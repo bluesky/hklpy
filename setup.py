@@ -3,7 +3,7 @@ from setuptools import (setup, find_packages)
 import versioneer
 
 
-setup(name='ophyd',
+setup(name='hklpy',
       version=versioneer.get_version(),
       cmdclass=versioneer.get_cmdclass(),
       license='BSD',

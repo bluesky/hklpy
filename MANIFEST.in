@@ -1,2 +1,2 @@
 include versioneer.py
-include ophyd/_version.py
+include hkl/_version.py
