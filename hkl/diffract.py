@@ -1,6 +1,6 @@
 import logging
 from . import calc
-from .. import (Signal, PseudoPositioner)
+from ophyd import (Signal, PseudoPositioner)
 
 
 logger = logging.getLogger(__name__)
