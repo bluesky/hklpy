@@ -34,8 +34,8 @@ requirements:
     - setuptools
   run:
     - python
-    - gi
     - numpy
+    - hkl
     - ophyd
 
 test:
