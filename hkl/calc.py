@@ -2,7 +2,6 @@ import logging
 import functools
 from collections import OrderedDict
 from threading import RLock
-from operator import itemgetter
 
 import numpy as np
 

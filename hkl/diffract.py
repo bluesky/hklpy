@@ -1,5 +1,4 @@
 import logging
-from operator import itemgetter
 
 from . import calc
 from ophyd import (Signal, PseudoPositioner)
