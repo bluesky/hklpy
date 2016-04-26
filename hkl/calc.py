@@ -1,6 +1,8 @@
 import logging
-from collections import (OrderedDict, namedtuple)
+import functools
+from collections import OrderedDict
 from threading import RLock
+from operator import itemgetter
 
 import numpy as np
 
@@ -13,6 +15,54 @@ from .context import UsingEngine
 logger = logging.getLogger(__name__)
 
 NM_KEV = 1.239842  # lambda = 1.24 / E (nm, keV or um, eV)
+
+
+def default_decision_function(position, solutions):
+    '''The default decision function - returns the first solution'''
+    return solutions[0]
+
+
+# This is used below by CalcRecip.
+def _locked(func):
+    '''a decorator for running a method with the instance's lock'''
+    @functools.wraps(func)
+    def wrapped(self, *args, **kwargs):
+        with self._lock:
+            return func(self, *args, **kwargs)
+
+    return wrapped
+
+
+# This is used below by CalcRecip.
+def _keep_physical_position(func):
+    '''a decorator that stores and restores the physical motor position
+    during calculations'''
+    @functools.wraps(func)
+    def wrapped(self, *args, **kwargs):
+        with self._lock:
+            initial_pos = self.physical_positions
+            try:
+                return func(self, *args, **kwargs)
+            finally:
+                self.physical_positions = initial_pos
+
+    return wrapped
+
+
+class UnreachableError(ValueError):
+    '''Position is unreachable.
+
+    Attributes
+    ----------
+    pseudo : sequence
+        Last reachable pseudo position in the trajectory
+    physical : sequence
+        Corresponding physical motor positions
+    '''
+    def __init__(self, msg, pseudo, physical):
+        super().__init__(msg)
+        self.pseudo = pseudo
+        self.physical = physical
 
 
 class CalcRecip(object):
@@ -89,6 +139,7 @@ class CalcRecip(object):
         return self._engine
 
     @engine.setter
+    @_locked
     def engine(self, engine):
         if engine is self._engine:
             return
@@ -120,6 +171,7 @@ class CalcRecip(object):
         return self._sample.name
 
     @sample_name.setter
+    @_locked
     def sample_name(self, new_name):
         sample = self._sample
         sample.name = new_name
@@ -129,6 +181,7 @@ class CalcRecip(object):
         return self._sample
 
     @sample.setter
+    @_locked
     def sample(self, sample):
         if sample is self._sample:
             return
@@ -166,7 +219,8 @@ class CalcRecip(object):
             sample = HklSample(calc=self, sample=sample, units=self._unit_name)
 
         if sample.name in self._samples:
-            raise ValueError('Sample of name "%s" already exists' % sample.name)
+            raise ValueError('Sample of name "%s" already exists' %
+                             sample.name)
 
         self._samples[sample.name] = sample
         if select:
@@ -194,6 +248,7 @@ class CalcRecip(object):
 
         return self.add_sample(sample, select=select)
 
+    @_locked
     def _re_init(self):
         if self._engine is None:
             return
@@ -241,6 +296,7 @@ class CalcRecip(object):
         return self._geometry.axis_values_get(self._units)
 
     @physical_positions.setter
+    @_locked
     def physical_positions(self, positions):
         # Set the physical motor positions and calculate the pseudo ones
         self._geometry.axis_values_set(positions, self._units)
@@ -291,7 +347,7 @@ class CalcRecip(object):
                         param = self._get_parameter(self._geometry.axis_get(k))
                         # cannot set Parameter.name, so these are as
                         # provided from below
-                        #param.name = axis
+                        # param.name = axis
                         return param
 
             return self._get_parameter(self._geometry.axis_get(axis))
@@ -305,6 +361,90 @@ class CalcRecip(object):
         elif axis in self.pseudo_axis_names:
             self._engine[axis] = value
 
+    @_keep_physical_position
+    def forward_iter(self, start, end, max_iters, *, threshold=0.99,
+                     decision_fcn=None):
+        '''Iteratively attempt to go from a pseudo start -> end position
+
+        For every solution failure, the position is moved back.
+        For every success, the position is moved closer to the destination.
+
+        After up to max_iters, the position can be reached, the solutions will
+        be returned. Otherwise, ValueError will be raised stating the last
+        position that was reachable and the corresponding motor positions.
+
+        Parameters
+        ----------
+        start : Position
+        end : Position
+        max_iters : int
+            Maximum number of iterations
+        threshold : float, optional
+            Normalized proximity to `end` position to stop iterating
+        decision_fcn : callable, optional
+            Function to choose a solution from several. Defaults to picking the
+            first solution. The signature of the function should be as follows:
+
+            >>  def decision(pseudo_position, solution_list):
+            >>      return solution_list[0]
+
+        Returns
+        -------
+        solutions : list
+
+        Raises
+        ------
+        UnreachableError (ValueError)
+            Position cannot be reached
+            The last valid HKL position and motor positions are accessible
+            in this exception instance.
+        '''
+        start = np.array(start)
+        end = np.array(end)
+
+        if decision_fcn is None:
+            decision_fcn = default_decision_function
+
+        min_t = 0.0
+
+        t = 1.0
+        iters = 0
+        valid_pseudo = None
+        valid_real = None
+        while iters < max_iters:
+            try:
+                pos = (1. - t) * start + t * end
+                self.engine.pseudo_positions = pos
+            except ValueError:
+                # couldn't calculate - step back half-way
+                t = (min_t + t) / 2.0
+            else:
+                if t > min_t:
+                    min_t = t
+
+                # successful calculation - move forward
+                t = (t + 1) / 2.0
+
+                valid_pseudo = self.engine.pseudo_positions
+                valid_real = decision_fcn(valid_pseudo, self.engine.solutions)
+                self.physical_positions = valid_real
+
+                if t >= threshold:
+                    break
+
+            iters += 1
+
+        try:
+            self.engine.pseudo_positions = end
+            return self.engine.solutions
+        except ValueError:
+            raise UnreachableError('Unable to solve. iterations={}/{}\n'
+                                   'Last valid position: {}\n{} '
+                                   ''.format(iters, max_iters, valid_pseudo,
+                                             valid_real),
+                                   pseudo=valid_pseudo, physical=valid_real)
+
+    @_keep_physical_position
     def forward(self, position, engine=None):
         '''Forward-calculate a position from pseudo to real space'''
 
@@ -315,12 +455,11 @@ class CalcRecip(object):
             self.engine.pseudo_positions = position
             return self.engine.solutions
 
+    @_keep_physical_position
     def inverse(self, real):
-        with self._lock:
-            engine = self.engine
-            self.physical_positions = real
-            # self.update()  # done implicitly in setter
-            return self.pseudo_positions
+        self.physical_positions = real
+        # self.update()  # done implicitly in setter
+        return self.pseudo_positions
 
     def calc_linear_path(self, start, end, n, num_params=0, **kwargs):
         # start = [h1, k1, l1]

@@ -1,4 +1,6 @@
 import logging
+from operator import itemgetter
+
 from . import calc
 from ophyd import (Signal, PseudoPositioner)
 
@@ -32,8 +34,9 @@ class Diffractometer(PseudoPositioner):
             raise ValueError('Calculation engine must be locked'
                              ' (CalcDiff.lock_engine set)')
 
-        pseudo_axes = self._calc.pseudo_axes
-        pseudo_names = list(pseudo_axes.keys())
+        if decision_fcn is None:
+            # the default decision function is to just grab solution #1:
+            decision_fcn = calc.default_decision_function
 
         self._decision_fcn = decision_fcn
 
@@ -88,17 +91,14 @@ class Diffractometer(PseudoPositioner):
     # problem when someone uses these functions outside of move()
 
     def forward(self, pseudo):
-        solutions = self._calc.forward(pseudo)
+        solutions = self._calc.forward_iter(start=self.position, end=pseudo,
+                                            max_iters=100)
         logger.debug('pseudo to real: {}'.format(solutions))
-
-        if self._decision_fcn is not None:
-            return self._decision_fcn(position, solutions)
-        else:
-            return solutions[0]
+        return self._decision_fcn(pseudo, solutions)
 
     def inverse(self, real):
-        pseudo = self._calc.inverse(real)
-        return self.PseudoPosition(*pseudo)
+        self._calc.physical_positions = real
+        return self.PseudoPosition(*self._calc.pseudo_positions)
 
 
 class E4CH(Diffractometer):
