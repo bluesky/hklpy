@@ -65,6 +65,55 @@ class ArrayAttributeSignal(AttributeSignal):
 
 
 class Diffractometer(PseudoPositioner):
+    '''Diffractometer pseudopositioner
+
+    This has a corresponding calculation engine from hklpy that does forward
+    and inverse calculations.
+
+    If instantiating a specific diffractometer class such as E4C, E6C, neither
+    the `calc_inst` or the `calc_kw` parameters are required.
+
+    However, there is the option to either pass in a calculation instance (with
+    `calc_inst`) or keywords for the default calculation class (using
+    `calc_kw`) to instantiate a new one.
+
+    Parameters
+    ----------
+    prefix : str
+        PV prefix for all components
+    calc_kw : dict, optional
+        Initializer arguments for the calc class
+    decision_fcn : callable, optional
+        The decision function to use when multiple solutions exist for a given
+        forward calculation. Defaults to arbitrarily picking the first
+        solution.
+    read_attrs : list, optional
+        Read attributes default to all pseudo and real positioners
+    configuration_attrs : list, optional
+        Defaults to the UB matrix and energy
+    parent : Device, optional
+        Parent device
+    name : str, optional
+        Device name
+
+    See Also
+    --------
+    `hkl.diffract.E4CH`
+    `hkl.diffract.E4CV`
+    `hkl.diffract.E6C`
+    `hkl.diffract.K4CV`
+    `hkl.diffract.K6C`
+    `hkl.diffract.Petra3_p09_eh2`
+    `hkl.diffract.SoleilMars`
+    `hkl.diffract.SoleilSiriusKappa`
+    `hkl.diffract.SoleilSiriusTurret`
+    `hkl.diffract.SoleilSixsMed1p2`
+    `hkl.diffract.SoleilSixsMed2p2`
+    `hkl.diffract.SoleilSixs`
+    `hkl.diffract.Med2p3`
+    `hkl.diffract.TwoC`
+    `hkl.diffract.Zaxis`
+    '''
     calc_class = None
 
     # NOTE: you can override the `energy` component here with your own
@@ -85,9 +134,9 @@ class Diffractometer(PseudoPositioner):
     ux = Cpt(AttributeSignal, attr='calc.sample.ux.value',
              doc='ux portion of the U matrix')
     uy = Cpt(AttributeSignal, attr='calc.sample.uy.value',
-             doc='uy portion of the Y matrix')
+             doc='uy portion of the U matrix')
     uz = Cpt(AttributeSignal, attr='calc.sample.uz.value',
-             doc='uz portion of the Z matrix')
+             doc='uz portion of the U matrix')
 
     def __init__(self, prefix, calc_kw=None, decision_fcn=None,
                  calc_inst=None, *, configuration_attrs=None,
@@ -103,7 +152,6 @@ class Diffractometer(PseudoPositioner):
             if calc_kw is None:
                 calc_kw = {}
 
-            calc_kw = dict(calc_kw)
             self._calc = self.calc_class(lock_engine=True, **calc_kw)
 
         if not self._calc.engine_locked:
@@ -139,18 +187,18 @@ class Diffractometer(PseudoPositioner):
         '''
         Callback indicating that the energy signal was updated
         '''
-        energy = value
-
         logger.debug('{0.name} energy changed: {1}'.format(self, value))
-        self._calc.energy = energy
+        self._calc.energy = value
         self._update_position()
 
     @property
     def calc(self):
+        '''The calculation instance'''
         return self._calc
 
     @property
     def engine(self):
+        '''The calculation engine associated with the diffractometer'''
         return self._calc.engine
 
     # TODO so these calculations change the internal state of the hkl
