@@ -10,7 +10,7 @@ from hkl.diffract import E6C
 from hkl.util import Lattice
 
 
-def setup_module():
+def setup_module(module):
     ophyd.setup_ophyd()
 
 
@@ -76,9 +76,9 @@ def sample(tardis):
     r2 = tardis.calc.sample.add_reflection(1, 1, 0, position=p2)
     tardis.calc.sample.compute_UB(r1, r2)
 
-    tardis.energy = 0.931
+    tardis.energy.put(0.931)
     # tardis.calc.energy = 0.931
-    print('energy is', tardis.energy)
+    print('energy is', tardis.energy.get())
     print('calc.energy is', tardis.calc.energy)
     print('calc.wavelength is', tardis.calc.wavelength)
     print('sample is', tardis.calc.sample)

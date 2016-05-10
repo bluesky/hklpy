@@ -2,7 +2,7 @@ import logging
 
 from . import calc
 from ophyd import (Signal, PseudoPositioner)
-
+from ophyd import (Component as Cpt)
 
 logger = logging.getLogger(__name__)
 
@@ -10,8 +10,14 @@ logger = logging.getLogger(__name__)
 class Diffractometer(PseudoPositioner):
     calc_class = None
 
+    # NOTE: you can override the `energy` component here with your own
+    #       EpicsSignal, for example, in your own subclass. You could then
+    #       tie it to a pre-existing EPICS representation of the energy.
+    #       This replaces the old 'energy_signal' parameter.
+    energy = Cpt(Signal, value=8.0, doc='Energy (in keV)')
+
     def __init__(self, prefix, calc_kw=None, decision_fcn=None,
-                 energy_signal=None, energy=8.0, calc_inst=None,
+                 calc_inst=None,
                  **kwargs):
         if calc_inst is not None:
             if not isinstance(calc_inst, self.calc_class):
@@ -41,31 +47,8 @@ class Diffractometer(PseudoPositioner):
 
         super().__init__(prefix, **kwargs)
 
-        if energy_signal is None:
-            energy_signal = Signal(name='%s.energy' % self.name)
-        else:
-            # For pre-existing signals, don't update the energy upon
-            # initialization
-            energy = None
-
-        self._energy_sig = energy_signal
-
-        self._energy_sig.subscribe(self._energy_changed,
-                                   event_type=Signal.SUB_VALUE)
-
-        if energy is not None:
-            self._energy_sig.put(float(energy))
-
-    @property
-    def energy(self):
-        '''
-        Energy in keV
-        '''
-        return self._energy_sig.value
-
-    @energy.setter
-    def energy(self, energy):
-        self._energy_sig.put(float(energy))
+        self.energy.subscribe(self._energy_changed,
+                              event_type=Signal.SUB_VALUE)
 
     def _energy_changed(self, value=None, **kwargs):
         '''
@@ -73,7 +56,7 @@ class Diffractometer(PseudoPositioner):
         '''
         energy = value
 
-        logger.debug('{.name} energy changed: {}'.format(self, value))
+        logger.debug('{0.name} energy changed: {1}'.format(self, value))
         self._calc.energy = energy
         self._update_position()
 
