@@ -96,6 +96,13 @@ class Diffractometer(PseudoPositioner):
     name : str, optional
         Device name
 
+    Attributes
+    ----------
+    calc_class : sub-class of CalcRecip
+        Reciprocal calculation class used with this diffractometer.
+        If None (as in `hkl.diffract.Diffractometer`, `calc_inst` must be
+        specified upon initialization.
+
     See Also
     --------
     `hkl.diffract.E4CH`
