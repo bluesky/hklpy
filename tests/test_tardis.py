@@ -83,6 +83,16 @@ def sample(tardis):
     print('calc.wavelength is', tardis.calc.wavelength)
     print('sample is', tardis.calc.sample)
     print('position is', tardis.position)
+
+    print('sample name is', tardis.sample_name.get())
+    print('u matrix is', tardis.U.get(), tardis.U.describe())
+    print('ub matrix is', tardis.UB.get(), tardis.UB.describe())
+    print('reflections:', tardis.reflections.get(), tardis.reflections.describe())
+    print('ux is', tardis.ux.get(), tardis.ux.describe())
+    print('uy is', tardis.uy.get(), tardis.uy.describe())
+    print('uz is', tardis.uz.get(), tardis.uz.describe())
+    print('lattice is', tardis.lattice.get(), tardis.lattice.describe())
+    print(tardis.read())
     return sample
 
 
