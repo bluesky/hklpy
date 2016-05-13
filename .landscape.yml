@@ -1,0 +1,9 @@
+test-warnings: no
+strictness: medium
+python-targets:
+    - 3
+# ignore-paths:
+#     - hkl/__init__.py
+pylint:
+  disable:
+    - protected-access
