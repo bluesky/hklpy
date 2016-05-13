@@ -143,6 +143,20 @@ def test_reachable(tardis, sample):
     numpy.testing.assert_almost_equal(tardis.calc.physical_positions, rpos)
 
 
+def test_inversion(tardis, sample):
+    constrain(tardis)
+    ppos = (0, 0, 1.1)
+    rpos = (101.56806493825435, 0.0, 0.0, 0.0, 42.02226419522791,
+            # invert gamma for this test:
+            -176.69158155966787)
+
+    tardis.calc.inverted_axes = ['gamma']
+    tardis.calc.physical_positions = rpos
+
+    numpy.testing.assert_almost_equal(tardis.calc.physical_positions, rpos)
+    numpy.testing.assert_almost_equal(tardis.calc.inverse(rpos), ppos)
+
+
 def test_unreachable(tardis, sample):
     print('position is', tardis.position)
     with pytest.raises(UnreachableError) as exinfo:

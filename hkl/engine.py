@@ -11,10 +11,11 @@ logger = logging.getLogger(__name__)
 
 
 class Parameter(object):
-    def __init__(self, param, units='user'):
+    def __init__(self, param, units='user', name=None):
         self._param = param
         self._unit_name = units
         self._units = util.units[units]
+        self._name = name
 
     @property
     def hkl_parameter(self):
@@ -27,7 +28,10 @@ class Parameter(object):
 
     @property
     def name(self):
-        return self._param.name_get()
+        name = self._param.name_get()
+        if self._name != name:
+            return '{} (internally: {})'.format(self._name, name)
+        return name
 
     @property
     def value(self):
