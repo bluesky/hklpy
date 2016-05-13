@@ -11,11 +11,18 @@ logger = logging.getLogger(__name__)
 
 
 class Parameter(object):
-    def __init__(self, param, units='user', name=None):
+    def __init__(self, param, units='user', name=None,
+                 inverted=False):
         self._param = param
         self._unit_name = units
         self._units = util.units[units]
         self._name = name
+        self._inverted = inverted
+
+    @property
+    def inverted(self):
+        '''Is the value inverted internally?'''
+        return self._inverted
 
     @property
     def hkl_parameter(self):
@@ -49,6 +56,9 @@ class Parameter(object):
 
     @value.setter
     def value(self, value):
+        if self._inverted:
+            value *= -1.0
+
         self._param.value_set(value, self._units)
 
     @property
@@ -62,18 +72,26 @@ class Parameter(object):
 
     @property
     def limits(self):
-        return self._param.min_max_get(self._units)
+        if self._inverted:
+            low, high = self._param.min_max_get(self._units)
+            return [-high, -low]
+        else:
+            return self._param.min_max_get(self._units)
 
     @limits.setter
     def limits(self, lims):
         low, high = lims
-        self._param.min_max_set(low, high, self._units)
+        if self._inverted:
+            self._param.min_max_set(-high, -low, self._units)
+        else:
+            self._param.min_max_set(low, high, self._units)
 
     def _repr_info(self):
         repr = ['name={!r}'.format(self.name),
                 'limits={!r}'.format(self.limits),
                 'value={!r}'.format(self.value),
                 'fit={!r}'.format(self.fit),
+                'inverted={!r}'.format(self.inverted),
                 ]
 
         if self._unit_name == 'user':

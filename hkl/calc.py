@@ -407,7 +407,8 @@ class CalcRecip(object):
     def __getitem__(self, axis):
         return Parameter(self._get_axis_by_name(axis),
                          units=self._unit_name,
-                         name=axis)
+                         name=axis,
+                         inverted=axis in self._inverted_axes)
 
     def __setitem__(self, axis, value):
         param = self[axis]

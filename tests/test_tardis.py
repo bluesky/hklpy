@@ -153,6 +153,18 @@ def test_inversion(tardis, sample):
     tardis.calc.inverted_axes = ['gamma']
     tardis.calc.physical_positions = rpos
 
+    assert not tardis.calc['omega'].inverted
+    gamma = tardis.calc['gamma']
+    assert gamma.inverted
+    numpy.testing.assert_almost_equal(gamma.limits,
+                                      (-180.0, 5.0)  #  inverted from (-5, 180)
+                                      )
+    gamma.limits = (-180.0, 5.0)
+    numpy.testing.assert_almost_equal(gamma.limits,
+                                      (-180.0, 5.0)  #  inverted from (-5, 180)
+                                      )
+
+
     numpy.testing.assert_almost_equal(tardis.calc.physical_positions, rpos)
     numpy.testing.assert_almost_equal(tardis.calc.inverse(rpos), ppos)
 
