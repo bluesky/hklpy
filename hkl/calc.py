@@ -65,10 +65,30 @@ class UnreachableError(ValueError):
 
 
 class CalcRecip(object):
-    def __init__(self, dtype, engine='hkl',
-                 sample='main', lattice=None,
-                 degrees=True, units='user',
-                 lock_engine=False):
+    '''Reciprocal space calculations
+
+    Parameters
+    ----------
+    dtype : str
+        Diffractometer type (usually specified by a subclass)
+    engine : str, optional
+        'hkl', for example
+    sample : str, optional
+        Default sample name (default: 'main')
+    lattice : Lattice, optional
+        Lattice to use with the default sample
+    degrees : bool, optional
+        Use degrees instead of radians (default: True)
+    units : {'user', }
+        The type of units to use internally
+    lock_engine : bool, optional
+        Don't allow the engine to be changed during the life of this object
+    inverted_axes : list, optional
+        Names of axes to invert the sign of
+    '''
+    def __init__(self, dtype, engine='hkl', sample='main', lattice=None,
+                 degrees=True, units='user', lock_engine=False,
+                 inverted_axes=None):
 
         self._engine = None  # set below with property
         self._detector = util.new_detector()
@@ -79,7 +99,9 @@ class CalcRecip(object):
         self._units = util.units[self._unit_name]
         self._lock_engine = bool(lock_engine)
         self._lock = RLock()
-        self._axis_name_map = None
+        self._axis_name_to_renamed = {}
+        self._axis_name_to_original = {}
+        self._inverted_axes = inverted_axes
 
         try:
             self._factory = hkl_module.factories()[dtype]
@@ -112,7 +134,6 @@ class CalcRecip(object):
     @property
     def wavelength(self):
         '''The wavelength associated with the geometry, in nm'''
-        # TODO hkl lib doesn't expose the getter, only the setter
         return self._geometry.wavelength_get(self._units)
 
     @wavelength.setter
@@ -270,8 +291,8 @@ class CalcRecip(object):
 
     @property
     def physical_axis_names(self):
-        if self._axis_name_map:
-            return list(self._axis_name_map.values())
+        if self._axis_name_to_renamed:
+            return list(self._axis_name_to_renamed.values())
         else:
             return self._geometry.axis_names_get()
 
@@ -279,37 +300,74 @@ class CalcRecip(object):
     def physical_axis_names(self, axis_name_map):
         '''Set a persistent re-map of physical axis names
 
-           Parameter
-           ---------
-           axis_name_map : dict {orig_axis_1: new_name_1, ...}
-        '''
-        # make sure re-map names are 1-to-1 with the engine's expectations
-        assert set(axis_name_map.keys()) == set(self.physical_axis_names)
+        Resets `inverted_axes`.
 
-        self._axis_name_map = self.physical_axes
-        for k, v in axis_name_map.items():
-            self._axis_name_map[k] = v
+        Parameters
+        ----------
+        axis_name_map : dict
+            {orig_axis_1: new_name_1, ...}
+        '''
+        internal_axis_names = self._geometry.axis_names_get()
+        if set(axis_name_map.keys()) != set(internal_axis_names):
+            raise ValueError('Every axis name has to have a remapped name')
+
+        self._axis_name_to_original = OrderedDict(
+            (axis_name_map[axis], axis) for axis in internal_axis_names)
+        self._axis_name_to_renamed = OrderedDict(
+            (axis, axis_name_map[axis]) for axis in internal_axis_names)
+
+        self._inverted_axes = []
+
+    @property
+    def inverted_axes(self):
+        '''The physical axis names to invert'''
+        return self._inverted_axes
+
+    @inverted_axes.setter
+    def inverted_axes(self, to_invert):
+        for axis in to_invert:
+            assert axis in self.physical_axis_names
+
+        self._inverted_axes = to_invert
+
+    def _invert_physical_positions(self, pos):
+        '''Invert the physical axis positions based on the settings
+
+        Parameters
+        ----------
+        pos : OrderedDict
+            NOTE: Modified in-place
+        '''
+        for axis in self._inverted_axes:
+            pos[axis] = -pos[axis]
+        return pos
 
     @property
     def physical_positions(self):
-        return self._geometry.axis_values_get(self._units)
+        '''Physical (real) motor positions'''
+        pos = self.physical_axes
+        if self._inverted_axes:
+            pos = self._invert_physical_positions(pos)
+
+        return self.Position(*pos.values())
 
     @physical_positions.setter
     @_locked
     def physical_positions(self, positions):
+        if self._inverted_axes:
+            pos = self.Position(*positions)._asdict()
+            pos = self._invert_physical_positions(pos)
+            positions = list(pos.values())
+
         # Set the physical motor positions and calculate the pseudo ones
         self._geometry.axis_values_set(positions, self._units)
         self.update()
 
     @property
     def physical_axes(self):
-        if self._axis_name_map:
-            keys = list(self._axis_name_map.values())
-        else:
-            keys = self.physical_axis_names
-
-        positions = self.physical_positions
-        return OrderedDict(zip(keys, positions))
+        '''Physical (real) motor positions as an OrderedDict'''
+        return OrderedDict(zip(self.physical_axis_names,
+                               self._geometry.axis_values_get(self._units)))
 
     @property
     def pseudo_axis_names(self):
@@ -323,15 +381,23 @@ class CalcRecip(object):
 
     @property
     def pseudo_axes(self):
-        '''Dictionary of axis name to position'''
+        '''Ordered dictionary of axis name to position'''
         return self._engine.pseudo_axes
 
     def update(self):
         '''Calculate the pseudo axis positions from the real axis positions'''
         return self._engine.update()
 
-    def _get_parameter(self, param):
-        return Parameter(param, units=self._unit_name)
+    def _get_axis_by_name(self, name):
+        '''Given an axis name, return the HklParameter
+
+        Parameters
+        ----------
+        name : str
+            If a name map is specified, this is the mapped name.
+        '''
+        name = self._axis_name_to_original.get(name, name)
+        return self._geometry.axis_get(name)
 
     @property
     def units(self):
@@ -339,26 +405,14 @@ class CalcRecip(object):
         return self._unit_name
 
     def __getitem__(self, axis):
-        if axis in self.physical_axis_names:
-            if self._axis_name_map:
-                for k, v in self._axis_name_map.items():
-                    if axis == v:
-                        param = self._get_parameter(self._geometry.axis_get(k))
-                        # cannot set Parameter.name, so these are as
-                        # provided from below
-                        # param.name = axis
-                        return param
-
-            return self._get_parameter(self._geometry.axis_get(axis))
-        elif axis in self.pseudo_axis_names:
-            return self._engine[axis]
+        return Parameter(self._get_axis_by_name(axis),
+                         units=self._unit_name,
+                         name=axis,
+                         inverted=axis in self._inverted_axes)
 
     def __setitem__(self, axis, value):
-        if axis in self.physical_axis_names:
-            param = self[axis]
-            param.value = value
-        elif axis in self.pseudo_axis_names:
-            self._engine[axis] = value
+        param = self[axis]
+        param.value = value
 
     @_keep_physical_position
     def forward_iter(self, start, end, max_iters, *, threshold=0.99,
