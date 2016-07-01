@@ -11,3 +11,11 @@ when compared to the auto-generated gobject-introspection classes.
 Integrates with ophyd pseudopositioners.
 
 [Documentation](http://nsls-ii.github.io/)
+
+## Conda Recipes
+
+Install the most recent tagged build: `conda install filestore -c lightsource2-tag`
+
+Install the most recent tagged build: `conda install filestore -c lightsource2-dev`
+
+Find the tagged recipe [here](https://github.com/NSLS-II/lightsource2-recipes/tree/master/recipes-tag/filestore) and the dev recipe [here](https://github.com/NSLS-II/lightsource2-recipes/tree/master/recipes-dev/filestore)
