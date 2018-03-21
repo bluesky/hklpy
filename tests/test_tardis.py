@@ -129,6 +129,29 @@ def constrain(tardis):
     calc['gamma'].value = 0
     calc['gamma'].fit = True
 
+def test_params(tardis):
+    '''
+        Make sure the parameters are set correctly
+    '''
+    calc = tardis.calc
+    # gamma
+    calc['gamma'].limits = (-5, 180)
+    calc['gamma'].value = 10
+    calc['gamma'].fit = False
+
+    assert calc['gamma'].limits == (-5, 180)
+    assert calc['gamma'].value == 10
+    assert calc['gamma'].fit is False
+
+    # try another random set of parameters
+    # in case it was initialized to the parameters we "set"
+    calc['gamma'].limits = (-10, 180)
+    calc['gamma'].value = 20
+    calc['gamma'].fit = True
+
+    assert calc['gamma'].limits == (-10, 180)
+    assert calc['gamma'].value == 20
+    assert calc['gamma'].fit is True
 
 def test_reachable(tardis, sample):
     constrain(tardis)
