@@ -44,6 +44,8 @@ install:
   # ophyd version not tagged publicly just yet:
   # (dependencies pulled in above)
   - pip install git+http://github.com/nsls-ii/ophyd/
+  # this is an ophyd dep
+  - pip install typing
 
   - pip install coveralls pytest pytest-cov
   - python setup.py develop
