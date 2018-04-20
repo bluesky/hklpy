@@ -9,8 +9,8 @@ cache:
 
 matrix:
   include:
-  - python: 3.4
   - python: 3.5
+  - python: 3.6
 
 before_install:
   - export CONDA_ENV="testenv"
@@ -36,16 +36,10 @@ before_install:
   - source activate $CONDA_ENV
 
 install:
-  - conda install numpy pyepics prettytable filestore ipython pyolog pip
+  - conda install numpy pyepics prettytable ipython pyolog pip
   # install ophyd and the hkl library
   - conda install ophyd gsl   # missing dep?
   - conda install hkl
-
-  # ophyd version not tagged publicly just yet:
-  # (dependencies pulled in above)
-  - pip install git+http://github.com/nsls-ii/ophyd/
-  # this is an ophyd dep
-  - pip install typing
 
   - pip install coveralls pytest pytest-cov
   - python setup.py develop
