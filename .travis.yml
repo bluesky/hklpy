@@ -40,7 +40,8 @@ install:
   # install ophyd and the hkl library
   # TODO : this has a gsl2.2.1 dep
   - conda install ophyd gsl=2.2.1   # missing dep?
-  - conda install hkl libiconv pygobject3
+  - conda install pygobject3==3.18.2
+  - conda install hkl libiconv
   # mkl-random 1.0.1 requires cython, which is not installed.
   - conda install cython
   # keyring 12.0.1 requires secretstorage, which is not installed.
