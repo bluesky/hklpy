@@ -41,6 +41,10 @@ install:
   - conda install ophyd gsl   # missing dep?
   - conda install hkl
 
+  # ophyd version not tagged publicly just yet:
+  # (dependencies pulled in above)
+  - pip install git+http://github.com/nsls-ii/ophyd/
+
   - pip install coveralls pytest pytest-cov
   - python setup.py develop
 
