@@ -293,7 +293,7 @@ class CalcParameter(Parameter):
         axis = self._geometry.axis_get(self.param_name)
         low, high = axis.min_max_get(self._units)
         if self._inverted:
-            return [-high, -low]
+            return (-high, -low)
         return low, high
 
     @limits.setter
