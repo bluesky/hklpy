@@ -9,9 +9,7 @@ cache:
 
 matrix:
   include:
-  # we have removed the py35 dep because it does not work
-  #- python: 3.5
-  - python: 3.6
+    - python: 3.6
 
 before_install:
   - export CONDA_ENV="testenv"
@@ -37,7 +35,7 @@ before_install:
   - source activate $CONDA_ENV
 
 install:
-  - conda install numpy pyepics prettytable ipython pyolog pip
+  - conda install numpy pyepics prettytable ipython pip
   # install ophyd and the hkl library
   # TODO : this has a gsl2.2.1 dep
   - conda install ophyd gsl=2.2.1   # missing dep?
@@ -47,10 +45,6 @@ install:
   - pip install cython
   # keyring 12.0.1 requires secretstorage, which is not installed.
   - pip install secretstorage
-
-  # ophyd version not tagged publicly just yet:
-  # (dependencies pulled in above)
-  #- pip install ophyd
 
   - pip install coveralls pytest pytest-cov
   - python setup.py develop

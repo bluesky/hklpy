@@ -268,8 +268,6 @@ class Engine(object):
         return '{}({})'.format(self.__class__.__name__,
                                ', '.join(self._repr_info()))
 
-# the parameter for the calc object
-# this is a fix for backwards compatibility
 # when updating parameters we need to update the parent geometry object
 class CalcParameter(Parameter):
     def __init__(self, param, geometry, *args, **kwargs):
