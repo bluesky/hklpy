@@ -5,7 +5,7 @@ from threading import RLock
 
 import numpy as np
 
-from .engine import (Engine, Parameter)
+from .engine import (Engine, CalcParameter)
 from .sample import HklSample
 from . import util
 from .util import hkl_module
@@ -405,10 +405,9 @@ class CalcRecip(object):
         return self._unit_name
 
     def __getitem__(self, axis):
-        return Parameter(self._get_axis_by_name(axis),
-                         units=self._unit_name,
-                         name=axis,
-                         inverted=axis in self._inverted_axes)
+        return CalcParameter(self._get_axis_by_name(axis),
+                             units=self._unit_name, name=axis, inverted=axis in
+                             self._inverted_axes, geometry=self._geometry)
 
     def __setitem__(self, axis, value):
         param = self[axis]

@@ -74,7 +74,7 @@ class Parameter(object):
     def limits(self):
         if self._inverted:
             low, high = self._param.min_max_get(self._units)
-            return [-high, -low]
+            return (-high, -low)
         else:
             return self._param.min_max_get(self._units)
 
@@ -267,3 +267,68 @@ class Engine(object):
     def __repr__(self):
         return '{}({})'.format(self.__class__.__name__,
                                ', '.join(self._repr_info()))
+
+# when updating parameters we need to update the parent geometry object
+class CalcParameter(Parameter):
+    def __init__(self, param, geometry, *args, **kwargs):
+        '''
+            Like calc parameter but needs reference to a geometry object.
+            Updates to the parameter should be propagated back to the geometry.
+
+            Parameters
+            ----------
+                param : HklParameter
+                geometry: Geomery object
+        '''
+        super().__init__(param, *args, **kwargs)
+        self.param_name = param.name_get()
+        # you may wonder why we stash geometry object rather than axis
+        # this is because the axis params can only be updated from the geometry
+        self._geometry = geometry
+
+    @property
+    def limits(self):
+        axis = self._geometry.axis_get(self.param_name)
+        low, high = axis.min_max_get(self._units)
+        if self._inverted:
+            return (-high, -low)
+        return low, high
+
+    @limits.setter
+    def limits(self, lims):
+        low, high = lims
+        if self._inverted:
+            low, high = -high, -low
+        self._param.min_max_set(low, high, self._units)
+        # param name is the true name of axis
+        axis = self._geometry.axis_get(self.param_name)
+        axis.min_max_set(low, high, self._units)
+        self._geometry.axis_set(self.param_name, axis)
+
+    @property
+    def value(self):
+        axis = self._geometry.axis_get(self.param_name)
+        return axis.value_get(self._units)
+
+    @value.setter
+    def value(self, value):
+        if self._inverted:
+            value *= -1.0
+
+        # param name is the true name of axis
+        axis = self._geometry.axis_get(self.param_name)
+        axis.value_set(value, self._units)
+        self._geometry.axis_set(self.param_name, axis)
+
+    @property
+    def fit(self):
+        '''True if the parameter can be fit or not'''
+        axis = self._geometry.axis_get(self.param_name)
+        return bool(axis.fit_get())
+
+    @fit.setter
+    def fit(self, fit):
+        # param name is the true name of axis
+        axis = self._geometry.axis_get(self.param_name)
+        axis.fit_set(fit)
+        self._geometry.axis_set(self.param_name, axis)

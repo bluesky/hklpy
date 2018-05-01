@@ -9,8 +9,7 @@ cache:
 
 matrix:
   include:
-  - python: 3.4
-  - python: 3.5
+    - python: 3.6
 
 before_install:
   - export CONDA_ENV="testenv"
@@ -28,7 +27,7 @@ before_install:
   - conda config --set always_yes true
   - conda update conda --yes
   - conda install conda-build anaconda-client jinja2
-  - conda config --add channels lightsource2
+  - conda config --add channels lightsource2-tag
   - conda config --add channels soft-matter
 
   # MAKE THE CONDA RECIPE
@@ -36,20 +35,19 @@ before_install:
   - source activate $CONDA_ENV
 
 install:
-  - conda install numpy pyepics prettytable filestore ipython pyolog pip
+  - conda install numpy pyepics prettytable ipython pip
   # install ophyd and the hkl library
-  - conda install ophyd gsl   # missing dep?
-  - conda install hkl
-
-  # ophyd version not tagged publicly just yet:
-  # (dependencies pulled in above)
-  - pip install git+http://github.com/nsls-ii/ophyd/
+  # TODO : this has a gsl2.2.1 dep
+  - conda install ophyd gsl=2.2.1   # missing dep?
+  - conda install pygobject3==3.18.2
+  - conda install hkl libiconv
+  # mkl-random 1.0.1 requires cython, which is not installed.
+  - pip install cython
+  # keyring 12.0.1 requires secretstorage, which is not installed.
+  - pip install secretstorage
 
   - pip install coveralls pytest pytest-cov
   - python setup.py develop
-
-  # this is important:
-  - conda install -c lightsource2 readline
 
   # setup some path environment variables for epics
   - export PATH=$PATH:$EPICS_BASE/bin/$EPICS_HOST_ARCH
