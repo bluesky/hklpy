@@ -74,7 +74,7 @@ class Parameter(object):
     def limits(self):
         if self._inverted:
             low, high = self._param.min_max_get(self._units)
-            return [-high, -low]
+            return (-high, -low)
         else:
             return self._param.min_max_get(self._units)
 
