@@ -4,6 +4,7 @@ import numpy as np
 from ophyd import (Signal, PseudoPositioner, Component as Cpt)
 from ophyd.pseudopos import (pseudo_position_argument, real_position_argument)
 from ophyd.utils.epics_pvs import (data_type, data_shape)
+from ophyd.ophydobj import OphydObject, Kind
 
 from . import calc
 
@@ -21,9 +22,11 @@ class AttributeSignal(Signal):
         The signal name
     parent : Device, optional
         The parent device instance
+     kind : a member the Kind IntEnum (or equivalent integer), optional
+        Default is Kind.normal. See Kind for options.
     '''
-    def __init__(self, attr, *, name=None, parent=None):
-        super().__init__(name=name, parent=parent)
+    def __init__(self, attr, *, name=None, parent=None, kind=Kind.hinted):
+        super().__init__(name=name, parent=parent, kind=kind)
 
         if '.' in attr:
             self.attr_base, self.attr = attr.rsplit('.', 1)
