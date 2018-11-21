@@ -5,81 +5,10 @@ from ophyd import (Signal, PseudoPositioner, Component as Cpt)
 from ophyd.pseudopos import (pseudo_position_argument, real_position_argument)
 from ophyd.utils.epics_pvs import (data_type, data_shape)
 from ophyd.ophydobj import OphydObject, Kind
-
+from ophyd.signal import AttributeSignal, ArrayAttributeSignal
 from . import calc
 
 logger = logging.getLogger(__name__)
-
-
-class AttributeSignal(Signal):
-    '''Signal derived from a Python object instance's attribute
-
-    Parameters
-    ----------
-    attr : str
-        The dotted attribute name, relative to this signal's parent.
-    name : str, optional
-        The signal name
-    parent : Device, optional
-        The parent device instance
-     kind : a member the Kind IntEnum (or equivalent integer), optional
-        Default is Kind.normal. See Kind for options.
-    '''
-    def __init__(self, attr, *, name=None, parent=None, kind=Kind.hinted):
-        super().__init__(name=name, parent=parent, kind=kind)
-
-        if '.' in attr:
-            self.attr_base, self.attr = attr.rsplit('.', 1)
-        else:
-            self.attr_base, self.attr = None, attr
-
-    @property
-    def full_attr(self):
-        '''The full attribute name'''
-        if not self.attr_base:
-            return self.attr
-        else:
-            return '.'.join((self.attr_base, self.attr))
-
-    @property
-    def base(self):
-        '''The parent instance which has the final attribute'''
-        if self.attr_base is None:
-            return self.parent
-
-        obj = self.parent
-        for i, part in enumerate(self.attr_base.split('.')):
-            try:
-                obj = getattr(obj, part)
-            except AttributeError as ex:
-                attr = '.'.join(self.parent_attr[:i + 1])
-                raise AttributeError('{} ({})'.format(attr, ex))
-
-        return obj
-
-    def get(self, **kwargs):
-        return getattr(self.base, self.attr)
-
-    def put(self, value, **kwargs):
-        return setattr(self.base, self.attr, value)
-
-    def describe(self):
-        value = self.value
-        desc = {'source': 'PY:{}.{}'.format(self.parent.name, self.full_attr),
-                'dtype': data_type(value),
-                'shape': data_shape(value),
-                }
-        return {self.name: desc}
-
-
-class ArrayAttributeSignal(AttributeSignal):
-    '''An AttributeSignal which is cast to an ndarray on get
-
-    This is used where data_type and data_shape may otherwise fail to determine
-    how to store the data into metadatastore.
-    '''
-    def get(self, **kwargs):
-        return np.asarray(super().get(**kwargs))
 
 
 class Diffractometer(PseudoPositioner):
