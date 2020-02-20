@@ -101,7 +101,7 @@ class CalcRecip(object):
         self._lock = RLock()
         self._axis_name_to_renamed = {}
         self._axis_name_to_original = {}
-        self._inverted_axes = inverted_axes
+        self._inverted_axes = inverted_axes or []
 
         try:
             self._factory = hkl_module.factories()[dtype]
