@@ -11,7 +11,7 @@ when compared to the auto-generated gobject-introspection classes.
 Integrates with ophyd pseudopositioners.
 
 [Documentation](http://nsls-ii.github.io/) about the bluesky framework.
-No documentation for this package exists at this time.
+No documentation for *hklpy* exists at this time.
 
 ## Conda Recipes
 
