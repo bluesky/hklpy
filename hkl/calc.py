@@ -13,6 +13,7 @@ from .context import UsingEngine
 
 logger = logging.getLogger(__name__)
 
+A_KEV = 12.3984244   # angstrom * keV
 NM_KEV = 1.239842  # lambda = 1.24 / E (nm, keV or um, eV)
 
 
@@ -133,7 +134,7 @@ class CalcRecip(object):
 
     @property
     def wavelength(self):
-        '''The wavelength associated with the geometry, in nm'''
+        '''The wavelength associated with the geometry, in angstrom'''
         return self._geometry.wavelength_get(self._units)
 
     @wavelength.setter
@@ -143,11 +144,11 @@ class CalcRecip(object):
     @property
     def energy(self):
         '''The energy associated with the geometry, in keV'''
-        return NM_KEV / self.wavelength
+        return A_KEV / self.wavelength
 
     @energy.setter
     def energy(self, energy):
-        self.wavelength = NM_KEV / energy
+        self.wavelength = A_KEV / energy
 
     @property
     def engine_locked(self):
