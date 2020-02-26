@@ -2,9 +2,13 @@ from __future__ import print_function
 
 import config
 
-from ophyd.hkl.diffract import E4CH
-from ophyd.hkl.calc import (CalcRecip, CalcE4CH, CalcK6C)
-from ophyd.hkl.util import diffractometer_types
+import gi
+gi.require_version('Hkl', '5.0')
+# TODO: further updates needed?
+
+from hkl.diffract import E4CH
+from hkl.calc import (CalcRecip, CalcE4CH, CalcK6C)
+from hkl.util import diffractometer_types
 from ophyd import (Positioner, PseudoSingle)
 from ophyd.device import Component as Cpt
 
