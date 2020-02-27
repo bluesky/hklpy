@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 A_KEV = 12.3984244   # angstrom * keV
 NM_KEV = 1.239842  # lambda = 1.24 / E (nm, keV or um, eV)
+# Note: NM_KEV is not used by hklpy now, remains here as legacy
 
 
 def default_decision_function(position, solutions):
