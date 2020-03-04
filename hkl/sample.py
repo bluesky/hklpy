@@ -46,41 +46,44 @@ def check_lattice(lattice):
 
 
 class HklSample(object):
+    '''Represents a sample in diffractometer calculations
+
+    Parameters
+    ----------
+    calc : instance of CalcRecip
+        Reciprocal space calculation class
+    name : str
+        A user-defined name used to refer to the sample
+    sample : Hkl.Sample, optional
+        A Sample instance from the wrapped Hkl library. Created
+        automatically if not specified.
+    units : {'user', 'default'}
+        Units to use
+    lattice : np.ndarray, optional
+        The lattice
+    U : np.ndarray, optional
+        The crystal orientation matrix, U
+    UB : np.ndarray, optional
+        The UB matrix, where U is the crystal orientation matrix and B is
+        the transition matrix of a non-orthonormal (the reciprocal of the
+        crystal) in an orthonormal system
+    ux : np.ndarray, optional
+        ux part of the U matrix
+    uy : np.ndarray, optional
+        uy part of the U matrix
+    uz : np.ndarray, optional
+        uz part of the U matrix
+    reflections :
+        All reflections for the current sample in the form::
+
+            [(h, k, l), ...]
+
+        This assumes the hkl engine is used; generally, the ordered set of
+        positions for the engine in-use should be specified.
+
+    '''
+
     def __init__(self, calc, sample=None, units='user', **kwargs):
-        '''Represents a sample in diffractometer calculations
-
-        Parameters
-        ----------
-        calc : instance of CalcRecip
-            Reciprocal space calculation class
-        name : str
-            A user-defined name used to refer to the sample
-        sample : Hkl.Sample, optional
-            A Sample instance from the wrapped Hkl library. Created
-            automatically if not specified.
-        units : {'user', 'default'}
-            Units to use
-        lattice : np.ndarray, optional
-            The lattice
-        U : np.ndarray, optional
-            The crystal orientation matrix, U
-        UB : np.ndarray, optional
-            The UB matrix, where U is the crystal orientation matrix and B is
-            the transition matrix of a non-orthonormal (the reciprocal of the
-            crystal) in an orthonormal system
-        ux : np.ndarray, optional
-            ux part of the U matrix
-        uy : np.ndarray, optional
-            uy part of the U matrix
-        uz : np.ndarray, optional
-            uz part of the U matrix
-        reflections :
-            All reflections for the current sample in the form:
-                [(h, k, l), ...]
-            This assumes the hkl engine is used; generally, the ordered set of
-            positions for the engine in-use should be specified.
-        '''
-
         if sample is None:
             sample = hkl_module.Sample.new('')
 
