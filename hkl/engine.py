@@ -11,6 +11,19 @@ logger = logging.getLogger(__name__)
 
 
 class Parameter(object):
+    """HKL library parameter object
+
+    Example::
+
+        Parameter(
+                name='None (internally: ux)', 
+                limits=(min=-180.0, max=180.0), 
+                value=0.0, 
+                fit=True, 
+                inverted=False, 
+                units='Degree')
+
+    """
     def __init__(self, param, units='user', name=None,
                  inverted=False):
         self._param = param
@@ -113,6 +126,9 @@ class Parameter(object):
 
 
 class Solution(object):
+    """
+    solution of the conversion from (hkl) to axes
+    """
     def __init__(self, engine, list_item, class_):
         self._class = class_
         self._list_item = list_item.copy()
@@ -150,6 +166,8 @@ class Solution(object):
 
 
 class Engine(object):
+    """HKL calculation engine
+    """
     def __init__(self, calc, engine, engine_list):
         self._calc = calc
         self._engine = engine
@@ -270,16 +288,17 @@ class Engine(object):
 
 # when updating parameters we need to update the parent geometry object
 class CalcParameter(Parameter):
-    def __init__(self, param, geometry, *args, **kwargs):
-        '''
-            Like calc parameter but needs reference to a geometry object.
-            Updates to the parameter should be propagated back to the geometry.
+    """
+    Like calc parameter but needs reference to a geometry object.
+    Updates to the parameter should be propagated back to the geometry.
 
-            Parameters
-            ----------
-                param : HklParameter
-                geometry: Geomery object
-        '''
+    Parameters
+    ----------
+        param : HklParameter
+        geometry: Geomery object
+    """
+
+    def __init__(self, param, geometry, *args, **kwargs):
         super().__init__(param, *args, **kwargs)
         self.param_name = param.name_get()
         # you may wonder why we stash geometry object rather than axis
