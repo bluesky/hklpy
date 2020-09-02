@@ -17,7 +17,13 @@ import sphinx_rtd_theme
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-# sys.path.insert(0, os.path.dirname('../../..'))
+sys.path.insert(0, os.path.dirname('../../..'))
+# imports here for sphinx to build the documents without many WARNINGS.
+import gi
+gi.require_version('Hkl', '5.0')
+import hkl
+import hkl.calc
+import hkl.diffract
 
 # -- General configuration -----------------------------------------------------
 
