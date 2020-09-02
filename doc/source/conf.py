@@ -17,12 +17,7 @@ import sphinx_rtd_theme
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.dirname('../../..'))
-import gi
-gi.require_version('Hkl', '5.0')
-import hkl
-import hkl.calc
-import hkl.diffract
+# sys.path.insert(0, os.path.dirname('../../..'))
 
 # -- General configuration -----------------------------------------------------
 
@@ -31,16 +26,17 @@ import hkl.diffract
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = [ 
-              'sphinx.ext.autodoc', 
+extensions = [
+              'sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
-              'sphinx.ext.coverage', 
-              'sphinx.ext.inheritance_diagram', 
+              'sphinx.ext.coverage',
+              'sphinx.ext.inheritance_diagram',
               'sphinx.ext.intersphinx',
               'sphinx.ext.mathjax',
-              'sphinx.ext.napoleon',
-              'sphinx.ext.viewcode', 
+              'sphinx.ext.napoleon',  # see NOTE below
+              'sphinx.ext.viewcode',
               ]
+# NOTE: Requires sphinxcontrib-napoleon from conda-forge or PyPI.
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -56,7 +52,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'hklpy'
-copyright = u'2014, Brookhaven National Lab'
+copyright = u'2014-2020, Brookhaven National Laboratory'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -201,7 +197,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'hklpy.tex', u'hklpy Documentation',
-   u'Brookhaven National Lab', 'manual'),
+   u'Brookhaven National Laboratory', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -231,7 +227,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'hklpy', u'hklpy Documentation',
-     [u'Brookhaven National Lab'], 1)
+     [u'Brookhaven National Laboratory'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -245,7 +241,8 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'hklpy', u'hklpy Documentation',
-   u'Brookhaven National Lab', 'hklpy', 'One line description of project.',
+   u'Brookhaven National Laboratory', 'hklpy',
+   'Diffractometer computation library with ophyd pseudopositioner support.',
    'Miscellaneous'),
 ]
 

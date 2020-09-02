@@ -5,10 +5,12 @@
 hklpy
 =====
 
-Based on the *hkl* (https://repo.or.cz/hkl.git,
-also https://github.com/picca/hkl but that repository 
-may not be synchronized with the latest version from repo.or.cz) library, with slightly cleaner abstractions
-when compared to the auto-generated gobject-introspection classes.
+Based on the *hkl*  library, with slightly cleaner abstractions
+when compared to the auto-generated `gobject-introspection` classes.
+
+NOTE: main repository: https://repo.or.cz/hkl.git (GitHub repo
+https://github.com/picca/hkl is a shadow copy that may not be
+synchronized with the latest version from repo.or.cz)
 
 Integrates with ophyd pseudopositioners.
 
@@ -28,8 +30,6 @@ from hkl.diffract import E4CV
 
 ## Conda Recipes
 
-Install the most recent tagged build: `conda install hklpy -c lightsource2-tag`
-
-Install the most recent development build: `conda install hklpy -c lightsource2-dev`
+Install the most recent build: `conda install hklpy -c nsls2forge`
 
 Find the tagged recipe [here](https://github.com/NSLS-II/lightsource2-recipes/tree/master/recipes-tag/hklpy) and the dev recipe [here](https://github.com/NSLS-II/lightsource2-recipes/tree/master/recipes-dev/hklpy)
