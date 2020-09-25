@@ -13,7 +13,7 @@ from .context import UsingEngine
 
 logger = logging.getLogger(__name__)
 
-A_KEV = 12.39842 # 12.2984244   # angstrom * keV
+A_KEV = 12.39842  # 1 Angstrom = 12.39842 keV
 NM_KEV = 1.239842  # lambda = 1.24 / E (nm, keV or um, eV)
 # Note: NM_KEV is not used by hklpy now, remains here as legacy
 
