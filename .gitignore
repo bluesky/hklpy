@@ -69,4 +69,4 @@ target/
 doc/source/generated
 
 # Microsoft VS Code editor
-settings.json
+.vscode/
