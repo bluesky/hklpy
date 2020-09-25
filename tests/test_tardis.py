@@ -15,7 +15,8 @@ from hkl.util import Lattice
 
 
 def setup_module(module):
-    ophyd.setup_ophyd()
+    # ophyd.setup_ophyd()
+    pass
 
 
 class Tardis(E6C):
