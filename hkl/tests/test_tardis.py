@@ -3,7 +3,6 @@
 import pytest
 import numpy.testing
 
-import ophyd
 from ophyd import Component as Cpt
 from ophyd import (PseudoSingle, SoftPositioner)
 
@@ -66,7 +65,8 @@ def sample(tardis):
     # add the sample to the calculation engine
     tardis.calc.new_sample('KCF', lattice=lattice)
 
-    # we can alternatively set the wavelength (or photon energy) on the Tardis.calc instance
+    # We can alternatively set the wavelength
+    # (or photon energy) on the Tardis.calc instance.
     p1 = tardis.calc.Position(theta=48.42718305024724, omega=0.0, chi=0.0,
                               phi=0.0, delta=115.65436271083637,
                               gamma=3.0000034909999993)
@@ -88,7 +88,9 @@ def sample(tardis):
     print('sample name is', tardis.sample_name.get())
     print('u matrix is', tardis.U.get(), tardis.U.describe())
     print('ub matrix is', tardis.UB.get(), tardis.UB.describe())
-    print('reflections:', tardis.reflections.get(), tardis.reflections.describe())
+    print('reflections:',
+          tardis.reflections.get(),
+          tardis.reflections.describe())
     print('ux is', tardis.ux.get(), tardis.ux.describe())
     print('uy is', tardis.uy.get(), tardis.uy.describe())
     print('uz is', tardis.uz.get(), tardis.uz.describe())
@@ -130,6 +132,7 @@ def constrain(tardis):
     calc['gamma'].value = 0
     calc['gamma'].fit = True
 
+
 def test_params(tardis):
     '''
         Make sure the parameters are set correctly
@@ -153,6 +156,7 @@ def test_params(tardis):
     assert calc['gamma'].limits == (-10, 180)
     assert calc['gamma'].value == 20
     assert calc['gamma'].fit is True
+
 
 def test_reachable(tardis, sample):
     constrain(tardis)
@@ -181,13 +185,12 @@ def test_inversion(tardis, sample):
     gamma = tardis.calc['gamma']
     assert gamma.inverted
     numpy.testing.assert_almost_equal(gamma.limits,
-                                      (-180.0, 5.0)  #  inverted from (-5, 180)
+                                      (-180.0, 5.0)  # inverted from (-5, 180)
                                       )
     gamma.limits = (-180.0, 5.0)
     numpy.testing.assert_almost_equal(gamma.limits,
-                                      (-180.0, 5.0)  #  inverted from (-5, 180)
+                                      (-180.0, 5.0)  # inverted from (-5, 180)
                                       )
-
 
     numpy.testing.assert_almost_equal(tardis.calc.physical_positions, rpos)
     numpy.testing.assert_almost_equal(tardis.calc.inverse(rpos), ppos)
