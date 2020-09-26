@@ -78,7 +78,7 @@ def sample(tardis):
     tardis.calc.sample.compute_UB(r1, r2)
 
     # note: orientation matrix (below) was pre-computed with this wavelength
-    tardis.calc.wavelength = hkl.calc.A_KEV / 9.31  # energy in keV, wavelength in angstroms
+    tardis.calc.wavelength = 1.3317319441460795  # angstroms
     print('calc.wavelength is', tardis.calc.wavelength)
     print('sample is', tardis.calc.sample)
     print('position is', tardis.position)
