@@ -1,3 +1,5 @@
+#!/usr/bin/env py.test
+
 import pytest
 import numpy.testing
 
@@ -5,13 +7,16 @@ import ophyd
 from ophyd import Component as Cpt
 from ophyd import (PseudoSingle, SoftPositioner)
 
+import gi
+gi.require_version('Hkl', '5.0')
 from hkl.calc import UnreachableError
 from hkl.diffract import E6C
 from hkl.util import Lattice
 
 
 def setup_module(module):
-    ophyd.setup_ophyd()
+    # ophyd.setup_ophyd()
+    pass
 
 
 class Tardis(E6C):
@@ -31,12 +36,8 @@ class Tardis(E6C):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.omega._set_position(0)
-        self.theta._set_position(0)
-        self.chi._set_position(0)
-        self.phi._set_position(0)
-        self.delta._set_position(0)
-        self.gamma._set_position(0)
+        for p in self.real_positioners:
+            p._set_position(0)  # give each a starting position
 
 
 @pytest.fixture(scope='function')
@@ -76,8 +77,9 @@ def sample(tardis):
     r2 = tardis.calc.sample.add_reflection(1, 1, 0, position=p2)
     tardis.calc.sample.compute_UB(r1, r2)
 
-    tardis.energy.put(0.931)
-    # tardis.calc.energy = 0.931
+    # note: tardis.energy.put() writes to tardis.calc.energy
+    # but: direct writes to tardis.calc.energy do NOT update tardis.energy
+    tardis.energy.put(9.31)        # keV  (wavelength _must_ be 1.3317... angstroms)
     print('energy is', tardis.energy.get())
     print('calc.energy is', tardis.calc.energy)
     print('calc.wavelength is', tardis.calc.wavelength)
