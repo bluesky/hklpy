@@ -58,7 +58,7 @@ script:
   - source deactivate
   - source activate $CONDA_ENV
   - conda list
-  - py.test -vv --cov=hkl --cov-report term-missing tests
+  - py.test -vv --cov=hkl --cov-report term-missing hkl/tests
 
 after_success:
     - env
