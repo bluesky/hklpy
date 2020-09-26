@@ -77,7 +77,9 @@ def sample(tardis):
     r2 = tardis.calc.sample.add_reflection(1, 1, 0, position=p2)
     tardis.calc.sample.compute_UB(r1, r2)
 
-    tardis.energy.put(9.31)        # keV  (wavelength _must_ be 1.3317...)
+    # note: tardis.energy.put() writes to tardis.calc.energy
+    # but: direct writes to tardis.calc.energy do NOT update tardis.energy
+    tardis.energy.put(9.31)        # keV  (wavelength _must_ be 1.3317... angstroms)
     print('energy is', tardis.energy.get())
     print('calc.energy is', tardis.calc.energy)
     print('calc.wavelength is', tardis.calc.wavelength)
