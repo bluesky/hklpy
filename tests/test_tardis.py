@@ -65,7 +65,7 @@ def sample(tardis):
     # add the sample to the calculation engine
     tardis.calc.new_sample('KCF', lattice=lattice)
 
-    # we can alternatively set the energy on the Tardis instance
+    # we can alternatively set the energy (or wavelength) on the Tardis.calc instance
     p1 = tardis.calc.Position(theta=48.42718305024724, omega=0.0, chi=0.0,
                               phi=0.0, delta=115.65436271083637,
                               gamma=3.0000034909999993)
@@ -77,11 +77,8 @@ def sample(tardis):
     r2 = tardis.calc.sample.add_reflection(1, 1, 0, position=p2)
     tardis.calc.sample.compute_UB(r1, r2)
 
-    # note: tardis.energy.put() writes to tardis.calc.energy
-    # but: direct writes to tardis.calc.energy do NOT update tardis.energy
-    tardis.energy.put(9.31)        # keV  (wavelength _must_ be 1.3317... angstroms)
-    print('energy is', tardis.energy.get())
-    print('calc.energy is', tardis.calc.energy)
+    # note: orientation matrix (below) was pre-computed with this wavelength
+    tardis.calc.wavelength = hkl.calc.A_KEV / 9.31  # energy in keV, wavelength in angstroms
     print('calc.wavelength is', tardis.calc.wavelength)
     print('sample is', tardis.calc.sample)
     print('position is', tardis.position)
