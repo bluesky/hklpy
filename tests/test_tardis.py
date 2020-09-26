@@ -58,14 +58,15 @@ def tardis():
 
 @pytest.fixture(scope='function')
 def sample(tardis):
-    # lengths are in Angstrom, angles are in degrees
+    # lengths must have same units as wavelength
+    # angles are in degrees
     lattice = Lattice(a=0.5857, b=0.5857, c=0.7849, alpha=90.0, beta=90.0,
                       gamma=90.0)
 
     # add the sample to the calculation engine
     tardis.calc.new_sample('KCF', lattice=lattice)
 
-    # we can alternatively set the energy (or wavelength) on the Tardis.calc instance
+    # we can alternatively set the wavelength (or photon energy) on the Tardis.calc instance
     p1 = tardis.calc.Position(theta=48.42718305024724, omega=0.0, chi=0.0,
                               phi=0.0, delta=115.65436271083637,
                               gamma=3.0000034909999993)
@@ -78,7 +79,8 @@ def sample(tardis):
     tardis.calc.sample.compute_UB(r1, r2)
 
     # note: orientation matrix (below) was pre-computed with this wavelength
-    tardis.calc.wavelength = 1.3317319441460795  # angstroms
+    # wavelength units must match lattice unit cell length units
+    tardis.calc.wavelength = 1.3317314715359827
     print('calc.wavelength is', tardis.calc.wavelength)
     print('sample is', tardis.calc.sample)
     print('position is', tardis.position)
