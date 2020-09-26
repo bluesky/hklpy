@@ -8,6 +8,7 @@ from ophyd import (PseudoSingle, SoftPositioner)
 
 import gi
 gi.require_version('Hkl', '5.0')
+# NOTE: MUST call gi.require_version() BEFORE import hkl
 from hkl.calc import UnreachableError
 from hkl.diffract import E6C
 from hkl.util import Lattice
