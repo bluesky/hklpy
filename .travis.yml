@@ -6,48 +6,39 @@ cache:
   directories:
     - $HOME/.cache/pip
 
-matrix:
+jobs:
   include:
     - python: 3.6
     - python: 3.7
 
 before_install:
   - export CONDA_ENV="testenv"
-    # - perl --version
   - git fetch --unshallow
 
-  # INSTALL CONDA
+  # Install conda and prepare the test env.
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - bash ./miniconda.sh -b -p /home/travis/mc
   - env | sort -u
 
   - source /home/travis/mc/etc/profile.d/conda.sh
+
   - conda config --set always_yes true
   - conda update conda --yes
-  # - conda install conda-build anaconda-client jinja2
   - conda config --add channels nsls2forge
-  # - conda config --add channels soft-matter
 
-  # MAKE THE CONDA RECIPE
   - conda create -n $CONDA_ENV python=$TRAVIS_PYTHON_VERSION
   - conda activate $CONDA_ENV
 
 install:
-  - conda install numpy pyepics prettytable ipython
-  # install ophyd and the hkl library
+  - conda install numpy prettytable ipython
   - conda install ophyd hkl
-  # mkl-random 1.0.1 requires cython, which is not installed.
-  # - pip install cython
-  # keyring 12.0.1 requires secretstorage, which is not installed.
-  # - pip install secretstorage
-
   - pip install coveralls pytest pytest-cov
   - pip install -v .
 
   # setup some path environment variables for epics
-  - export PATH=$PATH:$EPICS_BASE/bin/$EPICS_HOST_ARCH
-  - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$EPICS_BASE/lib/$EPICS_HOST_ARCH"
-  - echo "PATH=$PATH"
+  # - export PATH=$PATH:$EPICS_BASE/bin/$EPICS_HOST_ARCH
+  # - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$EPICS_BASE/lib/$EPICS_HOST_ARCH"
+  # - echo "PATH=$PATH"
 
 script:
   # running tests
