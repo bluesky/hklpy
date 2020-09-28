@@ -1,7 +1,6 @@
 language: python
-
-# sudo: required
-dist: trusty
+os: linux
+dist: xenial
 
 cache:
   directories:
@@ -10,43 +9,40 @@ cache:
 matrix:
   include:
     - python: 3.6
+    - python: 3.7
 
 before_install:
   - export CONDA_ENV="testenv"
-
-  - perl --version
+    # - perl --version
   - git fetch --unshallow
 
   # INSTALL CONDA
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-  - chmod +x miniconda.sh
-  - "./miniconda.sh -b -p /home/travis/mc"
-  - env
+  - bash ./miniconda.sh -b -p /home/travis/mc
+  - env | sort -u
 
-  - export PATH=/home/travis/mc/bin:$PATH
+  - source /home/travis/mc/etc/profile.d/conda.sh
   - conda config --set always_yes true
   - conda update conda --yes
-  - conda install conda-build anaconda-client jinja2
-  - conda config --add channels lightsource2-tag
-  - conda config --add channels soft-matter
+  # - conda install conda-build anaconda-client jinja2
+  - conda config --add channels nsls2forge
+  # - conda config --add channels soft-matter
 
   # MAKE THE CONDA RECIPE
   - conda create -n $CONDA_ENV python=$TRAVIS_PYTHON_VERSION
-  - source activate $CONDA_ENV
+  - conda activate $CONDA_ENV
 
 install:
-  - conda install numpy pyepics prettytable ipython pip
+  - conda install numpy pyepics prettytable ipython
   # install ophyd and the hkl library
-  - conda install ophyd gsl
-  - conda install pygobject
-  - conda install hkl libiconv
+  - conda install ophyd hkl
   # mkl-random 1.0.1 requires cython, which is not installed.
-  - pip install cython
+  # - pip install cython
   # keyring 12.0.1 requires secretstorage, which is not installed.
-  - pip install secretstorage
+  # - pip install secretstorage
 
   - pip install coveralls pytest pytest-cov
-  - python setup.py develop
+  - pip install -v .
 
   # setup some path environment variables for epics
   - export PATH=$PATH:$EPICS_BASE/bin/$EPICS_HOST_ARCH
@@ -55,11 +51,11 @@ install:
 
 script:
   # running tests
-  - source deactivate
-  - source activate $CONDA_ENV
+  - conda deactivate
+  - conda activate $CONDA_ENV
   - conda list
   - py.test -vv --cov=hkl --cov-report term-missing hkl/tests
 
 after_success:
-    - env
-    - coveralls
+  - env | sort
+  - coveralls
