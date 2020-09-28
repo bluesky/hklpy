@@ -1,0 +1,16 @@
+name: hklpy
+channels:
+  - nsls2forge
+  - defaults
+dependencies:
+  - python>=3.6
+  - pip
+  - hkl
+  - ipython
+  - numpy
+  - ophyd
+  - prettytable
+  - pip:
+    - coveralls
+    - pytest
+    - pytest-cov
