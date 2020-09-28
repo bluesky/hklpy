@@ -12,35 +12,31 @@ jobs:
     - python: 3.7
     - python: 3.8
 
-before_install:
+install:
   - export CONDA_ENV="testenv"
-  - git fetch --unshallow
 
   # Install conda and prepare the test env.
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-  - bash ./miniconda.sh -b -p /home/travis/mc
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - source "$HOME/miniconda/etc/profile.d/conda.sh"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+
+  # Useful for debugging any issues with conda
+  - conda info -a
   - env | sort -u
 
-  - source /home/travis/mc/etc/profile.d/conda.sh
-
-  - conda config --set always_yes true
-  - conda update conda --yes
-  - conda config --add channels nsls2forge
-
-  - conda create -n $CONDA_ENV python=$TRAVIS_PYTHON_VERSION
+  - conda create -n $CONDA_ENV python=$TRAVIS_PYTHON_VERSION --file environment.yml
   - conda activate $CONDA_ENV
 
-install:
-  - conda install numpy prettytable ipython
-  - conda install ophyd hkl
-  - pip install coveralls pytest pytest-cov
   - pip install -v .
+  - conda list
 
 script:
-  # running tests
+  # Running tests
   - conda deactivate
   - conda activate $CONDA_ENV
-  - conda list
   - py.test -vv --cov=hkl --cov-report term-missing hkl/tests
 
 after_success:
