@@ -35,7 +35,7 @@ install:
   - conda activate $CONDA_ENV
 
   # Validate that we installed the requested Python version.
-  - python -c "import os, sys; sysver='.'.join([str(_) for _ in sys.version_info[:2]]); travis_python=os.getenv('TRAVIS_PYTHON_VERSION'), f'Installed Python version {sysver} does not match requested Python version on TravisCI {travis_python}'"
+  - python -c "import os, sys; sysver='.'.join([str(_) for _ in sys.version_info[:2]]); travis_python=os.getenv('TRAVIS_PYTHON_VERSION'); assert sysver==travis_python, f'Installed Python version {sysver} does not match requested Python version on TravisCI {travis_python}'"
 
   # Install the package itself.
   - pip install -v .
