@@ -1,6 +1,5 @@
-[![Circle CI](https://circleci.com/gh/NSLS-II/hklpy.svg?style=svg)](https://circleci.com/gh/NSLS-II/hklpy)
-
-[![Code Health](https://landscape.io/github/NSLS-II/hklpy/master/landscape.svg?style=flat)](https://landscape.io/github/NSLS-II/hklpy/master)
+[![Build Status](https://travis-ci.org/bluesky/hklpy.svg?branch=main)](https://travis-ci.org/bluesky/hklpy)
+[![Code Health](https://landscape.io/github/bluesky/hklpy/main/landscape.svg?style=flat)](https://landscape.io/github/bluesky/hklpy/main)
 
 hklpy
 =====
@@ -22,6 +21,8 @@ from hkl.diffract import E4CV
 **NOTE**: main repository: https://repo.or.cz/hkl.git (GitHub repo
 https://github.com/picca/hkl is a shadow copy that may not be
 synchronized with the latest version from repo.or.cz)
+
+**NOTE**: hklpy documentation: https://blueskyproject.io/hklpy
 
 **NOTE**: Bluesky framework documentation: https://blueskyproject.io
 

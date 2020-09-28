@@ -6,11 +6,6 @@ cache:
   directories:
     - $HOME/.cache/pip
 
-env:
-  global:
-    # Doctr deploy key for bluesky/bluesky.github.io
-    - secure: "YBcBYqB5XJZz9JIlPUHIYWJ9asnwhh+5oPCDmtJBa8XkAr+8sg0dCrtcnZUdbWh3lFwTEHVRzWcFKMK7QEYU+gxo+YuKUx1rDrBPDDYXeobup2R+XNMqnqJym7zzffr2jL18MHF+z97fgXta3DhNgTeAniasgi2jK56/XtAVCdVlvfdq+QxQGCMB/L4cQ5CNGNDhfMyhs2H5NiCPazdpMIosLbgTi0CZmTnCt/nbozA//+tC6Ppp5nDroCNGph3aA3bH4Ya05aFaK/mxc4VIXY+jpKj1ROmfA43i2zyGzPy9IEHpCvBzYNGf+MLl2iTbB33xsGh2agclZ5zaSNVJ6CbnV7YmPD0wdwe3XXeHOi+TTU420OWGp2KyriowBphTgJBKoOiwAlnUO1mm21cqFec0xCpiLSw3OwK5oBF33J1ANeBZH0KNV3xhYs+QAypqDnwY7w/sDOHvpGNV7TqRflyOUcTwqB8jDnpbAtxP5XYY8bqd5Il43LJx7Fwj1726fEAQtI9T56IYUxMAU+/kCXTHeOq3u2T01MBgYWNoCgkPf9lcFrLtyWS4gAj5DyeRnASlbEpwTi97w9OrUpwDUI4nN2zo7TrtI63JxnMYSzeZfXguNR7xC/SNYjWWT06UqnrMw76a/ir3hxFz2a4P12pSmhDLGAs9FQT3zpZFUQI="
-
 jobs:
   fast_finish: true
   include:
@@ -18,7 +13,10 @@ jobs:
     - python: 3.7
     - python: 3.8
     - python: 3.6
-      env: PUBLISH_DOCS=1
+      env:
+        - BUILD_AND_PUBLISH_DOCS=1
+        # Doctr deploy key for bluesky/bluesky.github.io
+        - secure: "YBcBYqB5XJZz9JIlPUHIYWJ9asnwhh+5oPCDmtJBa8XkAr+8sg0dCrtcnZUdbWh3lFwTEHVRzWcFKMK7QEYU+gxo+YuKUx1rDrBPDDYXeobup2R+XNMqnqJym7zzffr2jL18MHF+z97fgXta3DhNgTeAniasgi2jK56/XtAVCdVlvfdq+QxQGCMB/L4cQ5CNGNDhfMyhs2H5NiCPazdpMIosLbgTi0CZmTnCt/nbozA//+tC6Ppp5nDroCNGph3aA3bH4Ya05aFaK/mxc4VIXY+jpKj1ROmfA43i2zyGzPy9IEHpCvBzYNGf+MLl2iTbB33xsGh2agclZ5zaSNVJ6CbnV7YmPD0wdwe3XXeHOi+TTU420OWGp2KyriowBphTgJBKoOiwAlnUO1mm21cqFec0xCpiLSw3OwK5oBF33J1ANeBZH0KNV3xhYs+QAypqDnwY7w/sDOHvpGNV7TqRflyOUcTwqB8jDnpbAtxP5XYY8bqd5Il43LJx7Fwj1726fEAQtI9T56IYUxMAU+/kCXTHeOq3u2T01MBgYWNoCgkPf9lcFrLtyWS4gAj5DyeRnASlbEpwTi97w9OrUpwDUI4nN2zo7TrtI63JxnMYSzeZfXguNR7xC/SNYjWWT06UqnrMw76a/ir3hxFz2a4P12pSmhDLGAs9FQT3zpZFUQI="
 
 install:
   # Install conda.
@@ -57,14 +55,21 @@ script:
   - conda deactivate
   - conda activate $CONDA_ENV
   - py.test -vv --cov=hkl --cov-report term-missing hkl/tests
-  - set -e
-  - make -C doc html
   - |
-    if [ ! -z "${PUBLISH_DOCS}" ]; then
-      - pip install doctr
-      - doctr deploy --deploy-repo bluesky/bluesky.github.io --deploy-branch-name master hklpy
-    fi
+    if [ ! -z "${BUILD_AND_PUBLISH_DOCS}" ]; then
+        set -e
+        # Install deps for building the docs.
+        pip install --upgrade -r requirements-doc.txt
 
-after_success:
-  - env | sort
-  - coveralls
+        # Build the docs.
+        make -C doc/ html
+
+        # Upload the docs to gh-pages.
+
+        # doctr deploy --deploy-repo bluesky/bluesky.github.io --deploy-branch-name master hklpy
+
+        # A fix for doctr-versions-menu:
+        pip install pyparsing --upgrade
+        DEPLOY_DIR="hklpy/${TRAVIS_TAG:=master}"
+        doctr deploy --command=doctr-versions-menu --build-tags --deploy-repo bluesky/bluesky.github.io --deploy-branch-name master ${DEPLOY_DIR}
+    fi
