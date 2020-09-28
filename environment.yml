@@ -4,6 +4,7 @@ channels:
   - defaults
 dependencies:
   - python>=3.6
+  - pip
   - hkl
   - ipython
   - numpy
@@ -12,4 +13,4 @@ dependencies:
   - pip:
     - coveralls
     - pytest
-     pytest-cov
+    - pytest-cov

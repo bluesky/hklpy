@@ -13,9 +13,7 @@ jobs:
     - python: 3.8
 
 install:
-  - export CONDA_ENV="testenv"
-
-  # Install conda and prepare the test env.
+  # Install conda.
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - bash miniconda.sh -b -p $HOME/miniconda
   - source "$HOME/miniconda/etc/profile.d/conda.sh"
@@ -23,11 +21,17 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
 
-  # Useful for debugging any issues with conda
+  # Useful for debugging any issues with conda.
   - conda info -a
   - env | sort -u
 
-  - conda create -n $CONDA_ENV python=$TRAVIS_PYTHON_VERSION --file environment.yml
+  # Update the yaml file with the Python version from Travis env var.
+  - sed -i "s/python\>=3.6.0/python=${TRAVIS_PYTHON_VERSION}/g" environment.yml
+  - cat environment.yml
+
+  # Create a test conda env from the environment.yml file.
+  - export CONDA_ENV="testenv-${TRAVIS_PYTHON_VERSION}"
+  - conda env create -n ${CONDA_ENV} --file environment.yml
   - conda activate $CONDA_ENV
 
   - pip install -v .
