@@ -1,3 +1,5 @@
+doctr
+doctr-versions-menu
 ipython
 matplotlib
 numpydoc
