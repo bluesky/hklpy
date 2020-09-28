@@ -57,11 +57,11 @@ script:
   - py.test -vv --cov=hkl --cov-report term-missing hkl/tests
   - |
     if [ ! -z "${BUILD_AND_PUBLISH_DOCS}" ]; then
-      - set -e
-      - pip install -r requirements-doc.txt
-      - make -C doc html
-      - pip install doctr
-      - doctr deploy --deploy-repo bluesky/bluesky.github.io --deploy-branch-name master hklpy
+        set -e
+        pip install -r requirements-doc.txt
+        make -C doc/ html
+        pip install doctr
+        doctr deploy --deploy-repo bluesky/bluesky.github.io --deploy-branch-name master hklpy
     fi
 
 after_success:
