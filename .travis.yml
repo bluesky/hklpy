@@ -63,7 +63,3 @@ script:
         pip install doctr
         doctr deploy --deploy-repo bluesky/bluesky.github.io --deploy-branch-name master hklpy
     fi
-
-after_success:
-  - env | sort
-  - coveralls
