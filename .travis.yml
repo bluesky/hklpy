@@ -72,4 +72,4 @@ script:
         pip install pyparsing --upgrade
         DEPLOY_DIR="hklpy/${TRAVIS_TAG:=master}"
         doctr deploy --command=doctr-versions-menu --build-tags --deploy-repo bluesky/bluesky.github.io --deploy-branch-name master ${DEPLOY_DIR}
-fi
+    fi
