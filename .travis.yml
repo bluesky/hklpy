@@ -35,11 +35,6 @@ install:
   - pip install coveralls pytest pytest-cov
   - pip install -v .
 
-  # setup some path environment variables for epics
-  # - export PATH=$PATH:$EPICS_BASE/bin/$EPICS_HOST_ARCH
-  # - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$EPICS_BASE/lib/$EPICS_HOST_ARCH"
-  # - echo "PATH=$PATH"
-
 script:
   # running tests
   - conda deactivate
