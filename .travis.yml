@@ -26,7 +26,7 @@ install:
   - env | sort -u
 
   # Update the yaml file with the Python version from Travis env var.
-  - sed -i "s/python\>=3.6.0/python=${TRAVIS_PYTHON_VERSION}/g" environment.yml
+  - sed -i "s/python>=3.6.0/python=${TRAVIS_PYTHON_VERSION}/g" environment.yml
   - cat environment.yml
 
   # Create a test conda env from the environment.yml file.
