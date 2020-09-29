@@ -70,6 +70,13 @@ script:
 
         # A fix for doctr-versions-menu:
         pip install pyparsing --upgrade
+
         DEPLOY_DIR="hklpy/${TRAVIS_TAG:=main}"
+
+        # Avoid updating /index.html in the bluesky/bluesky.github.io repo.
+        # See https://goerz.github.io/doctr_versions_menu/v0.3.0/command.html#customizing-index-html
+        # for details.
+        export DOCTR_VERSIONS_MENU_WRITE_INDEX_HTML=false
+
         doctr deploy --command=doctr-versions-menu --build-tags --deploy-repo bluesky/bluesky.github.io --deploy-branch-name master ${DEPLOY_DIR}
     fi
