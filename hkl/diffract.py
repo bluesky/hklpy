@@ -52,21 +52,21 @@ class Diffractometer(PseudoPositioner):
 
     See Also
     --------
-    `hkl.diffract.E4CH`
-    `hkl.diffract.E4CV`
-    `hkl.diffract.E6C`
-    `hkl.diffract.K4CV`
-    `hkl.diffract.K6C`
-    `hkl.diffract.Petra3_p09_eh2`
-    `hkl.diffract.SoleilMars`
-    `hkl.diffract.SoleilSiriusKappa`
-    `hkl.diffract.SoleilSiriusTurret`
-    `hkl.diffract.SoleilSixsMed1p2`
-    `hkl.diffract.SoleilSixsMed2p2`
-    `hkl.diffract.SoleilSixs`
-    `hkl.diffract.Med2p3`
-    `hkl.diffract.TwoC`
-    `hkl.diffract.Zaxis`
+    :class:`hkl.diffract.E4CH`
+    :class:`hkl.diffract.E4CV`
+    :class:`hkl.diffract.E6C`
+    :class:`hkl.diffract.K4CV`
+    :class:`hkl.diffract.K6C`
+    :class:`hkl.diffract.Med2p3`
+    :class:`hkl.diffract.Petra3_p09_eh2`
+    :class:`hkl.diffract.SoleilMars`
+    :class:`hkl.diffract.SoleilSiriusKappa`
+    :class:`hkl.diffract.SoleilSiriusTurret`
+    :class:`hkl.diffract.SoleilSixs`
+    :class:`hkl.diffract.SoleilSixsMed1p2`
+    :class:`hkl.diffract.SoleilSixsMed2p2`
+    :class:`hkl.diffract.TwoC`
+    :class:`hkl.diffract.Zaxis`
     '''
     calc_class = None
 
