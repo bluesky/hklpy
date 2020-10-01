@@ -2,10 +2,12 @@
 diffract
 --------
 
-In most cases, a local subclass of the desired
-diffractometer geometry is created to customize
-the EPICS PVs used for the motor axes.  Other
+A local subclass of the desired
+diffractometer geometry must be created to define the reciprocal-space axes
+and customize the EPICS PVs used for the motor axes.  Other
 capabilities are also customized in a local subclass.
+
+Examples are provided after the source code documentation.
 
 These are the diffractometer geometries defined:
 
@@ -38,7 +40,18 @@ for further information on these geometries.
 
 https://people.debian.org/~picca/hkl/hkl.html#org7ea41dd
 
-## Examples
+----
+
+Source code documentation
++++++++++++++++++++++++++
+
+.. automodule:: hkl.diffract
+    :members:
+
+----
+
+Examples
+++++++++
 
 Demonstrate the setup of diffractometers using the *hkl* package.
 
@@ -46,7 +59,8 @@ Demonstrate the setup of diffractometers using the *hkl* package.
 * ``k4cv`` : kappa 4-circle with EPICS PVs for motors
 * ``k4cve`` : ``k4cv`` with energy from local control system
 
-### 6-circle with simulated motors
+``sim6c``: 6-circle with simulated motors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is useful, sometimes, to create a simulated
 diffractometer where the motor axes are provided
@@ -91,7 +105,8 @@ Create an instance of this diffractometer with::
 
     sim6c = SimulatedE6C('', name='sim6c')
 
-### kappa 4-circle with EPICS motor PVs
+``k4cv`` : kappa 4-circle with EPICS motor PVs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To control a kappa diffractometer (in 4-circle geometry
 with vertical scattering plane)
@@ -120,8 +135,8 @@ Create the custom kappa 4-circle subclass::
     import hkl.diffract
     from ophyd import Component, PseudoSingle, EpicsMotor
 
-    class SimulatedE6C(hkl.diffract.K6CV):
-        """E6C: kappa diffractometer in 4-circle geometry"""
+    class KappaK4CV(hkl.diffract.K4CV):
+        """K4CV: kappa diffractometer in 4-circle geometry"""
 
         h = Component(PseudoSingle, '')
         k = Component(PseudoSingle, '')
@@ -134,15 +149,96 @@ Create the custom kappa 4-circle subclass::
 
 Create an instance of this diffractometer with::
 
-    k4cv = SimulatedE6C('', name='k4cv')
+    k4cv = KappaK4CV('', name='k4cv')
 
-### ``k4cv`` with energy from local control system
+``k4cve`` : ``k4cv`` with energy from local control system
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--tba-
+Extend the ``k4cv`` example above to use the energy
+as provided by the local control system.  In this example,
+assume these are the PVs to be used:
 
-----
+==============  ====================
+signal          EPICS PV
+==============  ====================
+energy          optics:energy
+energy units    optics:energy.EGU
+energy locked?  optics:energy_locked
+energy offset   no PV, same units as *energy* (above)
+==============  ====================
 
-## Source code documentation
+The *energy locked?* signal is a flag controlled by the user
+that controls whether (or not) the *energy* signal will
+update the wavelength of the diffractometer's *calc* engine.
+We expect this to be either 1 (update the calc engine) or
+0 (do NOT update the calc engine).
 
-.. automodule:: hkl.diffract
-    :members:
+We'll also create a (non-EPICS) signal to provide for an energy
+offset (in the same units as the control system energy).
+This offset will be added to the control system energy, before
+conversion of the units to *keV* and then setting the
+diffractometer's *calc* engine energy (which then sets
+the wavelength).
+
+Create the custom kappa 4-circle subclass with energy::
+
+    import gi
+    gi.require_version('Hkl', '5.0')
+    # MUST come before `import hkl`
+    import hkl.diffract
+    from ophyd import Component, PseudoSingle, EpicsMotor
+
+    class KappaK4CV_Energy(hkl.diffract.K4CV):
+        """K4CV: kappa diffractometer in 4-circle geometry with energy"""
+
+        h = Component(PseudoSingle, '')
+        k = Component(PseudoSingle, '')
+        l = Component(PseudoSingle, '')
+
+        komega = Component(EpicsMotor, "sky:m1")
+        kappa = Component(EpicsMotor, "sky:m2")
+        kphi = Component(EpicsMotor, "sky:m3")
+        tth = Component(EpicsMotor, "sky:m4")
+
+        energy = Component(EpicsSignal, "optics:energy")
+        energy_EGU = Component(EpicsSignal, "optics:energy.EGU")
+        energy_update_calc = Component(EpicsSignal, "optics:energy_locked")
+        energy_offset = Component(Signal, value=0)
+
+        def _energy_changed(self, value=None, **kwargs):
+            '''
+            Callback indicating that the energy signal was updated
+            '''
+            if energy_update_calc.get() in (1, "Yes", "locked", "OK"):
+                # energy_offset has same units as energy
+                local_energy = value + self.energy_offset.get()
+
+                # either get units from control system
+                units = self.energy_EGU.get()
+                # or define as a constant here
+                # units = "eV"
+
+                logger.debug(
+                    '{0.name} energy changed: {1} {2}'.format(
+                        self, value, units))
+                keV = pint.Quantity(local_energy, units).to("keV")
+                self._calc.energy = keV
+                self._update_position()
+
+Create an instance of this diffractometer with::
+
+    k4cve = KappaK4CV_Energy('', name='k4cv')
+
+To set the energy offset from the command line::
+
+    %mov k4cve.energy_offset 50
+
+which means the diffractometer (assuming the control system 
+uses "eV" units) will use an energy that is 50 eV
+*higher* than the control system reports.
+The diffractometer's *calc* engine will **only** be updated
+when the energy signal is next updated.  To force an update to the
+calc engine, call ``_energy_changed()`` directly with the energy value
+as the argument::
+
+    k4cve._energy_changed(k4cve.energy.get())
