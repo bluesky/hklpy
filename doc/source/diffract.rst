@@ -9,17 +9,17 @@ capabilities are also customized in a local subclass.
 
 These are the diffractometer geometries defined:
 
-==========================  ==========================
+===========================  ==========================
 name                         description
-==========================  ==========================
-:class:`hkl.diffract.E4CH`  Eulerian 4-circle, vertical scattering plane
-:class:`hkl.diffract.E4CV`  Eulerian 4-circle, horizontal scattering plane
-:class:`hkl.diffract.E6C`   Eulerian 6-circle
-:class:`hkl.diffract.K4CV`  Kappa 4-circle, vertical scattering plane
-:class:`hkl.diffract.K6C`   Kappa 6-circle
-:class:`hkl.diffract.TwoC`  2-circle
-:class:`hkl.diffract.Zaxis` Z-axis
-==========================  ==========================
+===========================  ==========================
+:class:`hkl.diffract.E4CH`   Eulerian 4-circle, vertical scattering plane
+:class:`hkl.diffract.E4CV`   Eulerian 4-circle, horizontal scattering plane
+:class:`hkl.diffract.E6C`    Eulerian 6-circle
+:class:`hkl.diffract.K4CV`   Kappa 4-circle, vertical scattering plane
+:class:`hkl.diffract.K6C`    Kappa 6-circle
+:class:`hkl.diffract.TwoC`   2-circle
+:class:`hkl.diffract.Zaxis`  Z-axis
+===========================  ==========================
 
 These special-use geometries provided by the
 **hkl-c++** library are also provided:
