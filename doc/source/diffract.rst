@@ -233,7 +233,7 @@ To set the energy offset from the command line::
 
     %mov k4cve.energy_offset 50
 
-which means the diffractometer (assuming the control system 
+which means the diffractometer (assuming the control system
 uses "eV" units) will use an energy that is 50 eV
 *higher* than the control system reports.
 The diffractometer's *calc* engine will **only** be updated
