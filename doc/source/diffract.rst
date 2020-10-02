@@ -186,7 +186,8 @@ Create the custom kappa 4-circle subclass with energy::
     gi.require_version('Hkl', '5.0')
     # MUST come before `import hkl`
     import hkl.diffract
-    from ophyd import Component, PseudoSingle, EpicsMotor
+    from ophyd import Component, PseudoSingle, EpicsSignal, EpicsMotor, Signal
+    import pint
 
     class KappaK4CV_Energy(hkl.diffract.K4CV):
         """K4CV: kappa diffractometer in 4-circle geometry with energy"""
@@ -209,7 +210,12 @@ Create the custom kappa 4-circle subclass with energy::
             '''
             Callback indicating that the energy signal was updated
             '''
-            if energy_update_calc.get() in (1, "Yes", "locked", "OK"):
+            if not self.connected:
+                logger.warning(
+                    "%s not fully connected, %s.calc.energy not updated",
+                    self.name, self.name)
+                return
+            if self.energy_update_calc.get() in (1, "Yes", "locked", "OK"):
                 # energy_offset has same units as energy
                 local_energy = value + self.energy_offset.get()
 
@@ -218,16 +224,30 @@ Create the custom kappa 4-circle subclass with energy::
                 # or define as a constant here
                 # units = "eV"
 
-                logger.debug(
-                    '{0.name} energy changed: {1} {2}'.format(
-                        self, value, units))
                 keV = pint.Quantity(local_energy, units).to("keV")
-                self._calc.energy = keV
+                logger.debug(
+                    "setting %s.calc.energy = %f (keV)",
+                    self.name, keV.magnitude)
+                self._calc.energy = keV.magnitude
                 self._update_position()
 
 Create an instance of this diffractometer with::
 
-    k4cve = KappaK4CV_Energy('', name='k4cv')
+    k4cve = KappaK4CV_Energy('', name='k4cve')
+
+.. note::
+
+   This command will print a log message to the console::
+
+       W Fri-09:12:16 - k4cve not fully connected, k4cve.calc.energy not updated
+
+    which is expected since the update cannot happen until all EPICS
+    PVs are connected.  This code, will create the object, wait for
+    all PVs to connect, then update the `calc` engine::
+
+        k4cve = KappaK4CV_Energy('', name='k4cve')
+        k4cve.wait_for_connection()
+        k4cve._energy_changed(k4cve.energy.get())
 
 To set the energy offset from the command line::
 
