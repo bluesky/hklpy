@@ -2,10 +2,10 @@
 diffract
 --------
 
-A local subclass of the desired
-diffractometer geometry must be created to define the reciprocal-space axes
-and customize the EPICS PVs used for the motor axes.  Other
-capabilities are also customized in a local subclass.
+A local subclass of the desired diffractometer geometry must be created
+to define the reciprocal-space axes and customize the EPICS PVs used for
+the motor axes.  Other capabilities are also customized in a local
+subclass.
 
 Examples are provided after the source code documentation.
 
@@ -23,8 +23,8 @@ name                         description
 :class:`hkl.diffract.Zaxis`  Z-axis
 ===========================  ==========================
 
-These special-use geometries provided by the
-**hkl-c++** library are also provided:
+These special-use geometries are also provided by the **hkl-c++**
+library [#]_:
 
 * :class:`hkl.diffract.Med2p3`
 * :class:`hkl.diffract.Petra3_p09_eh2`
@@ -35,10 +35,11 @@ These special-use geometries provided by the
 * :class:`hkl.diffract.SoleilSixsMed1p2`
 * :class:`hkl.diffract.SoleilSixsMed2p2`
 
-In all cases, see the **hkl-c++** documentation
-for further information on these geometries.
+In all cases, see the **hkl-c++** documentation for further information
+on these geometries.
 
-https://people.debian.org/~picca/hkl/hkl.html#org7ea41dd
+.. [#] **hkl-c++** documentation:
+    https://people.debian.org/~picca/hkl/hkl.html#org7ea41dd
 
 ----
 
@@ -69,9 +70,13 @@ actual motors provided by the diffractometer.
 
 The ``ophyd.SoftPositioner`` [#]_ is such a software simulation.
 
-.. [#] ``ophyd.SoftPositioner``: https://blueskyproject.io/ophyd/positioners.html#ophyd.positioner.SoftPositioner
+.. [#] ``ophyd.SoftPositioner``:
+    https://blueskyproject.io/ophyd/positioners.html#ophyd.positioner.SoftPositioner
 
-Create the custom 6-circle subclass::
+Create the custom 6-circle subclass:
+
+.. code-block:: python
+    :linenos:
 
     import gi
     gi.require_version('Hkl', '5.0')
@@ -108,10 +113,9 @@ Create an instance of this diffractometer with::
 ``k4cv`` : kappa 4-circle with EPICS motor PVs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To control a kappa diffractometer (in 4-circle geometry
-with vertical scattering plane)
-where the motor axes are provided
-by EPICS PVs, use `ophyd.EpicsMotor`. [#]_
+To control a kappa diffractometer (in 4-circle geometry with vertical
+scattering plane) where the motor axes are provided by EPICS PVs, use
+`ophyd.EpicsMotor`. [#]_
 
 In this example, we know from our local control system that
 the kappa motors have these PVs:
@@ -125,9 +129,13 @@ kphi        sky:m3
 tth         sky:m4
 ==========  =========
 
-.. [#] ``ophyd.EpicsMotor``: https://blueskyproject.io/ophyd/builtin-devices.html?highlight=epicsmotor#ophyd.epics_motor.EpicsMotor
+.. [#] ``ophyd.EpicsMotor``:
+    https://blueskyproject.io/ophyd/builtin-devices.html?highlight=epicsmotor#ophyd.epics_motor.EpicsMotor
 
-Create the custom kappa 4-circle subclass::
+Create the custom kappa 4-circle subclass:
+
+.. code-block:: python
+    :linenos:
 
     import gi
     gi.require_version('Hkl', '5.0')
@@ -167,30 +175,35 @@ energy locked?  optics:energy_locked
 energy offset   no PV, same units as *energy* (above)
 ==============  ====================
 
-The *energy locked?* signal is a flag controlled by the user
-that controls whether (or not) the *energy* signal will
-update the wavelength of the diffractometer's *calc* engine.
-We expect this to be either 1 (update the calc engine) or
-0 (do NOT update the calc engine).
+The *energy locked?* signal is a flag controlled by the user that
+controls whether (or not) the *energy* signal will update the wavelength
+of the diffractometer's *calc* engine. We expect this to be either 1
+(update the calc engine) or 0 (do NOT update the calc engine).
 
-We'll also create a (non-EPICS) signal to provide for an energy
-offset (in the same units as the control system energy).
-This offset will be added to the control system energy, before
-conversion of the units to *keV* and then setting the
-diffractometer's *calc* engine energy (which then sets
-the wavelength).
+We'll also create a (non-EPICS) signal to provide for an energy offset
+(in the same units as the control system energy). This offset will be
+added to the control system energy, before conversion of the units to
+*keV* and then setting the diffractometer's *calc* engine energy (which
+then sets the wavelength).
 
-Create the custom kappa 4-circle subclass with energy::
+Create the custom kappa 4-circle subclass with energy:
+
+.. code-block:: python
+    :linenos:
 
     import gi
     gi.require_version('Hkl', '5.0')
     # MUST come before `import hkl`
     import hkl.diffract
-    from ophyd import Component, PseudoSingle, EpicsSignal, EpicsMotor, Signal
+    from ophyd import Component
+    from ophyd import PseudoSingle
+    from ophyd import EpicsSignal, EpicsMotor, Signal
     import pint
 
     class KappaK4CV_Energy(hkl.diffract.K4CV):
-        """K4CV: kappa diffractometer in 4-circle geometry with energy"""
+        """
+        K4CV: kappa diffractometer in 4-circle geometry with energy
+        """
 
         h = Component(PseudoSingle, '')
         k = Component(PseudoSingle, '')
@@ -203,7 +216,9 @@ Create the custom kappa 4-circle subclass with energy::
 
         energy = Component(EpicsSignal, "optics:energy")
         energy_EGU = Component(EpicsSignal, "optics:energy.EGU")
-        energy_update_calc = Component(EpicsSignal, "optics:energy_locked")
+        energy_update_calc = Component(
+            EpicsSignal,
+            "optics:energy_locked")
         energy_offset = Component(Signal, value=0)
 
         def _energy_changed(self, value=None, **kwargs):
@@ -237,9 +252,9 @@ Create an instance of this diffractometer with::
 
 .. note::
 
-   This command will print a log message to the console::
+    This command will print a log message to the console::
 
-       W Fri-09:12:16 - k4cve not fully connected, k4cve.calc.energy not updated
+        W Fri-09:12:16 - k4cve not fully connected, k4cve.calc.energy not updated
 
     which is expected since the update cannot happen until all EPICS
     PVs are connected.  This code, will create the object, wait for
@@ -253,12 +268,11 @@ To set the energy offset from the command line::
 
     %mov k4cve.energy_offset 50
 
-which means the diffractometer (assuming the control system
-uses "eV" units) will use an energy that is 50 eV
-*higher* than the control system reports.
-The diffractometer's *calc* engine will **only** be updated
-when the energy signal is next updated.  To force an update to the
-calc engine, call ``_energy_changed()`` directly with the energy value
-as the argument::
+which means the diffractometer (assuming the control system uses "eV"
+units) will use an energy that is 50 eV *higher* than the control system
+reports. The diffractometer's *calc* engine will **only** be updated
+when the energy signal is next updated.  To force an update to the calc
+engine, call ``_energy_changed()`` directly with the energy value as the
+argument::
 
     k4cve._energy_changed(k4cve.energy.get())
