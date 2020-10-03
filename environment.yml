@@ -1,6 +1,7 @@
 name: hklpy
 channels:
   - nsls2forge
+  - conda-forge
   - defaults
 dependencies:
   - python>=3.6
