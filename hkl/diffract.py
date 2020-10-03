@@ -57,11 +57,12 @@ class Diffractometer(PseudoPositioner):
 
     .. autosummary::
 
-        ~_energy_changed
         ~calc
         ~engine
         ~forward
         ~inverse
+        ~_energy_changed
+        ~_update_calc_energy
 
     This has a corresponding calculation engine from **hklpy** that does
     forward and inverse calculations.
