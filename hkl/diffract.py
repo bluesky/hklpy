@@ -194,7 +194,7 @@ class Diffractometer(PseudoPositioner):
 
     def _update_calc_energy(self, value=None, **kwargs):
         '''
-        Callback indicating that the energy signal was updated
+        writes self.calc.energy from value or self.energy
         '''
         if not self.connected:
             logger.warning(
