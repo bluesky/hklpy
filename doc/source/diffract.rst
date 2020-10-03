@@ -167,9 +167,9 @@ Create an instance of this diffractometer with::
 ``k4cve`` : ``k4cv`` with energy from local control system
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Extend the ``k4cv`` example above to use the energy
-as provided by the local control system.  In this example,
-assume these are the PVs to be used:
+Extend the ``k4cv`` example above to use the energy as provided by the
+local control system.  In this example, assume these are the PVs to be
+used:
 
 ==============  ====================
 signal          EPICS PV
@@ -187,11 +187,16 @@ of the diffractometer's *calc* engine. We expect this to be either 1
 
 We'll also create a (non-EPICS) signal to provide for an energy offset
 (in the same units as the control system energy). This offset will be
-added to the control system energy, before conversion of the units to
+*added* to the control system energy, before conversion of the units to
 *keV* and then setting the diffractometer's *calc* engine energy (which
-then sets the wavelength).
+then sets the wavelength)::
 
-Create the custom kappa 4-circle subclass with energy:
+    calc engine *energy* (keV) = control system *energy* + *offset*
+
+and account for the units of the control system *energy*.  To combine
+all this, we define a new python class starting with `KappaK4CV` from
+above, adding the energy signals.  Create the custom kappa 4-circle
+subclass with energy:
 
 .. code-block:: python
     :linenos:
