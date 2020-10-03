@@ -52,6 +52,8 @@ Source code documentation
 
 ----
 
+_diffract.examples:
+
 Examples
 ++++++++
 
@@ -61,12 +63,14 @@ Demonstrate the setup of diffractometers using the *hkl* package.
 * ``k4cv`` : kappa 4-circle with EPICS PVs for motors
 * ``k4cve`` : ``k4cv`` with energy from local control system
 
+The :ref:`sample` :ref:`sample.examples` section describes how to setup
+a crystal sample with an orientation matrix.
+
 ``sim6c``: 6-circle with simulated motors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is useful, sometimes, to create a simulated
-diffractometer where the motor axes are provided
-by software simulations, rather than using the
+It is useful, sometimes, to create a simulated diffractometer where the
+motor axes are provided by software simulations, rather than using the
 actual motors provided by the diffractometer.
 
 The ``ophyd.SoftPositioner`` [#]_ is such a software simulation.
