@@ -3,44 +3,45 @@
 diffract
 --------
 
-A local subclass of the desired diffractometer geometry must be created
-to define the reciprocal-space axes and customize the EPICS PVs used for
-the motor axes.  Other capabilities are also customized in a local
-subclass.
+A local subclass of :class:`hkl.diffract.Diffractometer` for the desired
+diffractometer geometry must be created to define the reciprocal-space
+axes and customize the EPICS PVs used for the motor axes.  Other
+capabilities are also customized in a local subclass.
 
 Examples are provided after the source code documentation.
 
-These are the diffractometer geometries defined:
+These are the diffractometer geometries provided by the **hkl-c++**
+library [#hklcpp]_:
 
-===========================  ==========================
-name                         description
-===========================  ==========================
-:class:`hkl.diffract.E4CH`   Eulerian 4-circle, vertical scattering plane
-:class:`hkl.diffract.E4CV`   Eulerian 4-circle, horizontal scattering plane
-:class:`hkl.diffract.E6C`    Eulerian 6-circle
-:class:`hkl.diffract.K4CV`   Kappa 4-circle, vertical scattering plane
-:class:`hkl.diffract.K6C`    Kappa 6-circle
-:class:`hkl.diffract.TwoC`   2-circle
-:class:`hkl.diffract.Zaxis`  Z-axis
-===========================  ==========================
+============================  ==========================
+name                          description
+============================  ==========================
+:class:`~hkl.diffract.E4CH`   Eulerian 4-circle, vertical scattering plane
+:class:`~hkl.diffract.E4CV`   Eulerian 4-circle, horizontal scattering plane
+:class:`~hkl.diffract.E6C`    Eulerian 6-circle
+:class:`~hkl.diffract.K4CV`   Kappa 4-circle, vertical scattering plane
+:class:`~hkl.diffract.K6C`    Kappa 6-circle
+:class:`~hkl.diffract.TwoC`   2-circle
+:class:`~hkl.diffract.Zaxis`  Z-axis
+============================  ==========================
 
 These special-use geometries are also provided by the **hkl-c++**
-library [#]_:
+library [#hklcpp]_:
 
-* :class:`hkl.diffract.Med2p3`
-* :class:`hkl.diffract.Petra3_p09_eh2`
-* :class:`hkl.diffract.SoleilMars`
-* :class:`hkl.diffract.SoleilSiriusKappa`
-* :class:`hkl.diffract.SoleilSiriusTurret`
-* :class:`hkl.diffract.SoleilSixs`
-* :class:`hkl.diffract.SoleilSixsMed1p2`
-* :class:`hkl.diffract.SoleilSixsMed2p2`
+* :class:`~hkl.diffract.Med2p3`
+* :class:`~hkl.diffract.Petra3_p09_eh2`
+* :class:`~hkl.diffract.SoleilMars`
+* :class:`~hkl.diffract.SoleilSiriusKappa`
+* :class:`~hkl.diffract.SoleilSiriusTurret`
+* :class:`~hkl.diffract.SoleilSixs`
+* :class:`~hkl.diffract.SoleilSixsMed1p2`
+* :class:`~hkl.diffract.SoleilSixsMed2p2`
 
 In all cases, see the **hkl-c++** documentation for further information
 on these geometries.
 
-.. [#] **hkl-c++** documentation:
-    https://people.debian.org/~picca/hkl/hkl.html#org7ea41dd
+.. [#hklcpp] **hkl-c++** documentation:
+    https://people.debian.org/~picca/hkl/hkl.html
 
 ----
 
@@ -346,8 +347,8 @@ the new method and modify ``_energy_changed()`` to call it:
             self._calc.energy = keV.magnitude
             self._update_position()
 
-Finally, to set the diffractometer's *calc* engine energy, use one of
-these two methods:
+Finally, to set the energy of the diffractometer's *calc* engine, use
+one of these two methods:
 
 =====================================   ============================
 motive                                  command
