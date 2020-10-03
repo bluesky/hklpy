@@ -105,6 +105,29 @@ pygments_style = 'sphinx'
 #modindex_common_prefix = []
 
 
+# -- Options for autodoc ---------------------------------------------------
+
+autodoc_exclude_members = ",".join("""
+  __weakref__
+  _component_kinds
+  _device_tuple
+  _required_for_connection
+  _sig_attrs
+  _sub_devices
+  calc_class
+  component_names
+""".split())
+autodoc_default_options = {
+    #'members': 'var1, var2',
+    #'member-order': 'bysource',
+    'private-members': True,
+    'special-members': '__init__',
+    # 'undoc-members': True,
+    'exclude-members': autodoc_exclude_members,
+}
+autodoc_mock_imports = [
+  "pint",
+]
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
