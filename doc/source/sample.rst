@@ -92,7 +92,7 @@ at these motor positions::
     p = fourc.calc.Position(
         omega=22.31594, chi=89.1377, phi=0, tth=45.15857)
 
-Associate the motor positions `p` with the (*080*) reflection::
+Associate `p` (the motor positions) with the (*080*) reflection::
 
     r1 = fourc.calc.sample.add_reflection(0, 8, 0, p)
 
