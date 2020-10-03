@@ -66,6 +66,8 @@ Demonstrate the setup of diffractometers using the *hkl* package.
 The :ref:`sample` :ref:`sample.examples` section describes how to setup
 a crystal sample with an orientation matrix.
 
+.. _diffract.sim6c:
+
 ``sim6c``: 6-circle with simulated motors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -353,3 +355,7 @@ motive                                  command
 obey ``energy_update_calc`` signal      ``k4cve._energy_changed()``
 ignore ``energy_update_calc`` signal    ``k4cve._update_calc_energy()``
 =====================================   ============================
+
+Each of these two methods will accept an optional ``value`` argument
+which, if provided, will be used in place of the ``energy`` signal from
+the control system.
