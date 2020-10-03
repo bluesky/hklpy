@@ -9,6 +9,7 @@ dependencies:
   - ipython
   - numpy
   - ophyd
+  - pint
   - prettytable
   - pip:
     - coveralls
