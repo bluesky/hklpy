@@ -183,12 +183,11 @@ class Diffractometer(PseudoPositioner):
             The `energy` signal is subscribed to this method
             in the :meth:`Diffractometer.__init__()` method.
         '''
-        # NOTE: enable this code when using EpicsSignal
-        # if not self.connected:
-        #     logger.warning(
-        #         "%s not fully connected, %s.calc.energy not updated",
-        #         self.name, self.name)
-        #     return
+        if not self.connected:
+            logger.warning(
+                "%s not fully connected, %s.calc.energy not updated",
+                self.name, self.name)
+            return
 
         if self._calc_energy_update_permitted:
             self._update_calc_energy(value)
@@ -197,12 +196,11 @@ class Diffractometer(PseudoPositioner):
         '''
         Callback indicating that the energy signal was updated
         '''
-        # NOTE: enable this code when using EpicsSignal
-        # if not self.connected:
-        #     logger.warning(
-        #         "%s not fully connected, %s.calc.energy not updated",
-        #         self.name, self.name)
-        #     return
+        if not self.connected:
+            logger.warning(
+                "%s not fully connected, %s.calc.energy not updated",
+                self.name, self.name)
+            return
 
         # use either supplied value or get from signal
         value = value or self.energy.get()
