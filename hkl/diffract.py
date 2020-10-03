@@ -1,3 +1,42 @@
+"""
+diffract
+--------
+
+Support for diffractometer instances
+
+BASE CLASS
+
+.. autosummary::
+
+    ~Diffractometer
+
+DIFFRACTOMETER GEOMETRIES
+
+.. autosummary::
+
+    ~E4CH
+    ~E4CV
+    ~E6C
+    ~K4CV
+    ~K6C
+    ~TwoC
+    ~Zaxis
+
+SPECIAL-USE DIFFRACTOMETER GEOMETRIES
+
+.. autosummary::
+
+    ~Med2p3
+    ~Petra3_p09_eh2
+    ~SoleilMars
+    ~SoleilSiriusKappa
+    ~SoleilSiriusTurret
+    ~SoleilSixs
+    ~SoleilSixsMed1p2
+    ~SoleilSixsMed2p2
+
+"""
+
 import logging
 import numpy as np
 
@@ -6,6 +45,8 @@ from ophyd.pseudopos import (pseudo_position_argument, real_position_argument)
 from ophyd.utils.epics_pvs import (data_type, data_shape)
 from ophyd.ophydobj import OphydObject, Kind
 from ophyd.signal import AttributeSignal, ArrayAttributeSignal
+import pint
+
 from . import calc
 
 logger = logging.getLogger(__name__)
@@ -14,15 +55,23 @@ logger = logging.getLogger(__name__)
 class Diffractometer(PseudoPositioner):
     '''Diffractometer pseudopositioner
 
-    This has a corresponding calculation engine from hklpy that does forward
-    and inverse calculations.
+    .. autosummary::
 
-    If instantiating a specific diffractometer class such as E4C, E6C, neither
-    the `calc_inst` or the `calc_kw` parameters are required.
+        ~_energy_changed
+        ~calc
+        ~engine
+        ~forward
+        ~inverse
 
-    However, there is the option to either pass in a calculation instance (with
-    `calc_inst`) or keywords for the default calculation class (using
-    `calc_kw`) to instantiate a new one.
+    This has a corresponding calculation engine from **hklpy** that does
+    forward and inverse calculations.
+
+    If instantiating a specific diffractometer class such as `E4C`, `E6C`,
+    neither the `calc_inst` or the `calc_kw` parameters are required.
+
+    However, there is the option to either pass in a calculation
+    instance (with `calc_inst`) or keywords for the default calculation
+    class (using `calc_kw`) to instantiate a new one.
 
     Parameters
     ----------
@@ -49,32 +98,15 @@ class Diffractometer(PseudoPositioner):
         Reciprocal calculation class used with this diffractometer.
         If None (as in `hkl.diffract.Diffractometer`, `calc_inst` must be
         specified upon initialization.
-
-    See Also
-    --------
-    :class:`hkl.diffract.E4CH`
-    :class:`hkl.diffract.E4CV`
-    :class:`hkl.diffract.E6C`
-    :class:`hkl.diffract.K4CV`
-    :class:`hkl.diffract.K6C`
-    :class:`hkl.diffract.Med2p3`
-    :class:`hkl.diffract.Petra3_p09_eh2`
-    :class:`hkl.diffract.SoleilMars`
-    :class:`hkl.diffract.SoleilSiriusKappa`
-    :class:`hkl.diffract.SoleilSiriusTurret`
-    :class:`hkl.diffract.SoleilSixs`
-    :class:`hkl.diffract.SoleilSixsMed1p2`
-    :class:`hkl.diffract.SoleilSixsMed2p2`
-    :class:`hkl.diffract.TwoC`
-    :class:`hkl.diffract.Zaxis`
     '''
     calc_class = None
 
-    # NOTE: you can override the `energy` component here with your own
-    #       EpicsSignal, for example, in your own subclass. You could then
-    #       tie it to a pre-existing EPICS representation of the energy.
-    #       This replaces the old 'energy_signal' parameter.
+    # see: Documentation has examples to use an EPICS PV for energy.
     energy = Cpt(Signal, value=8.0, doc='Energy (in keV)')
+    energy_units = Cpt(Signal, value="keV")
+    energy_offset = Cpt(Signal, value=0)
+    energy_update_calc_flag = Cpt(Signal, value=True)
+
     sample_name = Cpt(AttributeSignal, attr='calc.sample_name',
                       doc='Sample name')
     lattice = Cpt(ArrayAttributeSignal, attr='calc.sample.lattice',
@@ -137,12 +169,54 @@ class Diffractometer(PseudoPositioner):
         self.energy.subscribe(self._energy_changed,
                               event_type=Signal.SUB_VALUE)
 
+    @property
+    def _calc_energy_update_permitted(self):
+        """return boolean `True` if permitted"""
+        acceptable_values = (1, "Yes", "locked", "OK", True, "On")
+        return self.energy_update_calc_flag.get() in acceptable_values
+
     def _energy_changed(self, value=None, **kwargs):
         '''
         Callback indicating that the energy signal was updated
+
+        .. note::
+            The `energy` signal is subscribed to this method
+            in the :meth:`Diffractometer.__init__()` method.
         '''
-        logger.debug('{0.name} energy changed: {1}'.format(self, value))
-        self._calc.energy = value
+        # NOTE: enable this code when using EpicsSignal
+        # if not self.connected:
+        #     logger.warning(
+        #         "%s not fully connected, %s.calc.energy not updated",
+        #         self.name, self.name)
+        #     return
+
+        if self._calc_energy_update_permitted:
+            self._update_calc_energy(value)
+
+    def _update_calc_energy(self, value=None, **kwargs):
+        '''
+        Callback indicating that the energy signal was updated
+        '''
+        # NOTE: enable this code when using EpicsSignal
+        # if not self.connected:
+        #     logger.warning(
+        #         "%s not fully connected, %s.calc.energy not updated",
+        #         self.name, self.name)
+        #     return
+
+        # use either supplied value or get from signal
+        value = value or self.energy.get()
+
+        # energy_offset has same units as energy
+        local_energy = value + self.energy_offset.get()
+        units = self.energy_units.get()
+
+        keV = pint.Quantity(local_energy, units).to("keV")
+        new_calc_energy = keV.magnitude
+        logger.debug(
+            "setting %s.calc.energy = %f (keV)",
+            self.name, new_calc_energy)
+        self._calc.energy = new_calc_energy
         self._update_position()
 
     @property
