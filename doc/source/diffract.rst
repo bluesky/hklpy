@@ -1,3 +1,4 @@
+.. _diffract:
 
 diffract
 --------
@@ -277,10 +278,10 @@ argument::
 
     k4cve._energy_changed(k4cve.energy.get())
 
-But this only works when the ``optics:energy_locked`` PV is 1. To
-update the diffractometer's *calc* engine energy and bypass the
-``k4cve.energy_update_calc`` signal, we can call these routines
-on the command console::
+But this only works when the ``optics:energy_locked`` PV is 1 (permitted
+to update the calc engine energy). To update the diffractometer's *calc*
+engine energy and bypass the ``k4cve.energy_update_calc`` signal, we can
+call these routines on the command console::
 
     %mov diffractometer.energy_update_calc 1
     diffractometer._energy_changed(diffractometer.energy.get())
