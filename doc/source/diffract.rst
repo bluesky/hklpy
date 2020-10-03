@@ -276,3 +276,70 @@ engine, call ``_energy_changed()`` directly with the energy value as the
 argument::
 
     k4cve._energy_changed(k4cve.energy.get())
+
+But this only works when the ``optics:energy_locked`` PV is 1. To
+update the diffractometer's *calc* engine energy and bypass the
+``k4cve.energy_update_calc`` signal, we can call these routines
+on the command console::
+
+    %mov diffractometer.energy_update_calc 1
+    diffractometer._energy_changed(diffractometer.energy.get())
+    %mov diffractometer.energy_update_calc 0
+
+or we need to modify the ``_energy_changed()`` method and provide an
+additional method that does not check this signal.  We'll move code into
+the new method and modify ``_energy_changed()`` to call it:
+
+.. code-block:: python
+    :linenos:
+
+        def _energy_changed(self, value=None, **kwargs):
+            '''
+            Callback indicating that the energy signal was updated
+            '''
+            if not self.connected:
+                logger.warning(
+                    "%s not fully connected, %s.calc.energy not updated",
+                    self.name, self.name)
+                return
+
+            if self.energy_update_calc.get() in (1, "Yes", "locked", "OK"):
+                self._update_calc_energy(value)
+
+        def _update_calc_energy(self, value=None, **kwargs):
+            '''
+            Callback indicating that the energy signal was updated
+            '''
+            if not self.connected:
+                logger.warning(
+                    "%s not fully connected, %s.calc.energy not updated",
+                    self.name, self.name)
+                return
+
+            # use either supplied value or get from signal
+            value = value or self.energy.get()
+
+            # energy_offset has same units as energy
+            local_energy = value + self.energy_offset.get()
+
+            # either get units from control system
+            units = self.energy_EGU.get()
+            # or define as a constant here
+            # units = "eV"
+
+            keV = pint.Quantity(local_energy, units).to("keV")
+            logger.debug(
+                "setting %s.calc.energy = %f (keV)",
+                self.name, keV.magnitude)
+            self._calc.energy = keV.magnitude
+            self._update_position()
+
+Finally, to set the diffractometer's *calc* engine energy, use one of
+these two methods:
+
+=====================================   ============================
+motive                                  command
+=====================================   ============================
+obey ``energy_update_calc`` signal      ``k4cve._energy_changed()``
+ignore ``energy_update_calc`` signal    ``k4cve._update_calc_energy()``
+=====================================   ============================
