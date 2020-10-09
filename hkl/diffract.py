@@ -141,7 +141,7 @@ class Diffractometer(PseudoPositioner):
 
             self._calc = self.calc_class(lock_engine=True, **calc_kw)
 
-        if not self._calc.engine_locked:
+        if not self.calc.engine_locked:
             # Reason for this is that the engine determines the pseudomotor
             # names, so if the engine is switched from underneath, the
             # pseudomotor will no longer function properly
@@ -215,7 +215,7 @@ class Diffractometer(PseudoPositioner):
         logger.debug(
             "setting %s.calc.energy = %f (keV)",
             self.name, new_calc_energy)
-        self._calc.energy = new_calc_energy
+        self.calc.energy = new_calc_energy
         self._update_position()
 
     @property
@@ -226,7 +226,7 @@ class Diffractometer(PseudoPositioner):
     @property
     def engine(self):
         '''The calculation engine associated with the diffractometer'''
-        return self._calc.engine
+        return self.calc.engine
 
     # TODO so these calculations change the internal state of the hkl
     # calculation class, which is probably not a good thing -- it becomes a
@@ -234,15 +234,15 @@ class Diffractometer(PseudoPositioner):
 
     @pseudo_position_argument
     def forward(self, pseudo):
-        solutions = self._calc.forward_iter(start=self.position, end=pseudo,
+        solutions = self.calc.forward_iter(start=self.position, end=pseudo,
                                             max_iters=100)
         logger.debug('pseudo to real: {}'.format(solutions))
         return self._decision_fcn(pseudo, solutions)
 
     @real_position_argument
     def inverse(self, real):
-        self._calc.physical_positions = real
-        return self.PseudoPosition(*self._calc.pseudo_positions)
+        self.calc.physical_positions = real
+        return self.PseudoPosition(*self.calc.pseudo_positions)
 
 
 class E4CH(Diffractometer):
