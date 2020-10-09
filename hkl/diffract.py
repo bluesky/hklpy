@@ -207,15 +207,18 @@ class Diffractometer(PseudoPositioner):
         value = value or self.energy.get()
 
         # energy_offset has same units as energy
-        local_energy = value + self.energy_offset.get()
-        units = self.energy_units.get()
+        value += self.energy_offset.get()
 
-        keV = pint.Quantity(local_energy, units).to("keV")
-        new_calc_energy = keV.magnitude
+        # comment these lines to skip unit conversion
+        units = self.energy_units.get()
+        if units != "keV":
+            keV = pint.Quantity(value, units).to("keV")
+            value = keV.magnitude
+
         logger.debug(
             "setting %s.calc.energy = %f (keV)",
-            self.name, new_calc_energy)
-        self.calc.energy = new_calc_energy
+            self.name, value)
+        self.calc.energy = value
         self._update_position()
 
     @property
