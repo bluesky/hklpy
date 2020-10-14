@@ -175,9 +175,15 @@ class Diffractometer(PseudoPositioner):
         return self.PseudoPosition(*self._calc.pseudo_positions)
 
     def check_value(self, pos):
-        """raise exception is pos is not within limits"""
+        """
+        Raise exception if pos is not within limits.
+
+        In a scan, a subset of the axes may be directed,
+        which are given in a dict from a set message
+        from the bluesky RunEngine.
+        """
         if isinstance(pos, dict):
-            # redefine and fill in any missing values
+            # Redefine and fill in any missing values.
             pos = [
                 pos.get(p.attr_name) or p.position
                 for p in self.pseudo_positioners
