@@ -178,9 +178,11 @@ class Diffractometer(PseudoPositioner):
         """
         Raise exception if pos is not within limits.
 
-        In a scan, a subset of the axes may be directed,
-        which are given in a dict from a set message
-        from the bluesky RunEngine.
+        In a scan, a subset of the pseudo axes may be directed,
+        which are given in a dict from a set message from the
+        bluesky RunEngine.
+
+        It is not permitted to scan both pseudo and real positioners.
         """
         if isinstance(pos, dict):
             # Redefine and fill in any missing values.
