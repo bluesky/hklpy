@@ -174,6 +174,16 @@ class Diffractometer(PseudoPositioner):
         self._calc.physical_positions = real
         return self.PseudoPosition(*self._calc.pseudo_positions)
 
+    def check_value(self, pos):
+        """raise exception is pos is not within limits"""
+        if isinstance(pos, dict):
+            # redefine and fill in any missing values
+            pos = [
+                pos.get(p.attr_name) or p.position
+                for p in self.pseudo_positioners
+            ]
+        super().check_value(pos)
+
 
 class E4CH(Diffractometer):
     calc_class = calc.CalcE4CH
