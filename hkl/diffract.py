@@ -8,6 +8,7 @@ from ophyd.ophydobj import OphydObject, Kind
 from ophyd.signal import AttributeSignal, ArrayAttributeSignal
 from . import calc
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -98,8 +99,9 @@ class Diffractometer(PseudoPositioner):
                  **kwargs):
         if calc_inst is not None:
             if not isinstance(calc_inst, self.calc_class):
-                raise ValueError('Calculation instance must be derived from '
-                                 'the class {}'.format(self.calc_class))
+                raise ValueError('Calculation instance must be derived '
+                                 'from the class {}'.format(
+                                     self.calc_class))
             self._calc = calc_inst
 
         else:
@@ -131,8 +133,8 @@ class Diffractometer(PseudoPositioner):
         if read_attrs is None:
             # if unspecified, set the read attrs to the pseudo/real motor
             # positions once known
-            self.read_attrs = (list(self.PseudoPosition._fields) +
-                               list(self.RealPosition._fields))
+            self.read_attrs = (list(self.PseudoPosition._fields)
+                               + list(self.RealPosition._fields))
 
         self.energy.subscribe(self._energy_changed,
                               event_type=Signal.SUB_VALUE)
@@ -161,7 +163,8 @@ class Diffractometer(PseudoPositioner):
 
     @pseudo_position_argument
     def forward(self, pseudo):
-        solutions = self._calc.forward_iter(start=self.position, end=pseudo,
+        solutions = self._calc.forward_iter(start=self.position,
+                                            end=pseudo,
                                             max_iters=100)
         logger.debug('pseudo to real: {}'.format(solutions))
         return self._decision_fcn(pseudo, solutions)
