@@ -126,7 +126,7 @@ class Diffractometer(PseudoPositioner):
             if not isinstance(calc_inst, self.calc_class):
                 raise ValueError(
                     "Calculation instance must be derived "
-                    "from the class {}".format(self.calc_class)
+                    f"from the class {self.calc_class}"
                 )
             self._calc = calc_inst
 
@@ -175,7 +175,7 @@ class Diffractometer(PseudoPositioner):
         """
         Callback indicating that the energy signal was updated
         """
-        logger.debug("{0.name} energy changed: {1}".format(self, value))
+        logger.debug(f"{self.name} energy changed: {value}")
         self._calc.energy = value
         self._update_position()
 
@@ -199,7 +199,7 @@ class Diffractometer(PseudoPositioner):
         solutions = self._calc.forward_iter(
             start=self.position, end=pseudo, max_iters=100
         )
-        logger.debug("pseudo to real: {}".format(solutions))
+        logger.debug(f"pseudo to real: {solutions}")
         return self._decision_fcn(pseudo, solutions)
 
     @real_position_argument
