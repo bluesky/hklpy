@@ -5,7 +5,7 @@ from threading import RLock
 
 import numpy as np
 
-from .engine import (Engine, CalcParameter)
+from .engine import Engine, CalcParameter
 from .sample import HklSample
 from . import util
 from .util import hkl_module
@@ -19,13 +19,14 @@ NM_KEV = 1.239842  # lambda = 1.24 / E (nm, keV or um, eV)
 
 
 def default_decision_function(position, solutions):
-    '''The default decision function - returns the first solution'''
+    """The default decision function - returns the first solution"""
     return solutions[0]
 
 
 # This is used below by CalcRecip.
 def _locked(func):
-    '''a decorator for running a method with the instance's lock'''
+    """a decorator for running a method with the instance's lock"""
+
     @functools.wraps(func)
     def wrapped(self, *args, **kwargs):
         with self._lock:
@@ -36,8 +37,10 @@ def _locked(func):
 
 # This is used below by CalcRecip.
 def _keep_physical_position(func):
-    '''a decorator that stores and restores the physical motor position
-    during calculations'''
+    """
+    decorator: stores/restores the physical motor position during calculations
+    """
+
     @functools.wraps(func)
     def wrapped(self, *args, **kwargs):
         with self._lock:
@@ -51,7 +54,7 @@ def _keep_physical_position(func):
 
 
 class UnreachableError(ValueError):
-    '''Position is unreachable.
+    """Position is unreachable.
 
     Attributes
     ----------
@@ -59,7 +62,8 @@ class UnreachableError(ValueError):
         Last reachable pseudo position in the trajectory
     physical : sequence
         Corresponding physical motor positions
-    '''
+    """
+
     def __init__(self, msg, pseudo, physical):
         super().__init__(msg)
         self.pseudo = pseudo
@@ -67,7 +71,7 @@ class UnreachableError(ValueError):
 
 
 class CalcRecip(object):
-    '''Reciprocal space calculations
+    """Reciprocal space calculations
 
     Parameters
     ----------
@@ -84,13 +88,23 @@ class CalcRecip(object):
     units : {'user', }
         The type of units to use internally
     lock_engine : bool, optional
-        Don't allow the engine to be changed during the life of this object
+        Don't allow the engine to be changed during
+        the life of this object
     inverted_axes : list, optional
         Names of axes to invert the sign of
-    '''
-    def __init__(self, dtype, engine='hkl', sample='main', lattice=None,
-                 degrees=True, units='user', lock_engine=False,
-                 inverted_axes=None):
+    """
+
+    def __init__(
+        self,
+        dtype,
+        engine="hkl",
+        sample="main",
+        lattice=None,
+        degrees=True,
+        units="user",
+        lock_engine=False,
+        inverted_axes=None,
+    ):
 
         self._engine = None  # set below with property
         self._detector = util.new_detector()
@@ -108,9 +122,11 @@ class CalcRecip(object):
         try:
             self._factory = hkl_module.factories()[dtype]
         except KeyError:
-            types = ', '.join(util.diffractometer_types)
-            raise ValueError('Invalid diffractometer type {!r}; choose from: {}'
-                             ''.format(dtype, types))
+            types = ", ".join(util.diffractometer_types)
+            raise ValueError(
+                f"Invalid diffractometer type {repr(types)};"
+                f" choose from: {types}"
+            )
 
         self._geometry = self._factory.create_new_geometry()
         self._engine_list = self._factory.create_new_engine_list()
@@ -127,15 +143,16 @@ class CalcRecip(object):
 
     @property
     def Position(self):
-        '''Dynamically-generated physical motor position class'''
+        """Dynamically-generated physical motor position class"""
         # I know, I know, could be done more cleanly...
-        name = 'Pos{}'.format(self.__class__.__name__)
-        return util.get_position_tuple(self.physical_axis_names,
-                                       class_name=name)
+        name = f"Pos{self.__class__.__name__}"
+        return util.get_position_tuple(
+            self.physical_axis_names, class_name=name
+        )
 
     @property
     def wavelength(self):
-        '''The wavelength associated with the geometry, in angstrom'''
+        """The wavelength associated with the geometry, in angstrom"""
         return self._geometry.wavelength_get(self._units)
 
     @wavelength.setter
@@ -144,7 +161,7 @@ class CalcRecip(object):
 
     @property
     def energy(self):
-        '''The energy associated with the geometry, in keV'''
+        """The energy associated with the geometry, in keV"""
         return A_KEV / self.wavelength
 
     @energy.setter
@@ -153,7 +170,7 @@ class CalcRecip(object):
 
     @property
     def engine_locked(self):
-        '''If set, do not allow the engine to be changed post-initialization'''
+        """If set, do not allow the engine to be changed post-initialization"""
         return self._lock_engine
 
     @property
@@ -167,8 +184,10 @@ class CalcRecip(object):
             return
 
         if self._lock_engine and self._engine is not None:
-            raise ValueError('Engine is locked on this %s instance' %
-                             self.__class__.__name__)
+            raise ValueError(
+                "Engine is locked on this %s instance"
+                % self.__class__.__name__
+            )
 
         if isinstance(engine, hkl_module.Engine):
             self._engine = engine
@@ -177,7 +196,7 @@ class CalcRecip(object):
             try:
                 self._engine = engines[engine]
             except KeyError:
-                raise ValueError('Unknown engine name or type')
+                raise ValueError("Unknown engine name or type")
 
         self._re_init()
 
@@ -189,7 +208,7 @@ class CalcRecip(object):
 
     @property
     def sample_name(self):
-        '''The name of the currently selected sample'''
+        """The name of the currently selected sample"""
         return self._sample.name
 
     @sample_name.setter
@@ -217,13 +236,13 @@ class CalcRecip(object):
             name = sample
             sample = self._samples[name]
         else:
-            raise ValueError('Unknown sample type (expected HklSample)')
+            raise ValueError("Unknown sample type (expected HklSample)")
 
         self._sample = sample
         self._re_init()
 
     def add_sample(self, sample, select=True):
-        '''Add an HklSample
+        """Add an HklSample
 
         Parameters
         ----------
@@ -232,17 +251,21 @@ class CalcRecip(object):
             instance
         select : bool, optional
             Select the sample to focus calculations on
-        '''
+        """
         if not isinstance(sample, (HklSample, hkl_module.Sample)):
-            raise ValueError('Expected either an HklSample or a Sample '
-                             'instance')
+            raise ValueError(
+                "Expected either an HklSample or a Sample " "instance"
+            )
 
         if isinstance(sample, hkl_module.Sample):
-            sample = HklSample(calc=self, sample=sample, units=self._unit_name)
+            sample = HklSample(
+                calc=self, sample=sample, units=self._unit_name
+            )
 
         if sample.name in self._samples:
-            raise ValueError('Sample of name "%s" already exists' %
-                             sample.name)
+            raise ValueError(
+                'Sample of name "%s" already exists' % sample.name
+            )
 
         self._samples[sample.name] = sample
         if select:
@@ -252,7 +275,7 @@ class CalcRecip(object):
         return sample
 
     def new_sample(self, name, select=True, **kwargs):
-        '''Convenience function to add a sample by name
+        """Convenience function to add a sample by name
 
         Keyword arguments are passed to the new HklSample initializer.
 
@@ -262,11 +285,11 @@ class CalcRecip(object):
             The sample name
         select : bool, optional
             Select the sample to focus calculations on
-        '''
-        units = kwargs.pop('units', self._unit_name)
-        sample = HklSample(self, sample=hkl_module.Sample.new(name),
-                           units=units,
-                           **kwargs)
+        """
+        units = kwargs.pop("units", self._unit_name)
+        sample = HklSample(
+            self, sample=hkl_module.Sample.new(name), units=units, **kwargs
+        )
 
         return self.add_sample(sample, select=select)
 
@@ -275,17 +298,26 @@ class CalcRecip(object):
         if self._engine is None:
             return
 
-        if self._geometry is None or self._detector is None or self._sample is None:
-            raise ValueError('Not all parameters set (geometry, detector, sample)')
+        if (
+            self._geometry is None
+            or self._detector is None
+            or self._sample is None
+        ):
+            raise ValueError(
+                "Not all parameters set (geometry, detector, sample)"
+            )
             # pass
         else:
-            self._engine_list.init(self._geometry, self._detector,
-                                   self._sample.hkl_sample)
+            self._engine_list.init(
+                self._geometry, self._detector, self._sample.hkl_sample
+            )
 
     @property
     def engines(self):
-        return dict((engine.name_get(), Engine(self, engine, self._engine_list))
-                    for engine in self._engine_list.engines_get())
+        return dict(
+            (engine.name_get(), Engine(self, engine, self._engine_list))
+            for engine in self._engine_list.engines_get()
+        )
 
     @property
     def parameters(self):
@@ -300,7 +332,7 @@ class CalcRecip(object):
 
     @physical_axis_names.setter
     def physical_axis_names(self, axis_name_map):
-        '''Set a persistent re-map of physical axis names
+        """Set a persistent re-map of physical axis names
 
         Resets `inverted_axes`.
 
@@ -308,21 +340,23 @@ class CalcRecip(object):
         ----------
         axis_name_map : dict
             {orig_axis_1: new_name_1, ...}
-        '''
+        """
         internal_axis_names = self._geometry.axis_names_get()
         if set(axis_name_map.keys()) != set(internal_axis_names):
-            raise ValueError('Every axis name has to have a remapped name')
+            raise ValueError("Every axis name has to have a remapped name")
 
         self._axis_name_to_original = OrderedDict(
-            (axis_name_map[axis], axis) for axis in internal_axis_names)
+            (axis_name_map[axis], axis) for axis in internal_axis_names
+        )
         self._axis_name_to_renamed = OrderedDict(
-            (axis, axis_name_map[axis]) for axis in internal_axis_names)
+            (axis, axis_name_map[axis]) for axis in internal_axis_names
+        )
 
         self._inverted_axes = []
 
     @property
     def inverted_axes(self):
-        '''The physical axis names to invert'''
+        """The physical axis names to invert"""
         return self._inverted_axes
 
     @inverted_axes.setter
@@ -333,20 +367,20 @@ class CalcRecip(object):
         self._inverted_axes = to_invert
 
     def _invert_physical_positions(self, pos):
-        '''Invert the physical axis positions based on the settings
+        """Invert the physical axis positions based on the settings
 
         Parameters
         ----------
         pos : OrderedDict
             NOTE: Modified in-place
-        '''
+        """
         for axis in self._inverted_axes:
             pos[axis] = -pos[axis]
         return pos
 
     @property
     def physical_positions(self):
-        '''Physical (real) motor positions'''
+        """Physical (real) motor positions"""
         pos = self.physical_axes
         if self._inverted_axes:
             pos = self._invert_physical_positions(pos)
@@ -367,58 +401,67 @@ class CalcRecip(object):
 
     @property
     def physical_axes(self):
-        '''Physical (real) motor positions as an OrderedDict'''
-        return OrderedDict(zip(self.physical_axis_names,
-                               self._geometry.axis_values_get(self._units)))
+        """Physical (real) motor positions as an OrderedDict"""
+        return OrderedDict(
+            zip(
+                self.physical_axis_names,
+                self._geometry.axis_values_get(self._units),
+            )
+        )
 
     @property
     def pseudo_axis_names(self):
-        '''Pseudo axis names from the current engine'''
+        """Pseudo axis names from the current engine"""
         return self._engine.pseudo_axis_names
 
     @property
     def pseudo_positions(self):
-        '''Pseudo axis positions/values from the current engine'''
+        """Pseudo axis positions/values from the current engine"""
         return self._engine.pseudo_positions
 
     @property
     def pseudo_axes(self):
-        '''Ordered dictionary of axis name to position'''
+        """Ordered dictionary of axis name to position"""
         return self._engine.pseudo_axes
 
     def update(self):
-        '''Calculate the pseudo axis positions from the real axis positions'''
+        """Calculate the pseudo axis positions from the real axis positions"""
         return self._engine.update()
 
     def _get_axis_by_name(self, name):
-        '''Given an axis name, return the HklParameter
+        """Given an axis name, return the HklParameter
 
         Parameters
         ----------
         name : str
             If a name map is specified, this is the mapped name.
-        '''
+        """
         name = self._axis_name_to_original.get(name, name)
         return self._geometry.axis_get(name)
 
     @property
     def units(self):
-        '''The units used for calculations'''
+        """The units used for calculations"""
         return self._unit_name
 
     def __getitem__(self, axis):
-        return CalcParameter(self._get_axis_by_name(axis),
-                             units=self._unit_name, name=axis, inverted=axis in
-                             self._inverted_axes, geometry=self._geometry)
+        return CalcParameter(
+            self._get_axis_by_name(axis),
+            units=self._unit_name,
+            name=axis,
+            inverted=axis in self._inverted_axes,
+            geometry=self._geometry,
+        )
 
     def __setitem__(self, axis, value):
         param = self[axis]
         param.value = value
 
     @_keep_physical_position
-    def forward_iter(self, start, end, max_iters, *, threshold=0.99,
-                     decision_fcn=None):
-        '''Iteratively attempt to go from a pseudo start -> end position
+    def forward_iter(
+        self, start, end, max_iters, *, threshold=0.99, decision_fcn=None
+    ):
+        """Iteratively attempt to go from a pseudo start -> end position
 
         For every solution failure, the position is moved back.
         For every success, the position is moved closer to the destination.
@@ -452,7 +495,7 @@ class CalcRecip(object):
             Position cannot be reached
             The last valid HKL position and motor positions are accessible
             in this exception instance.
-        '''
+        """
         start = np.array(start)
         end = np.array(end)
 
@@ -467,7 +510,7 @@ class CalcRecip(object):
         valid_real = None
         while iters < max_iters:
             try:
-                pos = (1. - t) * start + t * end
+                pos = (1.0 - t) * start + t * end
                 self.engine.pseudo_positions = pos
             except ValueError:
                 # couldn't calculate - step back half-way
@@ -480,7 +523,9 @@ class CalcRecip(object):
                 t = (t + 1) / 2.0
 
                 valid_pseudo = self.engine.pseudo_positions
-                valid_real = decision_fcn(valid_pseudo, self.engine.solutions)
+                valid_real = decision_fcn(
+                    valid_pseudo, self.engine.solutions
+                )
                 self.physical_positions = valid_real
 
                 if t >= threshold:
@@ -492,19 +537,18 @@ class CalcRecip(object):
             self.engine.pseudo_positions = end
             return self.engine.solutions
         except ValueError:
-            raise UnreachableError('Unable to solve. iterations={}/{}\n'
-                                   'Last valid position: {}\n{} '
-                                   ''.format(iters, max_iters, valid_pseudo,
-                                             valid_real),
-                                   pseudo=valid_pseudo, physical=valid_real)
+            raise UnreachableError(
+                f"Unable to solve. iterations={iters}/{max_iters}\n"
+                f"Last valid position: {valid_pseudo}\n{valid_real} "
+            )
 
     @_keep_physical_position
     def forward(self, position, engine=None):
-        '''Forward-calculate a position from pseudo to real space'''
+        """Forward-calculate a position from pseudo to real space"""
 
         with UsingEngine(self, engine):
             if self.engine is None:
-                raise ValueError('Engine unset')
+                raise ValueError("Engine unset")
 
             self.engine.pseudo_positions = position
             return self.engine.solutions
@@ -520,19 +564,23 @@ class CalcRecip(object):
         # end   = [h2, k2, l2]
 
         # from start to end, in a linear path
-        singles = [np.linspace(start[i], end[i], n + 1)
-                   for i in range(num_params)]
+        singles = [
+            np.linspace(start[i], end[i], n + 1) for i in range(num_params)
+        ]
 
         return list(zip(*singles))
 
     def _get_path_fcn(self, path_type):
         try:
-            return getattr(self, 'calc_%s_path' % (path_type))
+            return getattr(self, "calc_%s_path" % (path_type))
         except AttributeError:
-            raise ValueError('Invalid path type specified (%s)' % path_type)
+            raise ValueError(
+                "Invalid path type specified (%s)" % path_type
+            )
 
-    def get_path(self, start, end=None, n=100,
-                 path_type='linear', **kwargs):
+    def get_path(
+        self, start, end=None, n=100, path_type="linear", **kwargs
+    ):
         num_params = len(self.pseudo_axis_names)
 
         start = np.array(start)
@@ -542,7 +590,9 @@ class CalcRecip(object):
         if end is not None:
             end = np.array(end)
             if start.size == end.size == num_params:
-                return path_fcn(start, end, n, num_params=num_params, **kwargs)
+                return path_fcn(
+                    start, end, n, num_params=num_params, **kwargs
+                )
 
         else:
             positions = np.array(start)
@@ -550,113 +600,127 @@ class CalcRecip(object):
                 # single position
                 return [list(positions)]
             elif positions.ndim == 2:
-                if positions.shape[0] == 1 and positions.size == num_params:
+                if (
+                    positions.shape[0] == 1
+                    and positions.size == num_params
+                ):
                     # [[h, k, l], ]
                     return [positions[0]]
                 elif positions.shape[0] == num_params:
                     # [[h, k, l], [h, k, l], ...]
                     return [positions[i, :] for i in range(num_params)]
 
-        raise ValueError('Invalid set of %s positions' %
-                         ', '.join(self.pseudo_axis_names))
+        raise ValueError(
+            "Invalid set of %s positions"
+            % ", ".join(self.pseudo_axis_names)
+        )
 
-    def __call__(self, start, end=None, n=100, engine=None,
-                 path_type='linear', **kwargs):
+    def __call__(
+        self,
+        start,
+        end=None,
+        n=100,
+        engine=None,
+        path_type="linear",
+        **kwargs
+    ):
 
         with UsingEngine(self, engine):
-            for pos in self.get_path(start, end=end, n=n,
-                                     path_type=path_type, **kwargs):
+            for pos in self.get_path(
+                start, end=end, n=n, path_type=path_type, **kwargs
+            ):
                 yield self.forward(pos, engine=None, **kwargs)
 
     def _repr_info(self):
-        repr = ['engine={!r}'.format(self.engine.name),
-                'detector={!r}'.format(self._detector),
-                'sample={!r}'.format(self._sample),
-                'samples={!r}'.format(self._samples),
-                ]
+        repr = [
+            f"engine={repr(self.engine.name)}",
+            f"detector={repr(self._detector)}",
+            f"sample={repr(self._sample)}",
+            f"samples={repr(self._samples)}",
+        ]
 
         return repr
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__,
-                               ', '.join(self._repr_info()))
+        return (
+            f"{self.__class__.__name__}"
+            f"({', '.join(self._repr_info())})"
+        )
 
     def __str__(self):
-        info = self._repr_info()
-        return '{}({})'.format(self.__class__.__name__,
-                               ', '.join(info))
+        return repr(self)
 
 
 class CalcE4CH(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('E4CH', **kwargs)
+        super().__init__("E4CH", **kwargs)
 
 
 class CalcE4CV(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('E4CV', **kwargs)
+        super().__init__("E4CV", **kwargs)
 
 
 class CalcE6C(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('E6C', **kwargs)
+        super().__init__("E6C", **kwargs)
 
 
 class CalcK4CV(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('K4CV', **kwargs)
+        super().__init__("K4CV", **kwargs)
 
 
 class CalcK6C(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('K6C', **kwargs)
+        super().__init__("K6C", **kwargs)
 
 
 class CalcPetra3_p09_eh2(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('PETRA3 P09 EH2', **kwargs)
+        super().__init__("PETRA3 P09 EH2", **kwargs)
 
 
 class CalcSoleilMars(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('SOLEIL MARS', **kwargs)
+        super().__init__("SOLEIL MARS", **kwargs)
 
 
 class CalcSoleilSiriusKappa(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('SOLEIL SIRIUS KAPPA', **kwargs)
+        super().__init__("SOLEIL SIRIUS KAPPA", **kwargs)
 
 
 class CalcSoleilSiriusTurret(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('SOLEIL SIRIUS TURRET', **kwargs)
+        super().__init__("SOLEIL SIRIUS TURRET", **kwargs)
 
 
 class CalcSoleilSixsMed1p2(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('SOLEIL SIXS MED1+2', **kwargs)
+        super().__init__("SOLEIL SIXS MED1+2", **kwargs)
 
 
 class CalcSoleilSixsMed2p2(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('SOLEIL SIXS MED2+2', **kwargs)
+        super().__init__("SOLEIL SIXS MED2+2", **kwargs)
 
 
 class CalcSoleilSixs(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('SOLEIL SIXS', **kwargs)
+        super().__init__("SOLEIL SIXS", **kwargs)
 
 
 class CalcMed2p3(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('MED2+3', **kwargs)
+        super().__init__("MED2+3", **kwargs)
 
 
 class CalcTwoC(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('TwoC', **kwargs)
+        super().__init__("TwoC", **kwargs)
 
 
 class CalcZaxis(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__('ZAXIS', **kwargs)
+        super().__init__("ZAXIS", **kwargs)
