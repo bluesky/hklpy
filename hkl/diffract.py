@@ -219,8 +219,9 @@ class Diffractometer(PseudoPositioner):
         """
         if isinstance(pos, dict):
             # Redefine and fill in any missing values.
+
             pos = [
-                pos.get(p.attr_name) or p.position
+                pos.get(p.attr_name, p.position)
                 for p in self.pseudo_positioners
                 ]
         super().check_value(pos)
