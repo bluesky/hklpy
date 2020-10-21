@@ -1,7 +1,6 @@
 #!/usr/bin/env pytest
 
 import pytest
-# from _pytest.pytester import Testdir as testdir
 
 
 FOURC_SETUP_CODE = """
