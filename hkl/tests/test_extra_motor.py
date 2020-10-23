@@ -111,4 +111,6 @@ def test_fourc_extra_pseudo():
     #     fourc = FourcSub('', name="fourc")
     # assert "tuple indices must be integers or slices" in str(exinfo.value)
     assert fourc.position == (0, 0, 0)
+    assert hasattr(fourc.p_extra, "_idx")
+    assert fourc.p_extra._idx is not None
     assert fourc.p_extra.get() == 0
