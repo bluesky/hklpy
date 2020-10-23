@@ -107,7 +107,8 @@ def test_fourc_extra_pseudo():
     fourc = FourcSub('', name="fourc")
     # FIXME: uncaught TypeError
     # TypeError: tuple indices must be integers or slices, not NoneType
-    # with pytest.raises(TypeError) as exinfo:
+    # with pytest.raises(Exception) as exinfo:
     #     fourc = FourcSub('', name="fourc")
     # assert "tuple indices must be integers or slices" in str(exinfo.value)
     assert fourc.position == (0, 0, 0)
+    assert fourc.p_extra.get() == 0
