@@ -4,21 +4,12 @@ import pytest
 
 
 FOURC_SETUP_CODE = """
-from bluesky import plans as bp
-from bluesky.simulators import check_limits
-from ophyd import (PseudoSingle, SoftPositioner)
+from ophyd import PseudoSingle, SoftPositioner
 from ophyd import Component as Cpt
-from ophyd.positioner import LimitError
-from warnings import warn
-import numpy.testing
-import pytest
 
 import gi
 gi.require_version('Hkl', '5.0')
-# NOTE: MUST call gi.require_version() BEFORE import hkl
-from hkl.calc import UnreachableError
 from hkl.diffract import E4CV
-from hkl.util import Lattice
 
 class Fourc(E4CV):
     h = Cpt(PseudoSingle, '')
@@ -82,11 +73,14 @@ def test_extra_pseudo_TypeError(testdir):
 
 
 def test_extra_pseudo_ok(testdir):
-    test_code = FOURC_SETUP_CODE
-    test_code += "\n" + "class FourcSub(Fourc):"
-    test_code += "\n" + "    _pseudo = ['h', 'k', 'l', ]"
-    test_code += "\n" + "    extra = Cpt(PseudoSingle, '')"
-    test_code += "\n" + "fourc = FourcSub('', name='fourc')"
+    test_code = FOURC_SETUP_CODE + "\n"
+    test_code += "class FourcSub(Fourc):" + "\n"
+    test_code += "    _pseudo = ['h', 'k', 'l', ]" + "\n"
+    test_code += "    extra = Cpt(PseudoSingle, '', value=0)" + "\n"
+    test_code += "fourc = FourcSub('', name='fourc')" + "\n"
+    test_code += "print(fourc.position)" + "\n"
+    test_code += "print(fourc.extra.position)" + "\n"
     testdir.makepyfile(test_code)
     result = testdir.runpytest_subprocess()
     result.stderr.no_fnmatch_line("*Fatal Python error*")
+    # FIXME: uncaught KeyError: 'extra'` in stdout
