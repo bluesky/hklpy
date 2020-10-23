@@ -2,6 +2,30 @@
 
 import pytest
 
+from ophyd import PseudoSingle, SoftPositioner
+from ophyd import Component as Cpt
+
+import gi
+gi.require_version('Hkl', '5.0')
+from hkl.diffract import E4CV
+
+
+class Fourc(E4CV):
+    h = Cpt(PseudoSingle, '')
+    k = Cpt(PseudoSingle, '')
+    l = Cpt(PseudoSingle, '')
+
+    omega = Cpt(SoftPositioner)
+    chi = Cpt(SoftPositioner)
+    phi = Cpt(SoftPositioner)
+    tth = Cpt(SoftPositioner)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for p in self.real_positioners:
+            p._set_position(0)  # give each a starting position
+
 
 FOURC_SETUP_CODE = """
 from ophyd import PseudoSingle, SoftPositioner
@@ -29,7 +53,7 @@ class Fourc(E4CV):
 """
 
 
-def test_plain_fourc_ok(testdir):
+def test_plain_fourc_not_fatal(testdir):
     test_code = FOURC_SETUP_CODE
     test_code += "\n" + "fourc = Fourc('', name='fourc')"
     testdir.makepyfile(test_code)
@@ -47,7 +71,7 @@ def test_extra_real_fatal(testdir):
     result.stderr.fnmatch_lines(["*Fatal Python error*"])
 
 
-def test_extra_real_ok(testdir):
+def test_extra_real_not_fatal(testdir):
     test_code = FOURC_SETUP_CODE
     test_code += "\n" + "class FourcSub(Fourc):"
     test_code += "\n" + "    _real = ['omega', 'chi', 'phi', 'tth', ]"
@@ -58,21 +82,7 @@ def test_extra_real_ok(testdir):
     result.stderr.no_fnmatch_line("*Fatal Python error*")
 
 
-def test_extra_pseudo_TypeError(testdir):
-    test_code = FOURC_SETUP_CODE
-    test_code += "\n" + "class FourcSub(Fourc):"
-    test_code += "\n" + "    extra = Cpt(PseudoSingle, '')"
-    test_code += "\n" + "fourc = FourcSub('', name='fourc')"
-    test_code += "\n" + "assert fourc.position == (0, 0, 0)"
-    testdir.makepyfile(test_code)
-    result = testdir.runpytest_subprocess()
-    result.stderr.no_fnmatch_line(["*Fatal Python error*"])
-    result.stdout.fnmatch_lines([
-        "*TypeError: __new__() missing 1 required positional argument*"
-    ])
-
-
-def test_extra_pseudo_ok(testdir):
+def test_extra_pseudo_not_fatal(testdir):
     test_code = FOURC_SETUP_CODE + "\n"
     test_code += "class FourcSub(Fourc):" + "\n"
     test_code += "    _pseudo = ['h', 'k', 'l', ]" + "\n"
@@ -83,4 +93,21 @@ def test_extra_pseudo_ok(testdir):
     testdir.makepyfile(test_code)
     result = testdir.runpytest_subprocess()
     result.stderr.no_fnmatch_line("*Fatal Python error*")
-    # FIXME: uncaught KeyError: 'extra'` in stdout
+
+
+def test_fourc_position():
+    fourc = Fourc('', name="fourc")
+    assert fourc.position == (0, 0, 0)
+
+
+def test_fourc_extra_pseudo():
+    class FourcSub(Fourc):
+        _pseudo = ['h', 'k', 'l', ]
+        p_extra = Cpt(PseudoSingle, '')
+    fourc = FourcSub('', name="fourc")
+    # FIXME: uncaught TypeError
+    # TypeError: tuple indices must be integers or slices, not NoneType
+    # with pytest.raises(TypeError) as exinfo:
+    #     fourc = FourcSub('', name="fourc")
+    # assert "tuple indices must be integers or slices" in str(exinfo.value)
+    assert fourc.position == (0, 0, 0)
