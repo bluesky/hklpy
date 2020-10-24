@@ -18,6 +18,27 @@ from hkl.diffract import E4CV
 from hkl.util import Lattice
 
 
+# TODO: remove once bluesky 1.6.6+ is released
+def check_limits(plan):
+    """
+    Check that a plan will not move devices outside of their limits.
+
+    Parameters
+    ----------
+    plan : iterable
+        Must yield `Msg` objects
+    """
+    ignore = []
+    for msg in plan:
+        if msg.command == 'set' and msg.obj not in ignore:
+            if hasattr(msg.obj, "check_value"):
+                msg.obj.check_value(msg.args[0])
+            else:
+                warn(f"{msg.obj.name} has no check_value() method"
+                     f" to check if {msg.args[0]} is within its limits.")
+                ignore.append(msg.obj)
+
+
 class Fourc(E4CV):
     h = Cpt(PseudoSingle, '')
     k = Cpt(PseudoSingle, '')
