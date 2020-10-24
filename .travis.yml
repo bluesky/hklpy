@@ -39,6 +39,7 @@ install:
   - export CONDA_ENV="testenv-${TRAVIS_PYTHON_VERSION}"
   - conda env create -n ${CONDA_ENV} --file environment.yml
   - conda activate $CONDA_ENV
+  - conda install -y bluesky -c conda-forge
 
   # Validate that we installed the requested Python version.
   - python -c "import os, sys; sysver='.'.join([str(_) for _ in sys.version_info[:2]]); travis_python=os.getenv('TRAVIS_PYTHON_VERSION'); assert sysver==travis_python, f'Installed Python version {sysver} does not match requested Python version on TravisCI {travis_python}'"

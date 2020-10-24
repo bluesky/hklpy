@@ -40,20 +40,21 @@ SPECIAL-USE DIFFRACTOMETER GEOMETRIES
 import logging
 import numpy as np
 
-from ophyd import (Signal, PseudoPositioner, Component as Cpt)
-from ophyd.pseudopos import (pseudo_position_argument, real_position_argument)
-from ophyd.utils.epics_pvs import (data_type, data_shape)
+from ophyd import Signal, PseudoPositioner, Component as Cpt
+from ophyd.pseudopos import pseudo_position_argument, real_position_argument
+from ophyd.utils.epics_pvs import data_type, data_shape
 from ophyd.ophydobj import OphydObject, Kind
 from ophyd.signal import AttributeSignal, ArrayAttributeSignal
 import pint
 
 from . import calc
 
+
 logger = logging.getLogger(__name__)
 
 
 class Diffractometer(PseudoPositioner):
-    '''Diffractometer pseudopositioner
+    """Diffractometer pseudopositioner
 
     .. autosummary::
 
@@ -99,7 +100,26 @@ class Diffractometer(PseudoPositioner):
         Reciprocal calculation class used with this diffractometer.
         If None (as in `hkl.diffract.Diffractometer`, `calc_inst` must be
         specified upon initialization.
-    '''
+
+    See Also
+    --------
+    :class:`hkl.diffract.E4CH`
+    :class:`hkl.diffract.E4CV`
+    :class:`hkl.diffract.E6C`
+    :class:`hkl.diffract.K4CV`
+    :class:`hkl.diffract.K6C`
+    :class:`hkl.diffract.Med2p3`
+    :class:`hkl.diffract.Petra3_p09_eh2`
+    :class:`hkl.diffract.SoleilMars`
+    :class:`hkl.diffract.SoleilSiriusKappa`
+    :class:`hkl.diffract.SoleilSiriusTurret`
+    :class:`hkl.diffract.SoleilSixs`
+    :class:`hkl.diffract.SoleilSixsMed1p2`
+    :class:`hkl.diffract.SoleilSixsMed2p2`
+    :class:`hkl.diffract.TwoC`
+    :class:`hkl.diffract.Zaxis`
+    """
+
     calc_class = None
 
     # see: Documentation has examples to use an EPICS PV for energy.
@@ -131,8 +151,10 @@ class Diffractometer(PseudoPositioner):
                  **kwargs):
         if calc_inst is not None:
             if not isinstance(calc_inst, self.calc_class):
-                raise ValueError('Calculation instance must be derived from '
-                                 'the class {}'.format(self.calc_class))
+                raise ValueError(
+                    "Calculation instance must be derived "
+                    f"from the class {self.calc_class}"
+                )
             self._calc = calc_inst
 
         else:
@@ -145,11 +167,13 @@ class Diffractometer(PseudoPositioner):
             # Reason for this is that the engine determines the pseudomotor
             # names, so if the engine is switched from underneath, the
             # pseudomotor will no longer function properly
-            raise ValueError('Calculation engine must be locked'
-                             ' (CalcDiff.lock_engine set)')
+            raise ValueError(
+                "Calculation engine must be locked"
+                " (CalcDiff.lock_engine set)"
+            )
 
         if configuration_attrs is None:
-            configuration_attrs = ['UB', 'energy']
+            configuration_attrs = ["UB", "energy"]
 
         if decision_fcn is None:
             # the default decision function is to just grab solution #1:
@@ -157,18 +181,22 @@ class Diffractometer(PseudoPositioner):
 
         self._decision_fcn = decision_fcn
 
-        super().__init__(prefix, read_attrs=read_attrs,
-                         configuration_attrs=configuration_attrs,
-                         **kwargs)
+        super().__init__(
+            prefix,
+            read_attrs=read_attrs,
+            configuration_attrs=configuration_attrs,
+            **kwargs
+        )
 
         if read_attrs is None:
             # if unspecified, set the read attrs to the pseudo/real motor
             # positions once known
-            self.read_attrs = (list(self.PseudoPosition._fields) +
-                               list(self.RealPosition._fields))
+            self.read_attrs = list(self.PseudoPosition._fields) + list(
+                self.RealPosition._fields
+            )
 
-        self.energy.subscribe(self._energy_changed,
-                              event_type=Signal.SUB_VALUE)
+        self.energy.subscribe(
+            self._energy_changed, event_type=Signal.SUB_VALUE)
 
     @property
     def _calc_energy_update_permitted(self):
@@ -177,13 +205,13 @@ class Diffractometer(PseudoPositioner):
         return self.energy_update_calc_flag.get() in acceptable_values
 
     def _energy_changed(self, value=None, **kwargs):
-        '''
+        """
         Callback indicating that the energy signal was updated
 
         .. note::
             The `energy` signal is subscribed to this method
             in the :meth:`Diffractometer.__init__()` method.
-        '''
+        """
         if not self.connected:
             logger.warning(
                 "%s not fully connected, %s.calc.energy not updated",
@@ -194,9 +222,9 @@ class Diffractometer(PseudoPositioner):
             self._update_calc_energy(value)
 
     def _update_calc_energy(self, value=None, **kwargs):
-        '''
+        """
         writes self.calc.energy from value or self.energy
-        '''
+        """
         if not self.connected:
             logger.warning(
                 "%s not fully connected, %s.calc.energy not updated",
@@ -223,7 +251,7 @@ class Diffractometer(PseudoPositioner):
 
     @property
     def calc(self):
-        '''The calculation instance'''
+        """The calculation instance"""
         return self._calc
 
     @property
@@ -232,8 +260,9 @@ class Diffractometer(PseudoPositioner):
         return self.calc.engine
 
     # TODO so these calculations change the internal state of the hkl
-    # calculation class, which is probably not a good thing -- it becomes a
-    # problem when someone uses these functions outside of move()
+    # calculation class, which is probably not a good thing
+    # -- it becomes a problem when someone uses these functions
+    # outside of move()
 
     @pseudo_position_argument
     def forward(self, pseudo):
@@ -246,6 +275,35 @@ class Diffractometer(PseudoPositioner):
     def inverse(self, real):
         self.calc.physical_positions = real
         return self.PseudoPosition(*self.calc.pseudo_positions)
+
+    def check_value(self, pos):
+        """
+        Raise exception if pos is not within limits.
+
+        In a scan, a subset of the pseudo axes may be directed,
+        which are given in a dict from a set message from the
+        bluesky RunEngine.
+
+        It is not permitted to scan both pseudo and real positioners.
+        """
+        if isinstance(pos, dict):
+            # Redefine and fill in any missing values.
+
+            for axis, target in pos.items():
+                if hasattr(self, axis):
+                    p = getattr(self, axis)
+                    if p in self.real_positioners:
+                        p.check_value(target)
+                else:
+                    raise KeyError(
+                        f"{axis} not in {self.name}"
+                    )
+
+            pos = [
+                pos.get(p.attr_name, p.position)
+                for p in self.pseudo_positioners
+                ]
+        super().check_value(pos)
 
 
 class E4CH(Diffractometer):
