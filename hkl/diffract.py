@@ -1,18 +1,19 @@
 import logging
 import numpy as np
 
-from ophyd import (Signal, PseudoPositioner, Component as Cpt)
-from ophyd.pseudopos import (pseudo_position_argument, real_position_argument)
-from ophyd.utils.epics_pvs import (data_type, data_shape)
+from ophyd import Signal, PseudoPositioner, Component as Cpt
+from ophyd.pseudopos import pseudo_position_argument, real_position_argument
+from ophyd.utils.epics_pvs import data_type, data_shape
 from ophyd.ophydobj import OphydObject, Kind
 from ophyd.signal import AttributeSignal, ArrayAttributeSignal
 from . import calc
+
 
 logger = logging.getLogger(__name__)
 
 
 class Diffractometer(PseudoPositioner):
-    '''Diffractometer pseudopositioner
+    """Diffractometer pseudopositioner
 
     This has a corresponding calculation engine from hklpy that does forward
     and inverse calculations.
@@ -67,39 +68,66 @@ class Diffractometer(PseudoPositioner):
     :class:`hkl.diffract.SoleilSixsMed2p2`
     :class:`hkl.diffract.TwoC`
     :class:`hkl.diffract.Zaxis`
-    '''
+    """
+
     calc_class = None
 
     # NOTE: you can override the `energy` component here with your own
     #       EpicsSignal, for example, in your own subclass. You could then
     #       tie it to a pre-existing EPICS representation of the energy.
     #       This replaces the old 'energy_signal' parameter.
-    energy = Cpt(Signal, value=8.0, doc='Energy (in keV)')
-    sample_name = Cpt(AttributeSignal, attr='calc.sample_name',
-                      doc='Sample name')
-    lattice = Cpt(ArrayAttributeSignal, attr='calc.sample.lattice',
-                  doc='Sample lattice')
-    lattice_reciprocal = Cpt(AttributeSignal, attr='calc.sample.reciprocal',
-                             doc='Reciprocal lattice')
-    U = Cpt(AttributeSignal, attr='calc.sample.U', doc='U matrix')
-    UB = Cpt(AttributeSignal, attr='calc.sample.UB', doc='UB matrix')
-    reflections = Cpt(ArrayAttributeSignal, attr='calc.sample.reflections',
-                      doc='Reflections')
-    ux = Cpt(AttributeSignal, attr='calc.sample.ux.value',
-             doc='ux portion of the U matrix')
-    uy = Cpt(AttributeSignal, attr='calc.sample.uy.value',
-             doc='uy portion of the U matrix')
-    uz = Cpt(AttributeSignal, attr='calc.sample.uz.value',
-             doc='uz portion of the U matrix')
+    energy = Cpt(Signal, value=8.0, doc="Energy (in keV)")
+    sample_name = Cpt(AttributeSignal, attr="calc.sample_name", doc="Sample name")
+    lattice = Cpt(
+        ArrayAttributeSignal,
+        attr="calc.sample.lattice",
+        doc="Sample lattice"
+    )
+    lattice_reciprocal = Cpt(
+        AttributeSignal,
+        attr="calc.sample.reciprocal",
+        doc="Reciprocal lattice"
+    )
+    U = Cpt(AttributeSignal, attr="calc.sample.U", doc="U matrix")
+    UB = Cpt(AttributeSignal, attr="calc.sample.UB", doc="UB matrix")
+    reflections = Cpt(
+        ArrayAttributeSignal,
+        attr="calc.sample.reflections",
+        doc="Reflections"
+    )
+    ux = Cpt(
+        AttributeSignal,
+        attr="calc.sample.ux.value",
+        doc="ux portion of the U matrix"
+    )
+    uy = Cpt(
+        AttributeSignal,
+        attr="calc.sample.uy.value",
+        doc="uy portion of the U matrix"
+    )
+    uz = Cpt(
+        AttributeSignal,
+        attr="calc.sample.uz.value",
+        doc="uz portion of the U matrix"
+    )
 
-    def __init__(self, prefix, calc_kw=None, decision_fcn=None,
-                 calc_inst=None, *, configuration_attrs=None,
-                 read_attrs=None,
-                 **kwargs):
+    def __init__(
+        self,
+        prefix,
+        calc_kw=None,
+        decision_fcn=None,
+        calc_inst=None,
+        *,
+        configuration_attrs=None,
+        read_attrs=None,
+        **kwargs
+    ):
         if calc_inst is not None:
             if not isinstance(calc_inst, self.calc_class):
-                raise ValueError('Calculation instance must be derived from '
-                                 'the class {}'.format(self.calc_class))
+                raise ValueError(
+                    "Calculation instance must be derived "
+                    f"from the class {self.calc_class}"
+                )
             self._calc = calc_inst
 
         else:
@@ -112,11 +140,13 @@ class Diffractometer(PseudoPositioner):
             # Reason for this is that the engine determines the pseudomotor
             # names, so if the engine is switched from underneath, the
             # pseudomotor will no longer function properly
-            raise ValueError('Calculation engine must be locked'
-                             ' (CalcDiff.lock_engine set)')
+            raise ValueError(
+                "Calculation engine must be locked"
+                " (CalcDiff.lock_engine set)"
+            )
 
         if configuration_attrs is None:
-            configuration_attrs = ['UB', 'energy']
+            configuration_attrs = ["UB", "energy"]
 
         if decision_fcn is None:
             # the default decision function is to just grab solution #1:
@@ -124,52 +154,87 @@ class Diffractometer(PseudoPositioner):
 
         self._decision_fcn = decision_fcn
 
-        super().__init__(prefix, read_attrs=read_attrs,
-                         configuration_attrs=configuration_attrs,
-                         **kwargs)
+        super().__init__(
+            prefix,
+            read_attrs=read_attrs,
+            configuration_attrs=configuration_attrs,
+            **kwargs
+        )
 
         if read_attrs is None:
             # if unspecified, set the read attrs to the pseudo/real motor
             # positions once known
-            self.read_attrs = (list(self.PseudoPosition._fields) +
-                               list(self.RealPosition._fields))
+            self.read_attrs = list(self.PseudoPosition._fields) + list(
+                self.RealPosition._fields
+            )
 
-        self.energy.subscribe(self._energy_changed,
-                              event_type=Signal.SUB_VALUE)
+        self.energy.subscribe(
+            self._energy_changed, event_type=Signal.SUB_VALUE)
 
     def _energy_changed(self, value=None, **kwargs):
-        '''
+        """
         Callback indicating that the energy signal was updated
-        '''
-        logger.debug('{0.name} energy changed: {1}'.format(self, value))
+        """
+        logger.debug(f"{self.name} energy changed: {value}")
         self._calc.energy = value
         self._update_position()
 
     @property
     def calc(self):
-        '''The calculation instance'''
+        """The calculation instance"""
         return self._calc
 
     @property
     def engine(self):
-        '''The calculation engine associated with the diffractometer'''
+        """The calculation engine associated with the diffractometer"""
         return self._calc.engine
 
     # TODO so these calculations change the internal state of the hkl
-    # calculation class, which is probably not a good thing -- it becomes a
-    # problem when someone uses these functions outside of move()
+    # calculation class, which is probably not a good thing
+    # -- it becomes a problem when someone uses these functions
+    # outside of move()
 
     @pseudo_position_argument
     def forward(self, pseudo):
-        solutions = self._calc.forward_iter(start=self.position, end=pseudo,
-                                            max_iters=100)
-        logger.debug('pseudo to real: {}'.format(solutions))
+        solutions = self._calc.forward_iter(
+            start=self.position, end=pseudo, max_iters=100
+        )
+        logger.debug(f"pseudo to real: {solutions}")
         return self._decision_fcn(pseudo, solutions)
 
     @real_position_argument
     def inverse(self, real):
         self._calc.physical_positions = real
         return self.PseudoPosition(*self._calc.pseudo_positions)
+
+    def check_value(self, pos):
+        """
+        Raise exception if pos is not within limits.
+
+        In a scan, a subset of the pseudo axes may be directed,
+        which are given in a dict from a set message from the
+        bluesky RunEngine.
+
+        It is not permitted to scan both pseudo and real positioners.
+        """
+        if isinstance(pos, dict):
+            # Redefine and fill in any missing values.
+
+            for axis, target in pos.items():
+                if hasattr(self, axis):
+                    p = getattr(self, axis)
+                    if p in self.real_positioners:
+                        p.check_value(target)
+                else:
+                    raise KeyError(
+                        f"{axis} not in {self.name}"
+                    )
+
+            pos = [
+                pos.get(p.attr_name, p.position)
+                for p in self.pseudo_positioners
+                ]
+        super().check_value(pos)
 
 
 class E4CH(Diffractometer):
