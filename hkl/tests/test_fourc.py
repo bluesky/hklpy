@@ -18,20 +18,6 @@ from hkl.diffract import E4CV
 from hkl.util import Lattice
 
 
-def my_check_limits(plan):
-    """
-    Check that a plan will not move devices outside of their limits.
-
-    Parameters
-    ----------
-    plan : iterable
-        Must yield `Msg` objects
-    """
-    for msg in plan:
-        if msg.command == 'set':
-            msg.obj.check_value(msg.args[0])
-
-
 class Fourc(E4CV):
     h = Cpt(PseudoSingle, '')
     k = Cpt(PseudoSingle, '')
@@ -104,7 +90,7 @@ def test_move(fourc):
 
 def test_hl_scan(fourc):
     fourc.move((1.2, 1.2, 0.001))
-    assert my_check_limits(
+    assert check_limits(
         bp.scan(
             [fourc],
             fourc.h, 0.9, 1.1,
@@ -115,7 +101,7 @@ def test_hl_scan(fourc):
 
 def test_h00_scan(fourc):
     fourc.move(1, 0, 0)
-    assert my_check_limits(
+    assert check_limits(
         bp.scan(
             [fourc],
             fourc.h, 0.9, 1.1,
@@ -126,7 +112,7 @@ def test_h00_scan(fourc):
 
 def test_hkl_scan(fourc):
     fourc.move(1, 1, 1)
-    assert my_check_limits(
+    assert check_limits(
         bp.scan(
             [fourc],
             fourc.h, 0.9, 1.1,
@@ -138,7 +124,7 @@ def test_hkl_scan(fourc):
 
 def test_hkl_range_error(fourc):
     with pytest.raises(ValueError) as exinfo:
-        assert my_check_limits(
+        assert check_limits(
             bp.scan(
                 [fourc],
                 fourc.h, 0.9, 1.1,
@@ -150,7 +136,7 @@ def test_hkl_range_error(fourc):
 
 
 def test_real_axis(fourc):
-    assert my_check_limits(
+    assert check_limits(
         bp.scan(
             [fourc],
             fourc.tth, 10, 20,
@@ -161,7 +147,7 @@ def test_real_axis(fourc):
 def test_axis_contention(fourc):
     # contention if move pseudo and real positioners together
     with pytest.raises(ValueError) as exinfo:
-        my_check_limits(
+        check_limits(
             bp.scan(
                 [fourc],
                 fourc.tth, 10, 20,
@@ -172,7 +158,7 @@ def test_axis_contention(fourc):
 
 
 def test_real_axis_range_multi(fourc):
-    assert my_check_limits(
+    assert check_limits(
         bp.scan(
             [fourc],
             fourc.tth, 10, 20,
@@ -183,7 +169,7 @@ def test_real_axis_range_multi(fourc):
 
 def test_real_axis_range_error(fourc):
     with pytest.raises(LimitError) as exinfo:
-        my_check_limits(
+        check_limits(
             bp.scan(
                 [fourc],
                 fourc.tth, 10, 20000,
