@@ -6,6 +6,7 @@ from ophyd import (PseudoSingle, SoftPositioner)
 from ophyd import Component as Cpt
 from ophyd.positioner import LimitError
 from warnings import warn
+import numpy as np
 import numpy.testing
 import pytest
 
@@ -67,6 +68,30 @@ def test_limits(fourc):
     with pytest.raises(ValueError) as exinfo:
         fourc.h.check_value(10)
     assert "Unable to solve." in str(exinfo.value)
+
+
+def test_check_value(fourc):
+    assert fourc.check_value((1, 0, 0)) is None
+    assert fourc.check_value(dict(h=1, k=0, l=0)) is None
+    assert fourc.check_value(dict(h=1, k=0)) is None
+
+    with pytest.raises(TypeError) as exinfo:
+        assert fourc.check_value(1, 0, 0) is None
+    assert "check_value() takes 2 positional arguments" in str(exinfo.value)
+
+    with pytest.raises(ValueError) as exinfo:
+        assert fourc.check_value(1) is None
+    assert "Not all required values for a PseudoPosition" in str(exinfo.value)
+
+    assert fourc.check_value(dict(h=1, tth=0)) is None
+
+    with pytest.raises(LimitError) as exinfo:
+        fourc.check_value(dict(h=1, tth=np.inf))
+    assert "position=inf not within limits" in str(exinfo.value)
+
+    with pytest.raises(KeyError) as exinfo:
+        fourc.check_value(dict(waldo=0))
+    assert "waldo not in fourc" in str(exinfo.value)
 
 
 def test_move(fourc):

@@ -220,6 +220,16 @@ class Diffractometer(PseudoPositioner):
         if isinstance(pos, dict):
             # Redefine and fill in any missing values.
 
+            for axis, target in pos.items():
+                if hasattr(self, axis):
+                    p = getattr(self, axis)
+                    if p in self.real_positioners:
+                        p.check_value(target)
+                else:
+                    raise KeyError(
+                        f"{axis} not in {self.name}"
+                    )
+
             pos = [
                 pos.get(p.attr_name, p.position)
                 for p in self.pseudo_positioners
