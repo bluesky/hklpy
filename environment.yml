@@ -1,6 +1,7 @@
 name: hklpy
 channels:
   - nsls2forge
+  - conda-forge
   - defaults
 dependencies:
   - python>=3.6
@@ -9,6 +10,7 @@ dependencies:
   - ipython
   - numpy
   - ophyd
+  - pint
   - prettytable
   - pip:
     - coveralls

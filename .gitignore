@@ -70,3 +70,4 @@ doc/source/generated
 
 # Microsoft VS Code editor
 .vscode/
+.history/

@@ -3,44 +3,45 @@
 diffract
 --------
 
-A local subclass of the desired diffractometer geometry must be created
-to define the reciprocal-space axes and customize the EPICS PVs used for
-the motor axes.  Other capabilities are also customized in a local
-subclass.
+A local subclass of :class:`hkl.diffract.Diffractometer` for the desired
+diffractometer geometry must be created to define the reciprocal-space
+axes and customize the EPICS PVs used for the motor axes.  Other
+capabilities are also customized in a local subclass.
 
 Examples are provided after the source code documentation.
 
-These are the diffractometer geometries defined:
+These are the diffractometer geometries provided by the **hkl-c++**
+library [#hklcpp]_:
 
-===========================  ==========================
-name                         description
-===========================  ==========================
-:class:`hkl.diffract.E4CH`   Eulerian 4-circle, vertical scattering plane
-:class:`hkl.diffract.E4CV`   Eulerian 4-circle, horizontal scattering plane
-:class:`hkl.diffract.E6C`    Eulerian 6-circle
-:class:`hkl.diffract.K4CV`   Kappa 4-circle, vertical scattering plane
-:class:`hkl.diffract.K6C`    Kappa 6-circle
-:class:`hkl.diffract.TwoC`   2-circle
-:class:`hkl.diffract.Zaxis`  Z-axis
-===========================  ==========================
+============================  ==========================
+name                          description
+============================  ==========================
+:class:`~hkl.diffract.E4CH`   Eulerian 4-circle, vertical scattering plane
+:class:`~hkl.diffract.E4CV`   Eulerian 4-circle, horizontal scattering plane
+:class:`~hkl.diffract.E6C`    Eulerian 6-circle
+:class:`~hkl.diffract.K4CV`   Kappa 4-circle, vertical scattering plane
+:class:`~hkl.diffract.K6C`    Kappa 6-circle
+:class:`~hkl.diffract.TwoC`   2-circle
+:class:`~hkl.diffract.Zaxis`  Z-axis
+============================  ==========================
 
 These special-use geometries are also provided by the **hkl-c++**
-library [#]_:
+library [#hklcpp]_:
 
-* :class:`hkl.diffract.Med2p3`
-* :class:`hkl.diffract.Petra3_p09_eh2`
-* :class:`hkl.diffract.SoleilMars`
-* :class:`hkl.diffract.SoleilSiriusKappa`
-* :class:`hkl.diffract.SoleilSiriusTurret`
-* :class:`hkl.diffract.SoleilSixs`
-* :class:`hkl.diffract.SoleilSixsMed1p2`
-* :class:`hkl.diffract.SoleilSixsMed2p2`
+* :class:`~hkl.diffract.Med2p3`
+* :class:`~hkl.diffract.Petra3_p09_eh2`
+* :class:`~hkl.diffract.SoleilMars`
+* :class:`~hkl.diffract.SoleilSiriusKappa`
+* :class:`~hkl.diffract.SoleilSiriusTurret`
+* :class:`~hkl.diffract.SoleilSixs`
+* :class:`~hkl.diffract.SoleilSixsMed1p2`
+* :class:`~hkl.diffract.SoleilSixsMed2p2`
 
 In all cases, see the **hkl-c++** documentation for further information
 on these geometries.
 
-.. [#] **hkl-c++** documentation:
-    https://people.debian.org/~picca/hkl/hkl.html#org7ea41dd
+.. [#hklcpp] **hkl-c++** documentation:
+    https://people.debian.org/~picca/hkl/hkl.html
 
 ----
 
@@ -52,7 +53,7 @@ Source code documentation
 
 ----
 
-_diffract.examples:
+.. _diffract.examples:
 
 Examples
 ++++++++
@@ -189,16 +190,21 @@ of the diffractometer's *calc* engine. We expect this to be either 1
 
 We'll also create a (non-EPICS) signal to provide for an energy offset
 (in the same units as the control system energy). This offset will be
-*added* to the control system energy, before conversion of the units to
-*keV* and then setting the diffractometer's *calc* engine energy (which
-then sets the wavelength)::
+*added* to the control system energy (in
+:meth:`~hkl.diffract.Diffractometer._update_calc_energy()`), before
+conversion of the units to *keV* and then setting the diffractometer's
+*calc* engine energy:
 
-    calc engine *energy* (keV) = control system *energy* + *offset*
+  calc engine *energy* (keV) = control system *energy* + *offset*
 
-and account for the units of the control system *energy*.  To combine
-all this, we define a new python class starting with `KappaK4CV` from
-above, adding the energy signals.  Create the custom kappa 4-circle
-subclass with energy:
+which then sets the wavelength:
+
+  calc engine *wavelength* (angstrom) = :math:`h\nu` / calc engine *energy*
+
+(:math:`h\nu=` 12.39842 angstrom :math:`\cdot` keV) and account for the
+units of the control system *energy*.  To combine all this, we define a
+new python class starting similar to `KappaK4CV` above, and adding the
+energy signals.  Create the custom kappa 4-circle subclass with energy:
 
 .. code-block:: python
     :linenos:
@@ -227,36 +233,11 @@ subclass with energy:
         tth = Component(EpicsMotor, "sky:m4")
 
         energy = Component(EpicsSignal, "optics:energy")
-        energy_EGU = Component(EpicsSignal, "optics:energy.EGU")
-        energy_update_calc = Component(
+        energy_units = Component(EpicsSignal, "optics:energy.EGU")
+        energy_offset = Component(Signal, value=0)
+        energy_update_calc_flag = Component(
             EpicsSignal,
             "optics:energy_locked")
-        energy_offset = Component(Signal, value=0)
-
-        def _energy_changed(self, value=None, **kwargs):
-            '''
-            Callback indicating that the energy signal was updated
-            '''
-            if not self.connected:
-                logger.warning(
-                    "%s not fully connected, %s.calc.energy not updated",
-                    self.name, self.name)
-                return
-            if self.energy_update_calc.get() in (1, "Yes", "locked", "OK"):
-                # energy_offset has same units as energy
-                local_energy = value + self.energy_offset.get()
-
-                # either get units from control system
-                units = self.energy_EGU.get()
-                # or define as a constant here
-                # units = "eV"
-
-                keV = pint.Quantity(local_energy, units).to("keV")
-                logger.debug(
-                    "setting %s.calc.energy = %f (keV)",
-                    self.name, keV.magnitude)
-                self._calc.energy = keV.magnitude
-                self._update_position()
 
 Create an instance of this diffractometer with::
 
@@ -264,13 +245,13 @@ Create an instance of this diffractometer with::
 
 .. note::
 
-    This command will print a log message to the console::
+    If you get a log message such as this on the console::
 
         W Fri-09:12:16 - k4cve not fully connected, k4cve.calc.energy not updated
 
-    which is expected since the update cannot happen until all EPICS
-    PVs are connected.  This code, will create the object, wait for
-    all PVs to connect, then update the `calc` engine::
+    this informs you the update cannot happen until all EPICS
+    PVs are connected.  The following code, will create the object, wait
+    for all PVs to connect, then update the `calc` engine::
 
         k4cve = KappaK4CV_Energy('', name='k4cve')
         k4cve.wait_for_connection()
@@ -287,74 +268,24 @@ when the energy signal is next updated.  To force an update to the calc
 engine, call ``_energy_changed()`` directly with the energy value as the
 argument::
 
-    k4cve._energy_changed(k4cve.energy.get())
+    k4cve._energy_changed()
 
 But this only works when the ``optics:energy_locked`` PV is 1 (permitted
 to update the calc engine energy). To update the diffractometer's *calc*
-engine energy and bypass the ``k4cve.energy_update_calc`` signal, we can
-call these routines on the command console::
+engine energy and bypass the ``k4cve.energy_update_calc_flag`` signal,
+call this command::
 
-    %mov diffractometer.energy_update_calc 1
-    diffractometer._energy_changed(diffractometer.energy.get())
-    %mov diffractometer.energy_update_calc 0
+    k4cve._update_calc_energy()
 
-or we need to modify the ``_energy_changed()`` method and provide an
-additional method that does not check this signal.  We'll move code into
-the new method and modify ``_energy_changed()`` to call it:
+Finally, to set the energy of the diffractometer's *calc* engine, use
+one of these two methods:
 
-.. code-block:: python
-    :linenos:
-
-        def _energy_changed(self, value=None, **kwargs):
-            '''
-            Callback indicating that the energy signal was updated
-            '''
-            if not self.connected:
-                logger.warning(
-                    "%s not fully connected, %s.calc.energy not updated",
-                    self.name, self.name)
-                return
-
-            if self.energy_update_calc.get() in (1, "Yes", "locked", "OK"):
-                self._update_calc_energy(value)
-
-        def _update_calc_energy(self, value=None, **kwargs):
-            '''
-            Callback indicating that the energy signal was updated
-            '''
-            if not self.connected:
-                logger.warning(
-                    "%s not fully connected, %s.calc.energy not updated",
-                    self.name, self.name)
-                return
-
-            # use either supplied value or get from signal
-            value = value or self.energy.get()
-
-            # energy_offset has same units as energy
-            local_energy = value + self.energy_offset.get()
-
-            # either get units from control system
-            units = self.energy_EGU.get()
-            # or define as a constant here
-            # units = "eV"
-
-            keV = pint.Quantity(local_energy, units).to("keV")
-            logger.debug(
-                "setting %s.calc.energy = %f (keV)",
-                self.name, keV.magnitude)
-            self._calc.energy = keV.magnitude
-            self._update_position()
-
-Finally, to set the diffractometer's *calc* engine energy, use one of
-these two methods:
-
-=====================================   ============================
-motive                                  command
-=====================================   ============================
-obey ``energy_update_calc`` signal      ``k4cve._energy_changed()``
-ignore ``energy_update_calc`` signal    ``k4cve._update_calc_energy()``
-=====================================   ============================
+============================   ============================
+``energy_update_calc_flag``    command
+============================   ============================
+obey signal                    ``k4cve._energy_changed()``
+ignore signal                  ``k4cve._update_calc_energy()``
+============================   ============================
 
 Each of these two methods will accept an optional ``value`` argument
 which, if provided, will be used in place of the ``energy`` signal from
