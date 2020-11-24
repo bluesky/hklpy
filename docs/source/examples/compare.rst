@@ -1,6 +1,13 @@
 Compare *hkl* trajectory with SPEC
 ===================================================
 
+This example has problems.  Cannot solve the forward reflections
+with *hkl* in any of the diffractometer modes.
+Is it the wavelength?
+
+Maybe need a simpler example?
+
+
 Start IPython session from console:
 
     (bluesky_2020_9) prjemian@poof ~/.../source/examples $ ipython
