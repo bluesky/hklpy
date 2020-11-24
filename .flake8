@@ -7,4 +7,4 @@ exclude =
     versioneer.py,
     doc/source
 max-line-length = 115
-ignore: W504,W503
+ignore: W504,W503,E741,E402,E226

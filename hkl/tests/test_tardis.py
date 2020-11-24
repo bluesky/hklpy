@@ -1,4 +1,3 @@
-#!/usr/bin/env py.test
 
 import pytest
 import numpy.testing

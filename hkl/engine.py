@@ -16,11 +16,11 @@ class Parameter(object):
     Example::
 
         Parameter(
-                name='None (internally: ux)', 
-                limits=(min=-180.0, max=180.0), 
-                value=0.0, 
-                fit=True, 
-                inverted=False, 
+                name='None (internally: ux)',
+                limits=(min=-180.0, max=180.0),
+                value=0.0,
+                fit=True,
+                inverted=False,
                 units='Degree')
 
     """
@@ -285,6 +285,7 @@ class Engine(object):
     def __repr__(self):
         return '{}({})'.format(self.__class__.__name__,
                                ', '.join(self._repr_info()))
+
 
 # when updating parameters we need to update the parent geometry object
 class CalcParameter(Parameter):

@@ -1,6 +1,3 @@
-#!/usr/bin/env pytest
-
-import pytest
 
 from ophyd import PseudoSingle, SoftPositioner
 from ophyd import Component as Cpt
