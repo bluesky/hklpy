@@ -14,7 +14,6 @@ from hkl.util import Lattice
 
 
 def setup_module(module):
-    # ophyd.setup_ophyd()
     pass
 
 
