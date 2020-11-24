@@ -63,7 +63,7 @@ script:
         pip install --upgrade -r requirements-doc.txt
 
         # Build the docs.
-        make -C doc/ html
+        make -C docs/ html
 
         # Upload the docs to gh-pages.
 
