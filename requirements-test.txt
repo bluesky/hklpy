@@ -1,5 +1,6 @@
 attrs>=19.3.0
 codecov
 flake8
+pyepics
 pytest
 pytest-faulthandler
