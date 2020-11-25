@@ -9,8 +9,6 @@ jobs:
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
-    # env:
-    #   TEST_CL: pyepics
 
     steps:
     - uses: actions/checkout@v2
@@ -37,7 +35,6 @@ jobs:
         conda env list
         printenv | sort
       env:
-        # PY_VER: ${{ matrix.python-version }}
         ENV_NAME: conda-test-env-${{ matrix.python-version }}
 
     # $CONDA is an environment variable pointing to the
@@ -50,12 +47,13 @@ jobs:
         conda install pytest coverage
         conda list -r
       env:
-        # PY_VER: ${{ matrix.python-version }}
         ENV_NAME: conda-test-env-${{ matrix.python-version }}
 
     - shell: bash -l {0}
       run: |
         conda list --name $ENV_NAME
+      env:
+        ENV_NAME: conda-test-env-${{ matrix.python-version }}
 
     - name: Test with pytest
       run: |
@@ -65,5 +63,4 @@ jobs:
         coverage combine
         coverage report
       env:
-        # PY_VER: ${{ matrix.python-version }}
         ENV_NAME: conda-test-env-${{ matrix.python-version }}
