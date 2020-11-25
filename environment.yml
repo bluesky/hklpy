@@ -5,12 +5,13 @@ channels:
   - defaults
 dependencies:
   - python>=3.6
-  - pip
+  - bluesky
   - hkl
   - ipython
   - numpy
   - ophyd
   - pint
+  - pip
   - prettytable
   - pip:
     - coveralls
