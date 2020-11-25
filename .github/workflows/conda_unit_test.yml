@@ -31,11 +31,14 @@ jobs:
     - shell: bash -l {0}
       run: |
         conda info
-        conda list
+        conda list --name $ENV_NAME
         conda config --show-sources
         conda config --show
         conda env list
         printenv | sort
+      env:
+        # PY_VER: ${{ matrix.python-version }}
+        ENV_NAME: conda-test-env-${{ matrix.python-version }}
 
     # $CONDA is an environment variable pointing to the
     # root of the miniconda directory
@@ -49,6 +52,10 @@ jobs:
       env:
         # PY_VER: ${{ matrix.python-version }}
         ENV_NAME: conda-test-env-${{ matrix.python-version }}
+
+    - shell: bash -l {0}
+      run: |
+        conda list --name $ENV_NAME
 
     - name: Test with pytest
       run: |
