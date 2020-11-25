@@ -42,9 +42,10 @@ jobs:
 
     - name: Install dependencies
       run: |
-        $CONDA/bin/conda env update --file environment.yml --name $ENV_NAME
-        $CONDA/bin/conda install pytest --name $ENV_NAME
-        $CONDA/bin/conda list -r --name $ENV_NAME
+        source $CONDA/bin/activate $ENV_NAME
+        conda env update --file environment.yml
+        conda install pytest coverage
+        conda list -r
       env:
         # PY_VER: ${{ matrix.python-version }}
         ENV_NAME: conda-test-env-${{ matrix.python-version }}
