@@ -3,9 +3,11 @@ name: Unit Tests with Conda install
 on: [push, pull_request]
 
 jobs:
+
   build:
     env:
-      ENV_NAME: conda-test-env-${{ matrix.python-version }}
+      ENV_NAME: hklpy-test-${{ matrix.python-version }}
+      PACKAGE: hklpy
 
     runs-on: ubuntu-latest
     strategy:
@@ -17,13 +19,14 @@ jobs:
 
     - shell: bash -l {0}
       run: |
-        sed -i.bak "s/name: hklpy/name: ${ENV_NAME}/g" environment.yml
+        sed -i.bak "s/name: ${PACKAGE}/name: ${ENV_NAME}/g" environment.yml
 
     - name: Setup Miniconda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
       with:
         activate-environment:
-            conda-test-env-${{ matrix.python-version }}
+            ${ENV_NAME}
+            # conda-test-env-${{ matrix.python-version }}
         auto-update-conda: true
         channel-priority: true
         channels: defaults,conda-forge
@@ -40,8 +43,6 @@ jobs:
       run: |
         conda list
         # conda list --name $ENV_NAME
-      # env:
-      #   ENV_NAME: conda-test-env-${{ matrix.python-version }}
 
     - shell: bash -l {0}
       run: |
@@ -62,20 +63,16 @@ jobs:
     # $CONDA is an environment variable pointing to the
     # root of the miniconda directory
 
-    # - name: Install dependencies
-    #   run: |
-    #     source $CONDA/bin/activate $ENV_NAME
-    #     conda env update --file environment.yml
-    #     conda install pytest coverage
-    #     conda list -r
-    #   env:
-    #     ENV_NAME: conda-test-env-${{ matrix.python-version }}
+    - name: Install test dependencies
+      run: |
+        # source $CONDA/bin/activate $ENV_NAME
+        # conda env update --file environment.yml
+        conda install pytest coverage
+        # conda list -r
 
-    # - shell: bash -l {0}
-    #   run: |
-    #     conda list --name $ENV_NAME
-    #   env:
-    #     ENV_NAME: conda-test-env-${{ matrix.python-version }}
+    - shell: bash -l {0}
+      run: |
+        conda list
 
     # - name: Test with pytest
     #   run: |
@@ -84,5 +81,3 @@ jobs:
     #     coverage run --concurrency=thread --parallel-mode -m pytest -v -k "${TEST_CL}"
     #     coverage combine
     #     coverage report
-    #   env:
-    #     ENV_NAME: conda-test-env-${{ matrix.python-version }}
