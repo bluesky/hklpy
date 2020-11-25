@@ -4,6 +4,8 @@ on: [push, pull_request]
 
 jobs:
   build:
+    env:
+      ENV_NAME: conda-test-env-${{ matrix.python-version }}
 
     runs-on: ubuntu-latest
     strategy:
@@ -12,6 +14,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - shell: bash -l {0}
+      run: |
+        sed -i.bak "s/name: hklpy/name: ${ENV_NAME}/g" environment.yml
 
     - name: Setup Miniconda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
@@ -28,10 +34,14 @@ jobs:
 
     - shell: bash -l {0}
       run: |
-        # conda list --name $ENV_NAME
         conda env list
-      env:
-        ENV_NAME: conda-test-env-${{ matrix.python-version }}
+
+    - shell: bash -l {0}
+      run: |
+        conda list
+        # conda list --name $ENV_NAME
+      # env:
+      #   ENV_NAME: conda-test-env-${{ matrix.python-version }}
 
     - shell: bash -l {0}
       run: |
