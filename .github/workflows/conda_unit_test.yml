@@ -74,10 +74,9 @@ jobs:
       run: |
         conda list
 
-    # - name: Test with pytest
-    #   run: |
-    #     source $CONDA/bin/activate $ENV_NAME
-    #     # pytest tests
-    #     coverage run --concurrency=thread --parallel-mode -m pytest -v -k "${TEST_CL}"
-    #     coverage combine
-    #     coverage report
+    - name: Test with pytest
+      run: |
+        # pytest tests
+        coverage run --concurrency=thread --parallel-mode -m pytest -v -k "${TEST_CL}"
+        coverage combine
+        coverage report
