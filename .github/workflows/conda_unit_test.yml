@@ -55,12 +55,12 @@ jobs:
       env:
         ENV_NAME: conda-test-env-${{ matrix.python-version }}
 
-    - name: Test with pytest
-      run: |
-        source $CONDA/bin/activate $ENV_NAME
-        # pytest tests
-        coverage run --concurrency=thread --parallel-mode -m pytest -v -k "${TEST_CL}"
-        coverage combine
-        coverage report
-      env:
-        ENV_NAME: conda-test-env-${{ matrix.python-version }}
+    # - name: Test with pytest
+    #   run: |
+    #     source $CONDA/bin/activate $ENV_NAME
+    #     # pytest tests
+    #     coverage run --concurrency=thread --parallel-mode -m pytest -v -k "${TEST_CL}"
+    #     coverage combine
+    #     coverage report
+    #   env:
+    #     ENV_NAME: conda-test-env-${{ matrix.python-version }}
