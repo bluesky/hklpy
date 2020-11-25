@@ -65,10 +65,7 @@ jobs:
 
     - name: Install test dependencies
       run: |
-        # source $CONDA/bin/activate $ENV_NAME
-        # conda env update --file environment.yml
-        conda install pytest coverage
-        # conda list -r
+        conda install -y pytest coverage
 
     - shell: bash -l {0}
       run: |
@@ -76,7 +73,6 @@ jobs:
 
     - name: Test with pytest
       run: |
-        # pytest tests
-        coverage run --concurrency=thread --parallel-mode -m pytest -v -k "${TEST_CL}"
+        coverage run --concurrency=thread --parallel-mode -m pytest -vvv
         coverage combine
         coverage report
