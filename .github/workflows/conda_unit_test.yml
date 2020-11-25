@@ -1,0 +1,61 @@
+name: Unit Tests, Conda install
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
+    env:
+      TEST_CL: pyepics
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Miniconda ${{ matrix.python-version }}
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        activate-environment:
+            conda-test-env-${{ matrix.python-version }}
+        auto-update-conda: true
+        channel-priority: true
+        channels: defaults,conda-forge
+        # environment-file: environment.yml
+        mamba-version: "*"
+        python-version: ${{ matrix.python-version }}
+        use-only-tar-bz2: true  # required for caching
+
+    - shell: bash -l {0}
+      run: |
+        conda info
+        conda list
+        conda config --show-sources
+        conda config --show
+        conda env list
+        printenv | sort
+
+    # $CONDA is an environment variable pointing to the
+    # root of the miniconda directory
+
+    - name: Install dependencies
+      run: |
+        $CONDA/bin/conda env update --file environment.yml --name $ENV_NAME
+        $CONDA/bin/conda install pytest --name $ENV_NAME
+        $CONDA/bin/conda list -r --name $ENV_NAME
+      env:
+        # PY_VER: ${{ matrix.python-version }}
+        ENV_NAME: conda-test-env-${{ matrix.python-version }}
+
+    - name: Test with pytest
+      run: |
+        source $CONDA/bin/activate $ENV_NAME
+        # pytest tests
+        coverage run --concurrency=thread --parallel-mode -m pytest -v -k "${TEST_CL}"
+        coverage combine
+        coverage report
+      env:
+        # PY_VER: ${{ matrix.python-version }}
+        ENV_NAME: conda-test-env-${{ matrix.python-version }}
