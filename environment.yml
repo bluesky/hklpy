@@ -13,6 +13,7 @@ dependencies:
   - pint
   - pip
   - prettytable
+  - pyepics
   - pip:
     - coveralls
     - pytest

@@ -1,4 +1,4 @@
-name: Unit Tests, Conda install
+name: Unit Tests with Conda install
 
 on: [push, pull_request]
 
@@ -9,8 +9,8 @@ jobs:
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
-    env:
-      TEST_CL: pyepics
+    # env:
+    #   TEST_CL: pyepics
 
     steps:
     - uses: actions/checkout@v2
