@@ -61,6 +61,7 @@ jobs:
         printenv | sort
 
     - name: Test with only pytest
+      shell: bash -l {0}
       run: |
         pytest -vvv hkl/tests
 
