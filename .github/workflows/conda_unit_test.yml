@@ -60,19 +60,20 @@ jobs:
       run: |
         printenv | sort
 
-    # $CONDA is an environment variable pointing to the
-    # root of the miniconda directory
-
-    - name: Install test dependencies
+    - name: Test with only pytest
       run: |
-        conda install -y pytest coverage
+        pytest -vvv hkl/tests
 
-    - shell: bash -l {0}
-      run: |
-        conda list
+    # - name: Install test dependencies
+    #   run: |
+    #     conda install -y pytest coverage
 
-    - name: Test with pytest
-      run: |
-        coverage run --concurrency=thread --parallel-mode -m pytest -vvv
-        coverage combine
-        coverage report
+    # - shell: bash -l {0}
+    #   run: |
+    #     conda list
+
+    # - name: Test with coverage and pytest
+    #   run: |
+    #     coverage run --concurrency=thread --parallel-mode -m pytest -vvv
+    #     coverage combine
+    #     coverage report
