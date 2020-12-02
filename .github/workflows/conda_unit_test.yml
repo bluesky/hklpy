@@ -72,6 +72,9 @@ jobs:
       run: |
         pytest -vvv hkl/tests
 
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+
     # - name: Install test dependencies
     #   run: |
     #     conda install -y pytest coverage
