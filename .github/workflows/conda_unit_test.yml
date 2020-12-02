@@ -37,6 +37,9 @@ jobs:
         python-version: ${{ matrix.python-version }}
         use-only-tar-bz2: true  # required for caching
 
+    - name: Start tmate session
+      uses: mxschmitt/action-tmate@v3
+
     - name: Print list of conda environments
       shell: bash -l {0}
       run: |
@@ -67,9 +70,6 @@ jobs:
       shell: bash -l {0}
       run: |
         printenv | sort
-
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
 
     # - name: Test with only pytest
     #   shell: bash -l {0}
