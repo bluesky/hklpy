@@ -12,7 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        # python-version: [3.6, 3.7, 3.8]
+        python-version: [3.8]
 
     steps:
     - uses: actions/checkout@v2
@@ -67,13 +68,13 @@ jobs:
       run: |
         printenv | sort
 
-    - name: Test with only pytest
-      shell: bash -l {0}
-      run: |
-        pytest -vvv hkl/tests
-
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
+
+    # - name: Test with only pytest
+    #   shell: bash -l {0}
+    #   run: |
+    #     pytest -vvv hkl/tests
 
     # - name: Install test dependencies
     #   run: |
