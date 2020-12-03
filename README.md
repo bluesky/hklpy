@@ -1,5 +1,5 @@
-![Unit Tests with Conda install](https://github.com/bluesky/hklpy/workflows/Unit%20Tests%20with%20Conda%20install/badge.svg)
-![Check Code Style](https://github.com/bluesky/hklpy/workflows/Check%20Code%20Style/badge.svg)
+![Unit Tests](https://github.com/bluesky/hklpy/workflows/Unit%20Tests/badge.svg)
+![Code Style](https://github.com/bluesky/hklpy/workflows/Code%20Style/badge.svg)
 [![Code Health](https://landscape.io/github/bluesky/hklpy/main/landscape.svg?style=flat)](https://landscape.io/github/bluesky/hklpy/main)
 
 hklpy
