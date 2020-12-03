@@ -634,14 +634,14 @@ class CalcRecip(object):
                 yield self.forward(pos, engine=None, **kwargs)
 
     def _repr_info(self):
-        repr = [
+        r = [
             f"engine={repr(self.engine.name)}",
             f"detector={repr(self._detector)}",
             f"sample={repr(self._sample)}",
             f"samples={repr(self._samples)}",
         ]
 
-        return repr
+        return r
 
     def __repr__(self):
         return (

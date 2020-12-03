@@ -38,12 +38,9 @@ SPECIAL-USE DIFFRACTOMETER GEOMETRIES
 """
 
 import logging
-import numpy as np
 
 from ophyd import Signal, PseudoPositioner, Component as Cpt
 from ophyd.pseudopos import pseudo_position_argument, real_position_argument
-from ophyd.utils.epics_pvs import data_type, data_shape
-from ophyd.ophydobj import OphydObject, Kind
 from ophyd.signal import AttributeSignal, ArrayAttributeSignal
 import pint
 
@@ -267,7 +264,7 @@ class Diffractometer(PseudoPositioner):
     @pseudo_position_argument
     def forward(self, pseudo):
         solutions = self.calc.forward_iter(start=self.position, end=pseudo,
-                                            max_iters=100)
+                                           max_iters=100)
         logger.debug('pseudo to real: {}'.format(solutions))
         return self._decision_fcn(pseudo, solutions)
 
@@ -302,7 +299,7 @@ class Diffractometer(PseudoPositioner):
             pos = [
                 pos.get(p.attr_name, p.position)
                 for p in self.pseudo_positioners
-                ]
+            ]
         super().check_value(pos)
 
 
