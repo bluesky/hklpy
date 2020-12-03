@@ -5,6 +5,6 @@ exclude =
     build,
     dist,
     versioneer.py,
-    doc/source
+    docs/source
 max-line-length = 115
 ignore: W504,W503,E741,E402,E226
