@@ -1,4 +1,3 @@
-#!/usr/bin/env py.test
 
 import pytest
 import numpy.testing
@@ -9,9 +8,8 @@ from ophyd import (PseudoSingle, SoftPositioner)
 import gi
 gi.require_version('Hkl', '5.0')
 # NOTE: MUST call gi.require_version() BEFORE import hkl
-from hkl.calc import UnreachableError, A_KEV
+from hkl.calc import A_KEV
 from hkl.diffract import E4CV
-from hkl.util import Lattice
 
 
 class Fourc(E4CV):
@@ -45,11 +43,9 @@ def test_calc_energy_permit(fourc):
     assert not fourc._calc_energy_update_permitted
 
     nrg = fourc.calc.energy
-    fourc.energy.put(5.989) # BTW: Cr K absorption edge
-    numpy.testing.assert_almost_equal(
-        fourc.energy.get(), 5.989)
-    numpy.testing.assert_almost_equal(
-        fourc.calc.energy, nrg)
+    fourc.energy.put(5.989)  # BTW: Cr K absorption edge
+    numpy.testing.assert_almost_equal(fourc.energy.get(), 5.989)
+    numpy.testing.assert_almost_equal(fourc.calc.energy, nrg)
 
     fourc._energy_changed()
     numpy.testing.assert_almost_equal(
@@ -78,10 +74,8 @@ def test_energy(fourc):
 
     for nrg in (8.0, 8.04, 9.0, 0.931):
         fourc.energy.put(nrg)
-        numpy.testing.assert_almost_equal(
-            fourc.energy.get(), nrg)
-        numpy.testing.assert_almost_equal(
-            fourc.calc.energy, nrg)
+        numpy.testing.assert_almost_equal(fourc.energy.get(), nrg)
+        numpy.testing.assert_almost_equal(fourc.calc.energy, nrg)
         numpy.testing.assert_almost_equal(
             fourc.calc.wavelength, A_KEV/nrg)
 
@@ -104,6 +98,7 @@ def test_energy_offset(fourc):
         numpy.testing.assert_almost_equal(
             fourc.energy.get() + offset, fourc.calc.energy)
 
+
 def test_energy_offset_units(fourc):
     assert fourc.energy_offset.get() == 0
     assert fourc.energy_units.get() == "keV"
@@ -112,8 +107,7 @@ def test_energy_offset_units(fourc):
 
     nrg = 931
     fourc.energy.put(nrg)
-    numpy.testing.assert_almost_equal(
-        fourc.energy.get(), nrg)
+    numpy.testing.assert_almost_equal(fourc.energy.get(), nrg)
     numpy.testing.assert_almost_equal(
         fourc.energy.get()/1000, fourc.calc.energy)
 

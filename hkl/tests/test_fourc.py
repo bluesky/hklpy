@@ -1,7 +1,6 @@
-#!/usr/bin/env py.test
 
 from bluesky import plans as bp
-from bluesky.simulators import check_limits
+# TODO: from bluesky.simulators import check_limits
 from ophyd import (PseudoSingle, SoftPositioner)
 from ophyd import Component as Cpt
 from ophyd.positioner import LimitError
@@ -13,9 +12,7 @@ import pytest
 import gi
 gi.require_version('Hkl', '5.0')
 # NOTE: MUST call gi.require_version() BEFORE import hkl
-from hkl.calc import UnreachableError
 from hkl.diffract import E4CV
-from hkl.util import Lattice
 
 
 # TODO: remove once bluesky 1.6.6+ is released
@@ -104,9 +101,10 @@ def test_check_value(fourc):
 def test_move(fourc):
     ppos = (1.2, 1.2, 0.001)
     rpos = (58.051956519652485, 44.99999005281953,
-        89.95225352812487, 116.10391303930497)
+            89.95225352812487, 116.10391303930497)
     fourc.move(ppos)
     numpy.testing.assert_almost_equal(fourc.position, ppos)
+    numpy.testing.assert_almost_equal(tuple(fourc.real_position), rpos)
 
 
 def test_hl_scan(fourc):

@@ -1,4 +1,3 @@
-#!/usr/bin/env py.test
 
 import pytest
 import numpy.testing
@@ -15,7 +14,6 @@ from hkl.util import Lattice
 
 
 def setup_module(module):
-    # ophyd.setup_ophyd()
     pass
 
 

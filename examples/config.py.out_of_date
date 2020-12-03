@@ -2,10 +2,6 @@
 
 import sys
 import logging
-from ophyd.utils.startup import setup as setup_ophyd
-import ophyd
-
-setup_ophyd()
 
 
 LOG_FORMAT = "%(asctime)-15s [%(name)5s:%(levelname)s] %(message)s"

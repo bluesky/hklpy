@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/bluesky/hklpy.svg?branch=main)](https://travis-ci.org/bluesky/hklpy)
+![Unit Tests](https://github.com/bluesky/hklpy/workflows/Unit%20Tests/badge.svg)
+![Code Style](https://github.com/bluesky/hklpy/workflows/Code%20Style/badge.svg)
 [![Code Health](https://landscape.io/github/bluesky/hklpy/main/landscape.svg?style=flat)](https://landscape.io/github/bluesky/hklpy/main)
 
 hklpy

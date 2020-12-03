@@ -26,6 +26,7 @@ class FakeMotor(Positioner):
     def moving(self):
         return False
 
+
 def test():
     loggers = ('ophyd.utils.hkl',
                )
@@ -147,7 +148,6 @@ def test():
         phi = Cpt(FakeMotor, '')
         tth = Cpt(FakeMotor, '')
 
-
     diffr = MyE4CH('', name='my_e4ch',
                    energy=8.0,
                    )
@@ -161,7 +161,6 @@ def test():
     calc = diffr.calc
     sample = calc.sample
     sample.add_reflection(1, 1, 1)
-
 
     def show_pos():
         print('pseudo positioners', diffr.pseudo_positioners)
@@ -185,6 +184,7 @@ def test():
     logger.info(diffr.calc)
 
     return k6c, diffr
+
 
 if __name__ == '__main__':
     k6c, diffr = test()

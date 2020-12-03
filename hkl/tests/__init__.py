@@ -1,17 +1,14 @@
 
+import epics
 import logging
 import unittest
-
-import epics
-
-from ophyd.utils.startup import setup as setup_ophyd
 
 
 logger = logging.getLogger('ophyd_session_test')
 
 
 def setup_package():
-    setup_ophyd()
+    pass
 
 
 def teardown_package():
