@@ -35,7 +35,7 @@ Contents:
    :maxdepth: 1
    :glob:
 
-   examples/index
+   examples/*
    calc
    context
    diffract

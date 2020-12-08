@@ -9,4 +9,4 @@ Contents:
    :maxdepth: 1
    :glob:
 
-   compare
+   *.rst
