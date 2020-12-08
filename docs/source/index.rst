@@ -35,11 +35,11 @@ Contents:
    :maxdepth: 1
    :glob:
 
-   examples/*
    calc
    context
    diffract
    engine
    sample
    util
+   examples/*
 

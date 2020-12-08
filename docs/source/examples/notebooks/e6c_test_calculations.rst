@@ -178,8 +178,9 @@ Calculate various (*hkl*) given motor positions
 Diffracting upside-down now
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that omega and phi only need to sum to +-120, which reflects what the inverse calculations from the library give
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Note that omega and phi only need to sum to +-120
+(:math:`\omega+\varphi = \pm |120|`), which reflects what the inverse
+calculations from the library give.
 
 (100)
 ^^^^^

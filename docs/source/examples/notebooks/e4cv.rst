@@ -3,7 +3,18 @@
 
 The `IUCr provides a schematic of the 4-circle
 diffractometer <http://ww1.iucr.org/iucr-top/comm/cteach/pamphlets/2/node14.html>`__
-(in horizontal geometry typical of a laboratory instrument):
+(in horizontal geometry typical of a laboratory instrument).
+
+.. raw:: html
+
+   <!-- image source:
+     http://ww1.iucr.org/iucr-top/comm/cteach/pamphlets/2/
+     -->
+
+.. figure:: img69.gif
+   :alt: E4CH geometry
+
+   E4CH geometry
 
 At X-ray synchrotrons, the vertical geometry is more common due to the
 polarization of the X-rays.
@@ -28,6 +39,11 @@ Setup the *E4CV* diffractometer in *hklpy*
 
 In *hkl* *E4CV* geometry
 (https://people.debian.org/~picca/hkl/hkl.html#org7ef08ba):
+
+.. figure:: 3S+1D.png
+   :alt: E4CV geometry
+
+   E4CV geometry
 
 -  xrays incident on the :math:`\vec{x}` direction (1, 0, 0)
 
