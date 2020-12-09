@@ -19,6 +19,12 @@ diffractometer <http://ww1.iucr.org/iucr-top/comm/cteach/pamphlets/2/node14.html
 At X-ray synchrotrons, the vertical geometry is more common due to the
 polarization of the X-rays.
 
+--------------
+
+Note: This example is available as a `Jupyter
+notebook <https://jupyter.org/>`__ from the *hklpy* source code website:
+https://github.com/bluesky/hklpy/tree/main/examples
+
 Load the *hklpy* package (named *``hkl``*)
 ------------------------------------------
 
@@ -47,14 +53,14 @@ In *hkl* *E4CV* geometry
 
 -  xrays incident on the :math:`\vec{x}` direction (1, 0, 0)
 
-===== ======== =============================
-axis  moves    rotation about axis
-===== ======== =============================
+===== ======== ================ ============
+axis  moves    rotation axis    vector
+===== ======== ================ ============
 omega sample   :math:`-\vec{y}` ``[0 -1 0]``
-chi   sample   :math:`\vec{x}` ``[1 0 0]``
+chi   sample   :math:`\vec{x}`  ``[1 0 0]``
 phi   sample   :math:`-\vec{y}` ``[0 -1 0]``
 tth   detector :math:`-\vec{y}` ``[0 -1 0]``
-===== ======== =============================
+===== ======== ================ ============
 
 Define *this* diffractometer
 ----------------------------
@@ -290,8 +296,33 @@ Constrain the motors to limited ranges
     fourc.phi.move(0)
     fourc.engine.mode = "constant_phi"
 
+(400) reflection test
+~~~~~~~~~~~~~~~~~~~~~
+
+1. Check the ``inverse`` (angles -> (*hkl*)) computation.
+2. Check the ``forward`` ((*hkl*) -> angles) computation.
+
 Check the inverse calculation: (400)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To calculate the (*hkl*) corresponding to a given set of motor angles,
+call ``fourc.inverse((h, k, l))``. Note the second set of parentheses
+needed by this function.
+
+The values are specified, without names, in the order specified by
+``fourc.calc.physical_axis_names``.
+
+.. code:: ipython3
+
+    print("axis names:", fourc.calc.physical_axis_names)
+
+
+.. parsed-literal::
+
+    axis names: ['omega', 'chi', 'phi', 'tth']
+
+
+Now, proceed with the inverse calculation.
 
 .. code:: ipython3
 
@@ -304,22 +335,24 @@ Check the inverse calculation: (400)
     (4 0 0) ? 4.00 0.00 0.00
 
 
-Check the inverse calculation: (040)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: ipython3
-
-    sol = fourc.inverse((-145.451, 90, 0, 69.0966))
-    print("(0 4 0) ?", f"{sol.h:.2f}", f"{sol.k:.2f}", f"{sol.l:.2f}")
-
-
-.. parsed-literal::
-
-    (0 4 0) ? 0.00 4.00 0.00
-
-
 Check the forward calculation: (400)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Compute the angles necessary to position the diffractometer for the
+given reflection.
+
+Note that for the forward computation, more than one set of angles may
+be used to reach the same crystal reflection. This test will report the
+*default* selection. The *default* selection (which may be changed
+through methods described in the ``hkl.calc`` module) is the first
+solution.
+
+======================== ==============================
+function                 returns
+======================== ==============================
+``fourc.forward()``      The *default* solution
+``fourc.calc.forward()`` List of all allowed solutions.
+======================== ==============================
 
 .. code:: ipython3
 
@@ -338,8 +371,28 @@ Check the forward calculation: (400)
     (400) : tth=69.0985 omega=-145.4500 chi=0.0000 phi=0.0000
 
 
+(040) reflection test
+~~~~~~~~~~~~~~~~~~~~~
+
+Repeat the ``inverse`` and ``forward`` calculations for the second
+orientation reflection.
+
+Check the inverse calculation: (040)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: ipython3
+
+    sol = fourc.inverse((-145.451, 90, 0, 69.0966))
+    print("(0 4 0) ?", f"{sol.h:.2f}", f"{sol.k:.2f}", f"{sol.l:.2f}")
+
+
+.. parsed-literal::
+
+    (0 4 0) ? 0.00 4.00 0.00
+
+
 Check the forward calculation: (040)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: ipython3
 
@@ -358,8 +411,8 @@ Check the forward calculation: (040)
     (040) : tth=69.0985 omega=-145.4500 chi=90.0000 phi=0.0000
 
 
-Check the forward calculation: (440)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(440) reflection: angles
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: ipython3
 
@@ -428,19 +481,19 @@ To scan with Bluesky, we need more setup.
 
     
     
-    Transient Scan ID: 1     Time: 2020-12-07 15:47:53
-    Persistent Unique Scan ID: '67026d11-6546-4f40-b9c6-b704c81ea910'
+    Transient Scan ID: 1     Time: 2020-12-09 12:02:58
+    Persistent Unique Scan ID: '26088e62-fd00-40ec-bfd3-fccf3a4d320d'
     New stream: 'primary'
     +-----------+------------+------------+
     |   seq_num |       time |    fourc_h |
     +-----------+------------+------------+
-    |         1 | 15:47:53.4 |      3.900 |
-    |         2 | 15:47:53.4 |      3.950 |
-    |         3 | 15:47:53.4 |      4.000 |
-    |         4 | 15:47:53.4 |      4.050 |
-    |         5 | 15:47:53.4 |      4.100 |
+    |         1 | 12:02:58.3 |      3.900 |
+    |         2 | 12:02:58.3 |      3.950 |
+    |         3 | 12:02:58.3 |      4.000 |
+    |         4 | 12:02:58.3 |      4.050 |
+    |         5 | 12:02:58.3 |      4.100 |
     +-----------+------------+------------+
-    generator scan ['67026d11'] (scan num: 1)
+    generator scan ['26088e62'] (scan num: 1)
     
     
     
@@ -450,7 +503,7 @@ To scan with Bluesky, we need more setup.
 
 .. parsed-literal::
 
-    ('67026d11-6546-4f40-b9c6-b704c81ea910',)
+    ('26088e62-fd00-40ec-bfd3-fccf3a4d320d',)
 
 
 
@@ -466,24 +519,24 @@ chi scan from (400) to (040)
 
     
     
-    Transient Scan ID: 2     Time: 2020-12-07 15:47:53
-    Persistent Unique Scan ID: 'cf8f3d22-7c94-49eb-9ece-743b0fffe977'
+    Transient Scan ID: 2     Time: 2020-12-09 12:02:58
+    Persistent Unique Scan ID: '8072de45-4a80-4e47-9df9-151623ace6ff'
     New stream: 'primary'
     +-----------+------------+------------+------------+------------+------------+
-    |   seq_num |       time |  fourc_chi |    fourc_l |    fourc_k |    fourc_h |
+    |   seq_num |       time |  fourc_chi |    fourc_k |    fourc_l |    fourc_h |
     +-----------+------------+------------+------------+------------+------------+
-    |         1 | 15:47:53.7 |      0.000 |      0.000 |      0.000 |      4.100 |
-    |         2 | 15:47:54.0 |     10.000 |     -0.000 |      0.712 |      4.038 |
-    |         3 | 15:47:54.3 |     20.000 |     -0.000 |      1.402 |      3.853 |
-    |         4 | 15:47:54.5 |     30.000 |     -0.000 |      2.050 |      3.551 |
-    |         5 | 15:47:54.8 |     40.000 |     -0.000 |      2.635 |      3.141 |
-    |         6 | 15:47:55.0 |     50.000 |     -0.000 |      3.141 |      2.635 |
-    |         7 | 15:47:55.3 |     60.000 |     -0.000 |      3.551 |      2.050 |
-    |         8 | 15:47:55.5 |     70.000 |     -0.000 |      3.853 |      1.402 |
-    |         9 | 15:47:55.7 |     80.000 |     -0.000 |      4.038 |      0.712 |
-    |        10 | 15:47:56.0 |     90.000 |      0.000 |      4.100 |      0.000 |
+    |         1 | 12:02:58.7 |      0.000 |      0.000 |      0.000 |      4.100 |
+    |         2 | 12:02:58.9 |     10.000 |      0.712 |     -0.000 |      4.038 |
+    |         3 | 12:02:59.2 |     20.000 |      1.402 |     -0.000 |      3.853 |
+    |         4 | 12:02:59.4 |     30.000 |      2.050 |     -0.000 |      3.551 |
+    |         5 | 12:02:59.7 |     40.000 |      2.635 |     -0.000 |      3.141 |
+    |         6 | 12:02:59.9 |     50.000 |      3.141 |     -0.000 |      2.635 |
+    |         7 | 12:03:00.1 |     60.000 |      3.551 |     -0.000 |      2.050 |
+    |         8 | 12:03:00.3 |     70.000 |      3.853 |     -0.000 |      1.402 |
+    |         9 | 12:03:00.6 |     80.000 |      4.038 |     -0.000 |      0.712 |
+    |        10 | 12:03:00.8 |     90.000 |      4.100 |      0.000 |      0.000 |
     +-----------+------------+------------+------------+------------+------------+
-    generator scan ['cf8f3d22'] (scan num: 2)
+    generator scan ['8072de45'] (scan num: 2)
     
     
     
@@ -493,12 +546,12 @@ chi scan from (400) to (040)
 
 .. parsed-literal::
 
-    ('cf8f3d22-7c94-49eb-9ece-743b0fffe977',)
+    ('8072de45-4a80-4e47-9df9-151623ace6ff',)
 
 
 
 
-.. image:: e4cv_files/e4cv_36_2.svg
+.. image:: e4cv_files/e4cv_40_2.svg
 
 
 (*0k0*) scan near (040)
@@ -513,19 +566,19 @@ chi scan from (400) to (040)
 
     
     
-    Transient Scan ID: 5     Time: 2020-12-07 15:49:23
-    Persistent Unique Scan ID: 'b86c4725-4b62-4cf0-96b6-4912389e83f2'
+    Transient Scan ID: 3     Time: 2020-12-09 12:03:01
+    Persistent Unique Scan ID: 'aa3ef21b-80d2-472b-a459-d5bd30cae54a'
     New stream: 'primary'
     +-----------+------------+------------+
     |   seq_num |       time |    fourc_k |
     +-----------+------------+------------+
-    |         1 | 15:49:23.2 |      3.900 |
-    |         2 | 15:49:23.3 |      3.950 |
-    |         3 | 15:49:23.3 |      4.000 |
-    |         4 | 15:49:23.3 |      4.050 |
-    |         5 | 15:49:23.3 |      4.100 |
+    |         1 | 12:03:01.9 |      3.900 |
+    |         2 | 12:03:01.9 |      3.950 |
+    |         3 | 12:03:01.9 |      4.000 |
+    |         4 | 12:03:01.9 |      4.050 |
+    |         5 | 12:03:01.9 |      4.100 |
     +-----------+------------+------------+
-    generator scan ['b86c4725'] (scan num: 5)
+    generator scan ['aa3ef21b'] (scan num: 3)
     
     
     
@@ -535,7 +588,7 @@ chi scan from (400) to (040)
 
 .. parsed-literal::
 
-    ('b86c4725-4b62-4cf0-96b6-4912389e83f2',)
+    ('aa3ef21b-80d2-472b-a459-d5bd30cae54a',)
 
 
 
@@ -551,19 +604,19 @@ chi scan from (400) to (040)
 
     
     
-    Transient Scan ID: 4     Time: 2020-12-07 15:49:13
-    Persistent Unique Scan ID: '52b70612-24ad-40a1-ac87-6bf9bedeb6e1'
+    Transient Scan ID: 4     Time: 2020-12-09 12:03:02
+    Persistent Unique Scan ID: '36abd81c-c313-4035-acde-67782c2908d1'
     New stream: 'primary'
     +-----------+------------+------------+------------+------------+-------------+------------+------------+------------+
     |   seq_num |       time |    fourc_h |    fourc_k |    fourc_l | fourc_omega |  fourc_chi |  fourc_phi |  fourc_tth |
     +-----------+------------+------------+------------+------------+-------------+------------+------------+------------+
-    |         1 | 15:49:13.4 |      3.900 |      3.900 |      0.000 |    -128.558 |     45.000 |      0.000 |    102.883 |
-    |         2 | 15:49:14.0 |      3.950 |      3.950 |     -0.000 |    -127.627 |     45.000 |      0.000 |    104.745 |
-    |         3 | 15:49:14.6 |      4.000 |      4.000 |     -0.000 |    -126.675 |     45.000 |      0.000 |    106.647 |
-    |         4 | 15:49:15.3 |      4.050 |      4.050 |     -0.000 |    -125.703 |     45.000 |      0.000 |    108.593 |
-    |         5 | 15:49:16.0 |      4.100 |      4.100 |      0.000 |    -124.706 |     45.000 |      0.000 |    110.585 |
+    |         1 | 12:03:02.4 |      3.900 |      3.900 |      0.000 |    -128.558 |     45.000 |      0.000 |    102.883 |
+    |         2 | 12:03:03.0 |      3.950 |      3.950 |     -0.000 |    -127.627 |     45.000 |      0.000 |    104.745 |
+    |         3 | 12:03:03.7 |      4.000 |      4.000 |     -0.000 |    -126.675 |     45.000 |      0.000 |    106.647 |
+    |         4 | 12:03:04.3 |      4.050 |      4.050 |     -0.000 |    -125.703 |     45.000 |      0.000 |    108.593 |
+    |         5 | 12:03:05.0 |      4.100 |      4.100 |      0.000 |    -124.706 |     45.000 |      0.000 |    110.585 |
     +-----------+------------+------------+------------+------------+-------------+------------+------------+------------+
-    generator scan ['52b70612'] (scan num: 4)
+    generator scan ['36abd81c'] (scan num: 4)
     
     
     
@@ -573,10 +626,10 @@ chi scan from (400) to (040)
 
 .. parsed-literal::
 
-    ('52b70612-24ad-40a1-ac87-6bf9bedeb6e1',)
+    ('36abd81c-c313-4035-acde-67782c2908d1',)
 
 
 
 
-.. image:: e4cv_files/e4cv_40_2.svg
+.. image:: e4cv_files/e4cv_44_2.svg
 

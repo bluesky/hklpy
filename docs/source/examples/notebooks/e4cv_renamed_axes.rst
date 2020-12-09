@@ -4,6 +4,41 @@
 Following the E4CV example, this example will repeat those same steps
 but using different names for the motor axes.
 
+========= ==========
+E4CV name local name
+========= ==========
+omega     theta
+chi       chi
+phi       phi
+tth       ttheta
+========= ==========
+
+How’s it done?
+--------------
+
+This change is made by:
+
+1. Defining the ``FourCircle`` class using our local names (instead of
+   the canonical E4CV names)
+2. Writing a dictionary to the ``fourc`` object that maps the canonical
+   E4CV names to our local names:
+
+.. code:: python
+
+   fourc.calc.physical_axis_names = {
+       # E4CV: local
+       'omega': 'theta',
+       'chi': 'chi',
+       'phi': 'phi',
+       'tth': 'ttheta',
+       }
+
+--------------
+
+Note: This example is available as a `Jupyter
+notebook <https://jupyter.org/>`__ from the *hklpy* source code website:
+https://github.com/bluesky/hklpy/tree/main/examples
+
 Load the *hklpy* package (named *``hkl``*)
 ------------------------------------------
 

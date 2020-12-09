@@ -6,6 +6,12 @@ The kappa geometry replaces the traditional :math:`\chi`-ring on a
 phi stage. The kappa stage is tilted at angle :math:`\alpha` (typically
 50 degrees) from the :math:`\omega` stage.
 
+--------------
+
+Note: This example is available as a `Jupyter
+notebook <https://jupyter.org/>`__ from the *hklpy* source code website:
+https://github.com/bluesky/hklpy/tree/main/examples
+
 Load the *hklpy* package (named *``hkl``*)
 ------------------------------------------
 

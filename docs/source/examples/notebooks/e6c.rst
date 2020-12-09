@@ -10,6 +10,12 @@ detector separately.
 
    Huber 6-circle at APS
 
+--------------
+
+Note: This example is available as a `Jupyter
+notebook <https://jupyter.org/>`__ from the *hklpy* source code website:
+https://github.com/bluesky/hklpy/tree/main/examples
+
 Load the *hklpy* package (named *``hkl``*)
 ------------------------------------------
 

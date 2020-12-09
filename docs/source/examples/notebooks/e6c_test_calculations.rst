@@ -9,7 +9,13 @@ With the aid of Yong Chu’s mental math.
 `TL;DR <https://www.merriam-webster.com/dictionary/TL%3BDR>`__ appears
 to function as documented and as expected
 
-import the python libraries needed
+--------------
+
+Note: This example is available as a `Jupyter
+notebook <https://jupyter.org/>`__ from the *hklpy* source code website:
+https://github.com/bluesky/hklpy/tree/main/examples
+
+Import the python libraries needed
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: ipython3
