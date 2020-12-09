@@ -5,7 +5,7 @@ The 6-circle diffractometer can be considered as a 4-circle
 diffractometer with two additional rotations that rotate the sample and
 detector separately.
 
-.. figure:: 6-circle-diffractometer.jpg
+.. figure:: resources/6-circle-diffractometer.jpg
    :alt: Huber 6-circle at APS
 
    Huber 6-circle at APS
@@ -31,23 +31,23 @@ Setup the *E6C* diffractometer in *hklpy*
 In *hkl* *E6C* geometry
 (https://people.debian.org/~picca/hkl/hkl.html#orge5e0490):
 
-.. figure:: 4S+2D.png
+.. figure:: resources/4S+2D.png
    :alt: E6C geometry
 
    E6C geometry
 
 -  xrays incident on the :math:`\vec{x}` direction (1, 0, 0)
 
-===== ======== =============================
-axis  moves    rotation about axis
-===== ======== =============================
-mu    sample   :math:`\vec{z}` ``[0 0 1]``
+===== ======== ================ ============
+axis  moves    rotation axis    vector
+===== ======== ================ ============
+mu    sample   :math:`\vec{z}`  ``[0 0 1]``
 omega sample   :math:`-\vec{y}` ``[0 -1 0]``
-chi   sample   :math:`\vec{x}` ``[1 0 0]``
+chi   sample   :math:`\vec{x}`  ``[1 0 0]``
 phi   sample   :math:`-\vec{y}` ``[0 -1 0]``
-gamma detector :math:`\vec{z}` ``[0 0 1]``
+gamma detector :math:`\vec{z}`  ``[0 0 1]``
 delta detector :math:`-\vec{y}` ``[0 -1 0]``
-===== ======== =============================
+===== ======== ================ ============
 
 Define *this* diffractometer
 ----------------------------

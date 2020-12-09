@@ -11,7 +11,7 @@ diffractometer <http://ww1.iucr.org/iucr-top/comm/cteach/pamphlets/2/node14.html
      http://ww1.iucr.org/iucr-top/comm/cteach/pamphlets/2/
      -->
 
-.. figure:: img69.gif
+.. figure:: resources/img69.gif
    :alt: E4CH geometry
 
    E4CH geometry
@@ -40,7 +40,7 @@ Setup the *E4CV* diffractometer in *hklpy*
 In *hkl* *E4CV* geometry
 (https://people.debian.org/~picca/hkl/hkl.html#org7ef08ba):
 
-.. figure:: 3S+1D.png
+.. figure:: resources/3S+1D.png
    :alt: E4CV geometry
 
    E4CV geometry

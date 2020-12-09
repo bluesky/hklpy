@@ -27,7 +27,7 @@ Setup the *K4CV* diffractometer in *hklpy*
 In *hkl* *K4CV* geometry
 (https://people.debian.org/~picca/hkl/hkl.html#org723c5b9):
 
-.. figure:: k4cv.png
+.. figure:: resources/k4cv.png
    :alt: K4CV geometry
 
    K4CV geometry
@@ -35,14 +35,14 @@ In *hkl* *K4CV* geometry
 For this geometry there is a special parameter :math:`\alpha`, the angle
 between the kappa rotation axis and the :math:`\vec{y}` direction.
 
-====== ======== =======================================
-axis   moves    rotation about axis
-====== ======== =======================================
+====== ======== ================ =======================
+axis   moves    rotation axis    vector
+====== ======== ================ =======================
 komega sample   :math:`-\vec{y}` ``[0 -1 0]``
-kappa  sample   :math:`\vec{x}` ``[0 -0.6428 -0.7660]``
+kappa  sample   :math:`\vec{x}`  ``[0 -0.6428 -0.7660]``
 kphi   sample   :math:`-\vec{y}` ``[0 -1 0]``
 tth    detector :math:`-\vec{y}` ``[0 -1 0]``
-====== ======== =======================================
+====== ======== ================ =======================
 
 Define *this* diffractometer
 ----------------------------
