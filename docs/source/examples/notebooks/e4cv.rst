@@ -2,7 +2,7 @@
 ===============================
 
 The `IUCr provides a schematic of the 4-circle
-diffractometer <http://ww1.iucr.org/iucr-top/comm/cteach/pamphlets/2/node14.html>`__
+diffractometer <http://ww1.iucr.org/iucr-top/comm/cteach/pamphlets/2/node14.html>`_
 (in horizontal geometry typical of a laboratory instrument).
 
 .. raw:: html
