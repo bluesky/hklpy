@@ -22,7 +22,7 @@ polarization of the X-rays.
 --------------
 
 Note: This example is available as a `Jupyter
-notebook <https://jupyter.org/>`__ from the *hklpy* source code website:
+notebook <https://jupyter.org/>`_ from the *hklpy* source code website:
 https://github.com/bluesky/hklpy/tree/main/examples
 
 Load the *hklpy* package (named *``hkl``*)
