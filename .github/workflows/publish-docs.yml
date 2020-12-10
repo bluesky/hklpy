@@ -1,6 +1,6 @@
 name: Publish Documentation
 
-on: [push, pull_request]
+on: push
 
 # on:
 #   push:
@@ -39,6 +39,10 @@ jobs:
         mamba-version: "*"
         python-version: ${{ matrix.python-version }}
         use-only-tar-bz2: true  # required for caching
+
+    - name: Install publishing requirements
+      run: |
+        conda install jupyter nbconvert
 
     - name: Install the hklpy package
       shell: bash -l {0}
