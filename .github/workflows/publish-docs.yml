@@ -44,6 +44,12 @@ jobs:
       run: |
         conda install jupyter nbconvert
 
+    - name: Diagnostics
+      run: |
+        conda info
+        conda list jupyter
+        conda list nbconvert
+
     - name: Install the hklpy package
       shell: bash -l {0}
       run: |
