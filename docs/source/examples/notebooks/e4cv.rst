@@ -71,7 +71,7 @@ arbitrary. Pick any valid Python name not already in use.
 
 The argument to the ``FourCircle`` class tells which *hklpy* base class
 will be used. This sets the geometry. See the `hklpy diffractometers
-documentation <https://blueskyproject.io/hklpy/master/diffract.html#hkl.diffract.Diffractometer.calc_class>`__
+documentation <https://blueskyproject.io/hklpy/master/diffract.html#hkl.diffract.Diffractometer.calc_class>`_
 for a list of other choices.
 
 In *hklpy*, the reciprocal-space axes are known as ``pseudo``
