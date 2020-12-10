@@ -42,7 +42,7 @@ jobs:
 
     - name: Install publishing requirements
       run: |
-        conda install jupyter nbconvert
+        conda install jupyter nbconvert -n ${ENV_NAME}
 
     - name: Diagnostics
       run: |
@@ -73,10 +73,11 @@ jobs:
 
     - name: Convert notebooks
       run: |
-        make -C examples/
 
     - name: Build Docs
       run: |
+        conda activate ${ENV_NAME}
+        make -C examples/
         make -C docs/ html
 
     - name: Deploy documentation to blueskyproject.io.
