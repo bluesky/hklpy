@@ -58,7 +58,7 @@ delta detector :math:`-\vec{y}` ``[0 -1 0]``
 Define *this* diffractometer
 ----------------------------
 
-Create a python class that specifies the names of the real-space
+Create a Python class that specifies the names of the real-space
 positioners. We call it ``SixCircle`` here but that choice is arbitrary.
 Pick any valid Python name not already in use.
 
@@ -596,4 +596,3 @@ chi scan from (400) to (040)
 
 
 .. image:: e6c_files/e6c_40_2.svg
-
