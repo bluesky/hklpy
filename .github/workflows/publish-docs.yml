@@ -15,7 +15,7 @@ jobs:
   build:
     env:
       ENV_NAME: test
-      PACKAGE: hklpy
+      # PACKAGE: hklpy
 
     if: github.repository_owner == 'bluesky'
     runs-on: ubuntu-latest
@@ -27,14 +27,12 @@ jobs:
     - name: get correct package name from repository
       shell: bash -l {0}
       run: |
-        echo "MY_REPO=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+        echo "PACKAGE=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
 
     - name: show that
       shell: bash -l {0}
       run: |
-        env | sort
-        # and now a command that will crash the workflow here
-        sdfsayfgksuygdf
+        env | sort | grep hklpy
 
     - uses: actions/checkout@v2
 
