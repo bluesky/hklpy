@@ -45,8 +45,9 @@ jobs:
         use-only-tar-bz2: true  # required for caching
 
     - name: Install publishing requirements
+      shell: bash -l {0}
       run: |
-        source ${CONDA}/bin/activate  ${ENV_NAME}
+        # source ${CONDA}/bin/activate  ${ENV_NAME}
         conda install jupyter nbconvert sphinx sphinxcontrib-napoleon -c defaults -c conda-forge
         pip install sphinx-rtd-theme
 
@@ -56,9 +57,10 @@ jobs:
         pip install -e .
 
     - name: Build Docs
+      shell: bash -l {0}
       run: |
-        # force use of our conda env (should be done automatically but was not)
-        source ${CONDA}/bin/activate ${ENV_NAME}
+        # # force use of our conda env (should be done automatically but was not)
+        # source ${CONDA}/bin/activate ${ENV_NAME}
         conda info
         conda list jupyter
         # conda list nbconvert
