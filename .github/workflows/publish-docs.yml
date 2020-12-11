@@ -45,8 +45,8 @@ jobs:
 
     - name: Install publishing requirements
       run: |
-        # source ${CONDA}/bin/activate  ${ENV_NAME}
-        conda install -n ${ENV_NAME} jupyter nbconvert sphinx sphinxcontrib-napoleon -c defaults -c conda-forge
+        source ${CONDA}/bin/activate  ${ENV_NAME}
+        conda install jupyter nbconvert sphinx sphinxcontrib-napoleon -c defaults -c conda-forge
         pip install sphinx-rtd-theme
 
     - name: Install the package locally
