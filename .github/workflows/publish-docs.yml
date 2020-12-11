@@ -35,7 +35,7 @@ jobs:
       uses: conda-incubator/setup-miniconda@v2
       with:
         activate-environment:
-            ${ENV_NAME}
+          ${ENV_NAME}
         auto-update-conda: true
         channel-priority: true
         channels: defaults,conda-forge
