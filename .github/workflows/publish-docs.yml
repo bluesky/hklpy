@@ -57,7 +57,7 @@ jobs:
     - name: Build Docs
       run: |
         # force use of our conda env (should be done automatically but was not)
-        # source ${CONDA}/bin/activate ${ENV_NAME}
+        source ${CONDA}/bin/activate ${ENV_NAME}
         conda info
         conda list jupyter
         # conda list nbconvert
