@@ -45,7 +45,7 @@ jobs:
 
     - name: Install publishing requirements
       run: |
-        source ${CONDA}/bin/activate activate ${ENV_NAME}
+        # source ${CONDA}/bin/activate  ${ENV_NAME}
         conda install jupyter nbconvert sphinx sphinxcontrib-napoleon -c defaults -c conda-forge
         pip install sphinx-rtd-theme
 
@@ -54,31 +54,31 @@ jobs:
       run: |
         pip install -e .
 
-    - name: Demonstration - no activate
-      shell: bash -l {0}
-      run: |
-        conda info
+    # - name: Demonstration - no activate
+    #   shell: bash -l {0}
+    #   run: |
+    #     conda info
 
-    - name: Demonstration - standard activate
-      shell: bash -l {0}
-      run: |
-        source ${CONDA}/bin/activate activate ${ENV_NAME}
-        conda info
+    # - name: Demonstration - standard activate
+    #   shell: bash -l {0}
+    #   run: |
+    #     source ${CONDA}/bin/activate activate ${ENV_NAME}
+    #     conda info
 
-    - name: Demonstration - newer activate
-      shell: bash -l {0}
-      run: |
-        source ${CONDA}/etc/profile.d/conda.sh
-        conda activate ${ENV_NAME}
-        conda info
+    # - name: Demonstration - newer activate
+    #   shell: bash -l {0}
+    #   run: |
+    #     source ${CONDA}/etc/profile.d/conda.sh
+    #     conda activate ${ENV_NAME}
+    #     conda info
 
     - name: Build Docs
       run: |
         # force use of our conda env (should be done automatically but was not)
-        source ${CONDA}/bin/activate activate ${ENV_NAME}
+        # source ${CONDA}/bin/activate ${ENV_NAME}
         conda info
-        conda list jupyter
-        conda list nbconvert
+        # conda list jupyter
+        # conda list nbconvert
         env | sort | grep -i CONDA
         make -C examples/
         make -C docs/ html
