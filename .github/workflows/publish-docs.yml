@@ -27,7 +27,11 @@ jobs:
     - name: get correct package name from repository
       shell: bash -l {0}
       run: |
-        echo "myvar=yellow" >> $GITHUB_ENV
+        echo "MY_REPO=${{ env.GITHUB_REPOSITORY##*/ }}" >> $GITHUB_ENV
+
+    - name: show that
+      shell: bash -l {0}
+      run: |
         env | sort
         # and now a command that will crash the workflow here
         sdfsayfgksuygdf
