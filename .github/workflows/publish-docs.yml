@@ -65,12 +65,12 @@ jobs:
     #     pip install -r requirements-docs.txt
     #     pip list
 
-    - name: Diagnostics
-      run: |
-        conda info
-        conda list jupyter
-        conda list nbconvert
-        env | sort | grep -i CONDA
+    # - name: Diagnostics
+    #   run: |
+    #     conda info
+    #     conda list jupyter
+    #     conda list nbconvert
+    #     env | sort | grep -i CONDA
 
     ###
     ### initiate interactive tmate session
@@ -81,6 +81,10 @@ jobs:
     - name: Build Docs
       run: |
         source ${CONDA}/bin/activate activate ${ENV_NAME}
+        conda info
+        conda list jupyter
+        conda list nbconvert
+        env | sort | grep -i CONDA
         make -C examples/
         make -C docs/ html
 
