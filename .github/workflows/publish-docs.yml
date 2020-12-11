@@ -13,7 +13,8 @@ on: push
 jobs:
   build:
     env:
-      ENV_NAME: hklpy-docs-${{ matrix.python-version }}
+      # ENV_NAME: hklpy-docs-${{ matrix.python-version }}
+      ENV_NAME: test
       PACKAGE: hklpy
 
     if: github.repository_owner == 'bluesky'
@@ -34,8 +35,7 @@ jobs:
     - name: Setup Miniconda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
       with:
-        activate-environment:
-          $ENV_NAME
+        # activate-environment: ${ENV_NAME}
         auto-update-conda: true
         channel-priority: true
         channels: defaults,conda-forge
