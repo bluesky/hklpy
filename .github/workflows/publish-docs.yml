@@ -75,12 +75,12 @@ jobs:
     ###
     ### initiate interactive tmate session
     ###
-    - name: tmate session
-      uses: mxschmitt/action-tmate@v3
+    # - name: tmate session
+    #   uses: mxschmitt/action-tmate@v3
 
     - name: Build Docs
       run: |
-        conda activate ${ENV_NAME}
+        source ${CONDA}/bin/activate activate ${ENV_NAME}
         make -C examples/
         make -C docs/ html
 
