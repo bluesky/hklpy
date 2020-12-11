@@ -42,7 +42,9 @@ jobs:
 
     - name: Install publishing requirements
       run: |
-        conda install jupyter nbconvert -n ${ENV_NAME}
+        source ${CONDA}/bin/activate activate ${ENV_NAME}
+        conda install jupyter nbconvert sphinx sphinxcontrib-napoleon -c defaults -c conda-forge
+        pip install sphinx-rtd-theme
 
     - name: Install the hklpy package
       shell: bash -l {0}
