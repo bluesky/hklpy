@@ -13,7 +13,6 @@ on: push
 jobs:
   build:
     env:
-      # ENV_NAME: hklpy-docs-${{ matrix.python-version }}
       ENV_NAME: test
       PACKAGE: hklpy
 
@@ -35,7 +34,6 @@ jobs:
     - name: Setup Miniconda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
       with:
-        # activate-environment: ${ENV_NAME}
         auto-update-conda: true
         channel-priority: true
         channels: nsls2forge,conda-forge,defaults
@@ -47,7 +45,6 @@ jobs:
     - name: Install publishing requirements
       shell: bash -l {0}
       run: |
-        # source ${CONDA}/bin/activate  ${ENV_NAME}
         conda install jupyter nbconvert sphinx sphinxcontrib-napoleon -c defaults -c conda-forge
         pip install sphinx-rtd-theme
 
@@ -59,10 +56,8 @@ jobs:
     - name: Build Docs
       shell: bash -l {0}
       run: |
-        # # force use of our conda env (should be done automatically but was not)
-        # source ${CONDA}/bin/activate ${ENV_NAME}
-        conda info
-        conda list jupyter
+        # conda info
+        # conda list jupyter
         # conda list nbconvert
         env | sort | grep -i CONDA
         make -C examples/
