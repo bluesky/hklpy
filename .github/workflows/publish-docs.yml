@@ -29,6 +29,7 @@ jobs:
       shell: bash -l {0}
       run: |
         sed -i.bak "s/name: ${PACKAGE}/name: ${ENV_NAME}/g" environment.yml
+        head envir*
 
     - name: Setup Miniconda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
