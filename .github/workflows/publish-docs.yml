@@ -44,12 +44,6 @@ jobs:
       run: |
         conda install jupyter nbconvert -n ${ENV_NAME}
 
-    - name: Diagnostics
-      run: |
-        conda info
-        conda list jupyter
-        conda list nbconvert
-
     - name: Install the hklpy package
       shell: bash -l {0}
       run: |
@@ -71,8 +65,18 @@ jobs:
     #     pip install -r requirements-docs.txt
     #     pip list
 
-    - name: Convert notebooks
+    - name: Diagnostics
       run: |
+        conda info
+        conda list jupyter
+        conda list nbconvert
+        env | sort | grep -i CONDA
+
+    ###
+    ### initiate interactive tmate session
+    ###
+    - name: tmate session
+      uses: mxschmitt/action-tmate@v3
 
     - name: Build Docs
       run: |
