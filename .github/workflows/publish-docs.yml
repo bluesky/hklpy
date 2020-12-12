@@ -1,0 +1,88 @@
+name: Publish Documentation
+
+# comment for normal
+# (For development use)
+# on: push
+
+# comment here and uncomment above to publish docs for _any_ branch
+# (For production use)
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    env:
+      ENV_NAME: test
+      # will define PACKAGE in steps, obtained from GITHUB_REPOSITORY
+
+    if: github.repository_owner == 'bluesky'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+    - name: get correct package name from repository
+      shell: bash -l {0}
+      run: |
+        echo "PACKAGE=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
+
+    - name: show that
+      shell: bash -l {0}
+      run: |
+        env | sort | grep hklpy
+
+    - uses: actions/checkout@v2
+
+    - name: set environment name in YAML file
+      shell: bash -l {0}
+      run: |
+        sed -i.bak "s/name: ${PACKAGE}/name: ${ENV_NAME}/g" environment.yml
+        head envir*
+
+    - name: Setup Miniconda ${{ matrix.python-version }}
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        channel-priority: true
+        channels: nsls2forge,conda-forge,defaults
+        environment-file: environment.yml
+        mamba-version: "*"
+        python-version: ${{ matrix.python-version }}
+        use-only-tar-bz2: true  # required for caching
+
+    - name: Install publishing requirements
+      shell: bash -l {0}
+      run: |
+        conda install jupyter nbconvert sphinx sphinxcontrib-napoleon -c defaults -c conda-forge
+        pip install sphinx-rtd-theme
+
+    - name: Install the package locally
+      shell: bash -l {0}
+      run: |
+        pip install -e .
+
+    - name: Build Docs
+      shell: bash -l {0}
+      run: |
+        # conda info
+        # conda list jupyter
+        # conda list nbconvert
+        env | sort | grep -i CONDA
+        make -C examples/
+        make -C docs/ html
+
+    - name: Deploy documentation to blueskyproject.io.
+      # We pin to the SHA, not the tag, for security reasons.
+      # https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/security-hardening-for-github-actions#using-third-party-actions
+      uses: peaceiris/actions-gh-pages@bbdfb200618d235585ad98e965f4aafc39b4c501  # v3.7.3
+      with:
+        deploy_key: ${{ secrets.ACTIONS_DOCUMENTATION_DEPLOY_KEY }}
+        publish_branch: master
+        publish_dir: ./docs/build/html
+        external_repository: bluesky/bluesky.github.io
+        destination_dir: ${PACKAGE}
+        keep_files: true  # Keep old files.
+        force_orphan: false  # Keep git history.
