@@ -2,14 +2,14 @@ name: Publish Documentation
 
 # comment for normal
 # (For development use)
-# on: push
+on: push
 
 # comment here and uncomment above to publish docs for _any_ branch
 # (For production use)
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
 jobs:
   build:
