@@ -12,8 +12,10 @@ prefix   | type of example
 ``var_`` | variation on a geometry
 ``tst_`` | tests and comparisons
 
-The examples can be viewed directly as notebooks in most web browsers.  If an
-example fails to load properly, try using this convenient web tool to view:
+## notebook views
+The examples can be viewed directly as notebooks in most web
+browsers.  If an example fails to load properly, try using this
+convenient web tool to view:
 
 * https://nbviewer.jupyter.org/github/bluesky/hklpy/blob/24-examples/examples/geo_e4cv.ipynb
 * https://nbviewer.jupyter.org/github/bluesky/hklpy/blob/24-examples/examples/geo_e6c.ipynb
