@@ -42,4 +42,4 @@ Contents:
    sample
    util
    examples/*
-
+   release_notes
