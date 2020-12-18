@@ -27,7 +27,7 @@ Variations
    notebooks/var_*
 
 Tests and Comparisons
----------------------------
+---------------------
 
 .. toctree::
    :maxdepth: 1
