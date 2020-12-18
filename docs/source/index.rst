@@ -33,6 +33,7 @@ Contents:
 
 .. toctree::
    :maxdepth: 1
+   :glob:
 
    calc
    context
@@ -40,4 +41,5 @@ Contents:
    engine
    sample
    util
+   examples/*
 

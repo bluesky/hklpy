@@ -66,8 +66,11 @@ target/
 .ipynb_checkpoints
 
 # generated docs
-doc/source/generated
+docs/source/generated
 
 # Microsoft VS Code editor
 .vscode/
 .history/
+
+# PyTest cache
+.pytest_cache/
