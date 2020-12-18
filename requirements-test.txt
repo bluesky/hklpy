@@ -1,9 +1,0 @@
-attrs>=19.3.0
-bluesky
-codecov
-flake8
-ophyd
-pyepics
-PyGObject
-pytest
-pytest-faulthandler
