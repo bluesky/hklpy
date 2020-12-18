@@ -17,6 +17,8 @@ The examples can be viewed directly as notebooks in most web
 browsers.  If an example fails to load properly, try using this
 convenient web tool to view:
 
+TODO: Change these links to `main` branch after PR #52 is merged.
+
 * https://nbviewer.jupyter.org/github/bluesky/hklpy/blob/24-examples/examples/geo_e4cv.ipynb
 * https://nbviewer.jupyter.org/github/bluesky/hklpy/blob/24-examples/examples/geo_e6c.ipynb
 * https://nbviewer.jupyter.org/github/bluesky/hklpy/blob/24-examples/examples/geo_k4cv.ipynb
