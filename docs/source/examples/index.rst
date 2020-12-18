@@ -18,7 +18,7 @@ Diffractometer Geometries
    notebooks/geo_*
 
 Variations
--------------
+----------
 
 .. toctree::
    :maxdepth: 1
