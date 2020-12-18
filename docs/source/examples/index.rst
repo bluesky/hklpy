@@ -9,7 +9,7 @@ from the *hklpy* source
 code website: https://github.com/bluesky/hklpy/tree/main/examples
 
 Diffractometer Geometries
----------------------------
+-------------------------
 
 .. toctree::
    :maxdepth: 1
