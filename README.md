@@ -1,8 +1,6 @@
-[![Build Status](https://img.shields.io/github/workflow/status/bluesky/hklpy/Unit%20Tests)](https://github.com/bluesky/hklpy/actions?query=workflow%3A%22Unit+Tests%22+branch%3Amain)
-
-| Name | Downloads | Version | Platforms |
-| --- | --- | --- | --- |
-| [![Conda Recipe](https://img.shields.io/badge/recipe-hklpy-green.svg)](https://anaconda.org/nsls2forge/hklpy) | [![Conda Downloads](https://img.shields.io/conda/dn/nsls2forge/hklpy.svg)](https://anaconda.org/nsls2forge/hklpy) | [![Conda Version](https://img.shields.io/conda/vn/nsls2forge/hklpy.svg)](https://anaconda.org/nsls2forge/hklpy) | [![Conda Platforms](https://img.shields.io/conda/pn/nsls2forge/hklpy.svg)](https://anaconda.org/nsls2forge/hklpy) |
+| Name | Downloads | Version | Platforms | Testing |
+| --- | --- | --- | --- | --- |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-hklpy-green.svg)](https://anaconda.org/nsls2forge/hklpy) | [![Conda Downloads](https://img.shields.io/conda/dn/nsls2forge/hklpy.svg)](https://anaconda.org/nsls2forge/hklpy) | [![Conda Version](https://img.shields.io/conda/vn/nsls2forge/hklpy.svg)](https://anaconda.org/nsls2forge/hklpy) | [![Conda Platforms](https://img.shields.io/conda/pn/nsls2forge/hklpy.svg)](https://anaconda.org/nsls2forge/hklpy) | [![Build Status](https://img.shields.io/github/workflow/status/bluesky/hklpy/Unit%20Tests)](https://github.com/bluesky/hklpy/actions?query=workflow%3A%22Unit+Tests%22+branch%3Amain) |
 
 hklpy
 =====
