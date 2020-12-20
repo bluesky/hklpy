@@ -3,6 +3,7 @@ channels:
   - nsls2forge
   - conda-forge
   - defaults
+  - aps-anl-tag
 dependencies:
   - python>=3.6
   - bluesky
@@ -15,6 +16,7 @@ dependencies:
   - prettytable
   - pyepics
   - pyRestTable
+  - spec2nexus
   - pip:
     - coveralls
     - pytest
