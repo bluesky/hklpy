@@ -18,7 +18,7 @@ release date.
 
 .. [#] https://github.com/bluesky/hklpy/milestone/5
 
-v0.3.15 (2020-12-21)
+v0.3.15 (2020-12-20)
 ====================
 
 Breaking Changes
