@@ -247,13 +247,14 @@ class HklSample(object):
                                                h, k, l)
 
     def compute_UB(self, r1, r2):
-        '''Compute the UB matrix with two reflections
+        '''Compute the UB matrix with two reflections.
 
         Using the Busing and Levy method, compute the UB matrix for two sample
         reflections, r1 and r2.
 
-        Note that this modifies the internal state of the sample and does not
-        return a UB matrix. To access it after computation, see `Sample.UB`.
+        Returns the UB matrix or raises gi.repository.GLib.GError
+        (a change from 0.3.15 and before).  Returns ``None`` if no error
+        raised but computation was not successful.
 
         Parameters
         ----------
@@ -261,8 +262,13 @@ class HklSample(object):
             Reflection 1
         r2 : HklReflection
             Reflection 2
+
+        Parameters
+        ----------
+        UB matrix or raises gi.repository.GLib.GError
         '''
-        return self._sample.compute_UB_busing_levy(r1, r2)
+        if self._sample.compute_UB_busing_levy(r1, r2):
+            return self.UB
 
     @property
     def reflections(self):
