@@ -4,7 +4,6 @@ from bluesky.simulators import check_limits
 from ophyd import (PseudoSingle, SoftPositioner)
 from ophyd import Component as Cpt
 from ophyd.positioner import LimitError
-from warnings import warn
 import numpy as np
 import numpy.testing
 import pytest
