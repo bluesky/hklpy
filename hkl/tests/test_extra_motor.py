@@ -83,7 +83,7 @@ def test_extra_pseudo_not_fatal(testdir):
     test_code = FOURC_SETUP_CODE + "\n"
     test_code += "class FourcSub(Fourc):" + "\n"
     test_code += "    _pseudo = ['h', 'k', 'l', ]" + "\n"
-    test_code += "    extra = Cpt(PseudoSingle, '', value=0)" + "\n"
+    test_code += "    extra = Cpt(PseudoSingle, '')" + "\n"
     test_code += "fourc = FourcSub('', name='fourc')" + "\n"
     test_code += "print(fourc.position)" + "\n"
     test_code += "print(fourc.extra.position)" + "\n"
