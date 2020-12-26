@@ -1,23 +1,23 @@
-
 import pytest
 import numpy.testing
 
 from ophyd import Component as Cpt
-from ophyd import (PseudoSingle, SoftPositioner)
+from ophyd import PseudoSingle, SoftPositioner
 
 import pint
 
 import gi
-gi.require_version('Hkl', '5.0')
+
+gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
 from hkl.calc import A_KEV
 from hkl.diffract import E4CV
 
 
 class Fourc(E4CV):
-    h = Cpt(PseudoSingle, '')
-    k = Cpt(PseudoSingle, '')
-    l = Cpt(PseudoSingle, '')
+    h = Cpt(PseudoSingle, "")
+    k = Cpt(PseudoSingle, "")
+    l = Cpt(PseudoSingle, "")
 
     omega = Cpt(SoftPositioner)
     chi = Cpt(SoftPositioner)
@@ -31,9 +31,9 @@ class Fourc(E4CV):
             p._set_position(0)  # give each a starting position
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def fourc():
-    fourc = Fourc('', name='fourc')
+    fourc = Fourc("", name="fourc")
     fourc.wait_for_connection()
     fourc._update_calc_energy()
     return fourc
@@ -50,36 +50,33 @@ def test_calc_energy_permit(fourc):
     numpy.testing.assert_almost_equal(fourc.calc.energy, nrg)
 
     fourc._energy_changed()
-    numpy.testing.assert_almost_equal(
-        fourc.calc.energy, nrg)
+    numpy.testing.assert_almost_equal(fourc.calc.energy, nrg)
 
     fourc._energy_changed(fourc.energy.get())
-    numpy.testing.assert_almost_equal(
-        fourc.calc.energy, nrg)
+    numpy.testing.assert_almost_equal(fourc.calc.energy, nrg)
 
     fourc._energy_changed(5.989)
-    numpy.testing.assert_almost_equal(
-        fourc.calc.energy, nrg)
+    numpy.testing.assert_almost_equal(fourc.calc.energy, nrg)
 
     fourc._update_calc_energy()
-    numpy.testing.assert_almost_equal(
-        fourc.calc.energy, 5.989)
+    numpy.testing.assert_almost_equal(fourc.calc.energy, 5.989)
 
-    fourc._update_calc_energy(A_KEV/1)
-    numpy.testing.assert_almost_equal(
-        fourc.calc.energy, A_KEV)
+    fourc._update_calc_energy(A_KEV / 1)
+    numpy.testing.assert_almost_equal(fourc.calc.energy, A_KEV)
 
 
 def test_energy(fourc):
     numpy.testing.assert_almost_equal(
-        fourc.energy.get(), fourc.calc.energy)
+        fourc.energy.get(), fourc.calc.energy
+    )
 
     for nrg in (8.0, 8.04, 9.0, 0.931):
         fourc.energy.put(nrg)
         numpy.testing.assert_almost_equal(fourc.energy.get(), nrg)
         numpy.testing.assert_almost_equal(fourc.calc.energy, nrg)
         numpy.testing.assert_almost_equal(
-            fourc.calc.wavelength, A_KEV/nrg)
+            fourc.calc.wavelength, A_KEV / nrg
+        )
 
 
 def test_energy_offset(fourc):
@@ -87,18 +84,18 @@ def test_energy_offset(fourc):
 
     nrg = 8.0
     fourc.energy.put(nrg)
+    numpy.testing.assert_almost_equal(fourc.energy.get(), nrg)
     numpy.testing.assert_almost_equal(
-        fourc.energy.get(), nrg)
-    numpy.testing.assert_almost_equal(
-        fourc.energy.get(), fourc.calc.energy)
+        fourc.energy.get(), fourc.calc.energy
+    )
 
     for offset in (0.05, -0.1):
         fourc.energy_offset.put(offset)
         fourc.energy.put(nrg)
+        numpy.testing.assert_almost_equal(fourc.energy.get(), nrg)
         numpy.testing.assert_almost_equal(
-            fourc.energy.get(), nrg)
-        numpy.testing.assert_almost_equal(
-            fourc.energy.get() + offset, fourc.calc.energy)
+            fourc.energy.get() + offset, fourc.calc.energy
+        )
 
 
 def test_energy_offset_units(fourc):
@@ -111,15 +108,16 @@ def test_energy_offset_units(fourc):
     fourc.energy.put(nrg)
     numpy.testing.assert_almost_equal(fourc.energy.get(), nrg)
     numpy.testing.assert_almost_equal(
-        fourc.energy.get()/1000, fourc.calc.energy)
+        fourc.energy.get() / 1000, fourc.calc.energy
+    )
 
     for offset in (5, -6):
         fourc.energy_offset.put(offset)
         fourc.energy.put(nrg)
+        numpy.testing.assert_almost_equal(fourc.energy.get(), nrg)
         numpy.testing.assert_almost_equal(
-            fourc.energy.get(), nrg)
-        numpy.testing.assert_almost_equal(
-            (fourc.energy.get() + offset)/1000, fourc.calc.energy)
+            (fourc.energy.get() + offset) / 1000, fourc.calc.energy
+        )
 
 
 def test_energy_units(fourc):
@@ -130,16 +128,17 @@ def test_energy_units(fourc):
     eV = 931
     fourc.energy.put(eV)
     numpy.testing.assert_almost_equal(fourc.energy.get(), eV)
-    numpy.testing.assert_almost_equal(fourc.calc.energy, eV/1000)
+    numpy.testing.assert_almost_equal(fourc.calc.energy, eV / 1000)
 
     # issue #79
     fourc.energy_units.put("eV")
     fourc.energy_offset.put(0)
     eV = 1746
     fourc.energy.put(eV)
-    numpy.testing.assert_almost_equal(fourc.calc.energy, eV/1000)
+    numpy.testing.assert_almost_equal(fourc.calc.energy, eV / 1000)
     numpy.testing.assert_almost_equal(
-        pint.Quantity(fourc.calc.energy, "keV").to(
-            fourc.energy_units.get()).magnitude,
+        pint.Quantity(fourc.calc.energy, "keV")
+        .to(fourc.energy_units.get())
+        .magnitude,
         fourc.energy.get(),
-        )
+    )
