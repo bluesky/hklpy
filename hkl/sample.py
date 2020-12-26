@@ -14,12 +14,12 @@ logger = logging.getLogger(__name__)
 
 
 def check_lattice(lattice):
-    '''Check an Hkl.Lattice for validity
+    """Check an Hkl.Lattice for validity
 
     Raises
     ------
     ValueError
-    '''
+    """
 
     # TODO: assertion is raised if alpha/beta/gamma are invalid,
     #       which is not propagated back as a Python exception but a segfault.
@@ -33,20 +33,23 @@ def check_lattice(lattice):
     lt = Lattice(a, b, c, alpha, beta, gamma)
     for k, v in lt._asdict().items():
         if v is None:
-            raise ValueError('Lattice parameter "{}" unset or invalid'
-                             ''.format(k))
+            raise ValueError(
+                'Lattice parameter "{}" unset or invalid' "".format(k)
+            )
 
-    lt = Lattice(a.value_get(util.units['user']),
-                 b.value_get(util.units['user']),
-                 c.value_get(util.units['user']),
-                 alpha.value_get(util.units['user']),
-                 beta.value_get(util.units['user']),
-                 gamma.value_get(util.units['user']))
-    logger.debug('Lattice OK: %s', lt)
+    lt = Lattice(
+        a.value_get(util.units["user"]),
+        b.value_get(util.units["user"]),
+        c.value_get(util.units["user"]),
+        alpha.value_get(util.units["user"]),
+        beta.value_get(util.units["user"]),
+        gamma.value_get(util.units["user"]),
+    )
+    logger.debug("Lattice OK: %s", lt)
 
 
 class HklSample(object):
-    '''Represents a sample in diffractometer calculations
+    """Represents a sample in diffractometer calculations
 
     Parameters
     ----------
@@ -81,11 +84,11 @@ class HklSample(object):
         This assumes the hkl engine is used; generally, the ordered set of
         positions for the engine in-use should be specified.
 
-    '''
+    """
 
-    def __init__(self, calc, sample=None, units='user', **kwargs):
+    def __init__(self, calc, sample=None, units="user", **kwargs):
         if sample is None:
-            sample = hkl_module.Sample.new('')
+            sample = hkl_module.Sample.new("")
 
         self._calc = calc
         self._sample = sample
@@ -95,10 +98,18 @@ class HklSample(object):
         try:
             self._units = util.units[self._unit_name]
         except KeyError:
-            raise ValueError('Invalid unit type')
+            raise ValueError("Invalid unit type")
 
-        for name in ('lattice', 'name', 'U', 'UB', 'ux', 'uy', 'uz',
-                     'reflections', ):
+        for name in (
+            "lattice",
+            "name",
+            "U",
+            "UB",
+            "ux",
+            "uy",
+            "uz",
+            "reflections",
+        ):
             value = kwargs.pop(name, None)
             if value is not None:
                 try:
@@ -107,25 +118,27 @@ class HklSample(object):
                     # These kwargs are funneled down to the gi wrapper
                     # and could raise just about anything. Tack on the
                     # kwarg to help debugging if necessary:
-                    ex.message = '%s (attribute=%s)' % (ex, name)
+                    ex.message = "%s (attribute=%s)" % (ex, name)
                     raise
 
         if kwargs:
-            raise ValueError('Unsupported kwargs for HklSample: %s' %
-                             tuple(kwargs.keys()))
+            raise ValueError(
+                "Unsupported kwargs for HklSample: %s"
+                % tuple(kwargs.keys())
+            )
 
     @property
     def hkl_calc(self):
-        '''
+        """
         The HklCalc instance associated with the sample
-        '''
+        """
         return self._calc
 
     @property
     def hkl_sample(self):
-        '''
+        """
         The HKL library sample object
-        '''
+        """
         return self._sample
 
     @property
@@ -144,7 +157,7 @@ class HklSample(object):
         new_name : str
         """
         if new_name in self._sample_dict:
-            raise ValueError('Sample with that name already exists')
+            raise ValueError("Sample with that name already exists")
         sample = self._sample
         old_name = sample.name_get()
 
@@ -155,7 +168,7 @@ class HklSample(object):
 
     @property
     def reciprocal(self):
-        '''The reciprocal lattice'''
+        """The reciprocal lattice"""
         lattice = self._sample.lattice_get()
         reciprocal = lattice.copy()
         lattice.reciprocal(reciprocal)
@@ -163,11 +176,11 @@ class HklSample(object):
 
     @property
     def lattice(self):
-        '''The lattice (a, b, c, alpha, beta, gamma)
+        """The lattice (a, b, c, alpha, beta, gamma)
 
         a, b, c [nm]
         alpha, beta, gamma [deg]
-        '''
+        """
         lattice = self._sample.lattice_get()
         lattice = lattice.get(self._units)
         return Lattice(*lattice)
@@ -187,9 +200,9 @@ class HklSample(object):
 
     @property
     def U(self):
-        '''
+        """
         The crystal orientation matrix, U
-        '''
+        """
         return util.to_numpy(self._sample.U_get())
 
     @U.setter
@@ -201,35 +214,35 @@ class HklSample(object):
 
     @property
     def ux(self):
-        '''
+        """
         ux part of the U matrix
-        '''
+        """
         return self._get_parameter(self._sample.ux_get())
 
     @property
     def uy(self):
-        '''
+        """
         uy part of the U matrix
-        '''
+        """
         return self._get_parameter(self._sample.uy_get())
 
     @property
     def uz(self):
-        '''
+        """
         uz part of the U matrix
-        '''
+        """
         return self._get_parameter(self._sample.uz_get())
 
     @property
     def UB(self):
-        '''
+        """
         The UB matrix, where U is the crystal orientation matrix and B is the
         transition matrix of a non-orthonormal (the reciprocal of the crystal)
         in an orthonormal system
 
         If written to, the B matrix will be kept constant:
             U * B = UB -> U = UB * B^-1
-        '''
+        """
         return util.to_numpy(self._sample.UB_get())
 
     @UB.setter
@@ -237,17 +250,18 @@ class HklSample(object):
         self._sample.UB_set(util.to_hkl(new_ub))
 
     def _create_reflection(self, h, k, l, detector=None):
-        '''
+        """
         Create a new reflection with the current geometry/detector
-        '''
+        """
         if detector is None:
             detector = self._calc._detector
 
-        return hkl_module.SampleReflection.new(self._calc._geometry, detector,
-                                               h, k, l)
+        return hkl_module.SampleReflection.new(
+            self._calc._geometry, detector, h, k, l
+        )
 
     def compute_UB(self, r1, r2):
-        '''Compute the UB matrix with two reflections.
+        """Compute the UB matrix with two reflections.
 
         Using the Busing and Levy method, compute the UB matrix for two sample
         reflections, r1 and r2.
@@ -266,16 +280,16 @@ class HklSample(object):
         Parameters
         ----------
         UB matrix or raises gi.repository.GLib.GError
-        '''
+        """
         if self._sample.compute_UB_busing_levy(r1, r2):
             return self.UB
 
     @property
     def reflections(self):
-        '''
+        """
         All reflections for the current sample in the form:
             [(h, k, l), ...]
-        '''
+        """
         return [refl.hkl_get() for refl in self._sample.reflections_get()]
 
     @reflections.setter
@@ -284,8 +298,10 @@ class HklSample(object):
         for refl in refls:
             self.add_reflection(*refl)
 
-    def add_reflection(self, h, k, l, position=None, detector=None, compute_ub=False):
-        '''Add a reflection, optionally specifying the detector to use
+    def add_reflection(
+        self, h, k, l, position=None, detector=None, compute_ub=False
+    ):
+        """Add a reflection, optionally specifying the detector to use
 
         Parameters
         ----------
@@ -303,14 +319,16 @@ class HklSample(object):
             assumed.
         compute_ub : bool, optional
             Calculate the UB matrix with the last two reflections
-        '''
+        """
         calc = self._calc
         if detector is None:
             detector = calc._detector
 
         if compute_ub and len(self.reflections) < 1:
-            raise RuntimeError('Cannot calculate the UB matrix with less than two '
-                               'reflections')
+            raise RuntimeError(
+                "Cannot calculate the UB matrix with less than two "
+                "reflections"
+            )
 
         if compute_ub:
             r1 = self._sample.reflections_get()[-1]
@@ -318,7 +336,9 @@ class HklSample(object):
         with TemporaryGeometry(calc):
             if position is not None:
                 calc.physical_positions = position
-            r2 = self._sample.add_reflection(calc._geometry, detector, h, k, l)
+            r2 = self._sample.add_reflection(
+                calc._geometry, detector, h, k, l
+            )
 
         if compute_ub:
             self.compute_UB(r1, r2)
@@ -326,7 +346,7 @@ class HklSample(object):
         return r2
 
     def remove_reflection(self, refl):
-        '''Remove a specific reflection'''
+        """Remove a specific reflection"""
         if not isinstance(refl, hkl_module.SampleReflection):
             index = self.reflections.index(refl)
             refl = self._sample.reflections_get()[index]
@@ -334,15 +354,15 @@ class HklSample(object):
         return self._sample.del_reflection(refl)
 
     def clear_reflections(self):
-        '''Clear all reflections for the current sample'''
+        """Clear all reflections for the current sample"""
         reflections = self._sample.reflections_get()
         for refl in reflections:
             self._sample.del_reflection(refl)
 
     def _refl_matrix(self, fcn):
-        '''
+        """
         Get a reflection angle matrix
-        '''
+        """
         sample = self._sample
         refl = sample.reflections_get()
         refl_matrix = np.zeros((len(refl), len(refl)))
@@ -356,38 +376,51 @@ class HklSample(object):
 
     @property
     def reflection_measured_angles(self):
-        return self._refl_matrix(self._sample.get_reflection_measured_angle)
+        return self._refl_matrix(
+            self._sample.get_reflection_measured_angle
+        )
 
     @property
     def reflection_theoretical_angles(self):
-        return self._refl_matrix(self._sample.get_reflection_theoretical_angle)
+        return self._refl_matrix(
+            self._sample.get_reflection_theoretical_angle
+        )
 
     def affine(self):
-        '''
+        """
         Make the sample transform affine
-        '''
+        """
         return self._sample.affine()
 
     def _repr_info(self):
-        repr = ['name={!r}'.format(self.name),
-                'lattice={!r}'.format(self.lattice),
-                'ux={!r}'.format(self.ux),
-                'uy={!r}'.format(self.uy),
-                'uz={!r}'.format(self.uz),
-                'U={!r}'.format(self.U),
-                'UB={!r}'.format(self.UB),
-                'reflections={!r}'.format(self.reflections),
-                ]
+        repr = [
+            "name={!r}".format(self.name),
+            "lattice={!r}".format(self.lattice),
+            "ux={!r}".format(self.ux),
+            "uy={!r}".format(self.uy),
+            "uz={!r}".format(self.uz),
+            "U={!r}".format(self.U),
+            "UB={!r}".format(self.UB),
+            "reflections={!r}".format(self.reflections),
+        ]
 
         return repr
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__,
-                               ', '.join(self._repr_info()))
+        return "{}({})".format(
+            self.__class__.__name__, ", ".join(self._repr_info())
+        )
 
     def __str__(self):
         info = self._repr_info()
-        info.append('reflection_measured_angles={!r}'.format(self.reflection_measured_angles))
-        info.append('reflection_theoretical_angles={!r}'.format(self.reflection_theoretical_angles))
-        return '{}({})'.format(self.__class__.__name__,
-                               ', '.join(info))
+        info.append(
+            "reflection_measured_angles={!r}".format(
+                self.reflection_measured_angles
+            )
+        )
+        info.append(
+            "reflection_theoretical_angles={!r}".format(
+                self.reflection_theoretical_angles
+            )
+        )
+        return "{}({})".format(self.__class__.__name__, ", ".join(info))
