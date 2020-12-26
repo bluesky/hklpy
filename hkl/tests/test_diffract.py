@@ -5,6 +5,8 @@ import numpy.testing
 from ophyd import Component as Cpt
 from ophyd import (PseudoSingle, SoftPositioner)
 
+import pint
+
 import gi
 gi.require_version('Hkl', '5.0')
 # NOTE: MUST call gi.require_version() BEFORE import hkl
@@ -127,7 +129,17 @@ def test_energy_units(fourc):
 
     eV = 931
     fourc.energy.put(eV)
+    numpy.testing.assert_almost_equal(fourc.energy.get(), eV)
+    numpy.testing.assert_almost_equal(fourc.calc.energy, eV/1000)
+
+    # issue #79
+    fourc.energy_units.put("eV")
+    fourc.energy_offset.put(0)
+    eV = 1746
+    fourc.energy.put(eV)
+    numpy.testing.assert_almost_equal(fourc.calc.energy, eV/1000)
     numpy.testing.assert_almost_equal(
-        fourc.energy.get(), eV)
-    numpy.testing.assert_almost_equal(
-        fourc.calc.energy, eV/1000)
+        pint.Quantity(fourc.calc.energy, "keV").to(
+            fourc.energy_units.get()).magnitude,
+        fourc.energy.get(),
+        )
