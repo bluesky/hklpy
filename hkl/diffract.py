@@ -35,6 +35,11 @@ SPECIAL-USE DIFFRACTOMETER GEOMETRIES
     ~SoleilSixsMed1p2
     ~SoleilSixsMed2p2
 
+OTHER
+
+.. autosummary::
+
+    ~Constraint
 """
 
 from ophyd import Component as Cpt
@@ -45,6 +50,7 @@ from ophyd.pseudopos import pseudo_position_argument
 from ophyd.pseudopos import real_position_argument
 from ophyd.signal import ArrayAttributeSignal
 from ophyd.signal import AttributeSignal
+import collections
 import logging
 import numpy
 import pint
@@ -56,8 +62,15 @@ from . import calc
 logger = logging.getLogger(__name__)
 
 
+Constraint = collections.namedtuple(
+    "Constraint",
+    ("low_limit", "high_limit", "value", "fit"))
+
+
 class Diffractometer(PseudoPositioner):
     """Diffractometer pseudopositioner
+
+    OPERATIONS
 
     .. autosummary::
 
@@ -65,10 +78,23 @@ class Diffractometer(PseudoPositioner):
         ~engine
         ~forward
         ~inverse
+
+    REPORTING
+
+    .. autosummary::
+
         ~pa
         ~wh
-        ~_energy_changed
-        ~_update_calc_energy
+
+    CONSTRAINTS
+
+    .. autosummary::
+
+        ~applyConstraints
+        ~forwardSolutionsTable
+        ~resetConstraints
+        ~showConstraints
+        ~undoLastConstraints
 
     This has a corresponding calculation engine from **hklpy** that does
     forward and inverse calculations.
@@ -249,6 +275,8 @@ class Diffractometer(PseudoPositioner):
             self._energy_units_changed, event_type=Signal.SUB_VALUE
         )
 
+        self._constraints_stack = []
+
     @property
     def _calc_energy_update_permitted(self):
         """return boolean `True` if permitted"""
@@ -257,7 +285,9 @@ class Diffractometer(PseudoPositioner):
 
     def _energy_changed(self, value=None, **kwargs):
         """
-        Callback indicating that the energy signal was updated
+        Callback indicating that the energy signal was updated.
+
+        Do NOT call this method directly.
 
         .. note::
             The `energy` signal is subscribed to this method
@@ -276,7 +306,9 @@ class Diffractometer(PseudoPositioner):
 
     def _energy_offset_changed(self, value=None, **kwargs):
         """
-        Callback indicating that the energy offset signal was updated
+        Callback indicating that the energy offset signal was updated.
+
+        Do NOT call this method directly.
 
         .. note::
             The `energy_offset` signal is subscribed to this method
@@ -301,7 +333,9 @@ class Diffractometer(PseudoPositioner):
 
     def _energy_units_changed(self, value=None, **kwargs):
         """
-        Callback indicating that the energy units signal was updated
+        Callback indicating that the energy units signal was updated.
+
+        Do NOT call this method directly.
 
         .. note::
             The `energy_units` signal is subscribed to this method
@@ -324,7 +358,9 @@ class Diffractometer(PseudoPositioner):
 
     def _update_calc_energy(self, value=None, **kwargs):
         """
-        writes self.calc.energy from value or self.energy
+        Writes self.calc.energy from value or self.energy.
+
+        Do NOT call this method directly.
         """
         if not self.connected:
             logger.warning(
@@ -619,6 +655,68 @@ class Diffractometer(PseudoPositioner):
             print(table)
 
         return table
+
+    def applyConstraints(self, constraints):
+        """
+        Constrain the diffractometer's forward solutions.
+
+        This action will first the current constraints onto
+        a stack, enabling both *undo* and *reset* features.
+        """
+        self._push_current_constraints()
+        self._set_constraints(constraints)
+
+    def resetConstraints(self):
+        """Set constraints back to initial settings."""
+        if len(self._constraints_stack) > 0:
+            self._set_constraints(self._constraints_stack[0])
+            self._constraints_stack = []
+
+    def showConstraints(self, fmt="simple", printing=True):
+        """Print the current constraints in a table."""
+        tbl = pyRestTable.Table()
+        tbl.labels = "axis value low_limit high_limit fit".split()
+        for m in self.real_positioners._fields:
+            tbl.addRow((
+                m,
+                self.calc[m].value,
+                *self.calc[m].limits,
+                self.calc[m].fit))
+
+        if printing:
+            print(tbl.reST(fmt=fmt))
+
+        return tbl
+
+    def undoLastConstraints(self):
+        """Restore previous constraints (pop current from stack)."""
+        if len(self._constraints_stack) > 0:
+            self._set_constraints(self._constraints_stack.pop())
+
+    def _push_current_constraints(self):
+        """Push current constraints onto the stack."""
+        constraints = {
+            m: Constraint(
+                *self.calc[m].limits,
+                self.calc[m].value,
+                self.calc[m].fit)
+            for m in self.real_positioners._fields
+        }
+        self._constraints_stack.append(constraints)
+
+    def _set_constraints(self, constraints):
+        """Set diffractometer's constraints."""
+        for axis, constraint in constraints.items():
+            try:
+                # assume a Constraint (namedtuple)
+                self.calc[axis].limits = (constraint.low_limit, constraint.high_limit)
+                self.calc[axis].value = constraint.value
+                self.calc[axis].fit = constraint.fit
+            except AttributeError:
+                # accept a plain tuple
+                self.calc[axis].limits = (constraint[0], constraint[1])
+                self.calc[axis].value = constraint[2]
+                self.calc[axis].fit = constraint[3]
 
 
 class E4CH(Diffractometer):

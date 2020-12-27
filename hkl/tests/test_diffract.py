@@ -10,6 +10,7 @@ gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
 from hkl.calc import A_KEV
 from hkl.diffract import E4CV
+from hkl.diffract import Constraint
 
 
 class Fourc(E4CV):
@@ -277,3 +278,54 @@ def test_change_energy_units(fourc):
     fourc.energy.put(8000)
     numpy.testing.assert_approx_equal(fourc.calc.energy, 8.02)
     numpy.testing.assert_approx_equal(fourc.energy.get(), 8000)
+
+
+def test_showConstraints(fourc):
+    received = str(fourc.showConstraints(printing=False)).splitlines()
+    expected = [
+        "===== ===== ========= ========== ====",
+        "axis  value low_limit high_limit fit ",
+        "===== ===== ========= ========== ====",
+        "omega 0.0   -180.0    180.0      True",
+        "chi   0.0   -180.0    180.0      True",
+        "phi   0.0   -180.0    180.0      True",
+        "tth   0.0   -180.0    180.0      True",
+        "===== ===== ========= ========== ====",
+    ]
+    for r, e in zip(received, expected):
+        assert r == e
+
+
+def test_applyConstraints(fourc):
+    def check(reflection, expected_tuple):
+        sol = fourc.forward(1, 0, 0)
+        # Round to nearest int since we don't care about
+        # minor mistmatches, we just want the right sector.
+        for i, expect in enumerate(expected_tuple):
+            assert round(sol[i]) == expect
+
+    # test with the default settings
+    check((1, 0, 0), (-30, 0, -90, -60))
+
+    fourc.applyConstraints(
+        {
+            "tth": Constraint(0, 180, 0, True),
+            "chi": Constraint(0, 180, 0, True),
+        }
+    )
+    check((1, 0, 0), (30, 0, 90, 60))
+
+    # look for a different reflection
+    fourc.applyConstraints(
+        {
+            # use a plain tuple instead of Constraint()
+            "tth": (-180, 0, 0, True),
+        }
+    )
+    check((-1, 0, 0), (-30, 0, -90, -60))
+
+    fourc.undoLastConstraints()
+    check((-1, 0, 0), (30, 0, 90, 60))
+
+    fourc.resetConstraints()
+    check((1, 0, 0), (-30, 0, -90, -60))
