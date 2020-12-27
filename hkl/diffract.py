@@ -127,32 +127,58 @@ class Diffractometer(PseudoPositioner):
     calc_class = None
 
     # see: Documentation has examples to use an EPICS PV for energy.
-    energy = Cpt(Signal, value=8.0, doc='Energy (in keV)')
+    energy = Cpt(Signal, value=8.0, doc="Energy (in keV)")
     energy_units = Cpt(Signal, value="keV")
     energy_offset = Cpt(Signal, value=0)
     energy_update_calc_flag = Cpt(Signal, value=True)
 
-    sample_name = Cpt(AttributeSignal, attr='calc.sample_name',
-                      doc='Sample name')
-    lattice = Cpt(ArrayAttributeSignal, attr='calc.sample.lattice',
-                  doc='Sample lattice')
-    lattice_reciprocal = Cpt(AttributeSignal, attr='calc.sample.reciprocal',
-                             doc='Reciprocal lattice')
-    U = Cpt(AttributeSignal, attr='calc.sample.U', doc='U matrix')
-    UB = Cpt(AttributeSignal, attr='calc.sample.UB', doc='UB matrix')
-    reflections = Cpt(ArrayAttributeSignal, attr='calc.sample.reflections',
-                      doc='Reflections')
-    ux = Cpt(AttributeSignal, attr='calc.sample.ux.value',
-             doc='ux portion of the U matrix')
-    uy = Cpt(AttributeSignal, attr='calc.sample.uy.value',
-             doc='uy portion of the U matrix')
-    uz = Cpt(AttributeSignal, attr='calc.sample.uz.value',
-             doc='uz portion of the U matrix')
+    sample_name = Cpt(
+        AttributeSignal, attr="calc.sample_name", doc="Sample name"
+    )
+    lattice = Cpt(
+        ArrayAttributeSignal,
+        attr="calc.sample.lattice",
+        doc="Sample lattice",
+    )
+    lattice_reciprocal = Cpt(
+        AttributeSignal,
+        attr="calc.sample.reciprocal",
+        doc="Reciprocal lattice",
+    )
+    U = Cpt(AttributeSignal, attr="calc.sample.U", doc="U matrix")
+    UB = Cpt(AttributeSignal, attr="calc.sample.UB", doc="UB matrix")
+    reflections = Cpt(
+        ArrayAttributeSignal,
+        attr="calc.sample.reflections",
+        doc="Reflections",
+    )
+    ux = Cpt(
+        AttributeSignal,
+        attr="calc.sample.ux.value",
+        doc="ux portion of the U matrix",
+    )
+    uy = Cpt(
+        AttributeSignal,
+        attr="calc.sample.uy.value",
+        doc="uy portion of the U matrix",
+    )
+    uz = Cpt(
+        AttributeSignal,
+        attr="calc.sample.uz.value",
+        doc="uz portion of the U matrix",
+    )
 
-    def __init__(self, prefix, calc_kw=None, decision_fcn=None,
-                 calc_inst=None, *, configuration_attrs=None,
-                 read_attrs=None,
-                 **kwargs):
+    def __init__(
+        self,
+        prefix,
+        calc_kw=None,
+        decision_fcn=None,
+        calc_inst=None,
+        *,
+        configuration_attrs=None,
+        read_attrs=None,
+        **kwargs,
+    ):
         if calc_inst is not None:
             if not isinstance(calc_inst, self.calc_class):
                 raise ValueError(
@@ -189,7 +215,7 @@ class Diffractometer(PseudoPositioner):
             prefix,
             read_attrs=read_attrs,
             configuration_attrs=configuration_attrs,
-            **kwargs
+            **kwargs,
         )
 
         if read_attrs is None:
@@ -200,13 +226,16 @@ class Diffractometer(PseudoPositioner):
             )
 
         self.energy.subscribe(
-            self._energy_changed, event_type=Signal.SUB_VALUE)
+            self._energy_changed, event_type=Signal.SUB_VALUE
+        )
 
         self.energy_offset.subscribe(
-            self._energy_offset_changed, event_type=Signal.SUB_VALUE)
+            self._energy_offset_changed, event_type=Signal.SUB_VALUE
+        )
 
         self.energy_units.subscribe(
-            self._energy_units_changed, event_type=Signal.SUB_VALUE)
+            self._energy_units_changed, event_type=Signal.SUB_VALUE
+        )
 
     @property
     def _calc_energy_update_permitted(self):
@@ -225,7 +254,9 @@ class Diffractometer(PseudoPositioner):
         if not self.connected:
             logger.warning(
                 "%s not fully connected, %s.calc.energy not updated",
-                self.name, self.name)
+                self.name,
+                self.name,
+            )
             return
 
         if self._calc_energy_update_permitted:
@@ -245,19 +276,15 @@ class Diffractometer(PseudoPositioner):
                     "%s not fully connected,"
                     " '%s.calc.energy_offset' not updated"
                 ),
-                self.name, self.name)
+                self.name,
+                self.name,
+            )
             return
 
         # TODO: is there a loop back through _update_calc_energy?
-        # raise NotImplementedError(f"units = {self.energy_units.get()}")
-        try:
-            energy = pint.Quantity(
-                self.calc.energy, "keV"
-            ).to(
-                self.energy_units.get()
-            )
-        except Exception as exc:
-            raise NotImplementedError(f"units = {self.energy_units.get()}: {exc}")
+        energy = pint.Quantity(self.calc.energy, "keV").to(
+            self.energy_units.get()
+        )
         self.energy.put(energy.magnitude - value)
 
     def _energy_units_changed(self, value=None, **kwargs):
@@ -274,7 +301,9 @@ class Diffractometer(PseudoPositioner):
                     "%s not fully connected,"
                     " '%s.calc.energy_units' not updated"
                 ),
-                self.name, self.name)
+                self.name,
+                self.name,
+            )
             return
 
         # TODO: is there a loop back through _update_calc_energy?
@@ -288,7 +317,9 @@ class Diffractometer(PseudoPositioner):
         if not self.connected:
             logger.warning(
                 "%s not fully connected, %s.calc.energy not updated",
-                self.name, self.name)
+                self.name,
+                self.name,
+            )
             return
 
         # use either supplied value or get from signal
@@ -303,9 +334,7 @@ class Diffractometer(PseudoPositioner):
             keV = pint.Quantity(value, units).to("keV")
             value = keV.magnitude
 
-        logger.debug(
-            "setting %s.calc.energy = %f (keV)",
-            self.name, value)
+        logger.debug("setting %s.calc.energy = %f (keV)", self.name, value)
         self.calc.energy = value
         self._update_position()
 
@@ -316,7 +345,7 @@ class Diffractometer(PseudoPositioner):
 
     @property
     def engine(self):
-        '''The calculation engine associated with the diffractometer'''
+        """The calculation engine associated with the diffractometer"""
         return self.calc.engine
 
     # TODO so these calculations change the internal state of the hkl
@@ -326,9 +355,10 @@ class Diffractometer(PseudoPositioner):
 
     @pseudo_position_argument
     def forward(self, pseudo):
-        solutions = self.calc.forward_iter(start=self.position, end=pseudo,
-                                           max_iters=100)
-        logger.debug('pseudo to real: {}'.format(solutions))
+        solutions = self.calc.forward_iter(
+            start=self.position, end=pseudo, max_iters=100
+        )
+        logger.debug("pseudo to real: {}".format(solutions))
         return self._decision_fcn(pseudo, solutions)
 
     @real_position_argument
@@ -355,9 +385,7 @@ class Diffractometer(PseudoPositioner):
                     if p in self.real_positioners:
                         p.check_value(target)
                 else:
-                    raise KeyError(
-                        f"{axis} not in {self.name}"
-                    )
+                    raise KeyError(f"{axis} not in {self.name}")
 
             pos = [
                 pos.get(p.attr_name, p.position)
@@ -365,11 +393,136 @@ class Diffractometer(PseudoPositioner):
             ]
         super().check_value(pos)
 
-    def pa(self, printing=True):
+    def pa(self, all_samples=False, printing=True):
         """
         Print All the diffractometer settings.
+
+        EXAMPLE::
+
+            In [3]: e4cv.pa()
+            ===================== =========
+            ...
         """
-        pass  # TODO
+
+        def addTable(tbl):
+            return str(tbl).strip()
+
+        def Package(**kwargs):
+            return ", ".join([f"{k}={v}" for k, v in kwargs.items()])
+
+        table = pyRestTable.Table()
+        table.labels = "term value".split()
+
+        table.addRow(("diffractometer", self.name))
+        table.addRow(("geometry", self.calc._geometry.name_get()))
+        table.addRow(("class", self.__class__.__name__))
+        table.addRow(
+            (
+                f"energy ({self.energy_units.get()})",
+                float(f"{self.energy.get():.5f}"),
+            )
+        )
+        table.addRow(
+            (
+                f"energy offset ({self.energy_units.get()})",
+                self.energy_offset.get(),
+            )
+        )
+        table.addRow(
+            ("wavelength (angstrom)", float(f"{self.calc.wavelength:.5f}"))
+        )
+        table.addRow(
+            ("calc energy (keV)", float(f"{self.calc.energy:.5f}"))
+        )
+        table.addRow(
+            (
+                "calc wavelength (angstrom)",
+                float(f"{self.calc.wavelength:.5f}"),
+            )
+        )
+        table.addRow(("calc engine", self.calc.engine.name))
+        table.addRow(("mode", self.calc.engine.mode))
+
+        pt = pyRestTable.Table()
+        pt.labels = "name value".split()
+        if self.calc._axis_name_to_original:
+            pt.addLabel("original name")
+        for item in self.real_positioners:
+            row = [item.attr_name, f"{item.position:.5f}"]
+            k = self.calc._axis_name_to_original.get(item.attr_name)
+            if k is not None:
+                row.append(k)
+            pt.addRow(row)
+        table.addRow(("positions", addTable(pt)))
+
+        # t = self.showConstraints(printing=False)
+        # table.addRow(("constraints", addTable(t)))
+
+        if all_samples:
+            samples = self.calc._samples.values()
+        else:
+            samples = [self.calc._sample]
+        for sample in samples:
+            t = pyRestTable.Table()
+            t.labels = "term value".split()
+            nm = sample.name
+            if all_samples and sample == self.calc.sample:
+                nm += " (*)"
+
+            t.addRow(
+                (
+                    "unit cell edges",
+                    Package(
+                        **{
+                            k: getattr(sample.lattice, k)
+                            for k in "a b c".split()
+                        }
+                    ),
+                )
+            )
+            t.addRow(
+                (
+                    "unit cell angles",
+                    Package(
+                        **{
+                            k: getattr(sample.lattice, k)
+                            for k in "alpha beta gamma".split()
+                        }
+                    ),
+                )
+            )
+
+            for i, ref in enumerate(sample._sample.reflections_get()):
+                h, k, l = ref.hkl_get()
+                pos_arr = ref.geometry_get().axis_values_get(
+                    self.calc._units
+                )
+                t.addRow(
+                    (f"ref {i+1} (hkl)", Package(**dict(h=h, k=k, l=l)))
+                )
+                t.addRow(
+                    (
+                        f"ref {i+1} positioners",
+                        Package(
+                            **{
+                                k: f"{v:.5f}"
+                                for k, v in zip(
+                                    self.calc.physical_axis_names, pos_arr
+                                )
+                            }
+                        ),
+                    )
+                )
+
+            t.addRow(("[U]", sample.U))
+            t.addRow(("[UB]", sample.UB))
+
+            table.addRow((f"sample: {nm}", addTable(t)))
+
+        if printing:
+            print(table)
+
+        return table
 
     def wh(self, printing=True):
         """
@@ -412,21 +565,27 @@ class Diffractometer(PseudoPositioner):
         table.labels = "term value axis_type".split()
         table.addRow(("diffractometer", self.name, ""))
         table.addRow(("sample name", self.calc.sample.name, ""))
-        table.addRow((
-            f"energy ({self.energy_units.get()})",
-            float(f"{self.energy.get():.5f}"),
-            ""
-        ))
-        table.addRow((
-            f"energy offset ({self.energy_units.get()})",
-            self.energy_offset.get(),
-            ""
-        ))
-        table.addRow((
-            "wavelength (angstrom)",
-            float(f"{self.calc.wavelength:.5f}"),
-            ""
-        ))
+        table.addRow(
+            (
+                f"energy ({self.energy_units.get()})",
+                float(f"{self.energy.get():.5f}"),
+                "",
+            )
+        )
+        table.addRow(
+            (
+                f"energy offset ({self.energy_units.get()})",
+                self.energy_offset.get(),
+                "",
+            )
+        )
+        table.addRow(
+            (
+                "wavelength (angstrom)",
+                float(f"{self.calc.wavelength:.5f}"),
+                "",
+            )
+        )
         table.addRow(("calc engine", self.calc.engine.name, ""))
         table.addRow(("mode", self.calc.engine.mode, ""))
 

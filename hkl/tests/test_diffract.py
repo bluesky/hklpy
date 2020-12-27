@@ -133,6 +133,33 @@ def test_energy_units(fourc):
         fourc.calc.energy, eV/1000)
 
 
+def test_pa(fourc):
+    expected = [
+        # ["term", "value"],
+        ["diffractometer", "fourc"],
+        ["geometry", "E4CV"],
+        ["class", "Fourc"],
+        ["energy (keV)", 8.0],
+        ["energy offset (keV)", 0.0],
+        ["wavelength (angstrom)", 1.54980],
+        ["calc energy (keV)", 8.0],
+        ["calc wavelength (angstrom)", 1.54980],
+        ["calc engine", "hkl"],
+        ["mode", "bissector"],
+        # --- row-by-row testing stops here
+        ["positions", 0.0],     # FIXME: this cell holds an embedded table
+        # ["constraints", 0.0],   # FIXME: this cell will hold an embedded table
+        ["sample", 0.0],        # FIXME: this cell holds an embedded table
+    ]
+    table = fourc.pa(printing=False)
+    assert len(expected) == len(table.rows)
+    for i, row in enumerate(table.rows):
+        if row[0] == "positions":
+            break
+        for c in range(2):
+            assert expected[i][c] == row[c]
+
+
 def test_wh(fourc):
     expected = [
         # ["term", "value"],
@@ -152,7 +179,7 @@ def test_wh(fourc):
         ["tth", 0],
     ]
     table = fourc.wh(printing=False)
-    assert len(table.rows) == len(expected)
+    assert len(expected) == len(table.rows)
     for i, row in enumerate(table.rows):
         for c in range(2):
             assert expected[i][c] == row[c]
@@ -161,7 +188,7 @@ def test_wh(fourc):
     expected[2] = ["energy (eV)", 8000.0]
     expected[3] = ["energy offset (eV)", 0.0]
     table = fourc.wh(printing=False)
-    assert len(table.rows) == len(expected)
+    assert len(expected) == len(table.rows)
     for i, row in enumerate(table.rows):
         for c in range(2):
             assert expected[i][c] == row[c]
