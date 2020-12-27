@@ -132,6 +132,13 @@ class Diffractometer(PseudoPositioner):
     energy_offset = Cpt(Signal, value=0)
     energy_update_calc_flag = Cpt(Signal, value=True)
 
+    geometry_name = Cpt(
+        AttributeSignal, attr="calc.geometry_name", doc="Diffractometer Geometry name"
+    )
+    class_name = Cpt(
+        AttributeSignal, attr="__class__.__name__", doc="Diffractometer class name"
+    )
+
     sample_name = Cpt(
         AttributeSignal, attr="calc.sample_name", doc="Sample name"
     )
@@ -414,8 +421,8 @@ class Diffractometer(PseudoPositioner):
         table.labels = "term value".split()
 
         table.addRow(("diffractometer", self.name))
-        table.addRow(("geometry", self.calc._geometry.name_get()))
-        table.addRow(("class", self.__class__.__name__))
+        table.addRow(("geometry", self.geometry_name.get()))
+        table.addRow(("class", self.class_name.get()))
         table.addRow(
             (
                 f"energy ({self.energy_units.get()})",
