@@ -1,10 +1,9 @@
-
 import epics
 import logging
 import unittest
 
 
-logger = logging.getLogger('ophyd_session_test')
+logger = logging.getLogger("ophyd_session_test")
 
 
 def setup_package():
@@ -20,7 +19,7 @@ def main(is_main):
     # logging.basicConfig(format=fmt, level=logging.DEBUG)
     epics.ca.use_initial_context()
 
-    logger = logging.getLogger('logger')
+    logger = logging.getLogger("logger")
     logger.setLevel(logging.INFO)
 
     if is_main:
