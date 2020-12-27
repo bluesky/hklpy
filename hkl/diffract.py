@@ -202,6 +202,12 @@ class Diffractometer(PseudoPositioner):
         self.energy.subscribe(
             self._energy_changed, event_type=Signal.SUB_VALUE)
 
+        self.energy_offset.subscribe(
+            self._energy_offset_changed, event_type=Signal.SUB_VALUE)
+
+        self.energy_units.subscribe(
+            self._energy_units_changed, event_type=Signal.SUB_VALUE)
+
     @property
     def _calc_energy_update_permitted(self):
         """return boolean `True` if permitted"""
@@ -225,6 +231,56 @@ class Diffractometer(PseudoPositioner):
         if self._calc_energy_update_permitted:
             self._update_calc_energy(value)
 
+    def _energy_offset_changed(self, value=None, **kwargs):
+        """
+        Callback indicating that the energy offset signal was updated
+
+        .. note::
+            The `energy_offset` signal is subscribed to this method
+            in the :meth:`Diffractometer.__init__()` method.
+        """
+        if not self.connected:
+            logger.warning(
+                (
+                    "%s not fully connected,"
+                    " '%s.calc.energy_offset' not updated"
+                ),
+                self.name, self.name)
+            return
+
+        # TODO: is there a loop back through _update_calc_energy?
+        # raise NotImplementedError(f"units = {self.energy_units.get()}")
+        try:
+            energy = pint.Quantity(
+                self.calc.energy, "keV"
+            ).to(
+                self.energy_units.get()
+            )
+        except Exception as exc:
+            raise NotImplementedError(f"units = {self.energy_units.get()}: {exc}")
+        self.energy.put(energy.magnitude - value)
+
+    def _energy_units_changed(self, value=None, **kwargs):
+        """
+        Callback indicating that the energy units signal was updated
+
+        .. note::
+            The `energy_units` signal is subscribed to this method
+            in the :meth:`Diffractometer.__init__()` method.
+        """
+        if not self.connected:
+            logger.warning(
+                (
+                    "%s not fully connected,"
+                    " '%s.calc.energy_units' not updated"
+                ),
+                self.name, self.name)
+            return
+
+        # TODO: is there a loop back through _update_calc_energy?
+        energy = pint.Quantity(self.calc.energy, "keV").to(value)
+        self.energy.put(energy.magnitude - self.energy_offset.get())
+
     def _update_calc_energy(self, value=None, **kwargs):
         """
         writes self.calc.energy from value or self.energy
@@ -236,7 +292,7 @@ class Diffractometer(PseudoPositioner):
             return
 
         # use either supplied value or get from signal
-        value = value or self.energy.get()
+        value = float(value or self.energy.get())
 
         # energy_offset has same units as energy
         value += self.energy_offset.get()
@@ -328,6 +384,7 @@ class Diffractometer(PseudoPositioner):
             diffractometer        e4cv
             sample name           main
             energy (keV)          8.0509
+            energy offset (keV)   0.0
             wavelength (angstrom) 1.54000
             calc engine           hkl
             mode                  bissector
@@ -358,6 +415,11 @@ class Diffractometer(PseudoPositioner):
         table.addRow((
             f"energy ({self.energy_units.get()})",
             float(f"{self.energy.get():.5f}"),
+            ""
+        ))
+        table.addRow((
+            f"energy offset ({self.energy_units.get()})",
+            self.energy_offset.get(),
             ""
         ))
         table.addRow((

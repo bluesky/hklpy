@@ -139,6 +139,7 @@ def test_wh(fourc):
         ["diffractometer", "fourc"],
         ["sample name", "main"],
         ["energy (keV)", 8.0],
+        ["energy offset (keV)", 0.0],
         ["wavelength (angstrom)", 1.54980],
         ["calc engine", "hkl"],
         ["mode", "bissector"],
@@ -156,10 +157,44 @@ def test_wh(fourc):
         for c in range(2):
             assert expected[i][c] == row[c]
 
-    # fourc.energy_units.put("eV")
-    # expected[2] = ["energy (eV)", 8000.0]
-    # table = fourc.wh(printing=False)
-    # assert len(table.rows) == len(expected)
-    # for i, row in enumerate(table.rows):
-    #     for c in range(2):
-    #         assert expected[i][c] == row[c]
+    fourc.energy_units.put("eV")
+    expected[2] = ["energy (eV)", 8000.0]
+    expected[3] = ["energy offset (eV)", 0.0]
+    table = fourc.wh(printing=False)
+    assert len(table.rows) == len(expected)
+    for i, row in enumerate(table.rows):
+        for c in range(2):
+            assert expected[i][c] == row[c]
+
+def test_change_energy_units(fourc):
+    assert fourc.energy.get() == 8
+    assert fourc.energy_units.get() == "keV"
+
+    fourc.energy_units.put("eV")
+    assert fourc.energy.get() == 8000
+
+    fourc.energy_units.put("fJ")  # femtoJoules
+    numpy.testing.assert_approx_equal(
+        fourc.energy.get(),
+        1.28174,
+        significant=5
+    )
+
+    fourc.energy_units.put("keV")
+    fourc.energy.put(8)
+    fourc.energy_offset.put(0.015)
+    assert fourc.calc.energy == 8.0
+    assert fourc.energy.get() == 7.985
+    fourc.energy.put(8)
+    assert fourc.calc.energy == 8.015
+    assert fourc.energy.get() == 8
+
+    fourc.energy_units.put("eV")
+    numpy.testing.assert_approx_equal(fourc.calc.energy, 8.015)
+    numpy.testing.assert_approx_equal(fourc.energy.get(), 8014.985)
+    fourc.energy_offset.put(20)
+    numpy.testing.assert_approx_equal(fourc.calc.energy, 8.015)
+    numpy.testing.assert_approx_equal(fourc.energy.get(), 7995)
+    fourc.energy.put(8000)
+    numpy.testing.assert_approx_equal(fourc.calc.energy, 8.02)
+    numpy.testing.assert_approx_equal(fourc.energy.get(), 8000)
