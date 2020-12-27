@@ -143,21 +143,52 @@ def test_pa(fourc):
         ["calc engine", "hkl"],
         ["mode", "bissector"],
         # --- row-by-row testing stops here
-        ["positions", 0.0],  # FIXME: this cell holds an embedded table
-        # ["constraints", 0.0],   # FIXME: this cell will hold an embedded table
-        ["sample", 0.0],  # FIXME: this cell holds an embedded table
+        ["real positioners", 0.0],  # see below for specific test
+        ["sample", 0.0],  # see below for specific test
     ]
     table = fourc.pa(printing=False)
     assert len(expected) == len(table.rows)
     for i, row in enumerate(table.rows):
-        if row[0] == "positions":
+        if row[0] == "real positioners":
             break
         for c in range(2):
             assert expected[i][c] == row[c]
 
-    # TODO: positions
-    # TODO: constraints
-    # TODO: sample
+    # real positioners, table row 10
+    expected = """
+    ===== ===== ==== ========= ========== ========
+    name  value fit  low_limit high_limit inverted
+    ===== ===== ==== ========= ========== ========
+    omega 0     True -180.0    180.0      False
+    chi   0     True -180.0    180.0      False
+    phi   0     True -180.0    180.0      False
+    tth   0     True -180.0    180.0      False
+    ===== ===== ==== ========= ========== ========
+    """.strip().splitlines()
+    sub_table = table.rows[10][1].splitlines()
+    assert len(expected) == len(sub_table)
+    for i in range(len(expected)):
+        assert expected[i].strip() == sub_table[i].strip()
+
+    # sample, table row 11
+    expected = """
+    ============================= =================================
+    term                          value
+    ============================= =================================
+    unit cell lengths (angstroms) a=1.54, b=1.54, c=1.54
+    unit cell angles (degrees)    alpha=90.0, beta=90.0, gamma=90.0
+    [U]                           [[1. 0. 0.]
+                                   [0. 1. 0.]
+                                   [0. 0. 1.]]
+    [UB]                          [[ 4.07999 -0.      -0.     ]
+                                   [ 0.       4.07999 -0.     ]
+                                   [ 0.       0.       4.07999]]
+    ============================= =================================
+    """.strip().splitlines()
+    sub_table = table.rows[11][1].splitlines()
+    assert len(expected) == len(sub_table)
+    for i in range(len(expected)):
+        assert expected[i].strip() == sub_table[i].strip()
 
 
 def test_wh(fourc):
@@ -206,21 +237,33 @@ def test_change_energy_units(fourc):
         fourc.energy.get(), 1.28174, significant=5
     )
 
+    # changes fourc.energy, does not change fourc.calc.energy
     fourc.energy_units.put("keV")
+
+    # changes fourc.energy, changes fourc.calc.energy
     fourc.energy.put(8)
+
+    # changes fourc.energy, does not change fourc.calc.energy
     fourc.energy_offset.put(0.015)
     assert fourc.calc.energy == 8.0
     assert fourc.energy.get() == 7.985
+
+    # changes fourc.energy, changes fourc.calc.energy
     fourc.energy.put(8)
     assert fourc.calc.energy == 8.015
     assert fourc.energy.get() == 8
 
+    # changes fourc.energy, does not change fourc.calc.energy
     fourc.energy_units.put("eV")
     numpy.testing.assert_approx_equal(fourc.calc.energy, 8.015)
     numpy.testing.assert_approx_equal(fourc.energy.get(), 8014.985)
+
+    # changes fourc.energy, does not change fourc.calc.energy
     fourc.energy_offset.put(20)
     numpy.testing.assert_approx_equal(fourc.calc.energy, 8.015)
     numpy.testing.assert_approx_equal(fourc.energy.get(), 7995)
+
+    # changes fourc.energy, changes fourc.calc.energy
     fourc.energy.put(8000)
     numpy.testing.assert_approx_equal(fourc.calc.energy, 8.02)
     numpy.testing.assert_approx_equal(fourc.energy.get(), 8000)
