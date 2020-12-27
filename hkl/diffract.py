@@ -406,45 +406,7 @@ class Diffractometer(PseudoPositioner):
 
     def pa(self, all_samples=False, printing=True):
         """
-        Print All the diffractometer settings.
-
-        EXAMPLE::
-        ========================== =================================================================================
-        term                       value
-        ========================== =================================================================================
-        diffractometer             fourc
-        geometry                   E4CV
-        class                      Fourc
-        energy (keV)               8.0
-        energy offset (keV)        0
-        wavelength (angstrom)      1.54
-        calc energy (keV)          8.05092
-        calc wavelength (angstrom) 1.54
-        calc engine                hkl
-        mode                       bissector
-        positions                  ===== =======
-                                   name  value
-                                   ===== =======
-                                   omega 0.00000
-                                   chi   0.00000
-                                   phi   0.00000
-                                   tth   0.00000
-                                   ===== =======
-                                   ============================= ===================================================
-                                   term                          value
-                                   ============================= ===================================================
-                                   unit cell lengths (angstroms) a=1.54, b=1.54, c=1.54
-                                   unit cell angles (degrees)    alpha=90.0, beta=90.0, gamma=90.0
-                                   [U]                           [[1. 0. 0.]
-                                                                  [0. 1. 0.]
-                                                                  [0. 0. 1.]]
-                                   [UB]                          [[ 4.07999046e+00 -2.49827363e-16 -2.49827363e-16]
-                                                                  [ 0.00000000e+00  4.07999046e+00 -2.49827363e-16]
-                                                                  [ 0.00000000e+00  0.00000000e+00  4.07999046e+00]]
-                                   ============================= ===================================================
-        ========================== =================================================================================
-
-        Out[3]: <pyRestTable.rest_table.Table at 0x7f2c14764c40>
+        Print All the diffractometer settings as a table.
         """
 
         def addTable(tbl):
