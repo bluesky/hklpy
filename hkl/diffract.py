@@ -37,12 +37,17 @@ SPECIAL-USE DIFFRACTOMETER GEOMETRIES
 
 """
 
+from ophyd import Component as Cpt
+from ophyd import PositionerBase
+from ophyd import PseudoPositioner
+from ophyd import Signal
+from ophyd.pseudopos import pseudo_position_argument
+from ophyd.pseudopos import real_position_argument
+from ophyd.signal import ArrayAttributeSignal
+from ophyd.signal import AttributeSignal
 import logging
-
-from ophyd import Signal, PseudoPositioner, Component as Cpt
-from ophyd.pseudopos import pseudo_position_argument, real_position_argument
-from ophyd.signal import AttributeSignal, ArrayAttributeSignal
 import pint
+import pyRestTable
 
 from . import calc
 
