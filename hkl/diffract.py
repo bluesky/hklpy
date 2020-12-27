@@ -63,8 +63,14 @@ logger = logging.getLogger(__name__)
 
 
 Constraint = collections.namedtuple(
-    "Constraint",
-    ("low_limit", "high_limit", "value", "fit"))
+    "Constraint",  # for use in calculating possible forward solutions
+    (
+        "low_limit",  # lowest value allowed when fit=True
+        "high_limit",  # highest value allowed when fit=True
+        "value",  # nominal value when fit=False
+        "fit",  # boolean, True if should fit this positioner
+    ),
+)
 
 
 class Diffractometer(PseudoPositioner):
@@ -473,14 +479,9 @@ class Diffractometer(PseudoPositioner):
         table.addRow(
             ("wavelength (angstrom)", round(self.calc.wavelength, 5))
         )
+        table.addRow(("calc energy (keV)", round(self.calc.energy, 5)))
         table.addRow(
-            ("calc energy (keV)", round(self.calc.energy, 5))
-        )
-        table.addRow(
-            (
-                "calc wavelength (angstrom)",
-                round(self.calc.wavelength, 5),
-            )
+            ("calc wavelength (angstrom)", round(self.calc.wavelength, 5),)
         )
         table.addRow(("calc engine", self.calc.engine.name))
         table.addRow(("mode", self.calc.engine.mode))
@@ -628,11 +629,7 @@ class Diffractometer(PseudoPositioner):
             )
         )
         table.addRow(
-            (
-                "wavelength (angstrom)",
-                round(self.calc.wavelength, 5),
-                "",
-            )
+            ("wavelength (angstrom)", round(self.calc.wavelength, 5), "",)
         )
         table.addRow(("calc engine", self.calc.engine.name, ""))
         table.addRow(("mode", self.calc.engine.mode, ""))
@@ -677,11 +674,14 @@ class Diffractometer(PseudoPositioner):
         tbl = pyRestTable.Table()
         tbl.labels = "axis value low_limit high_limit fit".split()
         for m in self.real_positioners._fields:
-            tbl.addRow((
-                m,
-                self.calc[m].value,
-                *self.calc[m].limits,
-                self.calc[m].fit))
+            tbl.addRow(
+                (
+                    m,
+                    self.calc[m].value,
+                    *self.calc[m].limits,
+                    self.calc[m].fit,
+                )
+            )
 
         if printing:
             print(tbl.reST(fmt=fmt))
@@ -697,9 +697,8 @@ class Diffractometer(PseudoPositioner):
         """Push current constraints onto the stack."""
         constraints = {
             m: Constraint(
-                *self.calc[m].limits,
-                self.calc[m].value,
-                self.calc[m].fit)
+                *self.calc[m].limits, self.calc[m].value, self.calc[m].fit
+            )
             for m in self.real_positioners._fields
         }
         self._constraints_stack.append(constraints)
@@ -709,7 +708,10 @@ class Diffractometer(PseudoPositioner):
         for axis, constraint in constraints.items():
             try:
                 # assume a Constraint (namedtuple)
-                self.calc[axis].limits = (constraint.low_limit, constraint.high_limit)
+                self.calc[axis].limits = (
+                    constraint.low_limit,
+                    constraint.high_limit,
+                )
                 self.calc[axis].value = constraint.value
                 self.calc[axis].fit = constraint.fit
             except AttributeError:

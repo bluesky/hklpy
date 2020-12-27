@@ -300,7 +300,7 @@ def test_applyConstraints(fourc):
     def check(reflection, expected_tuple):
         sol = fourc.forward(1, 0, 0)
         # Round to nearest int since we don't care about
-        # minor mistmatches, we just want the right sector.
+        # minor mismatches, we just want the right sector.
         for i, expect in enumerate(expected_tuple):
             assert round(sol[i]) == expect
 
