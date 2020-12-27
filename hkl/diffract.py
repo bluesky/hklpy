@@ -46,6 +46,7 @@ from ophyd.pseudopos import real_position_argument
 from ophyd.signal import ArrayAttributeSignal
 from ophyd.signal import AttributeSignal
 import logging
+import numpy
 import pint
 import pyRestTable
 
@@ -424,7 +425,7 @@ class Diffractometer(PseudoPositioner):
         table.addRow(
             (
                 f"energy ({self.energy_units.get()})",
-                float(f"{self.energy.get():.5f}"),
+                round(self.energy.get(), 5),
             )
         )
         table.addRow(
@@ -434,34 +435,40 @@ class Diffractometer(PseudoPositioner):
             )
         )
         table.addRow(
-            ("wavelength (angstrom)", float(f"{self.calc.wavelength:.5f}"))
+            ("wavelength (angstrom)", round(self.calc.wavelength, 5))
         )
         table.addRow(
-            ("calc energy (keV)", float(f"{self.calc.energy:.5f}"))
+            ("calc energy (keV)", round(self.calc.energy, 5))
         )
         table.addRow(
             (
                 "calc wavelength (angstrom)",
-                float(f"{self.calc.wavelength:.5f}"),
+                round(self.calc.wavelength, 5),
             )
         )
         table.addRow(("calc engine", self.calc.engine.name))
         table.addRow(("mode", self.calc.engine.mode))
 
         pt = pyRestTable.Table()
-        pt.labels = "name value".split()
+        pt.labels = "name value fit low_limit high_limit inverted".split()
         if self.calc._axis_name_to_original:
             pt.addLabel("original name")
-        for item in self.real_positioners:
-            row = [item.attr_name, f"{item.position:.5f}"]
-            k = self.calc._axis_name_to_original.get(item.attr_name)
+        for axis in self.real_positioners:
+            axis_name = axis.attr_name
+            constraints = self.calc[axis_name]
+            row = [
+                axis_name,
+                round(axis.position, ndigits=5),
+                constraints.fit,
+                round(constraints.limits[0], ndigits=5),
+                round(constraints.limits[1], ndigits=5),
+                constraints.inverted,
+            ]
+            k = self.calc._axis_name_to_original.get(axis_name)
             if k is not None:
                 row.append(k)
             pt.addRow(row)
-        table.addRow(("positions", addTable(pt)))
-
-        # t = self.showConstraints(printing=False)
-        # table.addRow(("constraints", addTable(t)))
+        table.addRow(("real positioners", addTable(pt)))
 
         if all_samples:
             samples = self.calc._samples.values()
@@ -519,8 +526,8 @@ class Diffractometer(PseudoPositioner):
                     )
                 )
 
-            t.addRow(("[U]", sample.U))
-            t.addRow(("[UB]", sample.UB))
+            t.addRow(("[U]", numpy.round(sample.U, 5)))
+            t.addRow(("[UB]", numpy.round(sample.UB, 5)))
 
             table.addRow((f"sample: {nm}", addTable(t)))
 
@@ -573,7 +580,7 @@ class Diffractometer(PseudoPositioner):
         table.addRow(
             (
                 f"energy ({self.energy_units.get()})",
-                float(f"{self.energy.get():.5f}"),
+                round(self.energy.get(), 5),
                 "",
             )
         )
@@ -587,7 +594,7 @@ class Diffractometer(PseudoPositioner):
         table.addRow(
             (
                 "wavelength (angstrom)",
-                float(f"{self.calc.wavelength:.5f}"),
+                round(self.calc.wavelength, 5),
                 "",
             )
         )

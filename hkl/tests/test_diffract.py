@@ -227,26 +227,36 @@ def test_wh(fourc):
 
 def test_change_energy_units(fourc):
     assert fourc.energy.get() == 8
+    assert fourc.energy_offset.get() == 0
     assert fourc.energy_units.get() == "keV"
+    assert fourc.calc.energy == 8.0
 
+    # changes fourc.energy, does not change fourc.calc.energy
     fourc.energy_units.put("eV")
     assert fourc.energy.get() == 8000
+    assert fourc.calc.energy == 8.0
 
+    # changes fourc.energy, does not change fourc.calc.energy
     fourc.energy_units.put("fJ")  # femtoJoules
     numpy.testing.assert_approx_equal(
         fourc.energy.get(), 1.28174, significant=5
     )
+    numpy.testing.assert_approx_equal(fourc.calc.energy, 8.0)
 
     # changes fourc.energy, does not change fourc.calc.energy
     fourc.energy_units.put("keV")
+    numpy.testing.assert_approx_equal(fourc.calc.energy, 8.0)
+    numpy.testing.assert_approx_equal(fourc.energy.get(), 8.0)
 
     # changes fourc.energy, changes fourc.calc.energy
-    fourc.energy.put(8)
+    fourc.energy.put(8.014)
+    numpy.testing.assert_approx_equal(fourc.calc.energy, 8.014)
+    numpy.testing.assert_approx_equal(fourc.energy.get(), 8.014)
 
     # changes fourc.energy, does not change fourc.calc.energy
     fourc.energy_offset.put(0.015)
-    assert fourc.calc.energy == 8.0
-    assert fourc.energy.get() == 7.985
+    numpy.testing.assert_approx_equal(fourc.calc.energy, 8.014)
+    numpy.testing.assert_approx_equal(fourc.energy.get(), 7.999)
 
     # changes fourc.energy, changes fourc.calc.energy
     fourc.energy.put(8)
