@@ -64,6 +64,8 @@ class Diffractometer(PseudoPositioner):
         ~engine
         ~forward
         ~inverse
+        ~pa
+        ~wh
         ~_energy_changed
         ~_update_calc_energy
 
@@ -306,6 +308,84 @@ class Diffractometer(PseudoPositioner):
                 for p in self.pseudo_positioners
             ]
         super().check_value(pos)
+
+    def pa(self, printing=True):
+        """
+        Print All the diffractometer settings.
+        """
+        pass  # TODO
+
+    def wh(self, printing=True):
+        """
+        WHere is the diffractometer?  Print a brief report.
+
+        EXAMPLE::
+
+            In [3]: e4cv.wh()
+            ===================== =========
+            term                  value
+            ===================== =========
+            diffractometer        e4cv
+            sample name           main
+            energy (keV)          8.0509
+            wavelength (angstrom) 1.54000
+            calc engine           hkl
+            mode                  bissector
+            h                     0.0
+            k                     0.0
+            l                     0.0
+            omega                 0
+            chi                   0
+            phi                   0
+            tth                   0
+            ===================== =========
+
+            Out[3]: <pyRestTable.rest_table.Table at 0x7f55c4775cd0>
+
+        compare with similar function in SPEC (different geometry)::
+
+            1117.KAPPA> wh
+            H K L =  0  0  1.7345
+            Alpha = 20  Beta = 20  Azimuth = 90
+            Omega = 32.952  Lambda = 1.54
+            Two Theta       Theta         Chi         Phi     K_Theta       Kappa       K_Phi
+            40.000000   20.000000   90.000000   57.048500   77.044988  134.755995  114.093455
+        """
+        table = pyRestTable.Table()
+        table.labels = "term value axis_type".split()
+        table.addRow(("diffractometer", self.name, ""))
+        table.addRow(("sample name", self.calc.sample.name, ""))
+        table.addRow((
+            f"energy ({self.energy_units.get()})",
+            float(f"{self.energy.get():.5f}"),
+            ""
+        ))
+        table.addRow((
+            "wavelength (angstrom)",
+            float(f"{self.calc.wavelength:.5f}"),
+            ""
+        ))
+        table.addRow(("calc engine", self.calc.engine.name, ""))
+        table.addRow(("mode", self.calc.engine.mode, ""))
+
+        pseudo_axes = [v.attr_name for v in self._pseudo]
+        real_axes = [v.attr_name for v in self._real]
+        for k in self._sig_attrs.keys():
+            v = getattr(self, k)
+            if not issubclass(v.__class__, PositionerBase):
+                continue
+            if k in real_axes:
+                label = "real"
+            elif k in pseudo_axes:
+                label = "pseudo"
+            else:
+                label = "additional"
+            table.addRow((k, v.position, label))
+
+        if printing:
+            print(table)
+
+        return table
 
 
 class E4CH(Diffractometer):

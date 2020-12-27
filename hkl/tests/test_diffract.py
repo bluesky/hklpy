@@ -131,3 +131,35 @@ def test_energy_units(fourc):
         fourc.energy.get(), eV)
     numpy.testing.assert_almost_equal(
         fourc.calc.energy, eV/1000)
+
+
+def test_wh(fourc):
+    expected = [
+        # ["term", "value"],
+        ["diffractometer", "fourc"],
+        ["sample name", "main"],
+        ["energy (keV)", 8.0],
+        ["wavelength (angstrom)", 1.54980],
+        ["calc engine", "hkl"],
+        ["mode", "bissector"],
+        ["h", 0.0],
+        ["k", 0.0],
+        ["l", 0.0],
+        ["omega", 0],
+        ["chi", 0],
+        ["phi", 0],
+        ["tth", 0],
+    ]
+    table = fourc.wh(printing=False)
+    assert len(table.rows) == len(expected)
+    for i, row in enumerate(table.rows):
+        for c in range(2):
+            assert expected[i][c] == row[c]
+
+    # fourc.energy_units.put("eV")
+    # expected[2] = ["energy (eV)", 8000.0]
+    # table = fourc.wh(printing=False)
+    # assert len(table.rows) == len(expected)
+    # for i, row in enumerate(table.rows):
+    #     for c in range(2):
+    #         assert expected[i][c] == row[c]
