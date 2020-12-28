@@ -93,7 +93,9 @@ def test_calcUB(fourc):
     hkl.user.selectDiffractometer(fourc)
     a0 = 5.4310196
     hkl.user.newSample("silicon standard", a0, a0, a0, 90, 90, 90)
-    r1 = hkl.user.setor(4, 0, 0, -145.451, 0, 0, 69.0966, wavelength=1.54)
+    r1 = hkl.user.setor(
+        4, 0, 0, tth=69.0966, omega=-145.451, chi=0, phi=0, wavelength=1.54
+    )
     fourc.omega.move(-145.451)
     fourc.chi.move(90)
     fourc.phi.move(0)
