@@ -38,7 +38,7 @@ def fourc():
 
 
 def test_select_diffractometer(capsys, fourc):
-    # This assertion requires this test function be first.
+    # This test function must be first or the next assertion will fail.
     assert hkl.user._geom_ is None
     hkl.user.selectDiffractometer(fourc)
     assert hkl.user._geom_ is not None
