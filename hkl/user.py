@@ -83,7 +83,7 @@ def cahkl_table(reflections, digits=5):
     Parameters
     ----------
     reflections : list(tuple(number,number,number))
-        This is a list of reflections where 
+        This is a list of reflections where
         each reflection is a tuple of 3 numbers
         specifying (h, k, l) of the reflection
         to compute the ``forward()`` computation.
