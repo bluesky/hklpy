@@ -125,7 +125,7 @@ class Diffractometer(PseudoPositioner):
     read_attrs : list, optional
         Read attributes default to all pseudo and real positioners
     configuration_attrs : list, optional
-        Defaults to the UB matrix and energy
+        Defaults to the UB matrix, energy, geometry name, & class name.
     parent : Device, optional
         Parent device
     name : str, optional
@@ -169,11 +169,13 @@ class Diffractometer(PseudoPositioner):
         AttributeSignal,
         attr="calc.geometry_name",
         doc="Diffractometer Geometry name",
+        write_access=False,
     )
     class_name = Cpt(
         AttributeSignal,
         attr="__class__.__name__",
         doc="Diffractometer class name",
+        write_access=False,
     )
 
     sample_name = Cpt(
@@ -247,7 +249,9 @@ class Diffractometer(PseudoPositioner):
             )
 
         if configuration_attrs is None:
-            configuration_attrs = ["UB", "energy"]
+            configuration_attrs = """
+                UB energy geometry_name class_name
+            """.split()
 
         if decision_fcn is None:
             # the default decision function is to just grab solution #1:
