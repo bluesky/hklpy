@@ -41,5 +41,6 @@ Contents:
    engine
    sample
    util
+   user
    examples/*
    release_notes

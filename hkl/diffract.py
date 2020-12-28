@@ -43,6 +43,7 @@ from ophyd import Signal, PseudoPositioner, Component as Cpt
 from ophyd.pseudopos import pseudo_position_argument, real_position_argument
 from ophyd.signal import AttributeSignal, ArrayAttributeSignal
 import pint
+import pyRestTable
 
 from . import calc
 
@@ -59,6 +60,7 @@ class Diffractometer(PseudoPositioner):
         ~engine
         ~forward
         ~inverse
+        ~forwardSolutionsTable
         ~_energy_changed
         ~_update_calc_energy
 
@@ -253,7 +255,7 @@ class Diffractometer(PseudoPositioner):
 
     @property
     def engine(self):
-        '''The calculation engine associated with the diffractometer'''
+        '''The calculation engine associated with the diffractometer.'''
         return self.calc.engine
 
     # TODO so these calculations change the internal state of the hkl
@@ -263,6 +265,7 @@ class Diffractometer(PseudoPositioner):
 
     @pseudo_position_argument
     def forward(self, pseudo):
+        """Compute positions given reflections and constraints."""
         solutions = self.calc.forward_iter(start=self.position, end=pseudo,
                                            max_iters=100)
         logger.debug('pseudo to real: {}'.format(solutions))
@@ -270,6 +273,7 @@ class Diffractometer(PseudoPositioner):
 
     @real_position_argument
     def inverse(self, real):
+        """Compute reflection given positions."""
         self.calc.physical_positions = real
         return self.PseudoPosition(*self.calc.pseudo_positions)
 
@@ -301,6 +305,46 @@ class Diffractometer(PseudoPositioner):
                 for p in self.pseudo_positioners
             ]
         super().check_value(pos)
+
+    def forwardSolutionsTable(self, reflections, full=False, digits=5):
+        """
+        Return table of computed solutions for each (hkl) supplied.
+
+        The solutions are calculated using the current
+        UB matrix & constraints.
+
+        Parameters
+        ----------
+        reflections : list of (h, k, l) reflections
+            Each reflection is a tuple of 3 numbers,
+            (h, k, l) of the reflection.
+        full : bool
+            If ``True``, show all solutions.  If ``False``,
+            only show the default solution.
+        digits : int
+            Number of digits to roundoff each position
+            value.  Default is 5.
+        """
+        _table = pyRestTable.Table()
+        motors = self.real_positioners._fields
+        _table.labels = "(hkl) solution".split() + list(motors)
+        for reflection in reflections:
+            try:
+                solutions = self.calc.forward(reflection)
+            except ValueError as exc:
+                solutions = exc
+            if isinstance(solutions, ValueError):
+                row = [reflection, "none"]
+                row += ["" for m in motors]
+                _table.addRow(row)
+            else:
+                for i, s in enumerate(solutions):
+                    row = [reflection, i]
+                    row += [round(getattr(s, m), digits) for m in motors]
+                    _table.addRow(row)
+                    if not full:
+                        break   # only show the first (default) solution
+        return _table
 
 
 class E4CH(Diffractometer):
