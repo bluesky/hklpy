@@ -67,12 +67,13 @@ class Diffractometer(PseudoPositioner):
     This has a corresponding calculation engine from **hklpy** that does
     forward and inverse calculations.
 
-    If instantiating a specific diffractometer class such as `E4C`, `E6C`,
-    neither the `calc_inst` or the `calc_kw` parameters are required.
+    If instantiating a specific diffractometer class such as ``E4C``,
+    ``E6C``, neither the `calc_inst` or the `calc_kw` parameters are
+    required.
 
     However, there is the option to either pass in a calculation
-    instance (with `calc_inst`) or keywords for the default calculation
-    class (using `calc_kw`) to instantiate a new one.
+    instance (with ``calc_inst``) or keywords for the default
+    calculation class (using ``calc_kw``) to instantiate a new one.
 
     Parameters
     ----------

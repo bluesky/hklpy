@@ -82,9 +82,13 @@ def cahkl_table(reflections, digits=5):
 
     Parameters
     ----------
-    reflections : list of (h, k, l) reflections
-        Each reflection is a tuple of 3 numbers,
-        (h, k, l) of the reflection.
+    reflections : list(tuple(number,number,number))
+        This is a list of reflections where 
+        each reflection is a tuple of 3 numbers
+        specifying (h, k, l) of the reflection
+        to compute the ``forward()`` computation.
+
+        Example:  ``[(1,0,0), (1,1,1)]``
     digits : int
         Number of digits to roundoff each position
         value.  Default is 5.
