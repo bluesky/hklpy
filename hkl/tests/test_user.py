@@ -53,10 +53,11 @@ def test_select_diffractometer(capsys, fourc):
 
 def test_cahkl(fourc):
     hkl.user.selectDiffractometer(fourc)
+    fourc.calc["tth"].limits = (0, 180)
 
     # use the default "main" sample and UB matrix
     response = hkl.user.cahkl(1, 0, 0)
-    expected = (-30, 0, -90, -60)
+    expected = (30, 0, 90, 60)
     assert round(response[0]) == expected[0]
     assert round(response[1]) == expected[1]
     assert round(response[2]) == expected[2]
@@ -65,6 +66,7 @@ def test_cahkl(fourc):
 
 def test_cahkl_table(capsys, fourc):
     hkl.user.selectDiffractometer(fourc)
+    fourc.calc["tth"].limits = (0, 180)
 
     # use the default "main" sample and UB matrix
     rlist = [(1, 0, 0), (0, 1, 0)]
@@ -74,8 +76,8 @@ def test_cahkl_table(capsys, fourc):
     ========= ======== ===== === === ===
     (hkl)     solution omega chi phi tth
     ========= ======== ===== === === ===
-    (1, 0, 0) 0        -30   0   -90 -60
-    (0, 1, 0) 0        -30   -90 0   -60
+    (1, 0, 0) 0        30    0   90  60
+    (0, 1, 0) 0        30    90  0   60
     ========= ======== ===== === === ===
     """.strip().splitlines()
     assert err == ""
