@@ -385,3 +385,28 @@ class HklSample(object):
         info.append('reflection_theoretical_angles={!r}'.format(self.reflection_theoretical_angles))
         return '{}({})'.format(self.__class__.__name__,
                                ', '.join(info))
+
+    def _get_reflection_dict(self, refl):
+        """Return dictionary with detailds for the reflection."""
+        h, k, l = refl.hkl_get()
+        flag = refl.flag_get()
+        geom = refl.geometry_get()
+        wavelength = geom.wavelength_get(1)
+        pos = {
+            k: v
+            for k, v in zip(geom.axis_names_get(), geom.axis_values_get(1))
+        }
+        return dict(
+            reflection=dict(h=h, k=k, l=l),
+            flag=flag,
+            wavelength=wavelength,
+            position=pos
+        )
+
+    @property
+    def reflections_details(self):
+        """Return a list with details of all reflections."""
+        return [
+            self._get_reflection_dict(r)
+            for r in self._sample.reflections_get()
+        ]
