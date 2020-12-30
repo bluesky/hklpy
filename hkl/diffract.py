@@ -136,7 +136,8 @@ class Diffractometer(PseudoPositioner):
     UB = Cpt(AttributeSignal, attr='calc.sample.UB', doc='UB matrix')
     reflections = Cpt(ArrayAttributeSignal, attr='calc.sample.reflections',
                       doc='Reflections')
-    reflections_details = Cpt(AttributeSignal,
+    reflections_details = Cpt(
+        AttributeSignal,
         attr='calc.sample.reflections_details',
         doc='Details of reflections')
     ux = Cpt(AttributeSignal, attr='calc.sample.ux.value',
