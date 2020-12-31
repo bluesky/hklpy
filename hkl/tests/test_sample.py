@@ -1,19 +1,14 @@
 
-from bluesky import plans as bp
 from ophyd import Component as Cpt
 from ophyd import PseudoSingle
 from ophyd import SoftPositioner
-from ophyd.positioner import LimitError
-from warnings import warn
 import numpy as np
-import numpy.testing
 import pytest
 
 import gi
 gi.require_version('Hkl', '5.0')
 # NOTE: MUST call gi.require_version() BEFORE import hkl
 from hkl.diffract import E4CV
-import hkl.sample
 
 
 class Fourc(E4CV):
@@ -151,7 +146,7 @@ def test_reflections_details(fourc):
             wavelength=1.54
         )
     ]
-    r3 = sample.add_reflection(
+    sample.add_reflection(
         .1, .2, .3,
         (10.7826, 32.3115, 18.4349, 21.5652)
     )
@@ -169,7 +164,7 @@ def test_reflections_details(fourc):
             wavelength=1.54
         )
     ]
-    r4 = sample.add_reflection(
+    sample.add_reflection(
         .5, 0, .001,
         (14.4775, 0, 89.8854, 28.9551)
     )
@@ -197,7 +192,7 @@ def test_reflections_details(fourc):
     details = sample.reflections_details
     compare(expected, details)
 
-    sample.UB = [[1,0,0],[0,1,0],[0,0,1]]
+    sample.UB = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     assert len(sample._orientation_reflections) == 0
     expected[0]["orientation_reflection"] = False
     expected[1]["orientation_reflection"] = False
