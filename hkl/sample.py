@@ -416,7 +416,13 @@ class HklSample(object):
     @property
     def reflections_details(self):
         """Return a list with details of all reflections."""
+        refls = self._sample.reflections_get()
+        for r in self._orientation_reflections:
+            if r not in refls:
+                # Edge case when orientation reflection was
+                # deleted from the list in libhkl.
+                refls.append(r)
         return [
             self._get_reflection_dict(r)
-            for r in self._sample.reflections_get()
+            for r in refls
         ]
