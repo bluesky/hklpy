@@ -97,6 +97,11 @@ class HklSample(object):
         except KeyError:
             raise ValueError('Invalid unit type')
 
+        # List of reflections used in computing the U & UB matrices.
+        # If UB is computed by refinement of more than two reflections,
+        # the code that sets that up will also need to manage this list.
+        self._orientation_reflections = []
+
         for name in ('lattice', 'name', 'U', 'UB', 'ux', 'uy', 'uz',
                      'reflections', ):
             value = kwargs.pop(name, None)
@@ -194,6 +199,7 @@ class HklSample(object):
 
     @U.setter
     def U(self, new_u):
+        self._orientation_reflections = []
         self._sample.U_set(util.to_hkl(new_u))
 
     def _get_parameter(self, param):
@@ -234,6 +240,7 @@ class HklSample(object):
 
     @UB.setter
     def UB(self, new_ub):
+        self._orientation_reflections = []
         self._sample.UB_set(util.to_hkl(new_ub))
 
     def _create_reflection(self, h, k, l, detector=None):
@@ -262,6 +269,7 @@ class HklSample(object):
         r2 : HklReflection
             Reflection 2
         '''
+        self._orientation_reflections = [r1, r2]
         return self._sample.compute_UB_busing_levy(r1, r2)
 
     @property
@@ -275,6 +283,7 @@ class HklSample(object):
     @reflections.setter
     def reflections(self, refls):
         self.clear_reflections()
+        self._orientation_reflections = []
         for refl in refls:
             self.add_reflection(*refl)
 
@@ -329,9 +338,9 @@ class HklSample(object):
 
     def clear_reflections(self):
         '''Clear all reflections for the current sample'''
-        reflections = self._sample.reflections_get()
-        for refl in reflections:
+        for refl in self._sample.reflections_get():
             self._sample.del_reflection(refl)
+        self._orientation_reflections = []
 
     def _refl_matrix(self, fcn):
         '''
@@ -387,20 +396,21 @@ class HklSample(object):
                                ', '.join(info))
 
     def _get_reflection_dict(self, refl):
-        """Return dictionary with detailds for the reflection."""
+        """Return dictionary with reflection details."""
         h, k, l = refl.hkl_get()
-        flag = refl.flag_get()
         geom = refl.geometry_get()
-        wavelength = geom.wavelength_get(1)
-        pos = {
-            k: v
-            for k, v in zip(geom.axis_names_get(), geom.axis_values_get(1))
-        }
         return dict(
             reflection=dict(h=h, k=k, l=l),
-            flag=flag,
-            wavelength=wavelength,
-            position=pos
+            flag=refl.flag_get(),
+            wavelength=geom.wavelength_get(1),
+            position={
+                k: v
+                for k, v in zip(
+                    geom.axis_names_get(),
+                    geom.axis_values_get(1)
+                )
+            },
+            orientation_reflection=refl in self._orientation_reflections
         )
 
     @property
