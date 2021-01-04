@@ -659,7 +659,7 @@ class Diffractometer(PseudoPositioner):
 
     def forwardSolutionsTable(self, reflections, full=False):
         """
-        Table of computed ``self.forward(refl)`` in reflections.
+        Table of motor values computed for all ``reflections``.
 
         The solutions are calculated using the current mode, wavelength,
         UB matrix, and constraints
