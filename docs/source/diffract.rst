@@ -43,6 +43,41 @@ on these geometries.
 .. [#hklcpp] **hkl-c++** documentation:
     https://people.debian.org/~picca/hkl/hkl.html
 
+Engineering Units
++++++++++++++++++
+
+The :mod:`~hkl.diffract` module is the main user interface, providing
+the various diffractometer geometries provided by *libhkl* as *ophyd*
+`PseudoPositioner` Devices [#]_.  In :mod:`~hkl.diffract`, a feature has
+been added to allow the energy units to be set by the user.  Internally,
+:mod:`~hkl.diffract` will apply any necessary units conversion when
+interacting with the values from the :mod:`~hkl.calc` module.
+
+In the :mod:`~hkl.calc` module (lower level than the
+:mod:`~hkl.diffract` module), the units for *energy* and *wavelength*
+are ``keV`` and ``angstrom``, respectively.  These engineering units are
+not changeable by the user since the *libhkl* code requires a consistent
+set of units (it does not anticipate the need to do a units conversion).
+
+The Python *pint* package [#]_ is used to apply any unit conversion.
+
+This table summarizes the units for the energy and wavelength terms in
+the :mod:`~hkl.calc` and :mod:`~hkl.diffract` modules.
+
+==========================  =================
+diffractometer attribute    engineering units
+==========================  =================
+``.energy``                 set by value of ``.energy_units`` Signal
+``.calc.energy``            ``keV``
+``.wavelength``             does not exist in the :mod:`~hkl.diffract` module
+``.calc.wavelength``        ``angstrom``
+==========================  =================
+
+.. [#] *ophyd* `PseudoPositioner` Device:
+   https://blueskyproject.io/ophyd/positioners.html#pseudopositioner
+.. [#] *pint* (for engineering units conversion):
+   https://pint.readthedocs.io
+
 ----
 
 Source code documentation
