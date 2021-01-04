@@ -2,7 +2,9 @@ import pytest
 import numpy.testing
 
 from ophyd import Component as Cpt
-from ophyd import PseudoSingle, SoftPositioner
+from ophyd import PseudoSingle
+from ophyd import SoftPositioner
+import pint
 
 import gi
 
@@ -128,6 +130,19 @@ def test_energy_units(fourc):
     fourc.energy.put(eV)
     numpy.testing.assert_almost_equal(fourc.energy.get(), eV)
     numpy.testing.assert_almost_equal(fourc.calc.energy, eV / 1000)
+
+    # issue #79
+    fourc.energy_units.put("eV")
+    fourc.energy_offset.put(0)
+    eV = 1746
+    fourc.energy.put(eV)
+    numpy.testing.assert_almost_equal(fourc.calc.energy, eV / 1000)
+    numpy.testing.assert_almost_equal(
+        pint.Quantity(fourc.calc.energy, "keV")
+        .to(fourc.energy_units.get())
+        .magnitude,
+        fourc.energy.get(),
+    )
 
 
 def test_pa(fourc):
