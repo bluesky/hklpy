@@ -117,6 +117,7 @@ def test_hkl_scan(fourc):
     fourc.move(1, 1, 1)
     assert (
         check_limits(
+            # fmt: off
             bp.scan(
                 [fourc],
                 fourc.h, 0.9, 1.1,
@@ -124,6 +125,7 @@ def test_hkl_scan(fourc):
                 fourc.l, 0.9, 1.1,
                 33,
             )
+            # fmt: on
         )
         is None
     )
@@ -133,6 +135,7 @@ def test_hkl_range_error(fourc):
     with pytest.raises(ValueError) as exinfo:
         assert (
             check_limits(
+                # fmt: off
                 bp.scan(
                     [fourc],
                     fourc.h, 0.9, 1.1,
@@ -140,6 +143,7 @@ def test_hkl_range_error(fourc):
                     fourc.l, 0.09, 123.1,
                     33,
                 )
+                # fmt: on
             )
             is None
         )
