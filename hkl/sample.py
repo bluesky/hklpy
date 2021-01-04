@@ -98,7 +98,10 @@ class HklSample(object):
         try:
             self._units = util.units[self._unit_name]
         except KeyError:
-            raise ValueError("Invalid unit type")
+            raise ValueError(
+                f"Unit name '{self._unit_name}' not found."
+                f"  Allowed names: {list(util.units.keys())}"
+            )
 
         for name in (
             "lattice",
