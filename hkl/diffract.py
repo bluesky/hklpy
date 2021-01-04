@@ -657,6 +657,34 @@ class Diffractometer(PseudoPositioner):
 
         return table
 
+    def forwardSolutionsTable(self, reflections, full=False):
+        """
+        Table of computed ``self.forward(refl)`` in reflections.
+
+        The solutions are calculated using the current mode, wavelength,
+        UB matrix, and constraints
+        """
+        _table = pyRestTable.Table()
+        motors = self.real_positioners._fields
+        _table.labels = "(hkl) solution".split() + list(motors)
+        for reflection in reflections:
+            try:
+                solutions = self.calc.forward(reflection)
+            except ValueError as exc:
+                solutions = exc
+            if isinstance(solutions, ValueError):
+                row = [reflection, "none"]
+                row += ["" for m in motors]
+                _table.addRow(row)
+            else:
+                for i, s in enumerate(solutions):
+                    row = [reflection, i]
+                    row += [f"{getattr(s, m):.5f}" for m in motors]
+                    _table.addRow(row)
+                    if not full:
+                        break   # only show the first (default) solution
+        return _table
+
     def applyConstraints(self, constraints):
         """
         Constrain the diffractometer's forward solutions.

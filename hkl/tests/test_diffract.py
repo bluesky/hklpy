@@ -344,3 +344,28 @@ def test_applyConstraints(fourc):
 
     fourc.resetConstraints()
     check((1, 0, 0), (-30, 0, -90, -60))
+
+
+def test_forwardSolutionsTable(fourc):
+    # ensure proper wavelength for this test
+    fourc.calc.wavelength = 1.54
+    # use the default sample
+    reflections = [
+        (1, 0, 0),
+        (1, 1, 0),
+        (1, 1, 1),
+    ]
+    received = str(fourc.forwardSolutionsTable(reflections)).splitlines()
+    expected = """
+    ========= ======== ========= ======== ========= =========
+    (hkl)     solution omega     chi      phi       tth
+    ========= ======== ========= ======== ========= =========
+    (1, 0, 0) 0        -30.00000 -0.00000 -90.00000 -60.00000
+    (1, 1, 0) 0        45.00000  45.00000 90.00000  90.00000
+    (1, 1, 1) 0        60.00000  35.26439 45.00000  120.00000
+    ========= ======== ========= ======== ========= =========
+    """.strip().splitlines()
+    # just compare the motor positions, maybe roundoff and/or underflow
+    for r, e in zip(received[3:-1], expected[3:-1]):
+        for vr, ve in zip(r.split()[4:], e.split()[4:]):
+            assert round(float(vr), 5) == round(float(ve), 5)
