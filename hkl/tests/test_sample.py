@@ -1,4 +1,3 @@
-
 from ophyd import Component as Cpt
 from ophyd import PseudoSingle
 from ophyd import SoftPositioner
@@ -6,15 +5,16 @@ import numpy as np
 import pytest
 
 import gi
-gi.require_version('Hkl', '5.0')
+
+gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
 from hkl.diffract import E4CV
 
 
 class Fourc(E4CV):
-    h = Cpt(PseudoSingle, '')
-    k = Cpt(PseudoSingle, '')
-    l = Cpt(PseudoSingle, '')
+    h = Cpt(PseudoSingle, "")
+    k = Cpt(PseudoSingle, "")
+    l = Cpt(PseudoSingle, "")
 
     omega = Cpt(SoftPositioner, limits=(-180, 180))
     chi = Cpt(SoftPositioner, limits=(-180, 180))
@@ -28,9 +28,9 @@ class Fourc(E4CV):
             p._set_position(0)  # give each a starting position
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def fourc():
-    fourc = Fourc('', name="fourc")
+    fourc = Fourc("", name="fourc")
     return fourc
 
 
@@ -46,22 +46,20 @@ def test_compute_UB(fourc):
     np.testing.assert_array_almost_equal(default_UB, sample.UB)
 
     #  compute the UB matrix from two other reflections
+    # fmt: off
     r3 = sample.add_reflection(
-        .1, .2, .3,
+        0.1, 0.2, 0.3,
         (10.7826, 32.3115, 18.4349, 21.5652)
     )
     r4 = sample.add_reflection(
-        .5, 0, .001,
+        0.5, 0, 0.001,
         (14.4775, 0, 89.8854, 28.9551)
     )
+    # fmt: on
     sample.compute_UB(r3, r4)
     # Since the angles are rounded to 4 decimal places,
     # limit the comparison as well.
-    np.testing.assert_array_almost_equal(
-        default_UB,
-        sample.UB,
-        decimal=5
-    )
+    np.testing.assert_array_almost_equal(default_UB, sample.UB, decimal=5)
 
 
 def test_orientation_reflections(fourc):
@@ -105,7 +103,7 @@ def test_orientation_reflections(fourc):
 
     sample.remove_reflection(r3)
     assert len(sample._orientation_reflections) == 2
-    sample.remove_reflection((.5, 0, .001))
+    sample.remove_reflection((0.5, 0, 0.001))
     assert len(sample._orientation_reflections) == 2
 
 
@@ -118,7 +116,7 @@ def test_reflections_details(fourc):
             # dictionary comparisons
             for key in "position reflection".split():
                 for k, v in e[key].items():
-                    assert round(abs(v-r[key][k])) == 0
+                    assert round(abs(v - r[key][k])) == 0
 
     sample = fourc.calc.sample
     assert len(sample._orientation_reflections) == 0
