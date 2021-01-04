@@ -59,7 +59,7 @@ are ``keV`` and ``angstrom``, respectively.  These engineering units are
 not changeable by the user since the *libhkl* code requires a consistent
 set of units (it does not anticipate the need to do a units conversion).
 
-The python *pint* package [#]_ is used to apply any unit conversion.
+The Python *pint* package [#]_ is used to apply any unit conversion.
 
 This table summarizes the units for the energy and wavelength terms in
 the :mod:`~hkl.calc` and :mod:`~hkl.diffract` modules.
