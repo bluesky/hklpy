@@ -1,10 +1,7 @@
 from bluesky import plans as bp
-
-# TODO: from bluesky.simulators import check_limits
 from ophyd import PseudoSingle, SoftPositioner
 from ophyd import Component as Cpt
 from ophyd.positioner import LimitError
-from warnings import warn
 import numpy as np
 import numpy.testing
 import pytest
@@ -14,29 +11,6 @@ import gi
 gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
 from hkl.diffract import E4CV
-
-
-# TODO: remove once bluesky 1.6.6+ is released
-def check_limits(plan):
-    """
-    Check that a plan will not move devices outside of their limits.
-
-    Parameters
-    ----------
-    plan : iterable
-        Must yield `Msg` objects
-    """
-    ignore = []
-    for msg in plan:
-        if msg.command == "set" and msg.obj not in ignore:
-            if hasattr(msg.obj, "check_value"):
-                msg.obj.check_value(msg.args[0])
-            else:
-                warn(
-                    f"{msg.obj.name} has no check_value() method"
-                    f" to check if {msg.args[0]} is within its limits."
-                )
-                ignore.append(msg.obj)
 
 
 class Fourc(E4CV):
@@ -142,19 +116,15 @@ def test_hkl_scan(fourc):
     fourc.move(1, 1, 1)
     assert (
         check_limits(
+            # fmt: off
             bp.scan(
                 [fourc],
-                fourc.h,
-                0.9,
-                1.1,
-                fourc.k,
-                0.9,
-                1.1,
-                fourc.l,
-                0.9,
-                1.1,
+                fourc.h, 0.9, 1.1,
+                fourc.k, 0.9, 1.1,
+                fourc.l, 0.9, 1.1,
                 33,
             )
+            # fmt: on
         )
         is None
     )
@@ -164,19 +134,15 @@ def test_hkl_range_error(fourc):
     with pytest.raises(ValueError) as exinfo:
         assert (
             check_limits(
+                # fmt: off
                 bp.scan(
                     [fourc],
-                    fourc.h,
-                    0.9,
-                    1.1,
-                    fourc.k,
-                    0.9,
-                    1.1,
-                    fourc.l,
-                    0.09,
-                    123.1,
+                    fourc.h, 0.9, 1.1,
+                    fourc.k, 0.9, 1.1,
+                    fourc.l, 0.09, 123.1,
                     33,
                 )
+                # fmt: on
             )
             is None
         )
