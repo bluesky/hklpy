@@ -119,15 +119,9 @@ def test_hkl_scan(fourc):
         check_limits(
             bp.scan(
                 [fourc],
-                fourc.h,
-                0.9,
-                1.1,
-                fourc.k,
-                0.9,
-                1.1,
-                fourc.l,
-                0.9,
-                1.1,
+                fourc.h, 0.9, 1.1,
+                fourc.k, 0.9, 1.1,
+                fourc.l, 0.9, 1.1,
                 33,
             )
         )
@@ -141,15 +135,9 @@ def test_hkl_range_error(fourc):
             check_limits(
                 bp.scan(
                     [fourc],
-                    fourc.h,
-                    0.9,
-                    1.1,
-                    fourc.k,
-                    0.9,
-                    1.1,
-                    fourc.l,
-                    0.09,
-                    123.1,
+                    fourc.h, 0.9, 1.1,
+                    fourc.k, 0.9, 1.1,
+                    fourc.l, 0.09, 123.1,
                     33,
                 )
             )
