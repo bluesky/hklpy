@@ -1,4 +1,5 @@
 from bluesky import plans as bp
+from bluesky.simulators import check_limits
 from ophyd import PseudoSingle, SoftPositioner
 from ophyd import Component as Cpt
 from ophyd.positioner import LimitError
