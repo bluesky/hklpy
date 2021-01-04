@@ -77,6 +77,7 @@ def test_orientation_reflections(fourc):
     assert details[0]["orientation_reflection"]
     assert details[1]["orientation_reflection"]
 
+    # fmt: off
     r3 = sample.add_reflection(
         .1, .2, .3,
         (10.7826, 32.3115, 18.4349, 21.5652)
@@ -85,6 +86,7 @@ def test_orientation_reflections(fourc):
         .5, 0, .001,
         (14.4775, 0, 89.8854, 28.9551)
     )
+    # fmt: on
     sample.compute_UB(r3, r4)
     assert len(sample._orientation_reflections) == 2
     details = sample.reflections_details
@@ -125,23 +127,26 @@ def test_reflections_details(fourc):
     r1 = sample.add_reflection(-1, 0, 0, (30, 0, -90, 60))
 
     details = sample.reflections_details
+    # fmt: off
     expected = [
         dict(
             flag=1,
             orientation_reflection=False,
-            position=dict(chi=0, omega=30, phi=-90, tth=60),
+            position=dict(omega=30, chi=0, phi=-90, tth=60),
             reflection=dict(h=-1, k=0, l=0),
             wavelength=1.54
         )
     ]
+    # fmt: on
     compare(expected, details)
 
     r2 = sample.add_reflection(0, 1, 1, (45, 45, 0, 90))
+    # fmt: off
     expected += [
         dict(
             flag=1,
             orientation_reflection=False,
-            position=dict(chi=45, omega=45, phi=0, tth=90),
+            position=dict(omega=45, chi=45, phi=0, tth=90),
             reflection=dict(h=0, k=1, l=1),
             wavelength=1.54
         )
@@ -155,8 +160,8 @@ def test_reflections_details(fourc):
             flag=1,
             orientation_reflection=False,
             position=dict(
-                chi=32.3115,
                 omega=10.7826,
+                chi=32.3115,
                 phi=18.4349,
                 tth=21.5652
             ),
@@ -173,8 +178,8 @@ def test_reflections_details(fourc):
             flag=1,
             orientation_reflection=False,
             position=dict(
-                chi=0,
                 omega=14.4775,
+                chi=0,
                 phi=89.8854,
                 tth=28.9551
             ),
@@ -182,6 +187,7 @@ def test_reflections_details(fourc):
             wavelength=1.54
         ),
     ]
+    # fmt: on
     details = sample.reflections_details
     compare(expected, details)
 
