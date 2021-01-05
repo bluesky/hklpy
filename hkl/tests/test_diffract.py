@@ -142,3 +142,27 @@ def test_energy_units(fourc):
         .magnitude,
         fourc.energy.get(),
     )
+
+    fourc.energy_units.put("keV")
+    fourc.energy.put(8)
+    fourc.energy_offset.put(0.015)
+    assert fourc.calc.energy == 8.0
+    assert round(fourc.energy.get(), 6) == 7.985
+    fourc.energy.put(8)
+    assert fourc.calc.energy == 8.015
+    assert round(fourc.energy.get(), 6) == 8
+
+    # issue #86
+    # changing units or offset changes .energy, not .calc.energy
+    fourc.energy_units.put("eV")
+    assert fourc.calc.energy == 8.015
+    assert round(fourc.energy.get(), 1) == 8015
+    fourc.energy.put(8000)
+    assert round(fourc.calc.energy, 8) == 8.000015
+    assert round(fourc.energy.get(), 1) == 8000
+    fourc.energy_offset.put(15)
+    assert round(fourc.calc.energy, 8) == 8.000015
+    assert round(fourc.energy.get(), 1) == 7985
+    fourc.energy.put(8000)
+    assert round(fourc.calc.energy, 8) == 8.015
+    assert round(fourc.energy.get(), 1) == 8000
