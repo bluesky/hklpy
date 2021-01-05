@@ -103,16 +103,12 @@ class HklSample(object):
                 f"  Allowed names: {list(util.units.keys())}"
             )
 
-        for name in (
-            "lattice",
-            "name",
-            "U",
-            "UB",
-            "ux",
-            "uy",
-            "uz",
-            "reflections",
-        ):
+        # List of reflections used in computing the U & UB matrices.
+        # If UB is computed by refinement of more than two reflections,
+        # the code that sets that up will also need to manage this list.
+        self._orientation_reflections = []
+
+        for name in "lattice name U UB ux uy uz reflections".split():
             value = kwargs.pop(name, None)
             if value is not None:
                 try:
@@ -210,6 +206,7 @@ class HklSample(object):
 
     @U.setter
     def U(self, new_u):
+        self._orientation_reflections = []
         self._sample.U_set(util.to_hkl(new_u))
 
     def _get_parameter(self, param):
@@ -250,6 +247,7 @@ class HklSample(object):
 
     @UB.setter
     def UB(self, new_ub):
+        self._orientation_reflections = []
         self._sample.UB_set(util.to_hkl(new_ub))
 
     def _create_reflection(self, h, k, l, detector=None):
@@ -280,11 +278,12 @@ class HklSample(object):
         r2 : HklReflection
             Reflection 2
 
-        Parameters
-        ----------
-        UB matrix or raises gi.repository.GLib.GError
+        Returns
+        -------
+        UB matrix or raises ``gi.repository.GLib.GError``
         """
         if self._sample.compute_UB_busing_levy(r1, r2):
+            self._orientation_reflections = [r1, r2]
             return self.UB
 
     @property
@@ -298,6 +297,7 @@ class HklSample(object):
     @reflections.setter
     def reflections(self, refls):
         self.clear_reflections()
+        self._orientation_reflections = []
         for refl in refls:
             self.add_reflection(*refl)
 
@@ -357,15 +357,14 @@ class HklSample(object):
         return self._sample.del_reflection(refl)
 
     def clear_reflections(self):
-        """Clear all reflections for the current sample"""
+        """Clear all reflections for the current sample."""
         reflections = self._sample.reflections_get()
         for refl in reflections:
             self._sample.del_reflection(refl)
+        self._orientation_reflections = []
 
     def _refl_matrix(self, fcn):
-        """
-        Get a reflection angle matrix
-        """
+        """Get a reflection angle matrix."""
         sample = self._sample
         refl = sample.reflections_get()
         refl_matrix = np.zeros((len(refl), len(refl)))
@@ -427,3 +426,35 @@ class HklSample(object):
             )
         )
         return "{}({})".format(self.__class__.__name__, ", ".join(info))
+
+    def _get_reflection_dict(self, refl):
+        """Return dictionary with reflection details."""
+        h, k, l = refl.hkl_get()
+        geom = refl.geometry_get()
+        return dict(
+            reflection=dict(h=h, k=k, l=l),
+            flag=refl.flag_get(),
+            wavelength=geom.wavelength_get(1),
+            position={
+                k: v
+                for k, v in zip(
+                    geom.axis_names_get(),
+                    geom.axis_values_get(1)
+                )
+            },
+            orientation_reflection=refl in self._orientation_reflections
+        )
+
+    @property
+    def reflections_details(self):
+        """Return a list with details of all reflections."""
+        refls = self._sample.reflections_get()
+        for r in self._orientation_reflections:
+            if r not in refls:
+                # Edge case when orientation reflection was
+                # deleted from the list in libhkl.
+                refls.append(r)
+        return [
+            self._get_reflection_dict(r)
+            for r in refls
+        ]

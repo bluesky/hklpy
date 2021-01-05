@@ -131,10 +131,15 @@ class Diffractometer(PseudoPositioner):
                   doc='Sample lattice')
     lattice_reciprocal = Cpt(AttributeSignal, attr='calc.sample.reciprocal',
                              doc='Reciprocal lattice')
+
     U = Cpt(AttributeSignal, attr='calc.sample.U', doc='U matrix')
     UB = Cpt(AttributeSignal, attr='calc.sample.UB', doc='UB matrix')
     reflections = Cpt(ArrayAttributeSignal, attr='calc.sample.reflections',
                       doc='Reflections')
+    reflections_details = Cpt(
+        AttributeSignal,
+        attr='calc.sample.reflections_details',
+        doc='Details of reflections')
     ux = Cpt(AttributeSignal, attr='calc.sample.ux.value',
              doc='ux portion of the U matrix')
     uy = Cpt(AttributeSignal, attr='calc.sample.uy.value',
@@ -170,7 +175,7 @@ class Diffractometer(PseudoPositioner):
             )
 
         if configuration_attrs is None:
-            configuration_attrs = ["UB", "energy"]
+            configuration_attrs = ["UB", "energy", "reflections_details"]
 
         if decision_fcn is None:
             # the default decision function is to just grab solution #1:
