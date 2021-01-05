@@ -200,6 +200,11 @@ class CalcRecip(object):
 
         self._re_init()
 
+    @property
+    def geometry_name(self):
+        """Name (from libhkl) of this geometry."""
+        return self._geometry.name_get()
+
     def _get_sample(self, name):
         if isinstance(name, hkl_module.Sample):
             return name
