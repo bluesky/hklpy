@@ -186,7 +186,9 @@ class Diffractometer(PseudoPositioner):
             )
 
         if configuration_attrs is None:
-            configuration_attrs = ["UB", "energy", "reflections_details"]
+            configuration_attrs = """
+                UB energy reflections_details geometry_name class_name
+            """.split()
 
         if decision_fcn is None:
             # the default decision function is to just grab solution #1:
