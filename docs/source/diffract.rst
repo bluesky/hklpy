@@ -89,17 +89,17 @@ turn writes the ``.calc.wavelength`` value. Likewise, when
 
 .. tip:: How to set energy, offset, and units
 
-   To change energy, offset, & units, do it in this order:
+    To change energy, offset, & units, do it in this order:
 
-   1. set units and offset first
-   1. finally, set energy
+    * First, set units and offset
+    * Finally, set energy
 
-   EXAMPLE::
+    Example for a ``e4cv`` diffractometer::
 
-    fourc.energy_units.put("eV")
-    fourc.energy_offset.put(1.5)
-    fourc.energy.put(8000)
-    # now, fourc.calc.energy = 8.0015 keV
+        e4cv.energy_units.put("eV")
+        e4cv.energy_offset.put(1.5)
+        e4cv.energy.put(8000)
+        # now, e4cv.calc.energy = 8.0015 keV
 
 
 Engineering Units
