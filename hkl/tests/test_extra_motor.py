@@ -1,16 +1,16 @@
-
 from ophyd import PseudoSingle, SoftPositioner
 from ophyd import Component as Cpt
 
 import gi
-gi.require_version('Hkl', '5.0')
+
+gi.require_version("Hkl", "5.0")
 from hkl.geometries import E4CV
 
 
 class Fourc(E4CV):
-    h = Cpt(PseudoSingle, '')
-    k = Cpt(PseudoSingle, '')
-    l = Cpt(PseudoSingle, '')
+    h = Cpt(PseudoSingle, "")
+    k = Cpt(PseudoSingle, "")
+    l = Cpt(PseudoSingle, "")
 
     omega = Cpt(SoftPositioner)
     chi = Cpt(SoftPositioner)
@@ -93,15 +93,16 @@ def test_extra_pseudo_not_fatal(testdir):
 
 
 def test_fourc_position():
-    fourc = Fourc('', name="fourc")
+    fourc = Fourc("", name="fourc")
     assert fourc.position == (0, 0, 0)
 
 
 def test_fourc_extra_pseudo():
     class FourcSub(Fourc):
-        _pseudo = ['h', 'k', 'l', ]
-        p_extra = Cpt(PseudoSingle, '')
-    fourc = FourcSub('', name="fourc")
+        _pseudo = "h k l".split()
+        p_extra = Cpt(PseudoSingle, "")
+
+    fourc = FourcSub("", name="fourc")
     assert fourc.position == (0, 0, 0)
     assert hasattr(fourc.p_extra, "_idx")
     # TODO: this feature is broken in ophyd at this time
