@@ -24,6 +24,7 @@ gi.require_version('Hkl', '5.0')
 import hkl
 import hkl.calc
 import hkl.diffract
+import hkl.geometries
 
 # -- General configuration -----------------------------------------------------
 

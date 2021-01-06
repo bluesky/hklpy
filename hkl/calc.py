@@ -202,7 +202,7 @@ class CalcRecip(object):
 
     @property
     def geometry_name(self):
-        """Name (from libhkl) of this geometry."""
+        """Name of this geometry, as defined in **libhkl**."""
         return self._geometry.name_get()
 
     def _get_sample(self, name):
@@ -213,7 +213,7 @@ class CalcRecip(object):
 
     @property
     def sample_name(self):
-        """The name of the currently selected sample"""
+        """The name of the currently selected sample."""
         return self._sample.name
 
     @sample_name.setter
