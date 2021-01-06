@@ -125,6 +125,17 @@ class Diffractometer(PseudoPositioner):
     energy_offset = Cpt(Signal, value=0)
     energy_update_calc_flag = Cpt(Signal, value=True)
 
+    geometry_name = Cpt(
+        AttributeSignal,
+        attr="calc.geometry_name",
+        doc="Diffractometer Geometry name"
+    )
+    class_name = Cpt(
+        AttributeSignal,
+        attr="__class__.__name__",
+        doc="Diffractometer class name"
+    )
+
     sample_name = Cpt(AttributeSignal, attr='calc.sample_name',
                       doc='Sample name')
     lattice = Cpt(ArrayAttributeSignal, attr='calc.sample.lattice',
@@ -175,7 +186,9 @@ class Diffractometer(PseudoPositioner):
             )
 
         if configuration_attrs is None:
-            configuration_attrs = ["UB", "energy", "reflections_details"]
+            configuration_attrs = """
+                UB energy reflections_details geometry_name class_name
+            """.split()
 
         if decision_fcn is None:
             # the default decision function is to just grab solution #1:

@@ -142,3 +142,8 @@ def test_energy_units(fourc):
         .magnitude,
         fourc.energy.get(),
     )
+
+
+def test_names(fourc):
+    assert fourc.geometry_name.get() == "E4CV"
+    assert fourc.class_name.get() == "Fourc"
