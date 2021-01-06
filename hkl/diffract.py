@@ -128,12 +128,14 @@ class Diffractometer(PseudoPositioner):
     geometry_name = Cpt(
         AttributeSignal,
         attr="calc.geometry_name",
-        doc="Diffractometer Geometry name"
+        doc="Diffractometer Geometry name",
+        write_access=False,
     )
     class_name = Cpt(
         AttributeSignal,
         attr="__class__.__name__",
-        doc="Diffractometer class name"
+        doc="Diffractometer class name",
+        write_access=False,
     )
 
     sample_name = Cpt(AttributeSignal, attr='calc.sample_name',
