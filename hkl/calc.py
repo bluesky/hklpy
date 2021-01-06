@@ -8,7 +8,7 @@ import numpy as np
 from .engine import Engine, CalcParameter
 from .sample import HklSample
 from . import util
-from .util import hkl_module
+from .util import libhkl
 from .context import UsingEngine
 
 logger = logging.getLogger(__name__)
@@ -120,7 +120,7 @@ class CalcRecip(object):
         self._inverted_axes = inverted_axes or []
 
         try:
-            self._factory = hkl_module.factories()[dtype]
+            self._factory = libhkl.factories()[dtype]
         except KeyError:
             types = ", ".join(util.diffractometer_types)
             raise ValueError(
@@ -189,7 +189,7 @@ class CalcRecip(object):
                 % self.__class__.__name__
             )
 
-        if isinstance(engine, hkl_module.Engine):
+        if isinstance(engine, libhkl.Engine):
             self._engine = engine
         else:
             engines = self.engines
@@ -206,7 +206,7 @@ class CalcRecip(object):
         return self._geometry.name_get()
 
     def _get_sample(self, name):
-        if isinstance(name, hkl_module.Sample):
+        if isinstance(name, libhkl.Sample):
             return name
 
         return self._samples[name]
@@ -257,12 +257,12 @@ class CalcRecip(object):
         select : bool, optional
             Select the sample to focus calculations on
         """
-        if not isinstance(sample, (HklSample, hkl_module.Sample)):
+        if not isinstance(sample, (HklSample, libhkl.Sample)):
             raise ValueError(
                 "Expected either an HklSample or a Sample " "instance"
             )
 
-        if isinstance(sample, hkl_module.Sample):
+        if isinstance(sample, libhkl.Sample):
             sample = HklSample(
                 calc=self, sample=sample, units=self._unit_name
             )
@@ -293,7 +293,7 @@ class CalcRecip(object):
         """
         units = kwargs.pop("units", self._unit_name)
         sample = HklSample(
-            self, sample=hkl_module.Sample.new(name), units=units, **kwargs
+            self, sample=libhkl.Sample.new(name), units=units, **kwargs
         )
 
         return self.add_sample(sample, select=select)

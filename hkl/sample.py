@@ -4,7 +4,7 @@ import logging
 import numpy as np
 
 from .engine import Parameter
-from .util import hkl_module
+from .util import libhkl
 from . import util
 from .util import Lattice
 from .context import TemporaryGeometry
@@ -88,7 +88,7 @@ class HklSample(object):
 
     def __init__(self, calc, sample=None, units="user", **kwargs):
         if sample is None:
-            sample = hkl_module.Sample.new("")
+            sample = libhkl.Sample.new("")
 
         self._calc = calc
         self._sample = sample
@@ -186,10 +186,10 @@ class HklSample(object):
 
     @lattice.setter
     def lattice(self, lattice):
-        if not isinstance(lattice, hkl_module.Lattice):
+        if not isinstance(lattice, libhkl.Lattice):
             a, b, c, alpha, beta, gamma = lattice
             alpha, beta, gamma = np.radians((alpha, beta, gamma))
-            lattice = hkl_module.Lattice.new(a, b, c, alpha, beta, gamma)
+            lattice = libhkl.Lattice.new(a, b, c, alpha, beta, gamma)
 
         check_lattice(lattice)
         self._sample.lattice_set(lattice)
@@ -257,7 +257,7 @@ class HklSample(object):
         if detector is None:
             detector = self._calc._detector
 
-        return hkl_module.SampleReflection.new(
+        return libhkl.SampleReflection.new(
             self._calc._geometry, detector, h, k, l
         )
 
@@ -350,7 +350,7 @@ class HklSample(object):
 
     def remove_reflection(self, refl):
         """Remove a specific reflection"""
-        if not isinstance(refl, hkl_module.SampleReflection):
+        if not isinstance(refl, libhkl.SampleReflection):
             index = self.reflections.index(refl)
             refl = self._sample.reflections_get()[index]
 
