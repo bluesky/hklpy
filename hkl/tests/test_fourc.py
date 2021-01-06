@@ -11,7 +11,7 @@ import gi
 
 gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
-from hkl.diffract import E4CV
+from hkl.geometries import E4CV
 
 
 class Fourc(E4CV):

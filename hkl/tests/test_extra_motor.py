@@ -4,7 +4,7 @@ from ophyd import Component as Cpt
 
 import gi
 gi.require_version('Hkl', '5.0')
-from hkl.diffract import E4CV
+from hkl.geometries import E4CV
 
 
 class Fourc(E4CV):
@@ -30,7 +30,7 @@ from ophyd import Component as Cpt
 
 import gi
 gi.require_version('Hkl', '5.0')
-from hkl.diffract import E4CV
+from hkl.geometries import E4CV
 
 class Fourc(E4CV):
     h = Cpt(PseudoSingle, '')
