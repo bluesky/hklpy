@@ -157,7 +157,7 @@ We'll also create a (non-EPICS) signal to provide for an energy offset
 conversion of the units to *keV* and then setting the diffractometer's
 *calc* engine energy:
 
-  calc engine *energy* (keV) = control system *energy* + *offset*
+  calc engine *energy* (keV) = in_keV(control system *energy* + *offset*)
 
 which then sets the wavelength:
 
