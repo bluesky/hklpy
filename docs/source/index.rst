@@ -39,6 +39,7 @@ Contents:
    context
    diffract
    engine
+   geometries
    sample
    util
    examples/*

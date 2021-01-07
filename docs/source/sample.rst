@@ -23,7 +23,7 @@ solutions of the *forward* calculation from (*hkl*) to motor positions.
 These examples use a diffractometer object called ``fourc`` which we'll
 take to be an instance of a 4-circle diffractometer in vertical
 scattering geometry (*E4CV*) with simulated motors.  (This is similar
-to the 6-circle example :ref:`diffract.sim6c`.)
+to the 6-circle example :ref:`geometries.sim6c`.)
 
 .. code-block:: python
     :linenos:
@@ -106,10 +106,10 @@ Compute the **UB** matrix::
 
     fourc.calc.sample.compute_UB(r1, r2)
 
-See the *hkl-c++* documentation [#]_ for more details.
+See the **libhkl** documentation [#]_ for more details.
 
 .. [#] Acta Cryst 22 (1967) 457-464
-.. [#] *hkl-c++* documentation:
+.. [#] **libhkl** documentation:
     https://people.debian.org/~picca/hkl/hkl.html
 
 compute the motor positions for a reflection
