@@ -5,9 +5,10 @@
 hklpy
 =====
 
-Based on the *hkl*  library, with slightly cleaner abstractions
-when compared to the auto-generated `gobject-introspection` classes.
-Integrates with ophyd pseudopositioners.
+Based on the *hkl*  C++ library (described here as *libhkl*), with
+slightly cleaner abstractions when compared to the auto-generated
+`gobject-introspection` classes. Integrates with ophyd
+pseudopositioners.
 
 **TIP**: Always import the ``gobject-introspection`` package first
 and require ``Hkl`` version 5.0, as in:

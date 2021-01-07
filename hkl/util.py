@@ -6,10 +6,10 @@ from collections import namedtuple
 import numpy as np
 
 try:
-    from gi.repository import Hkl as hkl_module
+    from gi.repository import Hkl as libhkl
     from gi.repository import GLib
 except ImportError as ex:
-    hkl_module = None
+    libhkl = None
     GLib = None
 
     print('[!!] Failed to import Hkl library; diffractometer support '
@@ -21,13 +21,13 @@ logger = logging.getLogger(__name__)
 
 def new_detector(dtype=0):
     '''Create a new HKL-library detector'''
-    return hkl_module.Detector.factory_new(hkl_module.DetectorType(dtype))
+    return libhkl.Detector.factory_new(libhkl.DetectorType(dtype))
 
 
-if hkl_module:
-    diffractometer_types = tuple(sorted(hkl_module.factories().keys()))
-    UserUnits = hkl_module.UnitEnum.USER
-    DefaultUnits = hkl_module.UnitEnum.DEFAULT
+if libhkl:
+    diffractometer_types = tuple(sorted(libhkl.factories().keys()))
+    UserUnits = libhkl.UnitEnum.USER
+    DefaultUnits = libhkl.UnitEnum.DEFAULT
 
     units = {'user': UserUnits,
              'default': DefaultUnits
@@ -70,7 +70,7 @@ def to_hkl(arr):
     -------
     Hkl.Matrix
     """
-    if isinstance(arr, hkl_module.Matrix):
+    if isinstance(arr, libhkl.Matrix):
         return arr
 
     arr = np.array(arr)
@@ -83,7 +83,7 @@ def to_hkl(arr):
 def hkl_euler_matrix(euler_x, euler_y, euler_z):
     """
     """
-    return hkl_module.Matrix.new_euler(euler_x, euler_y, euler_z)
+    return libhkl.Matrix.new_euler(euler_x, euler_y, euler_z)
 
 
 def _gi_info(gi_val):
