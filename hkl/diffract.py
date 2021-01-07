@@ -262,15 +262,11 @@ class Diffractometer(PseudoPositioner):
             return
 
         # TODO: is there a loop back through _update_calc_energy?
-        # raise NotImplementedError(f"units = {self.energy_units.get()}")
+        units = self.energy_units.get()
         try:
-            energy = pint.Quantity(
-                self.calc.energy, "keV"
-            ).to(
-                self.energy_units.get()
-            )
+            energy = pint.Quantity(self.calc.energy, "keV").to(units)
         except Exception as exc:
-            raise NotImplementedError(f"units = {self.energy_units.get()}: {exc}")
+            raise NotImplementedError(f"units = {units}: {exc}")
         self.energy.put(energy.magnitude - value)
 
     def _energy_units_changed(self, value=None, **kwargs):
