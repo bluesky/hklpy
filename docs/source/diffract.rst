@@ -43,6 +43,65 @@ on these geometries.
 .. [#hklcpp] **hkl-c++** documentation:
     https://people.debian.org/~picca/hkl/hkl.html
 
+Energy
+++++++
+
+The monochromatic X-ray energy used by the diffractometer is defined as
+an ophyd ``Signal``.  The ``.energy`` signal may be used as-provided, as
+a constant or the Component may be replaced by an ``ophyd.EpicsSignal``
+in a custom subclass of :class:`~hkl.diffract.Diffractometer`, to
+connect with an EPICS PV from the instrument's control system.  There is
+no corresponding ``.wavelength`` signal at the diffractometer level.
+The ``.energy_offset`` signal is used to allow for a difference between
+the reported energy of ``.energy`` and the energy used for
+diffractometer operations ``.calc.energy``.  
+
+These are the terms:
+
+==================== =======================
+term                 meaning
+==================== =======================
+``.energy``          nominal energy (such as value reported by control system)
+``.energy_offset``   adjustment from nominal to calibrated energy for diffraction
+``.energy_units``    engineering units to be used for ``.energy`` and ``.energy_offset``
+``.calc.energy``     energy for diffraction (used to compute wavelength)
+``.calc.wavelength`` used for diffraction calculations
+==================== ======================= 
+
+These are the relationships::
+
+    .calc.energy = in_keV(.energy + .energy_offset)
+    .calc.wavelength = A*keV / .calc.energy
+
+For use with other types of radiation (such as neutrons or electrons),
+the conversion between energy and wavelength must be changed by editing
+the energy and wavelength methods in the :class:`hkl.calc.CalcRecip`
+class.
+
+When the Diffractometer ``.energy`` signal is written (via
+``.energy.put(value)`` operation), the ``.energy_offset`` is added.
+This result is converted to ``keV`` as required by the lower-level
+:mod:`hkl.calc` module, and then written to ``.calc.energy`` which in
+turn writes the ``.calc.wavelength`` value. Likewise, when
+``.energy.get()`` reads the energy, it takes its value from
+``.calc.energy``, converts into ``.energy_units``, and then applies
+``.energy_offset``.
+
+.. tip:: How to set energy, offset, and units
+
+    To change energy, offset, & units, do it in this order:
+
+    * First, set units and offset
+    * Finally, set energy
+
+    Example for a ``e4cv`` diffractometer::
+
+        e4cv.energy_units.put("eV")
+        e4cv.energy_offset.put(1.5)
+        e4cv.energy.put(8000)
+        # now, e4cv.calc.energy = 8.0015 keV
+
+
 Engineering Units
 +++++++++++++++++
 
