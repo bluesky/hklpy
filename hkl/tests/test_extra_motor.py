@@ -1,52 +1,24 @@
-from ophyd import PseudoSingle, SoftPositioner
-from ophyd import Component as Cpt
-
 import gi
+from ophyd import Component as Cpt
+from ophyd import PseudoSingle
 
 gi.require_version("Hkl", "5.0")
-from hkl.geometries import E4CV
+from hkl.geometries import SimulatedE4CV
 
 
-class Fourc(E4CV):
-    h = Cpt(PseudoSingle, "")
-    k = Cpt(PseudoSingle, "")
-    l = Cpt(PseudoSingle, "")
-
-    omega = Cpt(SoftPositioner)
-    chi = Cpt(SoftPositioner)
-    phi = Cpt(SoftPositioner)
-    tth = Cpt(SoftPositioner)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        for p in self.real_positioners:
-            p._set_position(0)  # give each a starting position
+class Fourc(SimulatedE4CV):
+    ...
 
 
 FOURC_SETUP_CODE = """
-from ophyd import PseudoSingle, SoftPositioner
 from ophyd import Component as Cpt
-
+from ophyd import SoftPositioner
 import gi
 gi.require_version('Hkl', '5.0')
-from hkl.geometries import E4CV
+from hkl.geometries import SimulatedE4CV
 
-class Fourc(E4CV):
-    h = Cpt(PseudoSingle, '')
-    k = Cpt(PseudoSingle, '')
-    l = Cpt(PseudoSingle, '')
-
-    omega = Cpt(SoftPositioner)
-    chi = Cpt(SoftPositioner)
-    phi = Cpt(SoftPositioner)
-    tth = Cpt(SoftPositioner)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        for p in self.real_positioners:
-            p._set_position(0)  # give each a starting position
+class Fourc(SimulatedE4CV):
+    ...
 """
 
 
