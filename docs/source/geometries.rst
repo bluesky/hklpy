@@ -39,42 +39,19 @@ the actual motors provided by the diffractometer.
 .. [#] The ``ophyd.SoftPositioner`` is such a software simulation:
     https://blueskyproject.io/ophyd/positioners.html#ophyd.positioner.SoftPositioner
 
-Create the custom 6-circle subclass:
+Load the simulated 6-circle geometry from *hklpy*:
 
 .. code-block:: python
     :linenos:
 
     import gi
-    gi.require_version('Hkl', '5.0')
+    gi.require_version("Hkl", "5.0")
     # MUST come before `import hkl`
-    import hkl.geometries
-    from ophyd import Component, PseudoSingle, SoftPositioner
-
-    class SimulatedE6C(hkl.geometries.E6C):
-        """E6C: Simulated (soft) 6-circle diffractometer"""
-
-        h = Component(PseudoSingle, '')
-        k = Component(PseudoSingle, '')
-        l = Component(PseudoSingle, '')
-
-        mu = Component(SoftPositioner)
-        omega = Component(SoftPositioner)
-        chi = Component(SoftPositioner)
-        phi = Component(SoftPositioner)
-        gamma = Component(SoftPositioner)
-        delta = Component(SoftPositioner)
-
-        def __init__(self, *args, **kwargs):
-            """
-            start the SoftPositioner objects with initial values
-            """
-            super().__init__(*args, **kwargs)
-            for axis in self.real_positioners:
-                axis.move(0)
+    from hkl.geometries import SimulatedE6C
 
 Create an instance of this diffractometer with::
 
-    sim6c = SimulatedE6C('', name='sim6c')
+    sim6c = SimulatedE6C("", name="sim6c")
 
 .. _geometries.k4cv:
 
@@ -100,23 +77,26 @@ tth         sky:m4
 .. [#] ``ophyd.EpicsMotor``:
     https://blueskyproject.io/ophyd/builtin-devices.html?highlight=epicsmotor#ophyd.epics_motor.EpicsMotor
 
-Create the custom kappa 4-circle subclass:
+In this case, we must first create a custom kappa 4-circle subclass and
+connect our motor PVs to the positioners for the *real axes*:
 
 .. code-block:: python
     :linenos:
 
     import gi
-    gi.require_version('Hkl', '5.0')
+    gi.require_version("Hkl", "5.0")
     # MUST come before `import hkl`
     import hkl.geometries
-    from ophyd import Component, PseudoSingle, EpicsMotor
+    from ophyd import Component
+    from ophyd import EpicsMotor
+    from ophyd import PseudoSingle
 
     class KappaK4CV(hkl.geometries.K4CV):
         """K4CV: kappa diffractometer in 4-circle geometry"""
 
-        h = Component(PseudoSingle, '')
-        k = Component(PseudoSingle, '')
-        l = Component(PseudoSingle, '')
+        h = Component(PseudoSingle, "")
+        k = Component(PseudoSingle, "")
+        l = Component(PseudoSingle, "")
 
         komega = Component(EpicsMotor, "sky:m1")
         kappa = Component(EpicsMotor, "sky:m2")
@@ -125,7 +105,7 @@ Create the custom kappa 4-circle subclass:
 
 Create an instance of this diffractometer with::
 
-    k4cv = KappaK4CV('', name='k4cv')
+    k4cv = KappaK4CV("", name="k4cv")
 
 .. _geometries.k4cve:
 
@@ -165,19 +145,21 @@ which then sets the wavelength:
 
 (:math:`h\nu=` 12.39842 angstrom :math:`\cdot` keV) and account for the
 units of the control system *energy*.  To combine all this, we define a
-new python class starting similar to `KappaK4CV` above, and adding the
+new python class starting similar to ``KappaK4CV`` above, and adding the
 energy signals.  Create the custom kappa 4-circle subclass with energy:
 
 .. code-block:: python
     :linenos:
 
     import gi
-    gi.require_version('Hkl', '5.0')
+    gi.require_version("Hkl", "5.0")
     # MUST come before `import hkl`
     import hkl.geometries
     from ophyd import Component
     from ophyd import PseudoSingle
-    from ophyd import EpicsSignal, EpicsMotor, Signal
+    from ophyd import EpicsMotor
+    from ophyd import EpicsSignal
+    from ophyd import Signal
     import pint
 
     class KappaK4CV_Energy(hkl.geometries.K4CV):
@@ -185,9 +167,9 @@ energy signals.  Create the custom kappa 4-circle subclass with energy:
         K4CV: kappa diffractometer in 4-circle geometry with energy
         """
 
-        h = Component(PseudoSingle, '')
-        k = Component(PseudoSingle, '')
-        l = Component(PseudoSingle, '')
+        h = Component(PseudoSingle, "")
+        k = Component(PseudoSingle, "")
+        l = Component(PseudoSingle, "")
 
         komega = Component(EpicsMotor, "sky:m1")
         kappa = Component(EpicsMotor, "sky:m2")
@@ -203,7 +185,7 @@ energy signals.  Create the custom kappa 4-circle subclass with energy:
 
 Create an instance of this diffractometer with::
 
-    k4cve = KappaK4CV_Energy('', name='k4cve')
+    k4cve = KappaK4CV_Energy("", name="k4cve")
 
 .. note::
 
@@ -215,7 +197,7 @@ Create an instance of this diffractometer with::
     PVs are connected.  The following code, will create the object, wait
     for all PVs to connect, then update the `calc` engine::
 
-        k4cve = KappaK4CV_Energy('', name='k4cve')
+        k4cve = KappaK4CV_Energy("", name="k4cve")
         k4cve.wait_for_connection()
         k4cve._energy_changed(k4cve.energy.get())
 
