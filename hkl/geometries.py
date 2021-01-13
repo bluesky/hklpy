@@ -15,6 +15,10 @@ DIFFRACTOMETER GEOMETRIES
     ~K6C
     ~TwoC
     ~Zaxis
+    ~SimulatedE4CV
+    ~SimulatedE6C
+    ~SimulatedK4CV
+    ~SimulatedK6C
 
 SPECIAL-USE DIFFRACTOMETER GEOMETRIES
 
@@ -33,6 +37,10 @@ SPECIAL-USE DIFFRACTOMETER GEOMETRIES
 
 from . import calc
 from .diffract import Diffractometer
+from ophyd import Component as Cpt
+from ophyd import Device
+from ophyd import PseudoSingle
+from ophyd import SoftPositioner
 import logging
 
 
@@ -127,3 +135,59 @@ class Zaxis(Diffractometer):
     """Z-axis geometry"""
 
     calc_class = calc.CalcZaxis
+
+
+class SimMixin(Device):
+    """Common setup for simulated geometries."""
+
+    h = Cpt(PseudoSingle, "")
+    k = Cpt(PseudoSingle, "")
+    l = Cpt(PseudoSingle, "")
+
+    def __init__(self, *args, **kwargs):
+        """
+        start the SoftPositioner objects with initial values
+        """
+        super().__init__(*args, **kwargs)
+        for axis in self.real_positioners:
+            axis.move(0)
+
+
+class SimulatedE4CV(SimMixin, E4CV):
+    """SimulatedE4CV: Eulerian 4-circle diffractometer, vertical"""
+
+    omega = Cpt(SoftPositioner, limits=(-180, 180))
+    chi = Cpt(SoftPositioner, limits=(-180, 180))
+    phi = Cpt(SoftPositioner, limits=(-180, 180))
+    tth = Cpt(SoftPositioner, limits=(-180, 180))
+
+
+class SimulatedE6C(SimMixin, E6C):
+    """SimulatedE6C: Eulerian 6-circle diffractometer"""
+
+    mu = Cpt(SoftPositioner, limits=(-180, 180))
+    omega = Cpt(SoftPositioner, limits=(-180, 180))
+    chi = Cpt(SoftPositioner, limits=(-180, 180))
+    phi = Cpt(SoftPositioner, limits=(-180, 180))
+    gamma = Cpt(SoftPositioner, limits=(-180, 180))
+    delta = Cpt(SoftPositioner, limits=(-180, 180))
+
+
+class SimulatedK4CV(SimMixin, K4CV):
+    """SimulatedK4CV: Kappa 4-circle diffractometer, vertical"""
+
+    komega = Cpt(SoftPositioner, limits=(-180, 180))
+    kappa = Cpt(SoftPositioner, limits=(-180, 180))
+    kphi = Cpt(SoftPositioner, limits=(-180, 180))
+    tth = Cpt(SoftPositioner, limits=(-180, 180))
+
+
+class SimulatedK6C(SimMixin, K6C):
+    """SimulatedK6C: Kappa 6-circle diffractometer"""
+
+    mu = Cpt(SoftPositioner, limits=(-180, 180))
+    komega = Cpt(SoftPositioner, limits=(-180, 180))
+    kappa = Cpt(SoftPositioner, limits=(-180, 180))
+    kphi = Cpt(SoftPositioner, limits=(-180, 180))
+    gamma = Cpt(SoftPositioner, limits=(-180, 180))
+    delta = Cpt(SoftPositioner, limits=(-180, 180))
