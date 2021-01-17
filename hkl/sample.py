@@ -438,11 +438,10 @@ class HklSample(object):
             position={
                 k: v
                 for k, v in zip(
-                    geom.axis_names_get(),
-                    geom.axis_values_get(1)
+                    geom.axis_names_get(), geom.axis_values_get(1)
                 )
             },
-            orientation_reflection=refl in self._orientation_reflections
+            orientation_reflection=refl in self._orientation_reflections,
         )
 
     @property
@@ -454,7 +453,4 @@ class HklSample(object):
                 # Edge case when orientation reflection was
                 # deleted from the list in libhkl.
                 refls.append(r)
-        return [
-            self._get_reflection_dict(r)
-            for r in refls
-        ]
+        return [self._get_reflection_dict(r) for r in refls]

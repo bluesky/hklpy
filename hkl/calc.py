@@ -546,7 +546,7 @@ class CalcRecip(object):
                 f"Unable to solve. iterations={iters}/{max_iters}\n"
                 f"Last valid position: {valid_pseudo}\n{valid_real} ",
                 pseudo=valid_pseudo,
-                physical=valid_real
+                physical=valid_real,
             )
 
     @_keep_physical_position
@@ -629,7 +629,7 @@ class CalcRecip(object):
         n=100,
         engine=None,
         path_type="linear",
-        **kwargs
+        **kwargs,
     ):
 
         with UsingEngine(self, engine):
