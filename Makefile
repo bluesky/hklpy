@@ -4,20 +4,20 @@
 
 all :: black flake8 pytest examples clean_docs html
 
+black:
+	black -l 115 .
+
 clean_docs:
 	make -C docs clean
-
-html:
-	make -C docs html
 
 examples:
 	make -C examples
 
-pytest:
-	pytest
-
 flake8:
 	flake8
 
-black:
-	black -l 115 .
+html:
+	make -C docs html
+
+pytest:
+	pytest
