@@ -5,7 +5,7 @@
 all :: black flake8 pytest examples clean_docs html
 
 black ::
-	black -l 115 .
+	black .
 
 clean_docs ::
 	make -C docs clean

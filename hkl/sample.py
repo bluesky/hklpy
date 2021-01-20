@@ -118,9 +118,7 @@ class HklSample(object):
                     raise
 
         if kwargs:
-            raise ValueError(
-                "Unsupported kwargs for HklSample: %s" % tuple(kwargs.keys())
-            )
+            raise ValueError("Unsupported kwargs for HklSample: %s" % tuple(kwargs.keys()))
 
     @property
     def hkl_calc(self):
@@ -320,9 +318,7 @@ class HklSample(object):
             detector = calc._detector
 
         if compute_ub and len(self.reflections) < 1:
-            raise RuntimeError(
-                "Cannot calculate the UB matrix with less than two reflections"
-            )
+            raise RuntimeError("Cannot calculate the UB matrix with less than two reflections")
 
         if compute_ub:
             r1 = self._sample.reflections_get()[-1]
@@ -398,14 +394,8 @@ class HklSample(object):
 
     def __str__(self):
         info = self._repr_info()
-        info.append(
-            "reflection_measured_angles={!r}".format(self.reflection_measured_angles)
-        )
-        info.append(
-            "reflection_theoretical_angles={!r}".format(
-                self.reflection_theoretical_angles
-            )
-        )
+        info.append("reflection_measured_angles={!r}".format(self.reflection_measured_angles))
+        info.append("reflection_theoretical_angles={!r}".format(self.reflection_theoretical_angles))
         return "{}({})".format(self.__class__.__name__, ", ".join(info))
 
     def _get_reflection_dict(self, refl):
@@ -416,9 +406,7 @@ class HklSample(object):
             reflection=dict(h=h, k=k, l=l),
             flag=refl.flag_get(),
             wavelength=geom.wavelength_get(1),
-            position={
-                k: v for k, v in zip(geom.axis_names_get(), geom.axis_values_get(1))
-            },
+            position={k: v for k, v in zip(geom.axis_names_get(), geom.axis_values_get(1))},
             orientation_reflection=refl in self._orientation_reflections,
         )
 
