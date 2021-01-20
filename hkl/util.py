@@ -13,9 +13,7 @@ except ImportError as ex:
     GLib = None
 
     print(
-        "[!!] Failed to import Hkl library; diffractometer support "
-        "disabled ({})".format(ex),
-        file=sys.stderr,
+        "[!!] Failed to import Hkl library; diffractometer support disabled ({})".format(ex), file=sys.stderr,
     )
 
 
@@ -104,9 +102,7 @@ def _gi_info(gi_val):
             except Exception:
                 return "({}: {})".format(ex.__class__.__name__, ex)
 
-    return {
-        attr: get(attr) for attr in dir(gi_val) if attr.endswith("_get")
-    }
+    return {attr: get(attr) for attr in dir(gi_val) if attr.endswith("_get")}
 
 
 Lattice = namedtuple("LatticeTuple", "a b c alpha beta gamma")

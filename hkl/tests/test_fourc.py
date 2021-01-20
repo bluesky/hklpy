@@ -59,15 +59,11 @@ def test_check_value(fourc):
 
     with pytest.raises(TypeError) as exinfo:
         assert fourc.check_value(1, 0, 0) is None
-    assert "check_value() takes 2 positional arguments" in str(
-        exinfo.value
-    )
+    assert "check_value() takes 2 positional arguments" in str(exinfo.value)
 
     with pytest.raises(ValueError) as exinfo:
         assert fourc.check_value(1) is None
-    assert "Not all required values for a PseudoPosition" in str(
-        exinfo.value
-    )
+    assert "Not all required values for a PseudoPosition" in str(exinfo.value)
 
     assert fourc.check_value(dict(h=1, tth=0)) is None
 
@@ -95,22 +91,12 @@ def test_move(fourc):
 
 def test_hl_scan(fourc):
     fourc.move((1.2, 1.2, 0.001))
-    assert (
-        check_limits(
-            bp.scan([fourc], fourc.h, 0.9, 1.1, fourc.l, 0, 0, 11)
-        )
-        is None
-    )
+    assert check_limits(bp.scan([fourc], fourc.h, 0.9, 1.1, fourc.l, 0, 0, 11)) is None
 
 
 def test_h00_scan(fourc):
     fourc.move(1, 0, 0)
-    assert (
-        check_limits(
-            bp.scan([fourc], fourc.h, 0.9, 1.1, fourc.l, 0, 0, 11)
-        )
-        is None
-    )
+    assert check_limits(bp.scan([fourc], fourc.h, 0.9, 1.1, fourc.l, 0, 0, 11)) is None
 
 
 def test_hkl_scan(fourc):
@@ -162,12 +148,7 @@ def test_axis_contention(fourc):
 
 
 def test_real_axis_range_multi(fourc):
-    assert (
-        check_limits(
-            bp.scan([fourc], fourc.tth, 10, 20, fourc.chi, 5, 7, 3)
-        )
-        is None
-    )
+    assert check_limits(bp.scan([fourc], fourc.tth, 10, 20, fourc.chi, 5, 7, 3)) is None
 
 
 def test_real_axis_range_error(fourc):

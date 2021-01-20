@@ -116,9 +116,7 @@ class Parameter(object):
         return repr
 
     def __repr__(self):
-        return "{}({})".format(
-            self.__class__.__name__, ", ".join(self._repr_info())
-        )
+        return "{}({})".format(self.__class__.__name__, ", ".join(self._repr_info()))
 
     def __str__(self):
         info = self._repr_info()
@@ -146,9 +144,7 @@ class Solution(object):
 
     @property
     def positions(self):
-        return self._class(
-            *self._geometry.axis_values_get(self._engine._units)
-        )
+        return self._class(*self._geometry.axis_values_get(self._engine._units))
 
     @property
     def units(self):
@@ -166,9 +162,7 @@ class Solution(object):
         return repr
 
     def __repr__(self):
-        return "{}({})".format(
-            self.__class__.__name__, ", ".join(self._repr_info())
-        )
+        return "{}({})".format(self.__class__.__name__, ", ".join(self._repr_info()))
 
 
 class Engine(object):
@@ -192,10 +186,7 @@ class Engine(object):
     @mode.setter
     def mode(self, mode):
         if mode not in self.modes:
-            raise ValueError(
-                "Unrecognized mode %r; "
-                "choose from: %s" % (mode, ", ".join(self.modes))
-            )
+            raise ValueError("Unrecognized mode %r; choose from: %s" % (mode, ", ".join(self.modes)))
 
         return self._engine.current_mode_set(mode)
 
@@ -226,9 +217,7 @@ class Engine(object):
 
     @property
     def pseudo_axes(self):
-        return OrderedDict(
-            zip(self.pseudo_axis_names, self.pseudo_positions)
-        )
+        return OrderedDict(zip(self.pseudo_axis_names, self.pseudo_positions))
 
     @property
     def pseudo_positions(self):
@@ -237,22 +226,16 @@ class Engine(object):
     @pseudo_positions.setter
     def pseudo_positions(self, values):
         try:
-            geometry_list = self._engine.pseudo_axis_values_set(
-                values, self._units
-            )
+            geometry_list = self._engine.pseudo_axis_values_set(values, self._units)
         except GLib.GError as ex:
             raise ValueError("Calculation failed (%s)" % ex)
 
         Position = self._calc.Position
 
         def get_position(item):
-            return Position(
-                *item.geometry_get().axis_values_get(self._units)
-            )
+            return Position(*item.geometry_get().axis_values_get(self._units))
 
-        self._solutions = [
-            get_position(item) for item in geometry_list.items()
-        ]
+        self._solutions = [get_position(item) for item in geometry_list.items()]
 
     def __getitem__(self, name):
         try:
@@ -297,9 +280,7 @@ class Engine(object):
         return repr
 
     def __repr__(self):
-        return "{}({})".format(
-            self.__class__.__name__, ", ".join(self._repr_info())
-        )
+        return "{}({})".format(self.__class__.__name__, ", ".join(self._repr_info()))
 
 
 # when updating parameters we need to update the parent geometry object

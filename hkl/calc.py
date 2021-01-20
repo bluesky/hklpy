@@ -123,10 +123,7 @@ class CalcRecip(object):
             self._factory = libhkl.factories()[dtype]
         except KeyError:
             types = ", ".join(util.diffractometer_types)
-            raise ValueError(
-                f"Invalid diffractometer type {repr(types)};"
-                f" choose from: {types}"
-            )
+            raise ValueError(f"Invalid diffractometer type {repr(types)};  choose from: {types}")
 
         self._geometry = self._factory.create_new_geometry()
         self._engine_list = self._factory.create_new_engine_list()
@@ -146,9 +143,7 @@ class CalcRecip(object):
         """Dynamically-generated physical motor position class"""
         # I know, I know, could be done more cleanly...
         name = f"Pos{self.__class__.__name__}"
-        return util.get_position_tuple(
-            self.physical_axis_names, class_name=name
-        )
+        return util.get_position_tuple(self.physical_axis_names, class_name=name)
 
     @property
     def wavelength(self):
@@ -184,10 +179,7 @@ class CalcRecip(object):
             return
 
         if self._lock_engine and self._engine is not None:
-            raise ValueError(
-                "Engine is locked on this %s instance"
-                % self.__class__.__name__
-            )
+            raise ValueError("Engine is locked on this %s instance" % self.__class__.__name__)
 
         if isinstance(engine, libhkl.Engine):
             self._engine = engine
@@ -258,19 +250,13 @@ class CalcRecip(object):
             Select the sample to focus calculations on
         """
         if not isinstance(sample, (HklSample, libhkl.Sample)):
-            raise ValueError(
-                "Expected either an HklSample or a Sample " "instance"
-            )
+            raise ValueError("Expected either an HklSample or a Sample instance")
 
         if isinstance(sample, libhkl.Sample):
-            sample = HklSample(
-                calc=self, sample=sample, units=self._unit_name
-            )
+            sample = HklSample(calc=self, sample=sample, units=self._unit_name)
 
         if sample.name in self._samples:
-            raise ValueError(
-                'Sample of name "%s" already exists' % sample.name
-            )
+            raise ValueError('Sample of name "%s" already exists' % sample.name)
 
         self._samples[sample.name] = sample
         if select:
@@ -292,9 +278,7 @@ class CalcRecip(object):
             Select the sample to focus calculations on
         """
         units = kwargs.pop("units", self._unit_name)
-        sample = HklSample(
-            self, sample=libhkl.Sample.new(name), units=units, **kwargs
-        )
+        sample = HklSample(self, sample=libhkl.Sample.new(name), units=units, **kwargs)
 
         return self.add_sample(sample, select=select)
 
@@ -303,19 +287,11 @@ class CalcRecip(object):
         if self._engine is None:
             return
 
-        if (
-            self._geometry is None
-            or self._detector is None
-            or self._sample is None
-        ):
-            raise ValueError(
-                "Not all parameters set (geometry, detector, sample)"
-            )
+        if self._geometry is None or self._detector is None or self._sample is None:
+            raise ValueError("Not all parameters set (geometry, detector, sample)")
             # pass
         else:
-            self._engine_list.init(
-                self._geometry, self._detector, self._sample.hkl_sample
-            )
+            self._engine_list.init(self._geometry, self._detector, self._sample.hkl_sample)
 
     @property
     def engines(self):
@@ -350,12 +326,8 @@ class CalcRecip(object):
         if set(axis_name_map.keys()) != set(internal_axis_names):
             raise ValueError("Every axis name has to have a remapped name")
 
-        self._axis_name_to_original = OrderedDict(
-            (axis_name_map[axis], axis) for axis in internal_axis_names
-        )
-        self._axis_name_to_renamed = OrderedDict(
-            (axis, axis_name_map[axis]) for axis in internal_axis_names
-        )
+        self._axis_name_to_original = OrderedDict((axis_name_map[axis], axis) for axis in internal_axis_names)
+        self._axis_name_to_renamed = OrderedDict((axis, axis_name_map[axis]) for axis in internal_axis_names)
 
         self._inverted_axes = []
 
@@ -407,12 +379,7 @@ class CalcRecip(object):
     @property
     def physical_axes(self):
         """Physical (real) motor positions as an OrderedDict"""
-        return OrderedDict(
-            zip(
-                self.physical_axis_names,
-                self._geometry.axis_values_get(self._units),
-            )
-        )
+        return OrderedDict(zip(self.physical_axis_names, self._geometry.axis_values_get(self._units),))
 
     @property
     def pseudo_axis_names(self):
@@ -463,9 +430,7 @@ class CalcRecip(object):
         param.value = value
 
     @_keep_physical_position
-    def forward_iter(
-        self, start, end, max_iters, *, threshold=0.99, decision_fcn=None
-    ):
+    def forward_iter(self, start, end, max_iters, *, threshold=0.99, decision_fcn=None):
         """Iteratively attempt to go from a pseudo start -> end position
 
         For every solution failure, the position is moved back.
@@ -528,9 +493,7 @@ class CalcRecip(object):
                 t = (t + 1) / 2.0
 
                 valid_pseudo = self.engine.pseudo_positions
-                valid_real = decision_fcn(
-                    valid_pseudo, self.engine.solutions
-                )
+                valid_real = decision_fcn(valid_pseudo, self.engine.solutions)
                 self.physical_positions = valid_real
 
                 if t >= threshold:
@@ -571,9 +534,7 @@ class CalcRecip(object):
         # end   = [h2, k2, l2]
 
         # from start to end, in a linear path
-        singles = [
-            np.linspace(start[i], end[i], n + 1) for i in range(num_params)
-        ]
+        singles = [np.linspace(start[i], end[i], n + 1) for i in range(num_params)]
 
         return list(zip(*singles))
 
@@ -581,13 +542,9 @@ class CalcRecip(object):
         try:
             return getattr(self, "calc_%s_path" % (path_type))
         except AttributeError:
-            raise ValueError(
-                "Invalid path type specified (%s)" % path_type
-            )
+            raise ValueError("Invalid path type specified (%s)" % path_type)
 
-    def get_path(
-        self, start, end=None, n=100, path_type="linear", **kwargs
-    ):
+    def get_path(self, start, end=None, n=100, path_type="linear", **kwargs):
         num_params = len(self.pseudo_axis_names)
 
         start = np.array(start)
@@ -597,9 +554,7 @@ class CalcRecip(object):
         if end is not None:
             end = np.array(end)
             if start.size == end.size == num_params:
-                return path_fcn(
-                    start, end, n, num_params=num_params, **kwargs
-                )
+                return path_fcn(start, end, n, num_params=num_params, **kwargs)
 
         else:
             positions = np.array(start)
@@ -607,35 +562,21 @@ class CalcRecip(object):
                 # single position
                 return [list(positions)]
             elif positions.ndim == 2:
-                if (
-                    positions.shape[0] == 1
-                    and positions.size == num_params
-                ):
+                if positions.shape[0] == 1 and positions.size == num_params:
                     # [[h, k, l], ]
                     return [positions[0]]
                 elif positions.shape[0] == num_params:
                     # [[h, k, l], [h, k, l], ...]
                     return [positions[i, :] for i in range(num_params)]
 
-        raise ValueError(
-            "Invalid set of %s positions"
-            % ", ".join(self.pseudo_axis_names)
-        )
+        raise ValueError("Invalid set of %s positions" % ", ".join(self.pseudo_axis_names))
 
     def __call__(
-        self,
-        start,
-        end=None,
-        n=100,
-        engine=None,
-        path_type="linear",
-        **kwargs,
+        self, start, end=None, n=100, engine=None, path_type="linear", **kwargs,
     ):
 
         with UsingEngine(self, engine):
-            for pos in self.get_path(
-                start, end=end, n=n, path_type=path_type, **kwargs
-            ):
+            for pos in self.get_path(start, end=end, n=n, path_type=path_type, **kwargs):
                 yield self.forward(pos, engine=None, **kwargs)
 
     def _repr_info(self):
@@ -649,10 +590,7 @@ class CalcRecip(object):
         return r
 
     def __repr__(self):
-        return (
-            f"{self.__class__.__name__}"
-            f"({', '.join(self._repr_info())})"
-        )
+        return f"{self.__class__.__name__} ({', '.join(self._repr_info())})"
 
     def __str__(self):
         return repr(self)

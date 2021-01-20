@@ -57,9 +57,7 @@ def tardis():
 def sample(tardis):
     # lengths must have same units as wavelength
     # angles are in degrees
-    lattice = Lattice(
-        a=0.5857, b=0.5857, c=0.7849, alpha=90.0, beta=90.0, gamma=90.0
-    )
+    lattice = Lattice(a=0.5857, b=0.5857, c=0.7849, alpha=90.0, beta=90.0, gamma=90.0)
 
     # add the sample to the calculation engine
     tardis.calc.new_sample("KCF", lattice=lattice)
@@ -67,22 +65,12 @@ def sample(tardis):
     # We can alternatively set the wavelength
     # (or photon energy) on the Tardis.calc instance.
     p1 = tardis.calc.Position(
-        theta=48.42718305024724,
-        omega=0.0,
-        chi=0.0,
-        phi=0.0,
-        delta=115.65436271083637,
-        gamma=3.0000034909999993,
+        theta=48.42718305024724, omega=0.0, chi=0.0, phi=0.0, delta=115.65436271083637, gamma=3.0000034909999993,
     )
     r1 = tardis.calc.sample.add_reflection(0, 0, 1, position=p1)
 
     p2 = tardis.calc.Position(
-        theta=138.42718305024724,
-        omega=0.0,
-        chi=0.0,
-        phi=0.0,
-        delta=115.65436271083637,
-        gamma=3.0000034909999993,
+        theta=138.42718305024724, omega=0.0, chi=0.0, phi=0.0, delta=115.65436271083637, gamma=3.0000034909999993,
     )
     r2 = tardis.calc.sample.add_reflection(1, 1, 0, position=p2)
     tardis.calc.sample.compute_UB(r1, r2)
@@ -98,9 +86,7 @@ def sample(tardis):
     print("u matrix is", tardis.U.get(), tardis.U.describe())
     print("ub matrix is", tardis.UB.get(), tardis.UB.describe())
     print(
-        "reflections:",
-        tardis.reflections.get(),
-        tardis.reflections.describe(),
+        "reflections:", tardis.reflections.get(), tardis.reflections.describe(),
     )
     print("ux is", tardis.ux.get(), tardis.ux.describe())
     print("uy is", tardis.uy.get(), tardis.uy.describe())
@@ -207,13 +193,9 @@ def test_inversion(tardis, sample):
     assert not tardis.calc["omega"].inverted
     gamma = tardis.calc["gamma"]
     assert gamma.inverted
-    numpy.testing.assert_almost_equal(
-        gamma.limits, (-180.0, 5.0)  # inverted from (-5, 180)
-    )
+    numpy.testing.assert_almost_equal(gamma.limits, (-180.0, 5.0))  # inverted from (-5, 180)
     gamma.limits = (-180.0, 5.0)
-    numpy.testing.assert_almost_equal(
-        gamma.limits, (-180.0, 5.0)  # inverted from (-5, 180)
-    )
+    numpy.testing.assert_almost_equal(gamma.limits, (-180.0, 5.0))  # inverted from (-5, 180)
 
     numpy.testing.assert_almost_equal(tardis.calc.physical_positions, rpos)
     numpy.testing.assert_almost_equal(tardis.calc.inverse(rpos), ppos)
@@ -231,6 +213,4 @@ def test_unreachable(tardis, sample):
 
     # it should not have moved:
     numpy.testing.assert_almost_equal(tardis.position, (0, 0, 0))
-    numpy.testing.assert_almost_equal(
-        tardis.calc.physical_positions, [0] * 6
-    )
+    numpy.testing.assert_almost_equal(tardis.calc.physical_positions, [0] * 6)

@@ -33,9 +33,7 @@ def check_lattice(lattice):
     lt = Lattice(a, b, c, alpha, beta, gamma)
     for k, v in lt._asdict().items():
         if v is None:
-            raise ValueError(
-                'Lattice parameter "{}" unset or invalid' "".format(k)
-            )
+            raise ValueError('Lattice parameter "{}" unset or invalid' "".format(k))
 
     lt = Lattice(
         a.value_get(util.units["user"]),
@@ -99,8 +97,7 @@ class HklSample(object):
             self._units = util.units[self._unit_name]
         except KeyError:
             raise ValueError(
-                f"Unit name '{self._unit_name}' not found."
-                f"  Allowed names: {list(util.units.keys())}"
+                f"Unit name '{self._unit_name}' not found.   Allowed names: {list(util.units.keys())}"
             )
 
         # List of reflections used in computing the U & UB matrices.
@@ -121,10 +118,7 @@ class HklSample(object):
                     raise
 
         if kwargs:
-            raise ValueError(
-                "Unsupported kwargs for HklSample: %s"
-                % tuple(kwargs.keys())
-            )
+            raise ValueError("Unsupported kwargs for HklSample: %s" % tuple(kwargs.keys()))
 
     @property
     def hkl_calc(self):
@@ -257,9 +251,7 @@ class HklSample(object):
         if detector is None:
             detector = self._calc._detector
 
-        return libhkl.SampleReflection.new(
-            self._calc._geometry, detector, h, k, l
-        )
+        return libhkl.SampleReflection.new(self._calc._geometry, detector, h, k, l)
 
     def compute_UB(self, r1, r2):
         """Compute the UB matrix with two reflections.
@@ -301,9 +293,7 @@ class HklSample(object):
         for refl in refls:
             self.add_reflection(*refl)
 
-    def add_reflection(
-        self, h, k, l, position=None, detector=None, compute_ub=False
-    ):
+    def add_reflection(self, h, k, l, position=None, detector=None, compute_ub=False):
         """Add a reflection, optionally specifying the detector to use
 
         Parameters
@@ -328,10 +318,7 @@ class HklSample(object):
             detector = calc._detector
 
         if compute_ub and len(self.reflections) < 1:
-            raise RuntimeError(
-                "Cannot calculate the UB matrix with less than two "
-                "reflections"
-            )
+            raise RuntimeError("Cannot calculate the UB matrix with less than two reflections")
 
         if compute_ub:
             r1 = self._sample.reflections_get()[-1]
@@ -339,9 +326,7 @@ class HklSample(object):
         with TemporaryGeometry(calc):
             if position is not None:
                 calc.physical_positions = position
-            r2 = self._sample.add_reflection(
-                calc._geometry, detector, h, k, l
-            )
+            r2 = self._sample.add_reflection(calc._geometry, detector, h, k, l)
 
         if compute_ub:
             self.compute_UB(r1, r2)
@@ -378,15 +363,11 @@ class HklSample(object):
 
     @property
     def reflection_measured_angles(self):
-        return self._refl_matrix(
-            self._sample.get_reflection_measured_angle
-        )
+        return self._refl_matrix(self._sample.get_reflection_measured_angle)
 
     @property
     def reflection_theoretical_angles(self):
-        return self._refl_matrix(
-            self._sample.get_reflection_theoretical_angle
-        )
+        return self._refl_matrix(self._sample.get_reflection_theoretical_angle)
 
     def affine(self):
         """
@@ -409,22 +390,12 @@ class HklSample(object):
         return repr
 
     def __repr__(self):
-        return "{}({})".format(
-            self.__class__.__name__, ", ".join(self._repr_info())
-        )
+        return "{}({})".format(self.__class__.__name__, ", ".join(self._repr_info()))
 
     def __str__(self):
         info = self._repr_info()
-        info.append(
-            "reflection_measured_angles={!r}".format(
-                self.reflection_measured_angles
-            )
-        )
-        info.append(
-            "reflection_theoretical_angles={!r}".format(
-                self.reflection_theoretical_angles
-            )
-        )
+        info.append("reflection_measured_angles={!r}".format(self.reflection_measured_angles))
+        info.append("reflection_theoretical_angles={!r}".format(self.reflection_theoretical_angles))
         return "{}({})".format(self.__class__.__name__, ", ".join(info))
 
     def _get_reflection_dict(self, refl):
@@ -435,12 +406,7 @@ class HklSample(object):
             reflection=dict(h=h, k=k, l=l),
             flag=refl.flag_get(),
             wavelength=geom.wavelength_get(1),
-            position={
-                k: v
-                for k, v in zip(
-                    geom.axis_names_get(), geom.axis_values_get(1)
-                )
-            },
+            position={k: v for k, v in zip(geom.axis_names_get(), geom.axis_values_get(1))},
             orientation_reflection=refl in self._orientation_reflections,
         )
 
