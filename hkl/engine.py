@@ -166,8 +166,7 @@ class Solution(object):
 
 
 class Engine(object):
-    """HKL calculation engine
-    """
+    """HKL calculation engine"""
 
     def __init__(self, calc, engine, engine_list):
         self._calc = calc

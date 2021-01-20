@@ -125,7 +125,8 @@ def test_energy_units(fourc):
     fourc.energy.put(eV)
     numpy.testing.assert_almost_equal(fourc.calc.energy, eV / 1000)
     numpy.testing.assert_almost_equal(
-        pint.Quantity(fourc.calc.energy, "keV").to(fourc.energy_units.get()).magnitude, fourc.energy.get(),
+        pint.Quantity(fourc.calc.energy, "keV").to(fourc.energy_units.get()).magnitude,
+        fourc.energy.get(),
     )
 
     fourc.energy_units.put("keV")

@@ -65,12 +65,22 @@ def sample(tardis):
     # We can alternatively set the wavelength
     # (or photon energy) on the Tardis.calc instance.
     p1 = tardis.calc.Position(
-        theta=48.42718305024724, omega=0.0, chi=0.0, phi=0.0, delta=115.65436271083637, gamma=3.0000034909999993,
+        theta=48.42718305024724,
+        omega=0.0,
+        chi=0.0,
+        phi=0.0,
+        delta=115.65436271083637,
+        gamma=3.0000034909999993,
     )
     r1 = tardis.calc.sample.add_reflection(0, 0, 1, position=p1)
 
     p2 = tardis.calc.Position(
-        theta=138.42718305024724, omega=0.0, chi=0.0, phi=0.0, delta=115.65436271083637, gamma=3.0000034909999993,
+        theta=138.42718305024724,
+        omega=0.0,
+        chi=0.0,
+        phi=0.0,
+        delta=115.65436271083637,
+        gamma=3.0000034909999993,
     )
     r2 = tardis.calc.sample.add_reflection(1, 1, 0, position=p2)
     tardis.calc.sample.compute_UB(r1, r2)
@@ -86,7 +96,9 @@ def sample(tardis):
     print("u matrix is", tardis.U.get(), tardis.U.describe())
     print("ub matrix is", tardis.UB.get(), tardis.UB.describe())
     print(
-        "reflections:", tardis.reflections.get(), tardis.reflections.describe(),
+        "reflections:",
+        tardis.reflections.get(),
+        tardis.reflections.describe(),
     )
     print("ux is", tardis.ux.get(), tardis.ux.describe())
     print("uy is", tardis.uy.get(), tardis.uy.describe())
@@ -132,7 +144,7 @@ def constrain(tardis):
 
 def test_params(tardis):
     """
-        Make sure the parameters are set correctly
+    Make sure the parameters are set correctly
     """
     calc = tardis.calc
     # gamma

@@ -102,25 +102,57 @@ class Diffractometer(PseudoPositioner):
     energy_update_calc_flag = Cpt(Signal, value=True)
 
     geometry_name = Cpt(
-        AttributeSignal, attr="calc.geometry_name", doc="Diffractometer Geometry name", write_access=False,
+        AttributeSignal,
+        attr="calc.geometry_name",
+        doc="Diffractometer Geometry name",
+        write_access=False,
     )
     class_name = Cpt(
-        AttributeSignal, attr="__class__.__name__", doc="Diffractometer class name", write_access=False,
+        AttributeSignal,
+        attr="__class__.__name__",
+        doc="Diffractometer class name",
+        write_access=False,
     )
 
     sample_name = Cpt(AttributeSignal, attr="calc.sample_name", doc="Sample name")
-    lattice = Cpt(ArrayAttributeSignal, attr="calc.sample.lattice", doc="Sample lattice",)
-    lattice_reciprocal = Cpt(AttributeSignal, attr="calc.sample.reciprocal", doc="Reciprocal lattice",)
+    lattice = Cpt(
+        ArrayAttributeSignal,
+        attr="calc.sample.lattice",
+        doc="Sample lattice",
+    )
+    lattice_reciprocal = Cpt(
+        AttributeSignal,
+        attr="calc.sample.reciprocal",
+        doc="Reciprocal lattice",
+    )
 
     U = Cpt(AttributeSignal, attr="calc.sample.U", doc="U matrix")
     UB = Cpt(AttributeSignal, attr="calc.sample.UB", doc="UB matrix")
-    reflections = Cpt(ArrayAttributeSignal, attr="calc.sample.reflections", doc="Reflections",)
-    reflections_details = Cpt(
-        AttributeSignal, attr="calc.sample.reflections_details", doc="Details of reflections",
+    reflections = Cpt(
+        ArrayAttributeSignal,
+        attr="calc.sample.reflections",
+        doc="Reflections",
     )
-    ux = Cpt(AttributeSignal, attr="calc.sample.ux.value", doc="ux portion of the U matrix",)
-    uy = Cpt(AttributeSignal, attr="calc.sample.uy.value", doc="uy portion of the U matrix",)
-    uz = Cpt(AttributeSignal, attr="calc.sample.uz.value", doc="uz portion of the U matrix",)
+    reflections_details = Cpt(
+        AttributeSignal,
+        attr="calc.sample.reflections_details",
+        doc="Details of reflections",
+    )
+    ux = Cpt(
+        AttributeSignal,
+        attr="calc.sample.ux.value",
+        doc="ux portion of the U matrix",
+    )
+    uy = Cpt(
+        AttributeSignal,
+        attr="calc.sample.uy.value",
+        doc="uy portion of the U matrix",
+    )
+    uz = Cpt(
+        AttributeSignal,
+        attr="calc.sample.uz.value",
+        doc="uz portion of the U matrix",
+    )
 
     def __init__(
         self,
@@ -162,7 +194,10 @@ class Diffractometer(PseudoPositioner):
         self._decision_fcn = decision_fcn
 
         super().__init__(
-            prefix, read_attrs=read_attrs, configuration_attrs=configuration_attrs, **kwargs,
+            prefix,
+            read_attrs=read_attrs,
+            configuration_attrs=configuration_attrs,
+            **kwargs,
         )
 
         if read_attrs is None:
@@ -192,7 +227,9 @@ class Diffractometer(PseudoPositioner):
         """
         if not self.connected:
             logger.warning(
-                "%s not fully connected, %s.calc.energy not updated", self.name, self.name,
+                "%s not fully connected, %s.calc.energy not updated",
+                self.name,
+                self.name,
             )
             return
 
@@ -209,7 +246,9 @@ class Diffractometer(PseudoPositioner):
         """
         if not self.connected:
             logger.warning(
-                ("%s not fully connected, '%s.calc.energy_offset' not updated"), self.name, self.name,
+                ("%s not fully connected, '%s.calc.energy_offset' not updated"),
+                self.name,
+                self.name,
             )
             return
 
@@ -231,7 +270,9 @@ class Diffractometer(PseudoPositioner):
         """
         if not self.connected:
             logger.warning(
-                ("%s not fully connected, '%s.calc.energy_units' not updated"), self.name, self.name,
+                ("%s not fully connected, '%s.calc.energy_units' not updated"),
+                self.name,
+                self.name,
             )
             return
 
@@ -245,7 +286,9 @@ class Diffractometer(PseudoPositioner):
         """
         if not self.connected:
             logger.warning(
-                "%s not fully connected, %s.calc.energy not updated", self.name, self.name,
+                "%s not fully connected, %s.calc.energy not updated",
+                self.name,
+                self.name,
             )
             return
 
