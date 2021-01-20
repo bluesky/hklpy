@@ -186,7 +186,9 @@ class Engine(object):
     @mode.setter
     def mode(self, mode):
         if mode not in self.modes:
-            raise ValueError("Unrecognized mode %r; choose from: %s" % (mode, ", ".join(self.modes)))
+            raise ValueError(
+                "Unrecognized mode %r; choose from: %s" % (mode, ", ".join(self.modes))
+            )
 
         return self._engine.current_mode_set(mode)
 

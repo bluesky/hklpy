@@ -65,12 +65,22 @@ def sample(tardis):
     # We can alternatively set the wavelength
     # (or photon energy) on the Tardis.calc instance.
     p1 = tardis.calc.Position(
-        theta=48.42718305024724, omega=0.0, chi=0.0, phi=0.0, delta=115.65436271083637, gamma=3.0000034909999993,
+        theta=48.42718305024724,
+        omega=0.0,
+        chi=0.0,
+        phi=0.0,
+        delta=115.65436271083637,
+        gamma=3.0000034909999993,
     )
     r1 = tardis.calc.sample.add_reflection(0, 0, 1, position=p1)
 
     p2 = tardis.calc.Position(
-        theta=138.42718305024724, omega=0.0, chi=0.0, phi=0.0, delta=115.65436271083637, gamma=3.0000034909999993,
+        theta=138.42718305024724,
+        omega=0.0,
+        chi=0.0,
+        phi=0.0,
+        delta=115.65436271083637,
+        gamma=3.0000034909999993,
     )
     r2 = tardis.calc.sample.add_reflection(1, 1, 0, position=p2)
     tardis.calc.sample.compute_UB(r1, r2)
@@ -193,9 +203,13 @@ def test_inversion(tardis, sample):
     assert not tardis.calc["omega"].inverted
     gamma = tardis.calc["gamma"]
     assert gamma.inverted
-    numpy.testing.assert_almost_equal(gamma.limits, (-180.0, 5.0))  # inverted from (-5, 180)
+    numpy.testing.assert_almost_equal(
+        gamma.limits, (-180.0, 5.0)
+    )  # inverted from (-5, 180)
     gamma.limits = (-180.0, 5.0)
-    numpy.testing.assert_almost_equal(gamma.limits, (-180.0, 5.0))  # inverted from (-5, 180)
+    numpy.testing.assert_almost_equal(
+        gamma.limits, (-180.0, 5.0)
+    )  # inverted from (-5, 180)
 
     numpy.testing.assert_almost_equal(tardis.calc.physical_positions, rpos)
     numpy.testing.assert_almost_equal(tardis.calc.inverse(rpos), ppos)

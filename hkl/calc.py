@@ -123,7 +123,9 @@ class CalcRecip(object):
             self._factory = libhkl.factories()[dtype]
         except KeyError:
             types = ", ".join(util.diffractometer_types)
-            raise ValueError(f"Invalid diffractometer type {repr(types)};  choose from: {types}")
+            raise ValueError(
+                f"Invalid diffractometer type {repr(types)};  choose from: {types}"
+            )
 
         self._geometry = self._factory.create_new_geometry()
         self._engine_list = self._factory.create_new_engine_list()
@@ -179,7 +181,9 @@ class CalcRecip(object):
             return
 
         if self._lock_engine and self._engine is not None:
-            raise ValueError("Engine is locked on this %s instance" % self.__class__.__name__)
+            raise ValueError(
+                "Engine is locked on this %s instance" % self.__class__.__name__
+            )
 
         if isinstance(engine, libhkl.Engine):
             self._engine = engine
@@ -291,7 +295,9 @@ class CalcRecip(object):
             raise ValueError("Not all parameters set (geometry, detector, sample)")
             # pass
         else:
-            self._engine_list.init(self._geometry, self._detector, self._sample.hkl_sample)
+            self._engine_list.init(
+                self._geometry, self._detector, self._sample.hkl_sample
+            )
 
     @property
     def engines(self):
@@ -326,8 +332,12 @@ class CalcRecip(object):
         if set(axis_name_map.keys()) != set(internal_axis_names):
             raise ValueError("Every axis name has to have a remapped name")
 
-        self._axis_name_to_original = OrderedDict((axis_name_map[axis], axis) for axis in internal_axis_names)
-        self._axis_name_to_renamed = OrderedDict((axis, axis_name_map[axis]) for axis in internal_axis_names)
+        self._axis_name_to_original = OrderedDict(
+            (axis_name_map[axis], axis) for axis in internal_axis_names
+        )
+        self._axis_name_to_renamed = OrderedDict(
+            (axis, axis_name_map[axis]) for axis in internal_axis_names
+        )
 
         self._inverted_axes = []
 
@@ -379,7 +389,9 @@ class CalcRecip(object):
     @property
     def physical_axes(self):
         """Physical (real) motor positions as an OrderedDict"""
-        return OrderedDict(zip(self.physical_axis_names, self._geometry.axis_values_get(self._units),))
+        return OrderedDict(
+            zip(self.physical_axis_names, self._geometry.axis_values_get(self._units),)
+        )
 
     @property
     def pseudo_axis_names(self):
@@ -569,14 +581,18 @@ class CalcRecip(object):
                     # [[h, k, l], [h, k, l], ...]
                     return [positions[i, :] for i in range(num_params)]
 
-        raise ValueError("Invalid set of %s positions" % ", ".join(self.pseudo_axis_names))
+        raise ValueError(
+            "Invalid set of %s positions" % ", ".join(self.pseudo_axis_names)
+        )
 
     def __call__(
         self, start, end=None, n=100, engine=None, path_type="linear", **kwargs,
     ):
 
         with UsingEngine(self, engine):
-            for pos in self.get_path(start, end=end, n=n, path_type=path_type, **kwargs):
+            for pos in self.get_path(
+                start, end=end, n=n, path_type=path_type, **kwargs
+            ):
                 yield self.forward(pos, engine=None, **kwargs)
 
     def _repr_info(self):
