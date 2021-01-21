@@ -1,0 +1,22 @@
+[tool.black]
+line-length = 115  # matches the value of 'max-line-length' in .flake8
+target-version = ['py38']
+exclude = '''
+
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | examples/archive
+    | build
+    | dist
+  )/
+  | hkl/_version.py
+  | versioneer.py    # also separately exclude a file named foo.py in
+                     # the root of the project
+)
+'''

@@ -24,8 +24,8 @@ class Parameter(object):
                 units='Degree')
 
     """
-    def __init__(self, param, units='user', name=None,
-                 inverted=False):
+
+    def __init__(self, param, units="user", name=None, inverted=False):
         self._param = param
         self._unit_name = units
         self._units = util.units[units]
@@ -34,12 +34,12 @@ class Parameter(object):
 
     @property
     def inverted(self):
-        '''Is the value inverted internally?'''
+        """Is the value inverted internally?"""
         return self._inverted
 
     @property
     def hkl_parameter(self):
-        '''The HKL library parameter object'''
+        """The HKL library parameter object"""
         return self._param
 
     @property
@@ -50,7 +50,7 @@ class Parameter(object):
     def name(self):
         name = self._param.name_get()
         if self._name != name:
-            return '{} (internally: {})'.format(self._name, name)
+            return "{} (internally: {})".format(self._name, name)
         return name
 
     @property
@@ -59,12 +59,12 @@ class Parameter(object):
 
     @property
     def user_units(self):
-        '''A string representing the user unit type'''
+        """A string representing the user unit type"""
         return self._param.user_unit_get()
 
     @property
     def default_units(self):
-        '''A string representing the default unit type'''
+        """A string representing the default unit type"""
         return self._param.default_unit_get()
 
     @value.setter
@@ -76,7 +76,7 @@ class Parameter(object):
 
     @property
     def fit(self):
-        '''True if the parameter can be fit or not'''
+        """True if the parameter can be fit or not"""
         return bool(self._param.fit_get())
 
     @fit.setter
@@ -100,35 +100,35 @@ class Parameter(object):
             self._param.min_max_set(low, high, self._units)
 
     def _repr_info(self):
-        repr = ['name={!r}'.format(self.name),
-                'limits={!r}'.format(self.limits),
-                'value={!r}'.format(self.value),
-                'fit={!r}'.format(self.fit),
-                'inverted={!r}'.format(self.inverted),
-                ]
+        repr = [
+            "name={!r}".format(self.name),
+            "limits={!r}".format(self.limits),
+            "value={!r}".format(self.value),
+            "fit={!r}".format(self.fit),
+            "inverted={!r}".format(self.inverted),
+        ]
 
-        if self._unit_name == 'user':
-            repr.append('units={!r}'.format(self.user_units))
+        if self._unit_name == "user":
+            repr.append("units={!r}".format(self.user_units))
         else:
-            repr.append('units={!r}'.format(self.default_units))
+            repr.append("units={!r}".format(self.default_units))
 
         return repr
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__,
-                               ', '.join(self._repr_info()))
+        return "{}({})".format(self.__class__.__name__, ", ".join(self._repr_info()))
 
     def __str__(self):
         info = self._repr_info()
         # info.append(self.)
-        return '{}({})'.format(self.__class__.__name__,
-                               ', '.join(info))
+        return "{}({})".format(self.__class__.__name__, ", ".join(info))
 
 
 class Solution(object):
     """
     solution of the conversion from (hkl) to axes
     """
+
     def __init__(self, engine, list_item, class_):
         self._class = class_
         self._list_item = list_item.copy()
@@ -154,20 +154,20 @@ class Solution(object):
         self._engine._engine_list.select_solution(self._list_item)
 
     def _repr_info(self):
-        repr = ['{!r}'.format(self.positions),
-                'units={!r}'.format(self._engine.units),
-                ]
+        repr = [
+            "{!r}".format(self.positions),
+            "units={!r}".format(self._engine.units),
+        ]
 
         return repr
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__,
-                               ', '.join(self._repr_info()))
+        return "{}({})".format(self.__class__.__name__, ", ".join(self._repr_info()))
 
 
 class Engine(object):
-    """HKL calculation engine
-    """
+    """HKL calculation engine"""
+
     def __init__(self, calc, engine, engine_list):
         self._calc = calc
         self._engine = engine
@@ -179,15 +179,13 @@ class Engine(object):
 
     @property
     def mode(self):
-        '''HKL calculation mode (see also `HklCalc.modes`)'''
+        """HKL calculation mode (see also `HklCalc.modes`)"""
         return self._engine.current_mode_get()
 
     @mode.setter
     def mode(self, mode):
         if mode not in self.modes:
-            raise ValueError('Unrecognized mode %r; '
-                             'choose from: %s' % (mode, ', '.join(self.modes))
-                             )
+            raise ValueError("Unrecognized mode %r; choose from: %s" % (mode, ", ".join(self.modes)))
 
         return self._engine.current_mode_set(mode)
 
@@ -200,7 +198,7 @@ class Engine(object):
         return tuple(self._solutions)
 
     def update(self):
-        '''Calculate the pseudo axis positions from the real axis positions'''
+        """Calculate the pseudo axis positions from the real axis positions"""
         # TODO: though this works, maybe it could be named better on the hkl
         # side? either the 'get' function name or the fact that the EngineList
         # is more than just a list...
@@ -218,8 +216,7 @@ class Engine(object):
 
     @property
     def pseudo_axes(self):
-        return OrderedDict(zip(self.pseudo_axis_names,
-                               self.pseudo_positions))
+        return OrderedDict(zip(self.pseudo_axis_names, self.pseudo_positions))
 
     @property
     def pseudo_positions(self):
@@ -228,63 +225,61 @@ class Engine(object):
     @pseudo_positions.setter
     def pseudo_positions(self, values):
         try:
-            geometry_list = self._engine.pseudo_axis_values_set(values,
-                                                                self._units)
+            geometry_list = self._engine.pseudo_axis_values_set(values, self._units)
         except GLib.GError as ex:
-            raise ValueError('Calculation failed (%s)' % ex)
+            raise ValueError("Calculation failed (%s)" % ex)
 
         Position = self._calc.Position
 
         def get_position(item):
             return Position(*item.geometry_get().axis_values_get(self._units))
 
-        self._solutions = [get_position(item)
-                           for item in geometry_list.items()]
+        self._solutions = [get_position(item) for item in geometry_list.items()]
 
     def __getitem__(self, name):
         try:
             return self.pseudo_axes[name]
         except KeyError:
-            raise ValueError('Unknown axis name: %s' % name)
+            raise ValueError("Unknown axis name: %s" % name)
 
     def __setitem__(self, name, value):
         values = self.pseudo_positions
         try:
             idx = self.pseudo_axis_names.index(name)
         except IndexError:
-            raise ValueError('Unknown axis name: %s' % name)
+            raise ValueError("Unknown axis name: %s" % name)
 
         values[idx] = float(value)
         self.pseudo_positions = values
 
     @property
     def units(self):
-        '''The units used for calculations'''
+        """The units used for calculations"""
         return self._calc.units
 
     @property
     def _units(self):
-        '''The (internal) units used for calculations'''
+        """The (internal) units used for calculations"""
         return self._calc._units
 
     @property
     def engine(self):
-        '''The calculation engine'''
+        """The calculation engine"""
         return self._engine
 
     def _repr_info(self):
-        repr = ['parameters={!r}'.format(self.parameters),
-                'pseudo_axes={!r}'.format(dict(self.pseudo_axes)),
-                'mode={!r}'.format(self.mode),
-                'modes={!r}'.format(self.modes),
-                'units={!r}'.format(self.units),
-                ]
+        repr = [
+            "parameters={!r}".format(self.parameters),
+            "pseudo_axes={!r}".format(dict(self.pseudo_axes)),
+            "mode={!r}".format(self.mode),
+            "modes={!r}".format(self.modes),
+            "units={!r}".format(self.units),
+        ]
 
         return repr
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__,
-                               ', '.join(self._repr_info()))
+        return "{}({})".format(self.__class__.__name__, ", ".join(self._repr_info()))
 
 
 # when updating parameters we need to update the parent geometry object
@@ -342,7 +337,7 @@ class CalcParameter(Parameter):
 
     @property
     def fit(self):
-        '''True if the parameter can be fit or not'''
+        """True if the parameter can be fit or not"""
         axis = self._geometry.axis_get(self.param_name)
         return bool(axis.fit_get())
 

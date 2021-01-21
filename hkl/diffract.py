@@ -10,11 +10,14 @@ Common Support for diffractometers
 
 """
 
-import logging
 
-from ophyd import Signal, PseudoPositioner, Component as Cpt
-from ophyd.pseudopos import pseudo_position_argument, real_position_argument
+from ophyd import Component as Cpt
+from ophyd import PseudoPositioner
+from ophyd import Signal
+from ophyd.pseudopos import pseudo_position_argument
+from ophyd.pseudopos import real_position_argument
 from ophyd.signal import AttributeSignal, ArrayAttributeSignal
+import logging
 import pint
 
 from . import calc
@@ -93,7 +96,7 @@ class Diffractometer(PseudoPositioner):
     calc_class = None
 
     # see: Documentation has examples to use an EPICS PV for energy.
-    energy = Cpt(Signal, value=8.0, doc='Energy (in keV)')
+    energy = Cpt(Signal, value=8.0, doc="Energy (in keV)")
     energy_units = Cpt(Signal, value="keV")
     energy_offset = Cpt(Signal, value=0)
     energy_update_calc_flag = Cpt(Signal, value=True)
@@ -111,38 +114,60 @@ class Diffractometer(PseudoPositioner):
         write_access=False,
     )
 
-    sample_name = Cpt(AttributeSignal, attr='calc.sample_name',
-                      doc='Sample name')
-    lattice = Cpt(ArrayAttributeSignal, attr='calc.sample.lattice',
-                  doc='Sample lattice')
-    lattice_reciprocal = Cpt(AttributeSignal, attr='calc.sample.reciprocal',
-                             doc='Reciprocal lattice')
+    sample_name = Cpt(AttributeSignal, attr="calc.sample_name", doc="Sample name")
+    lattice = Cpt(
+        ArrayAttributeSignal,
+        attr="calc.sample.lattice",
+        doc="Sample lattice",
+    )
+    lattice_reciprocal = Cpt(
+        AttributeSignal,
+        attr="calc.sample.reciprocal",
+        doc="Reciprocal lattice",
+    )
 
-    U = Cpt(AttributeSignal, attr='calc.sample.U', doc='U matrix')
-    UB = Cpt(AttributeSignal, attr='calc.sample.UB', doc='UB matrix')
-    reflections = Cpt(ArrayAttributeSignal, attr='calc.sample.reflections',
-                      doc='Reflections')
+    U = Cpt(AttributeSignal, attr="calc.sample.U", doc="U matrix")
+    UB = Cpt(AttributeSignal, attr="calc.sample.UB", doc="UB matrix")
+    reflections = Cpt(
+        ArrayAttributeSignal,
+        attr="calc.sample.reflections",
+        doc="Reflections",
+    )
     reflections_details = Cpt(
         AttributeSignal,
-        attr='calc.sample.reflections_details',
-        doc='Details of reflections')
-    ux = Cpt(AttributeSignal, attr='calc.sample.ux.value',
-             doc='ux portion of the U matrix')
-    uy = Cpt(AttributeSignal, attr='calc.sample.uy.value',
-             doc='uy portion of the U matrix')
-    uz = Cpt(AttributeSignal, attr='calc.sample.uz.value',
-             doc='uz portion of the U matrix')
+        attr="calc.sample.reflections_details",
+        doc="Details of reflections",
+    )
+    ux = Cpt(
+        AttributeSignal,
+        attr="calc.sample.ux.value",
+        doc="ux portion of the U matrix",
+    )
+    uy = Cpt(
+        AttributeSignal,
+        attr="calc.sample.uy.value",
+        doc="uy portion of the U matrix",
+    )
+    uz = Cpt(
+        AttributeSignal,
+        attr="calc.sample.uz.value",
+        doc="uz portion of the U matrix",
+    )
 
-    def __init__(self, prefix, calc_kw=None, decision_fcn=None,
-                 calc_inst=None, *, configuration_attrs=None,
-                 read_attrs=None,
-                 **kwargs):
+    def __init__(
+        self,
+        prefix,
+        calc_kw=None,
+        decision_fcn=None,
+        calc_inst=None,
+        *,
+        configuration_attrs=None,
+        read_attrs=None,
+        **kwargs,
+    ):
         if calc_inst is not None:
             if not isinstance(calc_inst, self.calc_class):
-                raise ValueError(
-                    "Calculation instance must be derived "
-                    f"from the class {self.calc_class}"
-                )
+                raise ValueError("Calculation instance must be derived  from the class {self.calc_class}")
             self._calc = calc_inst
 
         else:
@@ -155,10 +180,7 @@ class Diffractometer(PseudoPositioner):
             # Reason for this is that the engine determines the pseudomotor
             # names, so if the engine is switched from underneath, the
             # pseudomotor will no longer function properly
-            raise ValueError(
-                "Calculation engine must be locked"
-                " (CalcDiff.lock_engine set)"
-            )
+            raise ValueError("Calculation engine must be locked  (CalcDiff.lock_engine set)")
 
         if configuration_attrs is None:
             configuration_attrs = """
@@ -175,24 +197,19 @@ class Diffractometer(PseudoPositioner):
             prefix,
             read_attrs=read_attrs,
             configuration_attrs=configuration_attrs,
-            **kwargs
+            **kwargs,
         )
 
         if read_attrs is None:
             # if unspecified, set the read attrs to the pseudo/real motor
             # positions once known
-            self.read_attrs = list(self.PseudoPosition._fields) + list(
-                self.RealPosition._fields
-            )
+            self.read_attrs = list(self.PseudoPosition._fields) + list(self.RealPosition._fields)
 
-        self.energy.subscribe(
-            self._energy_changed, event_type=Signal.SUB_VALUE)
+        self.energy.subscribe(self._energy_changed, event_type=Signal.SUB_VALUE)
 
-        self.energy_offset.subscribe(
-            self._energy_offset_changed, event_type=Signal.SUB_VALUE)
+        self.energy_offset.subscribe(self._energy_offset_changed, event_type=Signal.SUB_VALUE)
 
-        self.energy_units.subscribe(
-            self._energy_units_changed, event_type=Signal.SUB_VALUE)
+        self.energy_units.subscribe(self._energy_units_changed, event_type=Signal.SUB_VALUE)
 
     @property
     def _calc_energy_update_permitted(self):
@@ -211,7 +228,9 @@ class Diffractometer(PseudoPositioner):
         if not self.connected:
             logger.warning(
                 "%s not fully connected, %s.calc.energy not updated",
-                self.name, self.name)
+                self.name,
+                self.name,
+            )
             return
 
         if self._calc_energy_update_permitted:
@@ -227,11 +246,10 @@ class Diffractometer(PseudoPositioner):
         """
         if not self.connected:
             logger.warning(
-                (
-                    "%s not fully connected,"
-                    " '%s.calc.energy_offset' not updated"
-                ),
-                self.name, self.name)
+                ("%s not fully connected, '%s.calc.energy_offset' not updated"),
+                self.name,
+                self.name,
+            )
             return
 
         # TODO: is there a loop back through _update_calc_energy?
@@ -252,11 +270,10 @@ class Diffractometer(PseudoPositioner):
         """
         if not self.connected:
             logger.warning(
-                (
-                    "%s not fully connected,"
-                    " '%s.calc.energy_units' not updated"
-                ),
-                self.name, self.name)
+                ("%s not fully connected, '%s.calc.energy_units' not updated"),
+                self.name,
+                self.name,
+            )
             return
 
         # TODO: is there a loop back through _update_calc_energy?
@@ -270,7 +287,9 @@ class Diffractometer(PseudoPositioner):
         if not self.connected:
             logger.warning(
                 "%s not fully connected, %s.calc.energy not updated",
-                self.name, self.name)
+                self.name,
+                self.name,
+            )
             return
 
         # use either supplied value or get from signal
@@ -285,9 +304,7 @@ class Diffractometer(PseudoPositioner):
             keV = pint.Quantity(value, units).to("keV")
             value = keV.magnitude
 
-        logger.debug(
-            "setting %s.calc.energy = %f (keV)",
-            self.name, value)
+        logger.debug("setting %s.calc.energy = %f (keV)", self.name, value)
         self.calc.energy = value
         self._update_position()
 
@@ -298,7 +315,7 @@ class Diffractometer(PseudoPositioner):
 
     @property
     def engine(self):
-        '''The calculation engine associated with the diffractometer'''
+        """The calculation engine associated with the diffractometer"""
         return self.calc.engine
 
     # TODO so these calculations change the internal state of the hkl
@@ -308,9 +325,8 @@ class Diffractometer(PseudoPositioner):
 
     @pseudo_position_argument
     def forward(self, pseudo):
-        solutions = self.calc.forward_iter(start=self.position, end=pseudo,
-                                           max_iters=100)
-        logger.debug('pseudo to real: {}'.format(solutions))
+        solutions = self.calc.forward_iter(start=self.position, end=pseudo, max_iters=100)
+        logger.debug("pseudo to real: {}".format(solutions))
         return self._decision_fcn(pseudo, solutions)
 
     @real_position_argument
@@ -337,12 +353,7 @@ class Diffractometer(PseudoPositioner):
                     if p in self.real_positioners:
                         p.check_value(target)
                 else:
-                    raise KeyError(
-                        f"{axis} not in {self.name}"
-                    )
+                    raise KeyError(f"{axis} not in {self.name}")
 
-            pos = [
-                pos.get(p.attr_name, p.position)
-                for p in self.pseudo_positioners
-            ]
+            pos = [pos.get(p.attr_name, p.position) for p in self.pseudo_positioners]
         super().check_value(pos)

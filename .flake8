@@ -5,6 +5,7 @@ exclude =
     build,
     dist,
     versioneer.py,
-    docs/source
+    docs/source,
+    hkl/_version.py
 max-line-length = 115
-ignore: W504,W503,E741,E402,E226
+ignore: E226,E402,E741,W503,W504

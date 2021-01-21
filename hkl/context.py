@@ -1,5 +1,6 @@
 class UsingEngine(object):
     """Context manager that uses a calculation engine temporarily"""
+
     def __init__(self, calc, engine):
         self.calc = calc
         self.engine = engine
