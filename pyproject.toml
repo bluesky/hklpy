@@ -1,5 +1,5 @@
 [tool.black]
-line-length = 115
+line-length = 115  # matches the value of 'max-line-length' in .flake8
 target-version = ['py38']
 exclude = '''
 
