@@ -380,10 +380,12 @@ class CalcRecip(object):
     def physical_axes(self):
         """Physical (real) motor positions as an OrderedDict"""
         return OrderedDict(
+            # fmt: off
             zip(
                 self.physical_axis_names,
                 self._geometry.axis_values_get(self._units),
             )
+            # fmt: on
         )
 
     @property
@@ -577,6 +579,7 @@ class CalcRecip(object):
         raise ValueError("Invalid set of %s positions" % ", ".join(self.pseudo_axis_names))
 
     def __call__(
+        # fmt: off
         self,
         start,
         end=None,
@@ -584,6 +587,7 @@ class CalcRecip(object):
         engine=None,
         path_type="linear",
         **kwargs,
+        # fmt: on
     ):
 
         with UsingEngine(self, engine):

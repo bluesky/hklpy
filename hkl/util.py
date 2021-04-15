@@ -13,8 +13,11 @@ except ImportError as ex:
     GLib = None
 
     print(
-        "[!!] Failed to import Hkl library; diffractometer support disabled ({})".format(ex),
+        # fmt: off
+        "[!!] Failed to import Hkl library;"
+        " diffractometer support disabled ({})".format(ex),
         file=sys.stderr,
+        # fmt: on
     )
 
 
