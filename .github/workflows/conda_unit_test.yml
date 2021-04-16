@@ -20,15 +20,12 @@ jobs:
     - name: set environment name in YAML file
       shell: bash -l {0}
       run: |
-        sed -i.bak "s/name: ${PACKAGE}/name: ${ENV_NAME}/g" environment.yml
-
-    - name: Is any python available?
-      shell: bash -l {0}
-      run: |
-        which python
-        which python3
-        python --version
-        python3 --version
+        # sed -i.bak "s/name: ${PACKAGE}/name: ${ENV_NAME}/g" environment.yml
+        python ./.github/edit_test_environment.py ${ENV_NAME}
+        echo "# ------ new conda environment"
+        cat conda_env.yml
+        echo "# ------ new pip requirements"
+        cat pip_req.txt
 
     # - name: Setup Miniconda ${{ matrix.python-version }}
     #   uses: conda-incubator/setup-miniconda@v2
