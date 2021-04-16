@@ -15,7 +15,7 @@ except ImportError as ex:
     print(
         # fmt: off
         "[!!] Failed to import Hkl library;"
-        " diffractometer support disabled ({})".format(ex),
+        f" diffractometer support disabled ({ex})",
         file=sys.stderr,
         # fmt: on
     )
@@ -103,7 +103,7 @@ def _gi_info(gi_val):
             try:
                 return getter(units["user"])
             except Exception:
-                return "({}: {})".format(ex.__class__.__name__, ex)
+                return f"({ex.__class__.__name__}: {ex})"
 
     return {attr: get(attr) for attr in dir(gi_val) if attr.endswith("_get")}
 

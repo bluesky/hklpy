@@ -33,7 +33,7 @@ def check_lattice(lattice):
     lt = Lattice(a, b, c, alpha, beta, gamma)
     for k, v in lt._asdict().items():
         if v is None:
-            raise ValueError('Lattice parameter "{}" unset or invalid' "".format(k))
+            raise ValueError(f'Lattice parameter "{k}" unset or invalid')
 
     lt = Lattice(
         a.value_get(util.units["user"]),
@@ -377,26 +377,26 @@ class HklSample(object):
 
     def _repr_info(self):
         repr = [
-            "name={!r}".format(self.name),
-            "lattice={!r}".format(self.lattice),
-            "ux={!r}".format(self.ux),
-            "uy={!r}".format(self.uy),
-            "uz={!r}".format(self.uz),
-            "U={!r}".format(self.U),
-            "UB={!r}".format(self.UB),
-            "reflections={!r}".format(self.reflections),
+            f"name={repr(self.name)}",
+            f"lattice={repr(self.lattice)}",
+            f"ux={repr(self.ux)}",
+            f"uy={repr(self.uy)}",
+            f"uz={repr(self.uz)}",
+            f"U={repr(self.U)}",
+            f"UB={repr(self.UB)}",
+            f"reflections={repr(self.reflections)}",
         ]
 
         return repr
 
     def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, ", ".join(self._repr_info()))
+        return f"{self.__class__.__name__}({', '.join(self._repr_info())})"
 
     def __str__(self):
         info = self._repr_info()
-        info.append("reflection_measured_angles={!r}".format(self.reflection_measured_angles))
-        info.append("reflection_theoretical_angles={!r}".format(self.reflection_theoretical_angles))
-        return "{}({})".format(self.__class__.__name__, ", ".join(info))
+        info.append(f"reflection_measured_angles={repr(self.reflection_measured_angles)}")
+        info.append(f"reflection_theoretical_angles={repr(self.reflection_theoretical_angles)}")
+        return f"{self.__class__.__name__}({', '.join(info)}))"
 
     def _get_reflection_dict(self, refl):
         """Return dictionary with reflection details."""
