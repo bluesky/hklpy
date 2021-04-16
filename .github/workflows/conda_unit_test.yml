@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: set environment name in YAML file
+    - name: customize environment requirements for conda & pip
       shell: bash -l {0}
       run: |
         python ./.github/edit_test_environment.py ${ENV_NAME}

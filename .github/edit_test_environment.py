@@ -33,9 +33,7 @@ def main():
     # remove them from the conda environment
     full_config["dependencies"] = full_config["dependencies"][:-1]
     # require specific python version
-    import pprint
-    pprint.pprint(full_config)
-    full_config["dependencies"].pop(0)
+    full_config["dependencies"].pop(0)  # assumes python requirement
     full_config["dependencies"].insert(0, f"python ={py_ver}")
 
     # write a new environment YAML file without the pip requirements
