@@ -17,23 +17,36 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: set environment name in YAML file
+    - name: customize environment requirements for conda & pip
       shell: bash -l {0}
       run: |
-        sed -i.bak "s/name: ${PACKAGE}/name: ${ENV_NAME}/g" environment.yml
+        python ./.github/edit_test_environment.py ${ENV_NAME}
+        echo "# ------ new conda environment"
+        cat conda_env.yml
+        echo "# ------ new pip requirements"
+        cat pip_req.txt
 
     - name: Setup Miniconda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
       with:
-        activate-environment:
-            ${ENV_NAME}
+        activate-environment: test-hklpy
         auto-update-conda: true
         channel-priority: true
         channels: defaults,conda-forge
-        environment-file: environment.yml
+        environment-file: conda_env.yml
         mamba-version: "*"
-        python-version: ${{ matrix.python-version }}
         use-only-tar-bz2: true  # required for caching
+
+    - name: show conda environments
+      shell: bash -l {0}
+      run: |
+        conda env list
+        python --version
+
+    - name: install pip requirements separately
+      shell: bash -l {0}
+      run: |
+        pip install -r pip_req.txt
 
     - name: Install the hklpy package
       shell: bash -l {0}

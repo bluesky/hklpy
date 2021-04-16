@@ -1,3 +1,7 @@
+# custom for our GitHub Actions workflow
+conda_env.yml
+pip_req.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
