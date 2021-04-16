@@ -376,7 +376,7 @@ class HklSample(object):
         return self._sample.affine()
 
     def _repr_info(self):
-        repr = [
+        r = [
             f"name={repr(self.name)}",
             f"lattice={repr(self.lattice)}",
             f"ux={repr(self.ux)}",
@@ -387,7 +387,7 @@ class HklSample(object):
             f"reflections={repr(self.reflections)}",
         ]
 
-        return repr
+        return r
 
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(self._repr_info())})"

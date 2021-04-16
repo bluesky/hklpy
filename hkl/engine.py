@@ -117,7 +117,6 @@ class Parameter(object):
 
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(self._repr_info())})"
-        
 
     def __str__(self):
         info = self._repr_info()
