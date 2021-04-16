@@ -32,7 +32,7 @@ jobs:
         channels: defaults,conda-forge
         environment-file: environment.yml
         mamba-version: "*"
-        python-version: ${{ matrix.python-version }}
+        # python-version: ${{ matrix.python-version }}
         use-only-tar-bz2: true  # required for caching
 
     - name: Install the hklpy package
