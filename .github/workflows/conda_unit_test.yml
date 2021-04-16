@@ -29,8 +29,8 @@ jobs:
     - name: Setup Miniconda ${{ matrix.python-version }}
       uses: conda-incubator/setup-miniconda@v2
       with:
-        activate-environment:
-            ${{ ENV_NAME }}
+        # activate-environment: ${{ ENV_NAME }}
+        activate-environment: test-hklpy
         auto-update-conda: true
         channel-priority: true
         channels: defaults,conda-forge
