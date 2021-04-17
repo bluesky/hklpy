@@ -12,6 +12,7 @@ Common Support for diffractometers
 
 
 from ophyd import Component as Cpt
+from ophyd import PositionerBase
 from ophyd import PseudoPositioner
 from ophyd import Signal
 from ophyd.pseudopos import pseudo_position_argument
@@ -19,6 +20,7 @@ from ophyd.pseudopos import real_position_argument
 from ophyd.signal import AttributeSignal, ArrayAttributeSignal
 import logging
 import pint
+import pyRestTable
 
 from . import calc
 
@@ -377,3 +379,71 @@ class Diffractometer(PseudoPositioner):
 
             pos = [pos.get(p.attr_name, p.position) for p in self.pseudo_positioners]
         super().check_value(pos)
+
+    def wh(self, printing=True):
+        """
+        report where is the diffractometer
+        EXAMPLE::
+            In [1]: from hkl.geometries import SimulatedE4CV
+
+            In [2]: sim4c = SimulatedE4CV('', name='sim4c')
+            In [3]: sim4c.wh()
+            ===================== =========
+            term                  value
+            ===================== =========
+            diffractometer        sim4c
+            sample name           main
+            energy (keV)          0.80509
+            wavelength (angstrom) 1.54000
+            calc engine           hkl
+            mode                  bissector
+            h                     0.0
+            k                     0.0
+            l                     0.0
+            omega                 0
+            chi                   0
+            phi                   0
+            tth                   0
+            ===================== =========
+
+            Out[3]: <pyRestTable.rest_table.Table at 0x7f55c4775cd0>
+
+        compare with similar function in SPEC::
+
+            1117.KAPPA> wh
+            H K L =  0  0  1.7345
+            Alpha = 20  Beta = 20  Azimuth = 90
+            Omega = 32.952  Lambda = 1.54
+            Two Theta       Theta         Chi         Phi     K_Theta       Kappa       K_Phi
+            40.000000   20.000000   90.000000   57.048500   77.044988  134.755995  114.093455
+
+        """
+        table = pyRestTable.Table()
+        table.labels = "term value axis_type".split()
+        table.addRow(("diffractometer", self.name, ""))
+        table.addRow(("sample name", self.calc.sample.name, ""))
+        table.addRow(("energy (keV)", f"{self.calc.energy:.5f}", ""))
+        table.addRow(
+            ("wavelength (angstrom)", f"{self.calc.wavelength:.5f}", "")
+        )
+        table.addRow(("calc engine", self.calc.engine.name, ""))
+        table.addRow(("mode", self.calc.engine.mode, ""))
+
+        pseudo_axes = [v.attr_name for v in self._pseudo]
+        real_axes = [v.attr_name for v in self._real]
+        for k in self._sig_attrs.keys():
+            v = getattr(self, k)
+            if not issubclass(v.__class__, PositionerBase):
+                continue
+            if k in real_axes:
+                label = "real"
+            elif k in pseudo_axes:
+                label = "pseudo"
+            else:
+                label = "additional"
+            table.addRow((k, v.position, label))
+
+        if printing:
+            print(table)
+
+        return table

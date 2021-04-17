@@ -1,6 +1,7 @@
 import gi
 import numpy.testing
 import pint
+import pyRestTable
 import pytest
 
 gi.require_version("Hkl", "5.0")
@@ -141,3 +142,33 @@ def test_energy_units(fourc):
 def test_names(fourc):
     assert fourc.geometry_name.get() == "E4CV"
     assert fourc.class_name.get() == "Fourc"
+
+
+def test_wh(fourc, capsys):
+    tbl = fourc.wh()
+    assert isinstance(tbl, pyRestTable.Table)
+    out, err = capsys.readouterr()
+    assert len(out) > 0
+    assert err == ""
+    out = [v.strip() for v in out.strip().splitlines()]
+    expected = [
+        "===================== ========= =========",
+        "term                  value     axis_type",
+        "===================== ========= =========",
+        "diffractometer        fourc",
+        "sample name           main",
+        "energy (keV)          8.00000",
+        "wavelength (angstrom) 1.54980",
+        "calc engine           hkl",
+        "mode                  bissector",
+        "h                     0.0       pseudo",
+        "k                     0.0       pseudo",
+        "l                     0.0       pseudo",
+        "omega                 0         real",
+        "chi                   0         real",
+        "phi                   0         real",
+        "tth                   0         real",
+        "===================== ========= =========",
+    ]
+    assert len(out) == len(expected)
+    assert out == expected
