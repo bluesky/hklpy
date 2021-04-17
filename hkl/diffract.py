@@ -37,6 +37,7 @@ class Diffractometer(PseudoPositioner):
         ~engine
         ~forward
         ~inverse
+        ~forwardSolutionsTable
         ~pa
         ~wh
         ~_energy_changed
@@ -382,17 +383,44 @@ class Diffractometer(PseudoPositioner):
             pos = [pos.get(p.attr_name, p.position) for p in self.pseudo_positioners]
         super().check_value(pos)
 
+    def forwardSolutionsTable(self, reflections, full=False):
+        """
+        Return table of computed solutions for each (hkl) in the supplied reflections list.
+
+        The solutions are calculated using the current UB matrix & constraints
+        """
+        _table = pyRestTable.Table()
+        motors = self.real_positioners._fields
+        _table.labels = "(hkl) solution".split() + list(motors)
+        for reflection in reflections:
+            try:
+                solutions = self.calc.forward(reflection)
+            except ValueError as exc:
+                solutions = exc
+            if isinstance(solutions, ValueError):
+                row = [reflection, "none"]
+                row += ["" for m in motors]
+                _table.addRow(row)
+            else:
+                for i, s in enumerate(solutions):
+                    row = [reflection, i]
+                    row += [f"{getattr(s, m):.5f}" for m in motors]
+                    _table.addRow(row)
+                    if not full:
+                        break  # only show the first (default) solution
+        return _table
+
     def pa(self, all_samples=False, printing=True):
         """
-        report the diffractometer settings
+        Report the diffractometer settings.
 
         EXAMPLE::
 
-            In [1]: from apstools import diffractometer as APS_diffractometer
+            In [1]: from hkl.geometries import SimulatedK4CV
 
-            In [2]: sim4c = APS_diffractometer.SoftE4CV('', name='sim4c')
+            In [2]: k4cv = SimulatedK4CV('', name='k4cv')
 
-            In [3]: sim4c.pa()
+            In [3]: k4cv.pa()  # FIXME lines are too long to include in source code
             ===================== ====================================================================
             term                  value                                                               
             ===================== ====================================================================

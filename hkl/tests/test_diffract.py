@@ -144,6 +144,40 @@ def test_names(fourc):
     assert fourc.class_name.get() == "Fourc"
 
 
+def test_forwardSolutionsTable(fourc):
+    fourc.calc.wavelength = 1.54
+
+    # (100) has chi ~ 0 which poses occasional roundoff errors
+    # (sometimes -0.00000, sometimes 0.00000)
+    sol = fourc.forward(1, 0, 0)
+    assert pytest.approx(sol.omega, 1e-5) == -30
+    assert pytest.approx(sol.chi, 1e-5) == 0
+    assert pytest.approx(sol.phi, 1e-5) == -90
+    assert pytest.approx(sol.tth, 1e-5) == -60
+
+    tbl = fourc.forwardSolutionsTable(
+        # fmt: off
+        [
+            [1, 1, 0],
+            [1, 1, 1],
+            [100, 1, 1],  # no solutions
+        ]
+        # fmt: on
+    )
+    received = str(tbl).splitlines()
+    expected = [
+        "=========== ======== ======== ======== ======== =========",
+        "(hkl)       solution omega    chi      phi      tth      ",
+        "=========== ======== ======== ======== ======== =========",
+        "[1, 1, 0]   0        45.00000 45.00000 90.00000 90.00000 ",
+        "[1, 1, 1]   0        60.00000 35.26439 45.00000 120.00000",
+        "[100, 1, 1] none                                         ",
+        "=========== ======== ======== ======== ======== =========",
+    ]
+    for r, e in zip(received, expected):
+        assert r == e
+
+
 def test_pa(fourc, capsys):
     tbl = fourc.pa()
     assert isinstance(tbl, pyRestTable.Table)
