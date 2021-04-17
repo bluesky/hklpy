@@ -39,6 +39,7 @@ class Diffractometer(PseudoPositioner):
         ~inverse
         ~_energy_changed
         ~_update_calc_energy
+        ~wh
 
     This has a corresponding calculation engine from **hklpy** that does
     forward and inverse calculations.
@@ -383,28 +384,31 @@ class Diffractometer(PseudoPositioner):
     def wh(self, printing=True):
         """
         report where is the diffractometer
-        EXAMPLE::
-            In [1]: from hkl.geometries import SimulatedE4CV
 
-            In [2]: sim4c = SimulatedE4CV('', name='sim4c')
-            In [3]: sim4c.wh()
-            ===================== =========
-            term                  value
-            ===================== =========
-            diffractometer        sim4c
+        EXAMPLE::
+
+            In [1]: from hkl.geometries import SimulatedK4CV
+
+            In [2]: k4cv = SimulatedK4CV('', name='k4cv')
+
+            In [3]: k4cv.wh()
+            ===================== ========= =========
+            term                  value     axis_type
+            ===================== ========= =========
+            diffractometer        k4cv
             sample name           main
-            energy (keV)          0.80509
+            energy (keV)          8.05092
             wavelength (angstrom) 1.54000
             calc engine           hkl
             mode                  bissector
-            h                     0.0
-            k                     0.0
-            l                     0.0
-            omega                 0
-            chi                   0
-            phi                   0
-            tth                   0
-            ===================== =========
+            h                     0.0       pseudo
+            k                     0.0       pseudo
+            l                     0.0       pseudo
+            komega                0         real
+            kappa                 0         real
+            kphi                  0         real
+            tth                   0         real
+            ===================== ========= =========
 
             Out[3]: <pyRestTable.rest_table.Table at 0x7f55c4775cd0>
 
