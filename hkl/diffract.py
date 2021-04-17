@@ -6,11 +6,13 @@ Common Support for diffractometers
 
 .. autosummary::
 
+    ~Constraint
     ~Diffractometer
 
 """
 
 
+import collections
 from ophyd import Component as Cpt
 from ophyd import PositionerBase
 from ophyd import PseudoPositioner
@@ -28,6 +30,11 @@ from . import calc
 logger = logging.getLogger(__name__)
 
 
+Constraint = collections.namedtuple(
+    "Constraint", ("low_limit", "high_limit", "value", "fit")
+)
+
+
 class Diffractometer(PseudoPositioner):
     """Diffractometer pseudopositioner
 
@@ -38,10 +45,15 @@ class Diffractometer(PseudoPositioner):
         ~forward
         ~inverse
         ~forwardSolutionsTable
+        ~applyConstraints
+        ~resetConstraints
+        ~showConstraints
+        ~undoLastConstraints
         ~pa
         ~wh
         ~_energy_changed
         ~_update_calc_energy
+
 
     This has a corresponding calculation engine from **hklpy** that does
     forward and inverse calculations.
@@ -217,6 +229,8 @@ class Diffractometer(PseudoPositioner):
             # fmt: on
         )
 
+        self._constraints_stack = []
+
         if read_attrs is None:
             # if unspecified, set the read attrs to the pseudo/real motor
             # positions once known
@@ -383,6 +397,69 @@ class Diffractometer(PseudoPositioner):
             pos = [pos.get(p.attr_name, p.position) for p in self.pseudo_positioners]
         super().check_value(pos)
 
+    def applyConstraints(self, constraints):
+        """
+        Constrain the diffractometer's motions.
+
+        This action will first the current constraints onto
+        a stack, enabling both *undo* and *reset* features.
+        """
+        self._push_current_constraints()
+        self._set_constraints(constraints)
+
+    def resetConstraints(self):
+        """Set constraints back to initial settings."""
+        if len(self._constraints_stack) > 0:
+            self._set_constraints(self._constraints_stack[0])
+            self._constraints_stack = []
+
+    def showConstraints(self, fmt="simple", printing=True):
+        """Print the current constraints in a table."""
+        tbl = pyRestTable.Table()
+        tbl.labels = "axis low_limit high_limit value fit".split()
+        for m in self.real_positioners._fields:
+            tbl.addRow(
+                (
+                    m,
+                    *self.calc[m].limits,
+                    self.calc[m].value,
+                    self.calc[m].fit,
+                )
+            )
+
+        if printing:
+            print(tbl.reST(fmt=fmt))
+
+        return tbl
+
+    def undoLastConstraints(self):
+        """
+        Remove the current constraints additions, restore previous.
+        """
+        if len(self._constraints_stack) > 0:
+            self._set_constraints(self._constraints_stack.pop())
+
+    def _push_current_constraints(self):
+        """push current constraints onto the stack"""
+        constraints = {
+            m: Constraint(
+                *self.calc[m].limits, self.calc[m].value, self.calc[m].fit
+            )
+            for m in self.real_positioners._fields
+            # TODO: any other positioner constraints
+        }
+        self._constraints_stack.append(constraints)
+
+    def _set_constraints(self, constraints):
+        """set diffractometer's constraints"""
+        for axis, constraint in constraints.items():
+            self.calc[axis].limits = (
+                constraint.low_limit,
+                constraint.high_limit,
+            )
+            self.calc[axis].value = constraint.value
+            self.calc[axis].fit = constraint.fit
+
     def forwardSolutionsTable(self, reflections, full=False):
         """
         Return table of computed solutions for each (hkl) in the supplied reflections list.
@@ -422,33 +499,33 @@ class Diffractometer(PseudoPositioner):
 
             In [3]: k4cv.pa()  # FIXME lines are too long to include in source code
             ===================== ====================================================================
-            term                  value                                                               
+            term                  value
             ===================== ====================================================================
-            diffractometer        k4cv                                                                
-            geometry              K4CV                                                                
-            class                 SimulatedK4CV                                                       
-            energy (keV)          8.05092                                                             
-            wavelength (angstrom) 1.54000                                                             
-            calc engine           hkl                                                                 
-            mode                  bissector                                                           
-            positions             ====== =======                                                      
-                                name   value                                                        
-                                ====== =======                                                      
-                                komega 0.00000                                                      
-                                kappa  0.00000                                                      
-                                kphi   0.00000                                                      
-                                tth    0.00000                                                      
-                                ====== =======                                                      
+            diffractometer        k4cv
+            geometry              K4CV
+            class                 SimulatedK4CV
+            energy (keV)          8.05092
+            wavelength (angstrom) 1.54000
+            calc engine           hkl
+            mode                  bissector
+            positions             ====== =======
+                                name   value
+                                ====== =======
+                                komega 0.00000
+                                kappa  0.00000
+                                kphi   0.00000
+                                tth    0.00000
+                                ====== =======
             sample: main          ================ ===================================================
-                                term             value                                              
+                                term             value
                                 ================ ===================================================
-                                unit cell edges  a=1.54, b=1.54, c=1.54                             
-                                unit cell angles alpha=90.0, beta=90.0, gamma=90.0                  
-                                [U]              [[1. 0. 0.]                                        
-                                                    [0. 1. 0.]                                        
-                                                    [0. 0. 1.]]                                       
-                                [UB]             [[ 4.07999046e+00 -2.49827363e-16 -2.49827363e-16] 
-                                                    [ 0.00000000e+00  4.07999046e+00 -2.49827363e-16] 
+                                unit cell edges  a=1.54, b=1.54, c=1.54
+                                unit cell angles alpha=90.0, beta=90.0, gamma=90.0
+                                [U]              [[1. 0. 0.]
+                                                    [0. 1. 0.]
+                                                    [0. 0. 1.]]
+                                [UB]             [[ 4.07999046e+00 -2.49827363e-16 -2.49827363e-16]
+                                                    [ 0.00000000e+00  4.07999046e+00 -2.49827363e-16]
                                                     [ 0.00000000e+00  0.00000000e+00  4.07999046e+00]]
                                 ================ ===================================================
             ===================== ====================================================================
@@ -488,9 +565,8 @@ class Diffractometer(PseudoPositioner):
             pt.addRow(row)
         table.addRow(("positions", addTable(pt)))
 
-        # TODO:
-        # t = self.showConstraints(printing=False)
-        # table.addRow(("constraints", addTable(t)))
+        t = self.showConstraints(printing=False)
+        table.addRow(("constraints", addTable(t)))
 
         if all_samples:
             samples = self.calc._samples.values()

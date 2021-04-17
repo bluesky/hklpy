@@ -7,6 +7,7 @@ import pytest
 gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
 from hkl.calc import A_KEV
+from hkl.diffract import Constraint
 from hkl.geometries import SimulatedE4CV
 
 
@@ -204,6 +205,14 @@ def test_pa(fourc, capsys):
         "                      phi   0.00000",
         "                      tth   0.00000",
         "                      ===== =======",
+        "constraints           ===== ========= ========== ===== ====",
+        "                      axis  low_limit high_limit value fit",
+        "                      ===== ========= ========== ===== ====",
+        "                      omega -180.0    180.0      0.0   True",
+        "                      chi   -180.0    180.0      0.0   True",
+        "                      phi   -180.0    180.0      0.0   True",
+        "                      tth   -180.0    180.0      0.0   True",
+        "                      ===== ========= ========== ===== ====",
         "sample: main          ================ ===================================================",
         "                      term             value",
         "                      ================ ===================================================",
@@ -250,3 +259,38 @@ def test_wh(fourc, capsys):
     ]
     assert len(out) == len(expected)
     assert out == expected
+
+
+def test_showConstraints(fourc, capsys):
+    fourc.showConstraints()
+    out, err = capsys.readouterr()
+    assert len(out) > 0
+    assert err == ""
+    out = [v.rstrip() for v in out.strip().splitlines()]
+    expected = [
+        "===== ========= ========== ===== ====",
+        "axis  low_limit high_limit value fit ",
+        "===== ========= ========== ===== ====",
+        "omega -180.0    180.0      0.0   True",
+        "chi   -180.0    180.0      0.0   True",
+        "phi   -180.0    180.0      0.0   True",
+        "tth   -180.0    180.0      0.0   True",
+        "===== ========= ========== ===== ====",
+    ]
+    for r, e in zip(out, expected):
+        assert r.rstrip() == e.rstrip()
+
+
+def test_applyConstraints(fourc):
+    fourc.calc.wavelength = 1.54
+    fourc.applyConstraints(
+        {
+            "tth": Constraint(0, 180, 0, True),
+            "chi": Constraint(0, 180, 0, True),
+        }
+    )
+    sol = fourc.forward(1, 0, 0)
+    assert pytest.approx(sol.omega, 1e-5) == 30
+    assert pytest.approx(sol.chi, 1e-5) == 0
+    assert pytest.approx(sol.phi, 1e-5) == 90
+    assert pytest.approx(sol.tth, 1e-5) == 60
