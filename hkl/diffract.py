@@ -37,9 +37,10 @@ class Diffractometer(PseudoPositioner):
         ~engine
         ~forward
         ~inverse
+        ~pa
+        ~wh
         ~_energy_changed
         ~_update_calc_energy
-        ~wh
 
     This has a corresponding calculation engine from **hklpy** that does
     forward and inverse calculations.
@@ -380,6 +381,154 @@ class Diffractometer(PseudoPositioner):
 
             pos = [pos.get(p.attr_name, p.position) for p in self.pseudo_positioners]
         super().check_value(pos)
+
+    def pa(self, all_samples=False, printing=True):
+        """
+        report the diffractometer settings
+
+        EXAMPLE::
+
+            In [1]: from apstools import diffractometer as APS_diffractometer
+
+            In [2]: sim4c = APS_diffractometer.SoftE4CV('', name='sim4c')
+
+            In [3]: sim4c.pa()
+            ===================== ====================================================================
+            term                  value                                                               
+            ===================== ====================================================================
+            diffractometer        k4cv                                                                
+            geometry              K4CV                                                                
+            class                 SimulatedK4CV                                                       
+            energy (keV)          8.05092                                                             
+            wavelength (angstrom) 1.54000                                                             
+            calc engine           hkl                                                                 
+            mode                  bissector                                                           
+            positions             ====== =======                                                      
+                                name   value                                                        
+                                ====== =======                                                      
+                                komega 0.00000                                                      
+                                kappa  0.00000                                                      
+                                kphi   0.00000                                                      
+                                tth    0.00000                                                      
+                                ====== =======                                                      
+            sample: main          ================ ===================================================
+                                term             value                                              
+                                ================ ===================================================
+                                unit cell edges  a=1.54, b=1.54, c=1.54                             
+                                unit cell angles alpha=90.0, beta=90.0, gamma=90.0                  
+                                [U]              [[1. 0. 0.]                                        
+                                                    [0. 1. 0.]                                        
+                                                    [0. 0. 1.]]                                       
+                                [UB]             [[ 4.07999046e+00 -2.49827363e-16 -2.49827363e-16] 
+                                                    [ 0.00000000e+00  4.07999046e+00 -2.49827363e-16] 
+                                                    [ 0.00000000e+00  0.00000000e+00  4.07999046e+00]]
+                                ================ ===================================================
+            ===================== ====================================================================
+
+            Out[3]: <pyRestTable.rest_table.Table at 0x7f5c16503e20>
+
+        """
+
+        def addTable(tbl):
+            return str(tbl).strip()
+
+        def Package(**kwargs):
+            return ", ".join([f"{k}={v}" for k, v in kwargs.items()])
+
+        table = pyRestTable.Table()
+        table.labels = "term value".split()
+
+        table.addRow(("diffractometer", self.name))
+        table.addRow(("geometry", self.calc._geometry.name_get()))
+        table.addRow(("class", self.__class__.__name__))
+        table.addRow(("energy (keV)", f"{self.calc.energy:.5f}"))
+        table.addRow(
+            ("wavelength (angstrom)", f"{self.calc.wavelength:.5f}")
+        )
+        table.addRow(("calc engine", self.calc.engine.name))
+        table.addRow(("mode", self.calc.engine.mode))
+
+        pt = pyRestTable.Table()
+        pt.labels = "name value".split()
+        if self.calc._axis_name_to_original:
+            pt.addLabel("original name")
+        for item in self.real_positioners:
+            row = [item.attr_name, f"{item.position:.5f}"]
+            k = self.calc._axis_name_to_original.get(item.attr_name)
+            if k is not None:
+                row.append(k)
+            pt.addRow(row)
+        table.addRow(("positions", addTable(pt)))
+
+        # TODO:
+        # t = self.showConstraints(printing=False)
+        # table.addRow(("constraints", addTable(t)))
+
+        if all_samples:
+            samples = self.calc._samples.values()
+        else:
+            samples = [self.calc._sample]
+        for sample in samples:
+            t = pyRestTable.Table()
+            t.labels = "term value".split()
+            nm = sample.name
+            if all_samples and sample == self.calc.sample:
+                nm += " (*)"
+
+            t.addRow(
+                (
+                    "unit cell edges",
+                    Package(
+                        **{
+                            k: getattr(sample.lattice, k)
+                            for k in "a b c".split()
+                        }
+                    ),
+                )
+            )
+            t.addRow(
+                (
+                    "unit cell angles",
+                    Package(
+                        **{
+                            k: getattr(sample.lattice, k)
+                            for k in "alpha beta gamma".split()
+                        }
+                    ),
+                )
+            )
+
+            for i, ref in enumerate(sample._sample.reflections_get()):
+                h, k, l = ref.hkl_get()
+                pos_arr = ref.geometry_get().axis_values_get(
+                    self.calc._units
+                )
+                t.addRow(
+                    (f"ref {i+1} (hkl)", Package(**dict(h=h, k=k, l=l)))
+                )
+                t.addRow(
+                    (
+                        f"ref {i+1} positioners",
+                        Package(
+                            **{
+                                k: f"{v:.5f}"
+                                for k, v in zip(
+                                    self.calc.physical_axis_names, pos_arr
+                                )
+                            }
+                        ),
+                    )
+                )
+
+            t.addRow(("[U]", sample.U))
+            t.addRow(("[UB]", sample.UB))
+
+            table.addRow((f"sample: {nm}", addTable(t)))
+
+        if printing:
+            print(table)
+
+        return table
 
     def wh(self, printing=True):
         """

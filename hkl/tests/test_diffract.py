@@ -144,13 +144,57 @@ def test_names(fourc):
     assert fourc.class_name.get() == "Fourc"
 
 
+def test_pa(fourc, capsys):
+    tbl = fourc.pa()
+    assert isinstance(tbl, pyRestTable.Table)
+    out, err = capsys.readouterr()
+    assert len(out) > 0
+    assert err == ""
+    out = [v.rstrip() for v in out.strip().splitlines()]
+    expected = [
+        "===================== ====================================================================",
+        "term                  value",
+        "===================== ====================================================================",
+        "diffractometer        fourc",
+        "geometry              E4CV",
+        "class                 Fourc",
+        "energy (keV)          8.00000",
+        "wavelength (angstrom) 1.54980",
+        "calc engine           hkl",
+        "mode                  bissector",
+        "positions             ===== =======",
+        "                      name  value",
+        "                      ===== =======",
+        "                      omega 0.00000",
+        "                      chi   0.00000",
+        "                      phi   0.00000",
+        "                      tth   0.00000",
+        "                      ===== =======",
+        "sample: main          ================ ===================================================",
+        "                      term             value",
+        "                      ================ ===================================================",
+        "                      unit cell edges  a=1.54, b=1.54, c=1.54",
+        "                      unit cell angles alpha=90.0, beta=90.0, gamma=90.0",
+        "                      [U]              [[1. 0. 0.]",
+        "                                        [0. 1. 0.]",
+        "                                        [0. 0. 1.]]",
+        "                      [UB]             [[ 4.07999046e+00 -2.49827363e-16 -2.49827363e-16]",
+        "                                        [ 0.00000000e+00  4.07999046e+00 -2.49827363e-16]",
+        "                                        [ 0.00000000e+00  0.00000000e+00  4.07999046e+00]]",
+        "                      ================ ===================================================",
+        "===================== ====================================================================",
+    ]
+    assert len(out) == len(expected)
+    assert out == expected
+
+
 def test_wh(fourc, capsys):
     tbl = fourc.wh()
     assert isinstance(tbl, pyRestTable.Table)
     out, err = capsys.readouterr()
     assert len(out) > 0
     assert err == ""
-    out = [v.strip() for v in out.strip().splitlines()]
+    out = [v.rstrip() for v in out.strip().splitlines()]
     expected = [
         "===================== ========= =========",
         "term                  value     axis_type",
