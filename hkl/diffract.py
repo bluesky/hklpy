@@ -30,9 +30,7 @@ from . import calc
 logger = logging.getLogger(__name__)
 
 
-Constraint = collections.namedtuple(
-    "Constraint", ("low_limit", "high_limit", "value", "fit")
-)
+Constraint = collections.namedtuple("Constraint", ("low_limit", "high_limit", "value", "fit"))
 
 
 class Diffractometer(PseudoPositioner):
@@ -418,14 +416,7 @@ class Diffractometer(PseudoPositioner):
         tbl = pyRestTable.Table()
         tbl.labels = "axis low_limit high_limit value fit".split()
         for m in self.real_positioners._fields:
-            tbl.addRow(
-                (
-                    m,
-                    *self.calc[m].limits,
-                    self.calc[m].value,
-                    self.calc[m].fit,
-                )
-            )
+            tbl.addRow((m, *self.calc[m].limits, self.calc[m].value, self.calc[m].fit,))
 
         if printing:
             print(tbl.reST(fmt=fmt))
@@ -442,9 +433,7 @@ class Diffractometer(PseudoPositioner):
     def _push_current_constraints(self):
         """push current constraints onto the stack"""
         constraints = {
-            m: Constraint(
-                *self.calc[m].limits, self.calc[m].value, self.calc[m].fit
-            )
+            m: Constraint(*self.calc[m].limits, self.calc[m].value, self.calc[m].fit)
             for m in self.real_positioners._fields
             # TODO: any other positioner constraints
         }
@@ -547,9 +536,7 @@ class Diffractometer(PseudoPositioner):
         table.addRow(("geometry", self.calc._geometry.name_get()))
         table.addRow(("class", self.__class__.__name__))
         table.addRow(("energy (keV)", f"{self.calc.energy:.5f}"))
-        table.addRow(
-            ("wavelength (angstrom)", f"{self.calc.wavelength:.5f}")
-        )
+        table.addRow(("wavelength (angstrom)", f"{self.calc.wavelength:.5f}"))
         table.addRow(("calc engine", self.calc.engine.name))
         table.addRow(("mode", self.calc.engine.mode))
 
@@ -579,6 +566,7 @@ class Diffractometer(PseudoPositioner):
             if all_samples and sample == self.calc.sample:
                 nm += " (*)"
 
+            # fmt: off
             t.addRow(
                 (
                     "unit cell edges",
@@ -601,15 +589,13 @@ class Diffractometer(PseudoPositioner):
                     ),
                 )
             )
+            # fmt: on
 
             for i, ref in enumerate(sample._sample.reflections_get()):
                 h, k, l = ref.hkl_get()
-                pos_arr = ref.geometry_get().axis_values_get(
-                    self.calc._units
-                )
-                t.addRow(
-                    (f"ref {i+1} (hkl)", Package(**dict(h=h, k=k, l=l)))
-                )
+                pos_arr = ref.geometry_get().axis_values_get(self.calc._units)
+                t.addRow((f"ref {i+1} (hkl)", Package(**dict(h=h, k=k, l=l))))
+                # fmt: off
                 t.addRow(
                     (
                         f"ref {i+1} positioners",
@@ -623,6 +609,7 @@ class Diffractometer(PseudoPositioner):
                         ),
                     )
                 )
+                # fmt: on
 
             t.addRow(("[U]", sample.U))
             t.addRow(("[UB]", sample.UB))
@@ -680,9 +667,7 @@ class Diffractometer(PseudoPositioner):
         table.addRow(("diffractometer", self.name, ""))
         table.addRow(("sample name", self.calc.sample.name, ""))
         table.addRow(("energy (keV)", f"{self.calc.energy:.5f}", ""))
-        table.addRow(
-            ("wavelength (angstrom)", f"{self.calc.wavelength:.5f}", "")
-        )
+        table.addRow(("wavelength (angstrom)", f"{self.calc.wavelength:.5f}", ""))
         table.addRow(("calc engine", self.calc.engine.name, ""))
         table.addRow(("mode", self.calc.engine.mode, ""))
 
