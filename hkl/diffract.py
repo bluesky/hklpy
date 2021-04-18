@@ -416,7 +416,16 @@ class Diffractometer(PseudoPositioner):
         tbl = pyRestTable.Table()
         tbl.labels = "axis low_limit high_limit value fit".split()
         for m in self.real_positioners._fields:
-            tbl.addRow((m, *self.calc[m].limits, self.calc[m].value, self.calc[m].fit,))
+            # fmt: off
+            tbl.addRow(
+                (
+                    m,
+                    *self.calc[m].limits,
+                    self.calc[m].value,
+                    self.calc[m].fit,
+                )
+            )
+            # fmt: on
 
         if printing:
             print(tbl.reST(fmt=fmt))
