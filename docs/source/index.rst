@@ -41,6 +41,7 @@ Contents:
    engine
    geometries
    sample
+   user
    util
    examples/*
    release_notes

@@ -26,6 +26,7 @@ import hkl
 import hkl.calc
 import hkl.diffract
 import hkl.geometries
+import hkl.user
 
 # -- General configuration -----------------------------------------------------
 
