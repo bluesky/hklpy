@@ -146,7 +146,7 @@ def test_names(fourc):
 
 
 def test_forwardSolutionsTable(fourc):
-    fourc.calc.wavelength = 1.54
+    fourc.energy.put(A_KEV/1.54)
 
     # (100) has chi ~ 0 which poses occasional roundoff errors
     # (sometimes -0.00000, sometimes 0.00000)
@@ -282,7 +282,7 @@ def test_showConstraints(fourc, capsys):
 
 
 def test_applyConstraints(fourc):
-    fourc.calc.wavelength = 1.54
+    fourc.energy.put(A_KEV/1.54)
     fourc.applyConstraints(
         {
             "tth": Constraint(0, 180, 0, True),
