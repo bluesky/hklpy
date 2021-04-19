@@ -499,7 +499,7 @@ class Diffractometer(PseudoPositioner):
 
     def pa(self, all_samples=False, printing=True):
         """
-        Report the diffractometer settings.
+        Report (all) the diffractometer settings.
 
         EXAMPLE::
 
@@ -644,7 +644,7 @@ class Diffractometer(PseudoPositioner):
 
     def wh(self, printing=True):
         """
-        report where is the diffractometer
+        Report (brief) where is the diffractometer.
 
         EXAMPLE::
 

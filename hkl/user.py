@@ -18,8 +18,8 @@ FUNCTIONS
     ~showSample
     ~showSelectedDiffractometer
     ~updateSample
-
-.. TODO:    ~wh
+    ~wh
+    ~pa
 """
 
 __all__ = """
@@ -247,15 +247,13 @@ def updateSample(a, b, c, alpha, beta, gamma):
     showSample(_geom_.calc.sample.name, verbose=False)
 
 
-# TODO: pending merge of PR #87
-# def pa():
-#     """ -tba- """
-#     _check_geom_selected_()
-#     _geom_.pa()
+def pa():
+    """Report (all) the diffractometer settings."""
+    _check_geom_selected_()
+    _geom_.pa()
 
 
-# TODO: pending merge of PR #87
-# def wh():
-#     """ -tba- """
-#     _check_geom_selected_()
-#     _geom_.wh()
+def wh():
+    """Report (brief) where is the diffractometer."""
+    _check_geom_selected_()
+    _geom_.wh()

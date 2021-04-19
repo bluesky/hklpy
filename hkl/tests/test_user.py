@@ -268,3 +268,89 @@ def test_updateSample(capsys, fourc):
     """.strip().splitlines()
     for e, r in list(zip(expected, str(out).strip().splitlines())):
         assert r.strip() == e.strip()
+
+
+def test_pa(fourc, capsys):
+    hkl.user.selectDiffractometer(fourc)
+
+    tbl = hkl.user.pa()
+    assert tbl is None
+    out, err = capsys.readouterr()
+    assert len(out) > 0
+    assert err == ""
+    out = [v.rstrip() for v in out.strip().splitlines()]
+    expected = [
+        "===================== ====================================================================",
+        "term                  value",
+        "===================== ====================================================================",
+        "diffractometer        fourc",
+        "geometry              E4CV",
+        "class                 Fourc",
+        "energy (keV)          8.00000",
+        "wavelength (angstrom) 1.54980",
+        "calc engine           hkl",
+        "mode                  bissector",
+        "positions             ===== =======",
+        "                      name  value",
+        "                      ===== =======",
+        "                      omega 0.00000",
+        "                      chi   0.00000",
+        "                      phi   0.00000",
+        "                      tth   0.00000",
+        "                      ===== =======",
+        "constraints           ===== ========= ========== ===== ====",
+        "                      axis  low_limit high_limit value fit",
+        "                      ===== ========= ========== ===== ====",
+        "                      omega -180.0    180.0      0.0   True",
+        "                      chi   -180.0    180.0      0.0   True",
+        "                      phi   -180.0    180.0      0.0   True",
+        "                      tth   -180.0    180.0      0.0   True",
+        "                      ===== ========= ========== ===== ====",
+        "sample: main          ================ ===================================================",
+        "                      term             value",
+        "                      ================ ===================================================",
+        "                      unit cell edges  a=1.54, b=1.54, c=1.54",
+        "                      unit cell angles alpha=90.0, beta=90.0, gamma=90.0",
+        "                      [U]              [[1. 0. 0.]",
+        "                                        [0. 1. 0.]",
+        "                                        [0. 0. 1.]]",
+        "                      [UB]             [[ 4.07999046e+00 -2.49827363e-16 -2.49827363e-16]",
+        "                                        [ 0.00000000e+00  4.07999046e+00 -2.49827363e-16]",
+        "                                        [ 0.00000000e+00  0.00000000e+00  4.07999046e+00]]",
+        "                      ================ ===================================================",
+        "===================== ====================================================================",
+    ]
+    assert len(out) == len(expected)
+    assert out == expected
+
+
+def test_wh(fourc, capsys):
+    hkl.user.selectDiffractometer(fourc)
+
+    tbl = hkl.user.wh()
+    assert tbl is None
+    out, err = capsys.readouterr()
+    assert len(out) > 0
+    assert err == ""
+    out = [v.rstrip() for v in out.strip().splitlines()]
+    expected = [
+        "===================== ========= =========",
+        "term                  value     axis_type",
+        "===================== ========= =========",
+        "diffractometer        fourc",
+        "sample name           main",
+        "energy (keV)          8.00000",
+        "wavelength (angstrom) 1.54980",
+        "calc engine           hkl",
+        "mode                  bissector",
+        "h                     0.0       pseudo",
+        "k                     0.0       pseudo",
+        "l                     0.0       pseudo",
+        "omega                 0         real",
+        "chi                   0         real",
+        "phi                   0         real",
+        "tth                   0         real",
+        "===================== ========= =========",
+    ]
+    assert len(out) == len(expected)
+    assert out == expected
