@@ -1,11 +1,13 @@
 import gi
 import numpy.testing
 import pint
+import pyRestTable
 import pytest
 
 gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
 from hkl.calc import A_KEV
+from hkl.diffract import Constraint
 from hkl.geometries import SimulatedE4CV
 
 
@@ -141,3 +143,156 @@ def test_energy_units(fourc):
 def test_names(fourc):
     assert fourc.geometry_name.get() == "E4CV"
     assert fourc.class_name.get() == "Fourc"
+
+
+def test_forward_solutions_table(fourc):
+    fourc.energy.put(A_KEV / 1.54)
+
+    # (100) has chi ~ 0 which poses occasional roundoff errors
+    # (sometimes -0.00000, sometimes 0.00000)
+    sol = fourc.forward(1, 0, 0)
+    assert pytest.approx(sol.omega, 1e-5) == -30
+    assert pytest.approx(sol.chi, 1e-5) == 0
+    assert pytest.approx(sol.phi, 1e-5) == -90
+    assert pytest.approx(sol.tth, 1e-5) == -60
+
+    tbl = fourc.forward_solutions_table(
+        # fmt: off
+        [
+            [1, 1, 0],
+            [1, 1, 1],
+            [100, 1, 1],  # no solutions
+        ]
+        # fmt: on
+    )
+    received = str(tbl).splitlines()
+    expected = [
+        "=========== ======== ======== ======== ======== =========",
+        "(hkl)       solution omega    chi      phi      tth      ",
+        "=========== ======== ======== ======== ======== =========",
+        "[1, 1, 0]   0        45.00000 45.00000 90.00000 90.00000 ",
+        "[1, 1, 1]   0        60.00000 35.26439 45.00000 120.00000",
+        "[100, 1, 1] none                                         ",
+        "=========== ======== ======== ======== ======== =========",
+    ]
+    for r, e in zip(received, expected):
+        assert r == e
+
+
+def test_pa(fourc, capsys):
+    tbl = fourc.pa()
+    assert isinstance(tbl, pyRestTable.Table)
+    out, err = capsys.readouterr()
+    assert len(out) > 0
+    assert err == ""
+    out = [v.rstrip() for v in out.strip().splitlines()]
+    expected = [
+        "===================== ====================================================================",
+        "term                  value",
+        "===================== ====================================================================",
+        "diffractometer        fourc",
+        "geometry              E4CV",
+        "class                 Fourc",
+        "energy (keV)          8.00000",
+        "wavelength (angstrom) 1.54980",
+        "calc engine           hkl",
+        "mode                  bissector",
+        "positions             ===== =======",
+        "                      name  value",
+        "                      ===== =======",
+        "                      omega 0.00000",
+        "                      chi   0.00000",
+        "                      phi   0.00000",
+        "                      tth   0.00000",
+        "                      ===== =======",
+        "constraints           ===== ========= ========== ===== ====",
+        "                      axis  low_limit high_limit value fit",
+        "                      ===== ========= ========== ===== ====",
+        "                      omega -180.0    180.0      0.0   True",
+        "                      chi   -180.0    180.0      0.0   True",
+        "                      phi   -180.0    180.0      0.0   True",
+        "                      tth   -180.0    180.0      0.0   True",
+        "                      ===== ========= ========== ===== ====",
+        "sample: main          ================ ===================================================",
+        "                      term             value",
+        "                      ================ ===================================================",
+        "                      unit cell edges  a=1.54, b=1.54, c=1.54",
+        "                      unit cell angles alpha=90.0, beta=90.0, gamma=90.0",
+        "                      [U]              [[1. 0. 0.]",
+        "                                        [0. 1. 0.]",
+        "                                        [0. 0. 1.]]",
+        "                      [UB]             [[ 4.07999046e+00 -2.49827363e-16 -2.49827363e-16]",
+        "                                        [ 0.00000000e+00  4.07999046e+00 -2.49827363e-16]",
+        "                                        [ 0.00000000e+00  0.00000000e+00  4.07999046e+00]]",
+        "                      ================ ===================================================",
+        "===================== ====================================================================",
+    ]
+    assert len(out) == len(expected)
+    assert out == expected
+
+
+def test_wh(fourc, capsys):
+    tbl = fourc.wh()
+    assert isinstance(tbl, pyRestTable.Table)
+    out, err = capsys.readouterr()
+    assert len(out) > 0
+    assert err == ""
+    out = [v.rstrip() for v in out.strip().splitlines()]
+    expected = [
+        "===================== ========= =========",
+        "term                  value     axis_type",
+        "===================== ========= =========",
+        "diffractometer        fourc",
+        "sample name           main",
+        "energy (keV)          8.00000",
+        "wavelength (angstrom) 1.54980",
+        "calc engine           hkl",
+        "mode                  bissector",
+        "h                     0.0       pseudo",
+        "k                     0.0       pseudo",
+        "l                     0.0       pseudo",
+        "omega                 0         real",
+        "chi                   0         real",
+        "phi                   0         real",
+        "tth                   0         real",
+        "===================== ========= =========",
+    ]
+    assert len(out) == len(expected)
+    assert out == expected
+
+
+def test_show_constraints(fourc, capsys):
+    fourc.show_constraints()
+    out, err = capsys.readouterr()
+    assert len(out) > 0
+    assert err == ""
+    out = [v.rstrip() for v in out.strip().splitlines()]
+    expected = [
+        "===== ========= ========== ===== ====",
+        "axis  low_limit high_limit value fit ",
+        "===== ========= ========== ===== ====",
+        "omega -180.0    180.0      0.0   True",
+        "chi   -180.0    180.0      0.0   True",
+        "phi   -180.0    180.0      0.0   True",
+        "tth   -180.0    180.0      0.0   True",
+        "===== ========= ========== ===== ====",
+    ]
+    for r, e in zip(out, expected):
+        assert r.rstrip() == e.rstrip()
+
+
+def test_apply_constraints(fourc):
+    fourc.energy.put(A_KEV / 1.54)
+    # fmt: off
+    fourc.apply_constraints(
+        {
+            "tth": Constraint(0, 180, 0, True),
+            "chi": Constraint(0, 180, 0, True),
+        }
+    )
+    # fmt: on
+    sol = fourc.forward(1, 0, 0)
+    assert pytest.approx(sol.omega, 1e-5) == 30
+    assert pytest.approx(sol.chi, 1e-5) == 0
+    assert pytest.approx(sol.phi, 1e-5) == 90
+    assert pytest.approx(sol.tth, 1e-5) == 60

@@ -33,7 +33,7 @@ def check_lattice(lattice):
     lt = Lattice(a, b, c, alpha, beta, gamma)
     for k, v in lt._asdict().items():
         if v is None:
-            raise ValueError('Lattice parameter "{}" unset or invalid' "".format(k))
+            raise ValueError(f'Lattice parameter "{k}" unset or invalid')
 
     lt = Lattice(
         a.value_get(util.units["user"]),
@@ -376,27 +376,27 @@ class HklSample(object):
         return self._sample.affine()
 
     def _repr_info(self):
-        repr = [
-            "name={!r}".format(self.name),
-            "lattice={!r}".format(self.lattice),
-            "ux={!r}".format(self.ux),
-            "uy={!r}".format(self.uy),
-            "uz={!r}".format(self.uz),
-            "U={!r}".format(self.U),
-            "UB={!r}".format(self.UB),
-            "reflections={!r}".format(self.reflections),
+        r = [
+            f"name={self.name!r}",
+            f"lattice={self.lattice!r}",
+            f"ux={self.ux!r}",
+            f"uy={self.uy!r}",
+            f"uz={self.uz!r}",
+            f"U={self.U!r}",
+            f"UB={self.UB!r}",
+            f"reflections={self.reflections!r}",
         ]
 
-        return repr
+        return r
 
     def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, ", ".join(self._repr_info()))
+        return f"{self.__class__.__name__}({', '.join(self._repr_info())})"
 
     def __str__(self):
         info = self._repr_info()
-        info.append("reflection_measured_angles={!r}".format(self.reflection_measured_angles))
-        info.append("reflection_theoretical_angles={!r}".format(self.reflection_theoretical_angles))
-        return "{}({})".format(self.__class__.__name__, ", ".join(info))
+        info.append(f"reflection_measured_angles={self.reflection_measured_angles!r}")
+        info.append(f"reflection_theoretical_angles={self.reflection_theoretical_angles!r}")
+        return f"{self.__class__.__name__}({', '.join(info)}))"
 
     def _get_reflection_dict(self, refl):
         """Return dictionary with reflection details."""

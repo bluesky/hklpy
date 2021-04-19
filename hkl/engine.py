@@ -50,7 +50,7 @@ class Parameter(object):
     def name(self):
         name = self._param.name_get()
         if self._name != name:
-            return "{} (internally: {})".format(self._name, name)
+            return f"{self._name} (internally: {name})"
         return name
 
     @property
@@ -100,28 +100,28 @@ class Parameter(object):
             self._param.min_max_set(low, high, self._units)
 
     def _repr_info(self):
-        repr = [
-            "name={!r}".format(self.name),
-            "limits={!r}".format(self.limits),
-            "value={!r}".format(self.value),
-            "fit={!r}".format(self.fit),
-            "inverted={!r}".format(self.inverted),
+        r = [
+            f"name={self.name!r}",
+            f"limits={self.limits!r}",
+            f"value={self.value!r}",
+            f"fit={self.fit!r}",
+            f"inverted={self.inverted!r}",
         ]
 
         if self._unit_name == "user":
-            repr.append("units={!r}".format(self.user_units))
+            r.append(f"units={self.user_units!r}")
         else:
-            repr.append("units={!r}".format(self.default_units))
+            r.append(f"units={self.default_units!r}")
 
-        return repr
+        return r
 
     def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, ", ".join(self._repr_info()))
+        return f"{self.__class__.__name__}({', '.join(self._repr_info())})"
 
     def __str__(self):
         info = self._repr_info()
         # info.append(self.)
-        return "{}({})".format(self.__class__.__name__, ", ".join(info))
+        return f"{self.__class__.__name__}({', '.join(info)})"
 
 
 class Solution(object):
@@ -154,15 +154,15 @@ class Solution(object):
         self._engine._engine_list.select_solution(self._list_item)
 
     def _repr_info(self):
-        repr = [
-            "{!r}".format(self.positions),
-            "units={!r}".format(self._engine.units),
+        r = [
+            repr(self.positions),
+            f"units={self._engine.units!r}",
         ]
 
-        return repr
+        return r
 
     def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, ", ".join(self._repr_info()))
+        return f"{self.__class__.__name__}({', '.join(self._repr_info())})"
 
 
 class Engine(object):
@@ -268,18 +268,18 @@ class Engine(object):
         return self._engine
 
     def _repr_info(self):
-        repr = [
-            "parameters={!r}".format(self.parameters),
-            "pseudo_axes={!r}".format(dict(self.pseudo_axes)),
-            "mode={!r}".format(self.mode),
-            "modes={!r}".format(self.modes),
-            "units={!r}".format(self.units),
+        r = [
+            f"parameters={self.parameters!r}",
+            f"pseudo_axes={self.pseudo_axes!r}",
+            f"mode={self.mode!r}",
+            f"modes={self.modes!r}",
+            f"units={self.units!r}",
         ]
 
-        return repr
+        return r
 
     def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, ", ".join(self._repr_info()))
+        return f"{self.__class__.__name__}({', '.join(self._repr_info())})"
 
 
 # when updating parameters we need to update the parent geometry object
@@ -291,7 +291,7 @@ class CalcParameter(Parameter):
     Parameters
     ----------
         param : HklParameter
-        geometry: Geomery object
+        geometry: Geometry object
     """
 
     def __init__(self, param, geometry, *args, **kwargs):
