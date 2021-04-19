@@ -291,7 +291,7 @@ class CalcParameter(Parameter):
     Parameters
     ----------
         param : HklParameter
-        geometry: Geomery object
+        geometry: Geometry object
     """
 
     def __init__(self, param, geometry, *args, **kwargs):
