@@ -346,7 +346,7 @@ class Diffractometer(PseudoPositioner):
     @pseudo_position_argument
     def forward(self, pseudo):
         solutions = self.calc.forward_iter(start=self.position, end=pseudo, max_iters=100)
-        logger.debug("pseudo to real: {}".format(solutions))
+        logger.debug("pseudo to real: %s", solutions)
         return self._decision_fcn(pseudo, solutions)
 
     @real_position_argument

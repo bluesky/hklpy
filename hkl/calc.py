@@ -123,7 +123,7 @@ class CalcRecip(object):
             self._factory = libhkl.factories()[dtype]
         except KeyError:
             types = ", ".join(util.diffractometer_types)
-            raise ValueError(f"Invalid diffractometer type {repr(types)};  choose from: {types}")
+            raise ValueError(f"Invalid diffractometer type {types!r};  choose from: {types}")
 
         self._geometry = self._factory.create_new_geometry()
         self._engine_list = self._factory.create_new_engine_list()
@@ -596,10 +596,10 @@ class CalcRecip(object):
 
     def _repr_info(self):
         r = [
-            f"engine={repr(self.engine.name)}",
-            f"detector={repr(self._detector)}",
-            f"sample={repr(self._sample)}",
-            f"samples={repr(self._samples)}",
+            f"engine={self.engine.name!r}",
+            f"detector={self._detector!r}",
+            f"sample={self._sample!r}",
+            f"samples={self._samples!r}",
         ]
 
         return r
