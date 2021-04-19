@@ -13,9 +13,9 @@ the new tools in Bluesky's *hklpy* package.
     ==============  =======================================
     *SPEC*          *hklpy*
     ==============  =======================================
-    --              :func:`~calcUB`
-    --              :func:`~newSample`
-    --              :func:`~selectDiffractometer`
+    --              :func:`~calc_UB`
+    --              :func:`~new_sample`
+    --              :func:`~select_diffractometer`
     ``br``          TODO:
     ``cal``         :func:`cahkl`
     ``cuts``        TODO: constraints
@@ -26,13 +26,13 @@ the new tools in Bluesky's *hklpy* package.
     ``or_swap``     TODO:
     ``or0``         :func:`~setor`
     ``or1``         :func:`~setor`
-    ``pa``          TODO: (`fourc.pa()`)
+    ``pa``          :func:`~pa`
     ``pl``          TODO:
     ``reflex_beg``  TODO:
     ``reflex_end``  TODO:
     ``reflex``      TODO:
     ``setaz``       TODO:
-    ``setlat``      :func:`~updateSample`
+    ``setlat``      :func:`~update_sample`
     ``setmode``     TODO: modes
     ``setsector``   TODO:
     ``sz``          TODO:
@@ -51,12 +51,12 @@ the new tools in Bluesky's *hklpy* package.
 EXAMPLES::
 
     # work with our 4-circle simulator
-    selectDiffractometer(fourc)
+    select_diffractometer(fourc)
 
     # sample is the silicon standard
-    a0=5.4310196; newSample("silicon standard", a0, a0, a0, 90, 90, 90)
+    a0=5.4310196; new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
 
-    listSamples()
+    list_samples()
 
     # define the first orientation reflection, specify each motor position
     # motor values given in "diffractometer order"::
@@ -69,7 +69,7 @@ EXAMPLES::
     # define the second orientation reflection, use current motor positions
     r2 = setor(0, 4, 0)
 
-    calcUB(r1, r2)
+    calc_UB(r1, r2)
 
     # calculate reflection, record motor positions before and after
     p_before = fourc.real_position

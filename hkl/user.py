@@ -2,22 +2,22 @@
 Provide a simplified UI for hklpy diffractometer users.
 
 The user must define a diffractometer instance, then
-register that instance here calling `selectDiffractometer(instance)`.
+register that instance here calling `select_diffractometer(instance)`.
 
 FUNCTIONS
 
 .. autosummary::
     ~cahkl
     ~cahkl_table
-    ~calcUB
-    ~listSamples
-    ~newSample
-    ~selectDiffractometer
-    ~setEnergy
+    ~calc_UB
+    ~list_samples
+    ~new_sample
+    ~select_diffractometer
+    ~set_energy
     ~setor
-    ~showSample
-    ~showSelectedDiffractometer
-    ~updateSample
+    ~show_sample
+    ~show_selected_diffractometer
+    ~update_sample
     ~wh
     ~pa
 """
@@ -25,17 +25,17 @@ FUNCTIONS
 __all__ = """
     cahkl
     cahkl_table
-    calcEnergy
-    calcUB
-    changeSample
-    listSamples
-    newSample
-    selectDiffractometer
-    setEnergy
+    calc_UB
+    change_sample
+    list_samples
+    new_sample
+    pa
+    select_diffractometer
+    set_energy
     setor
-    showSample
-    showSelectedDiffractometer
-    updateSample
+    show_sample
+    show_selected_diffractometer
+    update_sample
     wh
 """.split()
 
@@ -59,7 +59,7 @@ def _check_geom_selected_(*args, **kwargs):
     if _geom_ is None:
         raise ValueError(
             "No diffractometer selected."
-            " Call 'selectDiffractometer(diffr)' where"
+            " Call 'select_diffractometer(diffr)' where"
             " 'diffr' is a diffractometer instance."
         )
 
@@ -97,14 +97,19 @@ def cahkl_table(reflections, digits=5):
     print(_geom_.forward_solutions_table(reflections, digits=digits))
 
 
-def calcUB(r1, r2, wavelength=None):
+# def calc_energy():
+#     # TODO: should this be added?
+#     raise NotImplementedError
+
+
+def calc_UB(r1, r2, wavelength=None):
     """Compute the UB matrix with two reflections."""
     _check_geom_selected_()
     _geom_.calc.sample.compute_UB(r1, r2)
     print(_geom_.calc.sample.UB)
 
 
-def changeSample(sample):
+def change_sample(sample):
     """Pick a known sample to be the current selection."""
     _check_geom_selected_()
     if sample not in _geom_.calc._samples:
@@ -113,32 +118,32 @@ def changeSample(sample):
             f"  Known samples: {list(_geom_.calc._samples.keys())}"
         )
     _geom_.calc.sample = sample
-    showSample(sample)
+    show_sample(sample)
 
 
-def listSamples(verbose=True):
+def list_samples(verbose=True):
     """List all defined crystal samples."""
     _check_geom_selected_()
     # always show the default sample first
     current_name = _geom_.calc.sample_name
-    showSample(current_name, verbose=verbose)
+    show_sample(current_name, verbose=verbose)
 
     # now, show any other samples
     for sample in _geom_.calc._samples.keys():
         if sample != current_name:
             if verbose:
                 print("")
-            showSample(sample, verbose=verbose)
+            show_sample(sample, verbose=verbose)
 
 
-def newSample(nm, a, b, c, alpha, beta, gamma):
+def new_sample(nm, a, b, c, alpha, beta, gamma):
     """Define a new crystal sample."""
     _check_geom_selected_()
     if nm in _geom_.calc._samples:
         logger.warning(
             (
                 "Sample '%s' is already defined."
-                "  Use 'updateSample()' to change lattice parameters"
+                "  Use 'update_sample()' to change lattice parameters"
                 " on the *current* sample."
             ),
             nm,
@@ -148,10 +153,10 @@ def newSample(nm, a, b, c, alpha, beta, gamma):
             a=a, b=b, c=c, alpha=alpha, beta=beta, gamma=gamma
         )
         _geom_.calc.new_sample(nm, lattice=lattice)
-    showSample()
+    show_sample()
 
 
-def selectDiffractometer(instrument=None):
+def select_diffractometer(instrument=None):
     """Name the diffractometer to be used."""
     global _geom_
     if instrument is None or isinstance(instrument, Diffractometer):
@@ -162,7 +167,7 @@ def selectDiffractometer(instrument=None):
         )
 
 
-def setEnergy(value, units=None, offset=None):
+def set_energy(value, units=None, offset=None):
     """
     Set the energy (thus wavelength) to be used.
     """
@@ -195,7 +200,7 @@ def setor(h, k, l, *args, wavelength=None, **kwargs):
     return refl
 
 
-def showSample(sample_name=None, verbose=True):
+def show_sample(sample_name=None, verbose=True):
     """Print the default sample name and crystal lattice."""
     _check_geom_selected_()
     sample_name = sample_name or _geom_.calc.sample_name
@@ -226,14 +231,14 @@ def showSample(sample_name=None, verbose=True):
         print(f"{title}: {lattice}")
 
 
-def showSelectedDiffractometer(instrument=None):
+def show_selected_diffractometer(instrument=None):
     """Print the name of the selected diffractometer."""
     if _geom_ is None:
         print("No diffractometer selected.")
     print(_geom_.name)
 
 
-def updateSample(a, b, c, alpha, beta, gamma):
+def update_sample(a, b, c, alpha, beta, gamma):
     """Update current sample lattice."""
     _check_geom_selected_()
     _geom_.calc.sample.lattice = (
@@ -244,7 +249,7 @@ def updateSample(a, b, c, alpha, beta, gamma):
         beta,
         gamma,
     )  # define the current sample
-    showSample(_geom_.calc.sample.name, verbose=False)
+    show_sample(_geom_.calc.sample.name, verbose=False)
 
 
 def pa():

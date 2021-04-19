@@ -24,19 +24,19 @@ def fourc():
 def test_select_diffractometer(capsys, fourc):
     # This test function must be first or the next assertion will fail.
     assert hkl.user._geom_ is None
-    hkl.user.selectDiffractometer(fourc)
+    hkl.user.select_diffractometer(fourc)
     assert hkl.user._geom_ is not None
     assert hkl.user._geom_ == fourc
     capsys.readouterr()  # flush the output buffers
 
-    hkl.user.showSelectedDiffractometer()
+    hkl.user.show_selected_diffractometer()
     out, err = capsys.readouterr()
     assert str(err) == ""
     assert str(out).strip() == "fourc"
 
 
 def test_cahkl(fourc):
-    hkl.user.selectDiffractometer(fourc)
+    hkl.user.select_diffractometer(fourc)
     fourc.calc["tth"].limits = (0, 180)
 
     # use the default "main" sample and UB matrix
@@ -49,7 +49,7 @@ def test_cahkl(fourc):
 
 
 def test_cahkl_table(capsys, fourc):
-    hkl.user.selectDiffractometer(fourc)
+    hkl.user.select_diffractometer(fourc)
     fourc.calc["tth"].limits = (0, 180)
 
     # use the default "main" sample and UB matrix
@@ -73,10 +73,10 @@ def test_cahkl_table(capsys, fourc):
             assert float(r) == float(e)
 
 
-def test_calcUB(fourc):
-    hkl.user.selectDiffractometer(fourc)
+def test_calc_UB(fourc):
+    hkl.user.select_diffractometer(fourc)
     a0 = 5.4310196
-    hkl.user.newSample("silicon standard", a0, a0, a0, 90, 90, 90)
+    hkl.user.new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
     r1 = hkl.user.setor(
         4, 0, 0, tth=69.0966, omega=-145.451, chi=0, phi=0, wavelength=1.54
     )
@@ -86,22 +86,22 @@ def test_calcUB(fourc):
     fourc.tth.move(69.0966)
     r2 = hkl.user.setor(0, 4, 0)
 
-    ub = hkl.user.calcUB(r1, r2)
+    ub = hkl.user.calc_UB(r1, r2)
     if ub is None:
         # TODO: PR #85 will make this happen
-        hkl.user.calcUB(r1, r2)
+        hkl.user.calc_UB(r1, r2)
         ub = fourc.calc.sample.UB
     assert isinstance(ub, numpy.ndarray)
     assert isinstance(fourc.UB.get(), numpy.ndarray)
 
 
-def test_listSamples(capsys, fourc):
-    hkl.user.selectDiffractometer(fourc)
+def test_list_samples(capsys, fourc):
+    hkl.user.select_diffractometer(fourc)
     a0 = 5.431
-    hkl.user.newSample("silicon", a0, a0, a0, 90, 90, 90)
+    hkl.user.new_sample("silicon", a0, a0, a0, 90, 90, 90)
     capsys.readouterr()  # flush the output buffers
 
-    hkl.user.listSamples(verbose=False)
+    hkl.user.list_samples(verbose=False)
     out, err = capsys.readouterr()
     assert err == ""
     expected = """
@@ -111,7 +111,7 @@ def test_listSamples(capsys, fourc):
     for e, r in list(zip(expected, str(out).strip().splitlines())):
         assert r.strip() == e.strip()
 
-    hkl.user.listSamples()
+    hkl.user.list_samples()
     out, err = capsys.readouterr()
     assert err == ""
     expected = """
@@ -150,12 +150,12 @@ def test_listSamples(capsys, fourc):
         assert r.strip() == e.strip()
 
 
-def test_newSample(fourc):
-    hkl.user.selectDiffractometer(fourc)
+def test_new_sample(fourc):
+    hkl.user.select_diffractometer(fourc)
 
     # sample is the silicon standard
     a0 = 5.4310196
-    hkl.user.newSample("silicon standard", a0, a0, a0, 90, 90, 90)
+    hkl.user.new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
     assert fourc.calc.sample.name == "silicon standard"
     lattice = fourc.calc.sample.lattice
     assert round(lattice.a, 7) == a0
@@ -166,33 +166,33 @@ def test_newSample(fourc):
     assert round(lattice.gamma, 7) == 90
 
 
-def test_setEnergy(fourc):
-    hkl.user.selectDiffractometer(fourc)
+def test_set_energy(fourc):
+    hkl.user.select_diffractometer(fourc)
     numpy.testing.assert_approx_equal(fourc.energy.get(), 8)
     assert fourc.energy_offset.get() == 0
     assert fourc.energy_units.get() == "keV"
     numpy.testing.assert_approx_equal(fourc.calc.energy, 8)
 
-    hkl.user.setEnergy(8.1)
+    hkl.user.set_energy(8.1)
     numpy.testing.assert_approx_equal(fourc.energy.get(), 8.1)
     assert fourc.energy_offset.get() == 0
     assert fourc.energy_units.get() == "keV"
     numpy.testing.assert_approx_equal(fourc.calc.energy, 8.1)
 
-    hkl.user.setEnergy(7500, units="eV")
+    hkl.user.set_energy(7500, units="eV")
     numpy.testing.assert_approx_equal(fourc.energy.get(), 7500)
     assert fourc.energy_offset.get() == 0
     assert fourc.energy_units.get() == "eV"
     numpy.testing.assert_approx_equal(fourc.calc.energy, 7.5)
 
-    hkl.user.setEnergy(7100, units="eV", offset=25)
+    hkl.user.set_energy(7100, units="eV", offset=25)
     numpy.testing.assert_approx_equal(fourc.energy.get(), 7100)
     assert fourc.energy_offset.get() == 25
     assert fourc.energy_units.get() == "eV"
     numpy.testing.assert_approx_equal(fourc.calc.energy, 7.125)
 
     # Now, do not set offset.  It will use the previous value.
-    hkl.user.setEnergy(2500, units="eV")
+    hkl.user.set_energy(2500, units="eV")
     numpy.testing.assert_approx_equal(fourc.energy.get(), 2500)
     assert fourc.energy_offset.get() == 25
     assert fourc.energy_units.get() == "eV"
@@ -200,9 +200,9 @@ def test_setEnergy(fourc):
 
 
 def test_setor(fourc):
-    hkl.user.selectDiffractometer(fourc)
+    hkl.user.select_diffractometer(fourc)
     a0 = 5.4310196
-    hkl.user.newSample("silicon standard", a0, a0, a0, 90, 90, 90)
+    hkl.user.new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
 
     assert len(fourc.calc.sample.reflections) == 0
     hkl.user.setor(4, 0, 0, -145.451, 0, 0, 69.0966, wavelength=1.54)
@@ -218,20 +218,20 @@ def test_setor(fourc):
     assert fourc.calc.sample.reflections == [(4, 0, 0), (0, 4, 0)]
 
 
-def test_showSample(capsys, fourc):
-    hkl.user.selectDiffractometer(fourc)
+def test_show_sample(capsys, fourc):
+    hkl.user.select_diffractometer(fourc)
     a0 = 5.431
-    hkl.user.newSample("silicon", a0, a0, a0, 90, 90, 90)
+    hkl.user.new_sample("silicon", a0, a0, a0, 90, 90, 90)
     capsys.readouterr()  # flush the output buffers
 
-    hkl.user.showSample(verbose=False)
+    hkl.user.show_sample(verbose=False)
     out, err = capsys.readouterr()
     assert str(out).strip() == (
         "silicon (*):" " [5.431, 5.431, 5.431, 90.0, 90.0, 90.0]"
     )
     assert err == ""
 
-    hkl.user.showSample()
+    hkl.user.show_sample()
     out, err = capsys.readouterr()
     assert err == ""
     expected = """
@@ -254,10 +254,10 @@ def test_showSample(capsys, fourc):
         assert r.strip() == e.strip()
 
 
-def test_updateSample(capsys, fourc):
-    hkl.user.selectDiffractometer(fourc)
+def test_update_sample(capsys, fourc):
+    hkl.user.select_diffractometer(fourc)
 
-    hkl.user.updateSample(2, 2, 2, 90, 90, 90)
+    hkl.user.update_sample(2, 2, 2, 90, 90, 90)
     out, err = capsys.readouterr()
     assert err == ""
     expected = """
@@ -268,7 +268,7 @@ def test_updateSample(capsys, fourc):
 
 
 def test_pa(fourc, capsys):
-    hkl.user.selectDiffractometer(fourc)
+    hkl.user.select_diffractometer(fourc)
 
     tbl = hkl.user.pa()
     assert tbl is None
@@ -322,7 +322,7 @@ def test_pa(fourc, capsys):
 
 
 def test_wh(fourc, capsys):
-    hkl.user.selectDiffractometer(fourc)
+    hkl.user.select_diffractometer(fourc)
 
     tbl = hkl.user.wh()
     assert tbl is None
