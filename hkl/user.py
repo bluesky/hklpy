@@ -113,10 +113,12 @@ def change_sample(sample):
     """Pick a known sample to be the current selection."""
     _check_geom_selected_()
     if sample not in _geom_.calc._samples:
+        # fmt: off
         raise KeyError(
             f"Sample '{sample}' is unknown."
             f"  Known samples: {list(_geom_.calc._samples.keys())}"
         )
+        # fmt: on
     _geom_.calc.sample = sample
     show_sample(sample)
 
@@ -149,9 +151,7 @@ def new_sample(nm, a, b, c, alpha, beta, gamma):
             nm,
         )
     else:
-        lattice = Lattice(
-            a=a, b=b, c=c, alpha=alpha, beta=beta, gamma=gamma
-        )
+        lattice = Lattice(a=a, b=b, c=c, alpha=alpha, beta=beta, gamma=gamma)
         _geom_.calc.new_sample(nm, lattice=lattice)
     show_sample()
 
@@ -162,9 +162,7 @@ def select_diffractometer(instrument=None):
     if instrument is None or isinstance(instrument, Diffractometer):
         _geom_ = instrument
     else:
-        raise TypeError(
-            f"{instrument} must be a 'Diffractometer' subclass"
-        )
+        raise TypeError(f"{instrument} must be a 'Diffractometer' subclass")
 
 
 def set_energy(value, units=None, offset=None):
@@ -186,11 +184,13 @@ def setor(h, k, l, *args, wavelength=None, **kwargs):
         if len(kwargs) == 0:
             pos = _geom_.real_position
         else:
+            # fmt: off
             pos = [
                 kwargs[m]
                 for m in _geom_.calc.physical_axis_names
                 if m in kwargs
             ]
+            # fmt: on
     else:
         pos = args
     # TODO: How does libhkl get the wavelength on a reflection?
@@ -211,9 +211,7 @@ def show_sample(sample_name=None, verbose=True):
         title += " (*)"
 
     # Print Lattice more simply (than as a namedtuple).
-    lattice = [
-        getattr(sample.lattice, parm) for parm in sample.lattice._fields
-    ]
+    lattice = [getattr(sample.lattice, parm) for parm in sample.lattice._fields]
     if verbose:
         tbl = pyRestTable.Table()
         tbl.addLabel("key")

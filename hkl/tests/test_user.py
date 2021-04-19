@@ -65,9 +65,7 @@ def test_cahkl_table(capsys, fourc):
     ========= ======== ===== === === ===
     """.strip().splitlines()
     assert err == ""
-    for el, rl in list(
-        zip(expected[3:5], str(out).strip().splitlines()[3:5])
-    ):
+    for el, rl in list(zip(expected[3:5], str(out).strip().splitlines()[3:5])):
         # just compare the position values
         for e, r in list(zip(el.split()[-4:], rl.split()[-4:])):
             assert float(r) == float(e)
@@ -77,9 +75,7 @@ def test_calc_UB(fourc):
     hkl.user.select_diffractometer(fourc)
     a0 = 5.4310196
     hkl.user.new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
-    r1 = hkl.user.setor(
-        4, 0, 0, tth=69.0966, omega=-145.451, chi=0, phi=0, wavelength=1.54
-    )
+    r1 = hkl.user.setor(4, 0, 0, tth=69.0966, omega=-145.451, chi=0, phi=0, wavelength=1.54)
     fourc.omega.move(-145.451)
     fourc.chi.move(90)
     fourc.phi.move(0)
@@ -226,9 +222,7 @@ def test_show_sample(capsys, fourc):
 
     hkl.user.show_sample(verbose=False)
     out, err = capsys.readouterr()
-    assert str(out).strip() == (
-        "silicon (*):" " [5.431, 5.431, 5.431, 90.0, 90.0, 90.0]"
-    )
+    assert str(out).strip() == ("silicon (*):" " [5.431, 5.431, 5.431, 90.0, 90.0, 90.0]")
     assert err == ""
 
     hkl.user.show_sample()
