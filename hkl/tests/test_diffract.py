@@ -146,7 +146,7 @@ def test_names(fourc):
 
 
 def test_forwardSolutionsTable(fourc):
-    fourc.energy.put(A_KEV/1.54)
+    fourc.energy.put(A_KEV / 1.54)
 
     # (100) has chi ~ 0 which poses occasional roundoff errors
     # (sometimes -0.00000, sometimes 0.00000)
@@ -282,13 +282,15 @@ def test_showConstraints(fourc, capsys):
 
 
 def test_applyConstraints(fourc):
-    fourc.energy.put(A_KEV/1.54)
+    fourc.energy.put(A_KEV / 1.54)
+    # fmt: off
     fourc.applyConstraints(
         {
             "tth": Constraint(0, 180, 0, True),
             "chi": Constraint(0, 180, 0, True),
         }
     )
+    # fmt: on
     sol = fourc.forward(1, 0, 0)
     assert pytest.approx(sol.omega, 1e-5) == 30
     assert pytest.approx(sol.chi, 1e-5) == 0
