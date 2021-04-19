@@ -84,7 +84,6 @@ def test_calc_UB(fourc):
 
     ub = hkl.user.calc_UB(r1, r2)
     if ub is None:
-        # TODO: PR #85 will make this happen
         hkl.user.calc_UB(r1, r2)
         ub = fourc.calc.sample.UB
     assert isinstance(ub, numpy.ndarray)
