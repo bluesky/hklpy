@@ -1,5 +1,5 @@
 [run]
-source=hklpy
+source=hkl
 
 [report]
 omit=
