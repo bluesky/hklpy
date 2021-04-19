@@ -6,39 +6,37 @@ user
 Make it easier for users (especially SPEC users) to learn and remember
 the new tools in Bluesky's *hklpy* package.
 
-.. TODO  will enable once more of these are provided
+Quick Reference Table
 
-    Quick Reference Table
-
-    ==============  =======================================
-    *SPEC*          *hklpy*
-    ==============  =======================================
-    --              :func:`~calc_UB`
-    --              :func:`~new_sample`
-    --              :func:`~select_diffractometer`
-    ``br``          TODO:
-    ``cal``         :func:`cahkl`
-    ``cuts``        TODO: constraints
-    ``cz``          TODO:
-    ``freeze``      TODO: constraints
-    ``g_sect``      TODO: constraints
-    ``mz``          TODO:
-    ``or_swap``     TODO:
-    ``or0``         :func:`~setor`
-    ``or1``         :func:`~setor`
-    ``pa``          :func:`~pa`
-    ``pl``          TODO:
-    ``reflex_beg``  TODO:
-    ``reflex_end``  TODO:
-    ``reflex``      TODO:
-    ``setaz``       TODO:
-    ``setlat``      :func:`~update_sample`
-    ``setmode``     TODO: modes
-    ``setsector``   TODO:
-    ``sz``          TODO:
-    ``unfreeze``    TODO: constraints
-    ``wh``          :func:`~wh`
-    ==============  =======================================
+==============  =======================================
+*SPEC*          *hklpy*
+==============  =======================================
+--              :func:`~calc_UB`
+--              :func:`~new_sample`
+--              :func:`~select_diffractometer`
+``br``          TODO:
+``cal``         :func:`cahkl`
+``cuts``        TODO: constraints
+``cz``          TODO:
+``freeze``      TODO: constraints
+``g_sect``      TODO: constraints
+``mz``          TODO:
+``or_swap``     TODO:
+``or0``         :func:`~setor`
+``or1``         :func:`~setor`
+``pa``          :func:`~pa`
+``pl``          TODO:
+``reflex_beg``  TODO:
+``reflex_end``  TODO:
+``reflex``      TODO:
+``setaz``       TODO:
+``setlat``      :func:`~update_sample`
+``setmode``     TODO: modes
+``setsector``   TODO:
+``sz``          TODO:
+``unfreeze``    TODO: constraints
+``wh``          :func:`~wh`
+==============  =======================================
 
 .. automodule:: hkl.user
     :members:
