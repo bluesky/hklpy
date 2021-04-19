@@ -101,17 +101,17 @@ class Parameter(object):
 
     def _repr_info(self):
         r = [
-            f"name={repr(self.name)}",
-            f"limits={repr(self.limits)}",
-            f"value={repr(self.value)}",
-            f"fit={repr(self.fit)}",
-            f"inverted={repr(self.inverted)}",
+            f"name={self.name!r}",
+            f"limits={self.limits!r}",
+            f"value={self.value!r}",
+            f"fit={self.fit!r}",
+            f"inverted={self.inverted!r}",
         ]
 
         if self._unit_name == "user":
-            r.append(f"units={repr(self.user_units)}")
+            r.append(f"units={self.user_units!r}")
         else:
-            r.append(f"units={repr(self.default_units)}")
+            r.append(f"units={self.default_units!r}")
 
         return r
 
@@ -156,7 +156,7 @@ class Solution(object):
     def _repr_info(self):
         r = [
             repr(self.positions),
-            f"units={repr(self._engine.units)}",
+            f"units={self._engine.units!r}",
         ]
 
         return r
@@ -269,11 +269,11 @@ class Engine(object):
 
     def _repr_info(self):
         r = [
-            f"parameters={repr(self.parameters)}",
-            f"pseudo_axes={repr(dict(self.pseudo_axes))}",
-            f"mode={repr(self.mode)}",
-            f"modes={repr(self.modes)}",
-            f"units={repr(self.units)}",
+            f"parameters={self.parameters!r}",
+            f"pseudo_axes={self.pseudo_axes!r}",
+            f"mode={self.mode!r}",
+            f"modes={self.modes!r}",
+            f"units={self.units!r}",
         ]
 
         return r

@@ -377,14 +377,14 @@ class HklSample(object):
 
     def _repr_info(self):
         r = [
-            f"name={repr(self.name)}",
-            f"lattice={repr(self.lattice)}",
-            f"ux={repr(self.ux)}",
-            f"uy={repr(self.uy)}",
-            f"uz={repr(self.uz)}",
-            f"U={repr(self.U)}",
-            f"UB={repr(self.UB)}",
-            f"reflections={repr(self.reflections)}",
+            f"name={self.name!r}",
+            f"lattice={self.lattice!r}",
+            f"ux={self.ux!r}",
+            f"uy={self.uy!r}",
+            f"uz={self.uz!r}",
+            f"U={self.U!r}",
+            f"UB={self.UB!r}",
+            f"reflections={self.reflections!r}",
         ]
 
         return r
@@ -394,8 +394,8 @@ class HklSample(object):
 
     def __str__(self):
         info = self._repr_info()
-        info.append(f"reflection_measured_angles={repr(self.reflection_measured_angles)}")
-        info.append(f"reflection_theoretical_angles={repr(self.reflection_theoretical_angles)}")
+        info.append(f"reflection_measured_angles={self.reflection_measured_angles!r}")
+        info.append(f"reflection_theoretical_angles={self.reflection_theoretical_angles!r}")
         return f"{self.__class__.__name__}({', '.join(info)}))"
 
     def _get_reflection_dict(self, refl):
