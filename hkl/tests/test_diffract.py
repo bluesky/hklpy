@@ -145,7 +145,7 @@ def test_names(fourc):
     assert fourc.class_name.get() == "Fourc"
 
 
-def test_forwardSolutionsTable(fourc):
+def test_forward_solutions_table(fourc):
     fourc.energy.put(A_KEV / 1.54)
 
     # (100) has chi ~ 0 which poses occasional roundoff errors
@@ -156,7 +156,7 @@ def test_forwardSolutionsTable(fourc):
     assert pytest.approx(sol.phi, 1e-5) == -90
     assert pytest.approx(sol.tth, 1e-5) == -60
 
-    tbl = fourc.forwardSolutionsTable(
+    tbl = fourc.forward_solutions_table(
         # fmt: off
         [
             [1, 1, 0],
@@ -261,8 +261,8 @@ def test_wh(fourc, capsys):
     assert out == expected
 
 
-def test_showConstraints(fourc, capsys):
-    fourc.showConstraints()
+def test_show_constraints(fourc, capsys):
+    fourc.show_constraints()
     out, err = capsys.readouterr()
     assert len(out) > 0
     assert err == ""
@@ -281,10 +281,10 @@ def test_showConstraints(fourc, capsys):
         assert r.rstrip() == e.rstrip()
 
 
-def test_applyConstraints(fourc):
+def test_apply_constraints(fourc):
     fourc.energy.put(A_KEV / 1.54)
     # fmt: off
-    fourc.applyConstraints(
+    fourc.apply_constraints(
         {
             "tth": Constraint(0, 180, 0, True),
             "chi": Constraint(0, 180, 0, True),

@@ -42,11 +42,11 @@ class Diffractometer(PseudoPositioner):
         ~engine
         ~forward
         ~inverse
-        ~forwardSolutionsTable
-        ~applyConstraints
-        ~resetConstraints
-        ~showConstraints
-        ~undoLastConstraints
+        ~forward_solutions_table
+        ~apply_constraints
+        ~reset_constraints
+        ~show_constraints
+        ~undo_last_constraints
         ~pa
         ~wh
         ~_energy_changed
@@ -395,7 +395,7 @@ class Diffractometer(PseudoPositioner):
             pos = [pos.get(p.attr_name, p.position) for p in self.pseudo_positioners]
         super().check_value(pos)
 
-    def applyConstraints(self, constraints):
+    def apply_constraints(self, constraints):
         """
         Constrain the diffractometer's motions.
 
@@ -405,13 +405,13 @@ class Diffractometer(PseudoPositioner):
         self._push_current_constraints()
         self._set_constraints(constraints)
 
-    def resetConstraints(self):
+    def reset_constraints(self):
         """Set constraints back to initial settings."""
         if len(self._constraints_stack) > 0:
             self._set_constraints(self._constraints_stack[0])
             self._constraints_stack = []
 
-    def showConstraints(self, fmt="simple", printing=True):
+    def show_constraints(self, fmt="simple", printing=True):
         """Print the current constraints in a table."""
         tbl = pyRestTable.Table()
         tbl.labels = "axis low_limit high_limit value fit".split()
@@ -432,7 +432,7 @@ class Diffractometer(PseudoPositioner):
 
         return tbl
 
-    def undoLastConstraints(self):
+    def undo_last_constraints(self):
         """
         Remove the current constraints additions, restore previous.
         """
@@ -458,7 +458,7 @@ class Diffractometer(PseudoPositioner):
             self.calc[axis].value = constraint.value
             self.calc[axis].fit = constraint.fit
 
-    def forwardSolutionsTable(self, reflections, full=False):
+    def forward_solutions_table(self, reflections, full=False):
         """
         Return table of computed solutions for each (hkl) in the supplied reflections list.
 
@@ -561,7 +561,7 @@ class Diffractometer(PseudoPositioner):
             pt.addRow(row)
         table.addRow(("positions", addTable(pt)))
 
-        t = self.showConstraints(printing=False)
+        t = self.show_constraints(printing=False)
         table.addRow(("constraints", addTable(t)))
 
         if all_samples:
