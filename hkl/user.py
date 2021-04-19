@@ -94,7 +94,7 @@ def cahkl_table(reflections, digits=5):
         value.  Default is 5.
     """
     _check_geom_selected_()
-    print(_geom_.forwardSolutionsTable(reflections, digits=digits))
+    print(_geom_.forward_solutions_table(reflections, digits=digits))
 
 
 def calcUB(r1, r2, wavelength=None):
