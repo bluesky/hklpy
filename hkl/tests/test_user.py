@@ -1,9 +1,6 @@
 import pytest
 import numpy.testing
 
-from ophyd import Component as Cpt
-from ophyd import PseudoSingle, SoftPositioner
-
 import gi
 
 gi.require_version("Hkl", "5.0")
