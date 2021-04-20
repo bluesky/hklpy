@@ -52,14 +52,14 @@ EXAMPLES::
     select_diffractometer(fourc)
 
     # sample is the silicon standard
-    a0=5.4310196; new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
+    a0 = 5.4310196; new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
 
     list_samples()
 
     # define the first orientation reflection, specify each motor position
     # motor values given in "diffractometer order"::
     #     print(_geom_.calc.physical_axis_names)
-    r1 = setor(4, 0, 0, -145.451, 0, 0, 69.0966, wavelength = 1.54)
+    r1 = setor(4, 0, 0, -145.451, 0, 0, 69.0966, wavelength=1.54)
 
     # move to the position of the second reflection: (040)
     %mov fourc.omega -145.451 fourc.chi 90 fourc.phi 0 fourc.tth 69.0966

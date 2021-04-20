@@ -54,8 +54,8 @@ import pyRestTable
 _geom_ = None  # selected diffractometer geometry
 
 
-def _check_geom_selected_(*args, **kwargs):
-    """Raise ValueError i no diffractometer geometry is selected."""
+def _check_geom_selected(*args, **kwargs):
+    """Raise ValueError if no diffractometer geometry is selected."""
     if _geom_ is None:
         raise ValueError(
             "No diffractometer selected."
@@ -71,7 +71,7 @@ def cahkl(h, k, l):
     Returns a namedtuple.
     Does not move motors.
     """
-    _check_geom_selected_()
+    _check_geom_selected()
     # TODO: make certain this will not move the motors!
     return _geom_.forward(h, k, l)
 
@@ -93,7 +93,7 @@ def cahkl_table(reflections, digits=5):
         Number of digits to roundoff each position
         value.  Default is 5.
     """
-    _check_geom_selected_()
+    _check_geom_selected()
     print(_geom_.forward_solutions_table(reflections, digits=digits))
 
 
@@ -104,14 +104,14 @@ def cahkl_table(reflections, digits=5):
 
 def calc_UB(r1, r2, wavelength=None):
     """Compute the UB matrix with two reflections."""
-    _check_geom_selected_()
+    _check_geom_selected()
     _geom_.calc.sample.compute_UB(r1, r2)
     print(_geom_.calc.sample.UB)
 
 
 def change_sample(sample):
     """Pick a known sample to be the current selection."""
-    _check_geom_selected_()
+    _check_geom_selected()
     if sample not in _geom_.calc._samples:
         # fmt: off
         raise KeyError(
@@ -125,7 +125,7 @@ def change_sample(sample):
 
 def list_samples(verbose=True):
     """List all defined crystal samples."""
-    _check_geom_selected_()
+    _check_geom_selected()
     # always show the default sample first
     current_name = _geom_.calc.sample_name
     show_sample(current_name, verbose=verbose)
@@ -140,7 +140,7 @@ def list_samples(verbose=True):
 
 def new_sample(nm, a, b, c, alpha, beta, gamma):
     """Define a new crystal sample."""
-    _check_geom_selected_()
+    _check_geom_selected()
     if nm in _geom_.calc._samples:
         logger.warning(
             (
@@ -169,7 +169,7 @@ def set_energy(value, units=None, offset=None):
     """
     Set the energy (thus wavelength) to be used.
     """
-    _check_geom_selected_()
+    _check_geom_selected()
     if units is not None:
         _geom_.energy_units.put(units)
     if offset is not None:
@@ -179,7 +179,7 @@ def set_energy(value, units=None, offset=None):
 
 def setor(h, k, l, *args, wavelength=None, **kwargs):
     """Define a crystal reflection and its motor positions."""
-    _check_geom_selected_()
+    _check_geom_selected()
     if len(args) == 0:
         if len(kwargs) == 0:
             pos = _geom_.real_position
@@ -202,7 +202,7 @@ def setor(h, k, l, *args, wavelength=None, **kwargs):
 
 def show_sample(sample_name=None, verbose=True):
     """Print the default sample name and crystal lattice."""
-    _check_geom_selected_()
+    _check_geom_selected()
     sample_name = sample_name or _geom_.calc.sample_name
     sample = _geom_.calc._samples[sample_name]
 
@@ -238,7 +238,7 @@ def show_selected_diffractometer(instrument=None):
 
 def update_sample(a, b, c, alpha, beta, gamma):
     """Update current sample lattice."""
-    _check_geom_selected_()
+    _check_geom_selected()
     _geom_.calc.sample.lattice = (
         a,
         b,
@@ -252,11 +252,11 @@ def update_sample(a, b, c, alpha, beta, gamma):
 
 def pa():
     """Report (all) the diffractometer settings."""
-    _check_geom_selected_()
+    _check_geom_selected()
     _geom_.pa()
 
 
 def wh():
     """Report (brief) where is the diffractometer."""
-    _check_geom_selected_()
+    _check_geom_selected()
     _geom_.wh()
