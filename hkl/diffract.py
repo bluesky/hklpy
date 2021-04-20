@@ -458,11 +458,23 @@ class Diffractometer(PseudoPositioner):
             self.calc[axis].value = constraint.value
             self.calc[axis].fit = constraint.fit
 
-    def forward_solutions_table(self, reflections, full=False):
+    def forward_solutions_table(self, reflections, full=False, digits=5):
         """
-        Return table of computed solutions for each (hkl) in the supplied reflections list.
+        Return table of computed solutions for each supplied (hkl) reflection.
 
-        The solutions are calculated using the current UB matrix & constraints
+        The solutions are calculated using the current UB matrix & constraints.
+
+        Parameters
+        ----------
+        reflections : list of (h, k, l) reflections
+            Each reflection is a tuple of 3 numbers,
+            (h, k, l) of the reflection.
+        full : bool
+            If ``True``, show all solutions.  If ``False``,
+            only show the default solution.
+        digits : int
+            Number of digits to roundoff each position
+            value.  Default is 5.
         """
         _table = pyRestTable.Table()
         motors = self.real_positioners._fields
@@ -479,7 +491,7 @@ class Diffractometer(PseudoPositioner):
             else:
                 for i, s in enumerate(solutions):
                     row = [reflection, i]
-                    row += [f"{getattr(s, m):.5f}" for m in motors]
+                    row += [round(getattr(s, m), digits) for m in motors]
                     _table.addRow(row)
                     if not full:
                         break  # only show the first (default) solution
@@ -487,7 +499,7 @@ class Diffractometer(PseudoPositioner):
 
     def pa(self, all_samples=False, printing=True):
         """
-        Report the diffractometer settings.
+        Report (all) the diffractometer settings.
 
         EXAMPLE::
 
@@ -632,7 +644,7 @@ class Diffractometer(PseudoPositioner):
 
     def wh(self, printing=True):
         """
-        report where is the diffractometer
+        Report (brief) where is the diffractometer.
 
         EXAMPLE::
 
