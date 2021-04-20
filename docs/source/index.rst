@@ -31,14 +31,14 @@ and require ``Hkl`` version 5.0, as in::
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :glob:
    :caption: Core Functionality
 
    overview
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :glob:
    :caption: Ready-to-Use Devices
 
@@ -46,7 +46,7 @@ and require ``Hkl`` version 5.0, as in::
    examples/*
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :glob:
    :caption: Developer Notes
 
