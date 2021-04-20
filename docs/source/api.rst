@@ -11,4 +11,5 @@ API Reference
    engine
    geometries
    sample
+   user
    util
