@@ -1,4 +1,134 @@
+========
 Overview
 ========
 
-TODO
+The ``hklpy`` package provides controls for using diffractometers within the
+`Bluesky Framework <https://blueskyproject.io>`_.
+:class:`~hkl.diffract.Diffractometer()` is the base class from which all the
+different diffractometer geometries are built.  Built on the
+`ophyd.PseudoPositioner
+<https://blueskyproject.io/ophyd/positioners.html#pseudopositioner>`_ interface,
+it defines all the components of a diffractometer.  The different geometries
+specify the names and order for the real motor axes.  Several terms used throughout
+are:
+
+  **real axis (positioner)**
+
+    A positioner (whether simulated or attached to hardware) that operates in
+    *real* space.  Typically an instance of `ophyd.EpicsMotor
+    <https://blueskyproject.io/ophyd/builtin-devices.html#epicsmotor>`_
+    or
+    `ophyd.SoftPositioner
+    <https://blueskyproject.io/ophyd/positioners.html#softpositioner>`_.
+
+  **pseudo axis (positioner)**
+
+    A positioner (whether simulated or attached to hardware) that operates in
+    *reciprocal* space.  Typically an instance of `ophyd.PseudoSingle
+    <https://blueskyproject.io/ophyd/positioners.html#ophyd.pseudopos.PseudoSingle>`_.
+
+  **forward (transformation)**
+
+    Compute the values of the real positioners given values of the pseudo
+    positioners.  Since it is possible that more than one solution is possible,
+    additional constraints (limits on the real positioner and diffractometer
+    mode) may be added.
+
+  **inverse (transformation)**
+
+    Compute the values of the pseudo positioners given values of the real
+    positioners.
+
+  **libhkl support library**
+
+    The transformation between real and reciprocal (_pseudo_) space are passed
+    (from :mod:`hkl.diffract` through :mod:`hkl.calc`) to a support library
+    known here as *libhkl* (https://repo.or.cz/hkl.git), written in C++.
+
+Parts of a `Diffractometer`
+===========================
+
+A ``Diffractometer`` object has several parts:
+
+  **name**
+
+    The ``name`` of the ``Diffractometer()`` instance is completely at the choice
+    of the user and conveys no specific information to the underlying Python
+    support code.  One important convention is that the name given on the left
+    side of the ``=`` matches the name given by the ``name="..."`` keyword, such
+    as this example:  ``e4cv = E4CV("", name="e4cv")``.
+
+  **geometry**
+
+    The geometry describes the physical arrangement of real positioners that
+    make up the diffractometer.  The choices are limited to those geometries
+    provided in :mod:`hkl.geometries` (which are the geometries provided bythe
+    *libhkl* support library).  A geometry will provide a list of the real
+    positioners.  It is possible to use alternate names.
+
+  **calc**
+
+    The ``calc`` attribute, set when the :class:`~hkl.diffract.Diffractometer`
+    object is defined, connects with the underlying *libhkl* support library.
+    While a user might call certain methods from this
+    :class:`~hkl.calc.CalcRecip()` object, it is usually not necessary.  The
+    most common term from this layer would be the actual wavelength used for
+    computations.  Using from the example above, ``e4cv.calc.wavelength``,
+    expressed in angstrom units. Normally, the user will set the energy in the
+    diffractometer object, ``e4cv.energy``, which will then set the wavelength.
+
+    The ``calc`` contains the methods that convert between energy and
+    wavelength. To use this Python support at an instrument that does not use
+    X-rays (such as a neutron source), re-write these methods and also redefine
+    any classes that use :class:`hkl.calc.CalcRecip()`.
+
+  **energy**
+
+    The ``energy`` of the diffractometer sets the wavelength, which is used when:
+    
+    - computing ``forward()`` and ``inverse()`` transformations
+    - defining orientation reflections
+    - documenting the state of the diffractometer
+
+    It is more common for users to describe energy than wavelength.  The
+    high-level interface allows the energy to be expressed in any units that are
+    convertible to the expected units (`keV`).  An offset may be applied, which
+    is useful when connecting the diffractometer energy with a control system
+    variable.
+
+  **sample**
+
+    The point of a diffractometer is to position a sample for scientific
+    measurements. The ``sample`` attribute is an instance of
+    :class:`hkl.sample.HklSample`. Behind the scenes, the
+    :class:`hkl.diffract.Diffractometer` object maintains a *dictionary* of
+    samples (keyed by ``name``), each with its own :class:`hkl.utils.Lattice`
+    and orientation (reflections) information.
+
+  **lattice**
+
+    Crystal :class:`hkl.utils.Lattice` parameters of unit cell lengths and
+    angles.
+
+  **orientation**
+
+    The **UB** matrix describes the ``forward()`` and ``inverse()`` transformations
+    that allow precise positioning of a crystal's atomic planes in the laboratory
+    reference system of the diffractometer.  Typically, the **UB** matrix is computed
+    (by *libhkl*) from two orientation reflections.
+
+  **constraint**
+
+    The ``forward()`` transformation can have many solutions.  A
+    :class:`~hkl.diffract.Constraint` can be applied to a real positioner to
+    limit the range of solutions accepted for that positioner.
+
+  **mode**
+
+    The ``forward()`` transformation can have many solutions.  The
+    diffractometer is set to a mode (chosen from a list specified by the
+    diffractometer geometry) that controls how values for each of the real
+    positioners will be controlled. A mode can control relationships between
+    real positioners in addition to limiting the motion of a real positioner.
+    Further, a mode can specify and additional reflection which will be used to
+    determine the outcome of the ``forward()`` transformation.
