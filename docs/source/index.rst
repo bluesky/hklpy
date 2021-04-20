@@ -29,18 +29,26 @@ and require ``Hkl`` version 5.0, as in::
 
    from hkl.diffract import E4CV
 
-Contents:
 
 .. toctree::
    :maxdepth: 1
    :glob:
+   :caption: Core Functionality
 
-   calc
-   context
-   diffract
-   engine
-   geometries
-   sample
-   util
+   overview
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+   :caption: Ready-to-Use Devices
+
+   ready_to_use
    examples/*
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+   :caption: Developer Notes
+
+   api
    release_notes
