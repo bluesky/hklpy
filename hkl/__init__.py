@@ -1,6 +1,6 @@
 """
-:mod:`hkl` - HKL calculation utilities
-======================================
+:mod:`hkl` - HKL diffractometer support
+=======================================
 
 .. module:: hkl
    :synopsis:
