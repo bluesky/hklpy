@@ -1,8 +1,8 @@
 """
-:mod:`ophyd.hkl` - HKL calculation utilities
-============================================
+:mod:`hkl` - HKL diffractometer support
+=======================================
 
-.. module:: ophyd.hkl
+.. module:: hkl
    :synopsis:
 
 """

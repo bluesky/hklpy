@@ -8,7 +8,7 @@ diffractometer geometry must be created to define the reciprocal-space
 axes and customize the EPICS PVs used for the motor axes.  Other
 capabilities are also customized in a local subclass.
 
-Examples are provided in the 
+Examples are provided in the
 :ref:`Geometries Examples <geometries.examples>` section.
 
 These are the diffractometer geometries provided by the **libhkl**
@@ -44,6 +44,8 @@ on these geometries.
 .. [#libhkl] **libhkl** documentation:
     https://people.debian.org/~picca/hkl/hkl.html
 
+.. _diffract.energy:
+
 Energy
 ++++++
 
@@ -55,7 +57,7 @@ connect with an EPICS PV from the instrument's control system.  There is
 no corresponding ``.wavelength`` signal at the diffractometer level.
 The ``.energy_offset`` signal is used to allow for a difference between
 the reported energy of ``.energy`` and the energy used for
-diffractometer operations ``.calc.energy``.  
+diffractometer operations ``.calc.energy``.
 
 These are the terms:
 
@@ -67,7 +69,7 @@ term                 meaning
 ``.energy_units``    engineering units to be used for ``.energy`` and ``.energy_offset``
 ``.calc.energy``     energy for diffraction (used to compute wavelength)
 ``.calc.wavelength`` used for diffraction calculations
-==================== ======================= 
+==================== =======================
 
 These are the relationships::
 
@@ -102,6 +104,7 @@ turn writes the ``.calc.wavelength`` value. Likewise, when
         e4cv.energy.put(8000)
         # now, e4cv.calc.energy = 8.0015 keV
 
+.. _diffract.energy.units:
 
 Engineering Units
 +++++++++++++++++
@@ -140,6 +143,59 @@ diffractometer attribute    engineering units
    https://blueskyproject.io/ophyd/positioners.html#pseudopositioner
 .. [#] *pint* (for engineering units conversion):
    https://pint.readthedocs.io
+
+
+.. _diffract.energy.control_system:
+
+Control System Energy
++++++++++++++++++++++
+
+One way to connect the control system energy is to replace the ``energy``
+attribute in the custom subclass of :class:`hkl.diffract.Diffractometer()`,
+connecting it as either ``ophyd.EpicsSignal``, ``ophyd.EpicsSignalRO``, or
+``ophyd.EpicsSignalWithRBV``.  In the next example, the monochromator energy,
+engineering units, and offset are provided by EPICS.  Also, another EPICS PV
+controls whether the energy of the diffractometer object should be updated by
+changes in the EPICS energy.  Note that the
+:meth:`~hkl.diffract.Diffractometer._energy_changed()` method is already
+subscribed to updates in the ``energy`` signal.  It is not necessary to do this
+in the custom subclass.  Don't forget to add the definitions for the real and
+pseudo positioners.
+
+.. code-block:: python
+   :caption: Connecting control system energy to a 4-circle diffractometer.
+
+    import gi
+    gi.require_version('Hkl', '5.0')
+    from hkl.geometries import E4CV
+    import logging
+    from ophyd import Component
+    from ophyd import EpicsMotor
+    from ophyd import EpicsSignal
+    from ophyd import PseudoSingle
+    import pint
+
+    logger = logging.getLogger(__name__)
+    ureg = pint.UnitRegistry()
+
+    class LocalDiffractometer(E4CV):
+        h = Component(PseudoSingle, '', kind="hinted")
+        k = Component(PseudoSingle, '', kind="hinted")
+        l = Component(PseudoSingle, '', kind="hinted")
+
+        omega = Component(EpicsMotor, "EPICS:m1", kind="hinted")
+        chi = Component(EpicsMotor, "EPICS:m2", kind="hinted")
+        phi = Component(EpicsMotor, "EPICS:m3", kind="hinted")
+        tth = Component(EpicsMotor, "EPICS:m4", kind="hinted")
+
+        energy = Component(EpicsSignal, "EPICS:energy")
+        energy_EGU = Component(EpicsSignal, "EPICS:energy.EGU")
+        energy_offset = Component(EpicsSignal, "EPICS:energy:offset")
+        energy_update_calc_flag = Component(EpicsSignal, "EPICS:energy:lock")
+
+    fourc = LocalDiffractometer("", name="fourc")
+    fourc.wait_for_connection()
+    fourc._energy_changed()  # force the callback to update
 
 ----
 

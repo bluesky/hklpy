@@ -1,10 +1,11 @@
 .. hklpy documentation master file
 
+=====
 hklpy
 =====
 
-Diffractometer computation library with
-ophyd pseudopositioner support.
+Controls for using diffractometers within the `Bluesky Framework
+<https://blueskyproject.io>`_.
 
 Based on the *hkl* library (https://repo.or.cz/hkl.git,
 also https://github.com/picca/hkl but that repository
@@ -29,19 +30,32 @@ and require ``Hkl`` version 5.0, as in::
 
    from hkl.diffract import E4CV
 
-Contents:
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :glob:
+   :caption: Core Functionality
 
-   calc
-   context
-   diffract
-   engine
-   geometries
-   sample
-   user
-   util
+   overview
+
+.. toctree::
+   :maxdepth: 2
+   :glob:
+   :caption: Ready-to-Use Devices
+
+   ready_to_use
    examples/*
+
+.. toctree::
+   :maxdepth: 2
+   :glob:
+   :caption: Developer Notes
+
+   api
    release_notes
+
+Indices
+-------
+
+* :ref:`General Index <genindex>`
+* :ref:`Index of Modules <modindex>`

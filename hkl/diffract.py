@@ -85,27 +85,27 @@ class Diffractometer(PseudoPositioner):
     Attributes
     ----------
     calc_class : sub-class of CalcRecip
-        Reciprocal calculation class used with this diffractometer.
-        If None (as in `hkl.diffract.Diffractometer`, `calc_inst` must be
+        Reciprocal calculation class used with this diffractometer. If ``None``
+        (as used in `hkl.diffract.Diffractometer`), `calc_inst` must be
         specified upon initialization.
 
     See Also
     --------
-    :class:`hkl.diffract.E4CH`
-    :class:`hkl.diffract.E4CV`
-    :class:`hkl.diffract.E6C`
-    :class:`hkl.diffract.K4CV`
-    :class:`hkl.diffract.K6C`
-    :class:`hkl.diffract.Med2p3`
-    :class:`hkl.diffract.Petra3_p09_eh2`
-    :class:`hkl.diffract.SoleilMars`
-    :class:`hkl.diffract.SoleilSiriusKappa`
-    :class:`hkl.diffract.SoleilSiriusTurret`
-    :class:`hkl.diffract.SoleilSixs`
-    :class:`hkl.diffract.SoleilSixsMed1p2`
-    :class:`hkl.diffract.SoleilSixsMed2p2`
-    :class:`hkl.diffract.TwoC`
-    :class:`hkl.diffract.Zaxis`
+    :class:`~hkl.geometries.E4CH`
+    :class:`~hkl.geometries.E4CV`
+    :class:`~hkl.geometries.E6C`
+    :class:`~hkl.geometries.K4CV`
+    :class:`~hkl.geometries.K6C`
+    :class:`~hkl.geometries.Med2p3`
+    :class:`~hkl.geometries.Petra3_p09_eh2`
+    :class:`~hkl.geometries.SoleilMars`
+    :class:`~hkl.geometries.SoleilSiriusKappa`
+    :class:`~hkl.geometries.SoleilSiriusTurret`
+    :class:`~hkl.geometries.SoleilSixs`
+    :class:`~hkl.geometries.SoleilSixsMed1p2`
+    :class:`~hkl.geometries.SoleilSixsMed2p2`
+    :class:`~hkl.geometries.TwoC`
+    :class:`~hkl.geometries.Zaxis`
     """
 
     calc_class = None
