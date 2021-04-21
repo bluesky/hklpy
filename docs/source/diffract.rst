@@ -198,13 +198,31 @@ pseudo positioners.
             Callback indicating that the energy signal was updated
             """
             if not self.connected:
-                self.wait_for_connection()
+                return
             if self.energy_update_calc.get() in (1, "Yes", "locked", "OK"):
                 units = self.energy_EGU.get()
                 logger.debug("%s energy changed: %f %s", self.name, value, units)
                 keV = pint.Quantity(value, units).to(ureg.keV)
                 self._calc.energy = keV.magnitude
                 self._update_position()
+
+        def __init__(self, prefix, calc_kw=None, decision_fcn=None, calc_inst=None,
+            *, configuration_attrs=None, read_attrs=None, **kwargs
+        ):
+            super().__init__(prefix, 
+                calc_kw=calc_kw, decision_fcn=decision_fcn,
+                calc_inst=calc_inst, read_attrs=read_attrs,
+                configuration_attrs=configuration_attrs, **kwargs)
+
+            # subscribe the callback to handle PV updates
+            self.energy.subscribe(self._energy_changed, event_type=EpicsSignal.SUB_VALUE)
+            self.energy_EGU.subscribe(self._energy_changed, event_type=EpicsSignal.SUB_VALUE)
+            self.energy_offset.subscribe(self._energy_changed, event_type=EpicsSignal.SUB_VALUE)
+            self.energy_update_calc.subscribe(self._energy_changed, event_type=EpicsSignal.SUB_VALUE)
+
+    fourc = LocalDiffractometer("", name="fourc")
+    fourc.wait_for_connection()
+    fourc._energy_changed()  # force the callback to update
 
 ----
 
