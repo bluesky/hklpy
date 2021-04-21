@@ -1,10 +1,11 @@
 .. hklpy documentation master file
 
+=====
 hklpy
 =====
 
-Diffractometer computation library with
-ophyd pseudopositioner support.
+Controls for using diffractometers within the `Bluesky Framework
+<https://blueskyproject.io>`_.
 
 Based on the *hkl* library (https://repo.or.cz/hkl.git,
 also https://github.com/picca/hkl but that repository
@@ -52,3 +53,9 @@ and require ``Hkl`` version 5.0, as in::
 
    api
    release_notes
+
+Indices and tables
+------------------
+
+* :ref:`genindex`
+* :ref:`modindex`

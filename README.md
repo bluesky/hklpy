@@ -5,6 +5,9 @@
 hklpy
 =====
 
+Controls for using diffractometers within the [Bluesky
+Framework](https://blueskyproject.io).
+
 Based on the *hkl*  C++ library (described here as *libhkl*), with
 slightly cleaner abstractions when compared to the auto-generated
 `gobject-introspection` classes. Integrates with ophyd
