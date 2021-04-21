@@ -9,7 +9,7 @@ different diffractometer geometries are built.  Built on the
 `ophyd.PseudoPositioner
 <https://blueskyproject.io/ophyd/positioners.html#pseudopositioner>`_ interface,
 it defines all the components of a diffractometer.  The different geometries
-specify the names and order for the real motor axes.  
+specify the names and order for the real motor axes.
 
 Definitions
 ===========
@@ -64,10 +64,12 @@ name
 
 The ``name`` of the :class:`~hkl.diffract.Diffractometer()` instance is
 completely at the choice of the user and conveys no specific information to
-the underlying Python support code.  One important convention is that the
-name given on the left side of the ``=`` matches the name given by the
-``name="..."`` keyword, such as this example:  
-``e4cv = E4CV("", name="e4cv")``.
+the underlying Python support code.
+
+One important convention is that the name given on the left side of the ``=``
+matches the name given by the ``name="..."`` keyword, such as this example::
+
+    e4cv = E4CV("", name="e4cv")
 
 geometry
 --------
