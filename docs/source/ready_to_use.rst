@@ -8,6 +8,7 @@ SimulatedE4CV
 -------------
 
 .. code-block:: python
+   :caption: Create a simulated 4-circle diffractometer.
 
     import gi
     gi.require_version("Hkl", "5.0")
