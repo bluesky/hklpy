@@ -81,7 +81,7 @@ While a user might call certain methods from this
 most common term from this layer would be the actual wavelength used for
 computations.  Using from the example above, ``DFRCT.calc.wavelength``
 (where ``DFRCT`` is the diffractometer object, such as ``e4cv`` above),
-expressed in angstrom units. Normally, the user will set the energy in the
+expressed in Angstrom units. Normally, the user will set the energy in the
 diffractometer object, ``DFRCT.energy``, which will then set the wavelength.
 
 The ``calc`` contains the methods that convert between energy and
