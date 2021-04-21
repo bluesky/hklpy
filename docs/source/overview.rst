@@ -52,11 +52,12 @@ A ``Diffractometer`` object has several parts:
 
   **name**
 
-    The ``name`` of the ``Diffractometer()`` instance is completely at the choice
-    of the user and conveys no specific information to the underlying Python
-    support code.  One important convention is that the name given on the left
-    side of the ``=`` matches the name given by the ``name="..."`` keyword, such
-    as this example:  ``e4cv = E4CV("", name="e4cv")``.
+    The ``name`` of the :class:`~hkl.diffract.Diffractometer()` instance is
+    completely at the choice of the user and conveys no specific information to
+    the underlying Python support code.  One important convention is that the
+    name given on the left side of the ``=`` matches the name given by the
+    ``name="..."`` keyword, such as this example:  
+    ``e4cv = E4CV("", name="e4cv")``.
 
   **geometry**
 
@@ -66,6 +67,8 @@ A ``Diffractometer`` object has several parts:
     *libhkl* support library).  A geometry will provide a list of the real
     positioners.  It is possible to use alternate names.
 
+    .. TODO: how to add a new geometry? (text does not yet exist)
+
   **calc**
 
     The ``calc`` attribute, set when the :class:`~hkl.diffract.Diffractometer`
@@ -73,9 +76,10 @@ A ``Diffractometer`` object has several parts:
     While a user might call certain methods from this
     :class:`~hkl.calc.CalcRecip()` object, it is usually not necessary.  The
     most common term from this layer would be the actual wavelength used for
-    computations.  Using from the example above, ``e4cv.calc.wavelength``,
+    computations.  Using from the example above, ``DFRCT.calc.wavelength``
+    (where ``DFRCT`` is the diffractometer object, such as ``e4cv`` above),
     expressed in angstrom units. Normally, the user will set the energy in the
-    diffractometer object, ``e4cv.energy``, which will then set the wavelength.
+    diffractometer object, ``DFRCT.energy``, which will then set the wavelength.
 
     The ``calc`` contains the methods that convert between energy and
     wavelength. To use this Python support at an instrument that does not use
@@ -84,17 +88,19 @@ A ``Diffractometer`` object has several parts:
 
   **energy**
 
-    The ``energy`` of the diffractometer sets the wavelength, which is used when:
-    
-    - computing ``forward()`` and ``inverse()`` transformations
-    - defining orientation reflections
-    - documenting the state of the diffractometer
+    The :ref:`energy <diffract.energy>` of the diffractometer sets the
+    wavelength, which is used when:
+
+    #. computing ``forward()`` and ``inverse()`` transformations
+    #. defining orientation reflections
+    #. documenting the state of the diffractometer
 
     It is more common for users to describe energy than wavelength.  The
-    high-level interface allows the energy to be expressed in any units that are
-    convertible to the expected units (`keV`).  An offset may be applied, which
-    is useful when connecting the diffractometer energy with a control system
-    variable.
+    high-level interface allows the energy to be expressed in any
+    :ref:`engineering units <diffract.energy.units>` that are convertible to
+    the expected units (`keV`).  An offset may be applied, which is useful when
+    connecting the diffractometer energy with a control system variable.
+    (See the :ref:`diffract.energy.control_system` section.)
 
   **sample**
 
@@ -123,6 +129,8 @@ A ``Diffractometer`` object has several parts:
     :class:`~hkl.diffract.Constraint` can be applied to a real positioner to
     limit the range of solutions accepted for that positioner.
 
+    .. TODO: more explanation here?  or link?
+
   **mode**
 
     The ``forward()`` transformation can have many solutions.  The
@@ -130,5 +138,24 @@ A ``Diffractometer`` object has several parts:
     diffractometer geometry) that controls how values for each of the real
     positioners will be controlled. A mode can control relationships between
     real positioners in addition to limiting the motion of a real positioner.
-    Further, a mode can specify and additional reflection which will be used to
+    Further, a mode can specify an additional reflection which will be used to
     determine the outcome of the ``forward()`` transformation.
+
+    =======================  =======================
+    object                   meaning
+    =======================  =======================
+    ``DFRCT.engine.mode``    mode selected now
+    ``DFRCT.engine.modes``   list of possible modes
+    =======================  =======================
+
+    Here, ``DFRCT`` is the diffractometer object (such as ``e4cv`` above).
+
+How to define a diffractometer
+==============================
+
+#. Identify the geometry.
+#. Check that it is supported in  :mod:`hkl.geometries`.
+#. Create a custom subclass for the diffractometer.
+#. Connect the real positioners with the control system motors.
+#. (optional) Connect energy to the control system.
+#. Define the diffractometer object from the custom subclass.
