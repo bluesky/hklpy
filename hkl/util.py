@@ -20,7 +20,12 @@ except ImportError as ex:
         # fmt: on
     )
 
-
+__all__ = """
+    diffractometer_types
+    get_position_tuple
+    Lattice
+    new_detector
+""".split()
 logger = logging.getLogger(__name__)
 
 

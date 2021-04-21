@@ -10,6 +10,10 @@ from .util import Lattice
 from .context import TemporaryGeometry
 
 
+__all__ = """
+    check_lattice
+    HklSample
+""".split()
 logger = logging.getLogger(__name__)
 
 

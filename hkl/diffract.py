@@ -27,6 +27,10 @@ import pyRestTable
 from . import calc
 
 
+__all__ = """
+    Constraint
+    Diffractometer
+""".split()
 logger = logging.getLogger(__name__)
 
 
