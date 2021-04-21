@@ -30,9 +30,9 @@ are:
   **forward (transformation)**
 
     Compute the values of the real positioners given values of the pseudo
-    positioners.  Since it is possible that more than one solution is possible,
-    additional constraints (limits on the real positioner and diffractometer
-    mode) may be added.
+    positioners.  Since more than one solution is possible, additional
+    constraints (limits on the real positioner and diffractometer mode) may be
+    added.
 
   **inverse (transformation)**
 

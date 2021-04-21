@@ -163,32 +163,47 @@ in the custom subclass.  Don't forget to add the definitions for the real and
 pseudo positioners.
 
 .. code-block:: python
-   :caption: Connecting control system energy to the Diffractometer
+   :caption: Connecting control system energy to a 4-circle diffractometer.
 
     import gi
     gi.require_version('Hkl', '5.0')
-    import hkl.diffract
+    from hkl.geometries import E4CV
+    import logging
+    from ophyd import Component
+    from ophyd import EpicsMotor
+    from ophyd import EpicsSignal
+    from ophyd import PseudoSingle
     import pint
 
+    logger = logging.getLogger(__name__)
     ureg = pint.UnitRegistry()
 
-    class LocalDiffractometer(hkl.diffract.Diffractometer):
-        # ...
+    class LocalDiffractometer(E4CV):
+        h = Component(PseudoSingle, '', kind="hinted")
+        k = Component(PseudoSingle, '', kind="hinted")
+        l = Component(PseudoSingle, '', kind="hinted")
+
+        omega = Component(EpicsMotor, "EPICS:motor:omega", kind="hinted")
+        chi = Component(EpicsMotor, "EPICS:motor:chi", kind="hinted")
+        phi = Component(EpicsMotor, "EPICS:motor:phi", kind="hinted")
+        tth = Component(EpicsMotor, "EPICS:motor:two_theta", kind="hinted")
+
         energy = Component(EpicsSignal, "EPICS:energy")
         energy_EGU = Component(EpicsSignal, "EPICS:energy.EGU")
         energy_offset = Component(EpicsSignal, "EPICS:energy_offset")
         energy_update_calc = Component(EpicsSignal, "EPICS:energy_update_hkl")
-        # ...
 
         def _energy_changed(self, value=None, **kwargs):
-            '''
+            """
             Callback indicating that the energy signal was updated
-            '''
-            if energy_update_calc.get() in (1, "Yes", "locked", "OK"):
+            """
+            if not self.connected:
+                self.wait_for_connection()
+            if self.energy_update_calc.get() in (1, "Yes", "locked", "OK"):
                 units = self.energy_EGU.get()
-                logger.debug("%s energy changed: %f %s, self.name, value, units)
+                logger.debug("%s energy changed: %f %s", self.name, value, units)
                 keV = pint.Quantity(value, units).to(ureg.keV)
-                self._calc.energy = keV
+                self._calc.energy = keV.magnitude
                 self._update_position()
 
 ----
