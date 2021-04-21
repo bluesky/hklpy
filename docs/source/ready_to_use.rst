@@ -4,6 +4,8 @@ Ready-to-Use Devices
 These simulated diffractometer devices are ready-made classes in Python. To
 configure them, the user needs only provide a name.
 
+.. index:: !SimulatedE4CV
+
 SimulatedE4CV
 -------------
 
@@ -20,6 +22,8 @@ SimulatedE4CV
 .. autoclass:: hkl.geometries.SimulatedE4CV
     :members:
     :noindex:
+
+.. index:: !SimulatedE6C
 
 SimulatedE6C
 ------------
@@ -38,6 +42,8 @@ SimulatedE6C
     :members:
     :noindex:
 
+.. index:: !SimulatedK4CV
+
 SimulatedK4CV
 -------------
 
@@ -54,6 +60,8 @@ SimulatedK4CV
 .. autoclass:: hkl.geometries.SimulatedK4CV
     :members:
     :noindex:
+
+.. index:: !SimulatedK6C
 
 SimulatedK6C
 ------------

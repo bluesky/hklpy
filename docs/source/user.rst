@@ -6,6 +6,8 @@ user
 Make it easier for users (especially SPEC users) to learn and remember
 the new tools in Bluesky's *hklpy* package.
 
+.. index:: !Quick Reference Table
+
 Quick Reference Table
 
 ==============  =======================================

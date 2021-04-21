@@ -54,8 +54,8 @@ and require ``Hkl`` version 5.0, as in::
    api
    release_notes
 
-Indices and tables
-------------------
+Indices
+-------
 
-* :ref:`genindex`
-* :ref:`modindex`
+* :ref:`General Index <genindex>`
+* :ref:`Index of Modules <modindex>`

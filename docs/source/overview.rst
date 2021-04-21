@@ -16,6 +16,8 @@ Definitions
 
 Several terms used throughout are:
 
+.. index:: !real
+
 real axis (positioner)
 ----------------------
 
@@ -26,12 +28,16 @@ or
 `ophyd.SoftPositioner
 <https://blueskyproject.io/ophyd/positioners.html#softpositioner>`_.
 
+.. index:: !pseudo
+
 pseudo axis (positioner)
 ------------------------
 
 A positioner (whether simulated or attached to hardware) that operates in
 *reciprocal* space.  Typically an instance of `ophyd.PseudoSingle
 <https://blueskyproject.io/ophyd/positioners.html#ophyd.pseudopos.PseudoSingle>`_.
+
+.. index:: !forward
 
 forward (transformation)
 ------------------------
@@ -41,11 +47,15 @@ positioners.  Since more than one solution is possible, additional
 constraints (limits on the real positioner and diffractometer mode) may be
 added.
 
+.. index:: !inverse
+
 inverse (transformation)
 ------------------------
 
 Compute the values of the pseudo positioners given values of the real
 positioners.
+
+.. index:: !libhkl
 
 *libhkl* support library
 ------------------------
@@ -71,6 +81,8 @@ matches the name given by the ``name="..."`` keyword, such as this example::
 
     e4cv = E4CV("", name="e4cv")
 
+.. index:: geometry
+
 geometry
 --------
 
@@ -81,6 +93,8 @@ provided in :mod:`hkl.geometries` (which are the geometries provided by the
 positioners.  It is possible to use alternate names.
 
 .. TODO: how to add a new geometry? (text does not yet exist)
+
+.. index:: calc
 
 calc
 ----
@@ -100,6 +114,8 @@ wavelength. To use this Python support at an instrument that does not use
 X-rays (such as a neutron source), re-write these methods and also redefine
 any classes that use :class:`hkl.calc.CalcRecip()`.
 
+.. index:: energy
+
 energy
 ------
 
@@ -117,6 +133,8 @@ the expected units (`keV`).  An offset may be applied, which is useful when
 connecting the diffractometer energy with a control system variable.
 (See the :ref:`diffract.energy.control_system` section.)
 
+.. index:: sample
+
 sample
 ------
 
@@ -127,10 +145,14 @@ measurements. The ``sample`` attribute is an instance of
 samples (keyed by ``name``), each with its own :class:`hkl.utils.Lattice`
 and orientation (reflections) information.
 
+.. index:: lattice
+
 lattice
 -------
 
 Crystal :class:`hkl.utils.Lattice` parameters of unit cell lengths and angles.
+
+.. index:: orientation
 
 orientation
 -----------
@@ -140,6 +162,8 @@ that allow precise positioning of a crystal's atomic planes in the laboratory
 reference system of the diffractometer.  Typically, the **UB** matrix is computed
 (by *libhkl*) from two orientation reflections.
 
+.. index:: constraint
+
 constraint
 ----------
 
@@ -148,6 +172,8 @@ The ``forward()`` transformation can have many solutions.  A
 limit the range of solutions accepted for that positioner.
 
 .. TODO: more explanation here?  or link?
+
+.. index:: mode
 
 mode
 ----
