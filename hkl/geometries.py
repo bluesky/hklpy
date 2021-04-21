@@ -43,7 +43,28 @@ from ophyd import PseudoSingle
 from ophyd import SoftPositioner
 import logging
 
-
+__all__ = """
+    E4CH
+    E4CV
+    E6C
+    K4CV
+    K6C
+    Med2p3
+    Petra3_p09_eh2
+    SimMixin
+    SimulatedE4CV
+    SimulatedE6C
+    SimulatedK4CV
+    SimulatedK6C
+    SoleilMars
+    SoleilSiriusKappa
+    SoleilSiriusTurret
+    SoleilSixs
+    SoleilSixsMed1p2
+    SoleilSixsMed2p2
+    TwoC
+    Zaxis
+""".split()
 logger = logging.getLogger(__name__)
 
 
