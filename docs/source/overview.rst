@@ -9,41 +9,50 @@ different diffractometer geometries are built.  Built on the
 `ophyd.PseudoPositioner
 <https://blueskyproject.io/ophyd/positioners.html#pseudopositioner>`_ interface,
 it defines all the components of a diffractometer.  The different geometries
-specify the names and order for the real motor axes.  Several terms used throughout
-are:
+specify the names and order for the real motor axes.  
 
-  **real axis (positioner)**
+Definitions
+===========
 
-    A positioner (whether simulated or attached to hardware) that operates in
-    *real* space.  Typically an instance of `ophyd.EpicsMotor
-    <https://blueskyproject.io/ophyd/builtin-devices.html#epicsmotor>`_
-    or
-    `ophyd.SoftPositioner
-    <https://blueskyproject.io/ophyd/positioners.html#softpositioner>`_.
+Several terms used throughout are:
 
-  **pseudo axis (positioner)**
+real axis (positioner)
+----------------------
 
-    A positioner (whether simulated or attached to hardware) that operates in
-    *reciprocal* space.  Typically an instance of `ophyd.PseudoSingle
-    <https://blueskyproject.io/ophyd/positioners.html#ophyd.pseudopos.PseudoSingle>`_.
+A positioner (whether simulated or attached to hardware) that operates in
+*real* space.  Typically an instance of `ophyd.EpicsMotor
+<https://blueskyproject.io/ophyd/builtin-devices.html#epicsmotor>`_
+or
+`ophyd.SoftPositioner
+<https://blueskyproject.io/ophyd/positioners.html#softpositioner>`_.
 
-  **forward (transformation)**
+pseudo axis (positioner)
+------------------------
 
-    Compute the values of the real positioners given values of the pseudo
-    positioners.  Since more than one solution is possible, additional
-    constraints (limits on the real positioner and diffractometer mode) may be
-    added.
+A positioner (whether simulated or attached to hardware) that operates in
+*reciprocal* space.  Typically an instance of `ophyd.PseudoSingle
+<https://blueskyproject.io/ophyd/positioners.html#ophyd.pseudopos.PseudoSingle>`_.
 
-  **inverse (transformation)**
+forward (transformation)
+------------------------
 
-    Compute the values of the pseudo positioners given values of the real
-    positioners.
+Compute the values of the real positioners given values of the pseudo
+positioners.  Since more than one solution is possible, additional
+constraints (limits on the real positioner and diffractometer mode) may be
+added.
 
-  **libhkl support library**
+inverse (transformation)
+------------------------
 
-    The transformation between real and reciprocal (_pseudo_) space are passed
-    (from :mod:`hkl.diffract` through :mod:`hkl.calc`) to a support library
-    known here as *libhkl* (https://repo.or.cz/hkl.git), written in C++.
+Compute the values of the pseudo positioners given values of the real
+positioners.
+
+*libhkl* support library
+------------------------
+
+The transformation between real and reciprocal (_pseudo_) space are passed
+(from :mod:`hkl.diffract` through :mod:`hkl.calc`) to a support library
+known here as *libhkl* (https://repo.or.cz/hkl.git), written in C++.
 
 Parts of a `Diffractometer` object
 ==================================
@@ -158,8 +167,8 @@ object                   meaning
 
 Here, ``DFRCT`` is the diffractometer object (such as ``e4cv`` above).
 
-How to define a diffractometer object
-=====================================
+Steps to define a diffractometer object
+=======================================
 
 #. Identify the geometry.
 #. Check that it is supported in  :mod:`hkl.geometries`.
