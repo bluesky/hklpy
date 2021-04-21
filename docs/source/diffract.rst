@@ -183,43 +183,15 @@ pseudo positioners.
         k = Component(PseudoSingle, '', kind="hinted")
         l = Component(PseudoSingle, '', kind="hinted")
 
-        omega = Component(EpicsMotor, "EPICS:motor:omega", kind="hinted")
-        chi = Component(EpicsMotor, "EPICS:motor:chi", kind="hinted")
-        phi = Component(EpicsMotor, "EPICS:motor:phi", kind="hinted")
-        tth = Component(EpicsMotor, "EPICS:motor:two_theta", kind="hinted")
+        omega = Component(EpicsMotor, "EPICS:m1", kind="hinted")
+        chi = Component(EpicsMotor, "EPICS:m2", kind="hinted")
+        phi = Component(EpicsMotor, "EPICS:m3", kind="hinted")
+        tth = Component(EpicsMotor, "EPICS:m4", kind="hinted")
 
         energy = Component(EpicsSignal, "EPICS:energy")
         energy_EGU = Component(EpicsSignal, "EPICS:energy.EGU")
-        energy_offset = Component(EpicsSignal, "EPICS:energy_offset")
-        energy_update_calc = Component(EpicsSignal, "EPICS:energy_update_hkl")
-
-        def _energy_changed(self, value=None, **kwargs):
-            """
-            Callback indicating that the energy signal was updated
-            """
-            if not self.connected:
-                return
-            if self.energy_update_calc.get() in (1, "Yes", "locked", "OK"):
-                energy = self.energy.get() 
-                units = self.energy_EGU.get()
-                logger.debug("%s energy changed: %f %s", self.name, energy, units)
-                keV = pint.Quantity(energy, units).to(ureg.keV)
-                self._calc.energy = keV.magnitude
-                self._update_position()
-
-        def __init__(self, prefix, calc_kw=None, decision_fcn=None, calc_inst=None,
-            *, configuration_attrs=None, read_attrs=None, **kwargs
-        ):
-            super().__init__(prefix, 
-                calc_kw=calc_kw, decision_fcn=decision_fcn,
-                calc_inst=calc_inst, read_attrs=read_attrs,
-                configuration_attrs=configuration_attrs, **kwargs)
-
-            # subscribe the callback to handle PV updates
-            self.energy.subscribe(self._energy_changed, event_type=EpicsSignal.SUB_VALUE)
-            self.energy_EGU.subscribe(self._energy_changed, event_type=EpicsSignal.SUB_VALUE)
-            self.energy_offset.subscribe(self._energy_changed, event_type=EpicsSignal.SUB_VALUE)
-            self.energy_update_calc.subscribe(self._energy_changed, event_type=EpicsSignal.SUB_VALUE)
+        energy_offset = Component(EpicsSignal, "EPICS:energy:offset")
+        energy_update_calc_flag = Component(EpicsSignal, "EPICS:energy:lock")
 
     fourc = LocalDiffractometer("", name="fourc")
     fourc.wait_for_connection()
