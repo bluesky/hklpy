@@ -65,7 +65,7 @@ geometry
 
 The geometry describes the physical arrangement of real positioners that
 make up the diffractometer.  The choices are limited to those geometries
-provided in :mod:`hkl.geometries` (which are the geometries provided bythe
+provided in :mod:`hkl.geometries` (which are the geometries provided by the
 *libhkl* support library).  A geometry will provide a list of the real
 positioners.  It is possible to use alternate names.
 
