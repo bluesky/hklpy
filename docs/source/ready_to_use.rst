@@ -2,7 +2,7 @@ Ready-to-Use Devices
 ====================
 
 These simulated diffractometer devices are ready-made classes in Python. To
-configure them, the user need only provide a name.
+configure them, the user needs only provide a name.
 
 SimulatedE4CV
 -------------
