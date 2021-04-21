@@ -200,9 +200,10 @@ pseudo positioners.
             if not self.connected:
                 return
             if self.energy_update_calc.get() in (1, "Yes", "locked", "OK"):
+                energy =self.energy.get() 
                 units = self.energy_EGU.get()
-                logger.debug("%s energy changed: %f %s", self.name, value, units)
-                keV = pint.Quantity(value, units).to(ureg.keV)
+                logger.debug("%s energy changed: %f %s", self.name, energy, units)
+                keV = pint.Quantity(energy, units).to(ureg.keV)
                 self._calc.energy = keV.magnitude
                 self._update_position()
 
