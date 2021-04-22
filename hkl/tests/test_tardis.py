@@ -7,6 +7,7 @@ import pytest
 gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
 from hkl.calc import UnreachableError
+from hkl.diffract import Constraint
 from hkl.geometries import E6C
 from hkl.util import Lattice
 
@@ -114,38 +115,22 @@ def sample(tardis):
     return sample
 
 
+@pytest.fixture(scope="function")
 def constrain(tardis):
-    calc = tardis.calc
-    # apply some constraints
-    calc["theta"].limits = (-181, 181)
-    calc["theta"].value = 0
-    calc["theta"].fit = True
+    tardis.apply_constraints(
+        dict(
+            theta = Constraint(-181, 181, 0, True),
 
-    # we don't have it. Fix to 0
-    calc["phi"].limits = (0, 0)
-    calc["phi"].value = 0
-    calc["phi"].fit = False
+            # we don't have these!! Fix to 0
+            phi = Constraint(0, 0, 0, False),
+            chi = Constraint(0, 0, 0, False),
+            omega = Constraint(0, 0, 0, False),
 
-    # we don't have it. Fix to 0
-    calc["chi"].limits = (0, 0)
-    calc["chi"].value = 0
-    calc["chi"].fit = False
-
-    # we don't have it!! Fix to 0
-    calc["omega"].limits = (0, 0)
-    calc["omega"].value = 0
-    calc["omega"].fit = False
-
-    # Attention naming convention inverted at the detector stages!
-    # delta
-    calc["delta"].limits = (-5, 180)
-    calc["delta"].value = 0
-    calc["delta"].fit = True
-
-    # gamma
-    calc["gamma"].limits = (-5, 180)
-    calc["gamma"].value = 0
-    calc["gamma"].fit = True
+            # Attention naming convention inverted at the detector stages!
+            delta = Constraint(-5, 180, 0, True),
+            gamma = Constraint(-5, 180, 0, True),
+        )
+    )
 
 
 def test_params(tardis):
@@ -173,8 +158,7 @@ def test_params(tardis):
     assert calc["gamma"].fit is True
 
 
-def test_reachable(tardis, sample):
-    constrain(tardis)
+def test_reachable(tardis, sample, constrain):
     ppos = (0, 0, 1.1)
     rpos = (
         101.56806493825435,
@@ -192,8 +176,7 @@ def test_reachable(tardis, sample):
     numpy.testing.assert_almost_equal(tardis.calc.physical_positions, rpos)
 
 
-def test_inversion(tardis, sample):
-    constrain(tardis)
+def test_inversion(tardis, sample, constrain):
     ppos = (0, 0, 1.1)
     rpos = (
         101.56806493825435,
@@ -232,3 +215,61 @@ def test_unreachable(tardis, sample):
     # it should not have moved:
     numpy.testing.assert_almost_equal(tardis.position, (0, 0, 0))
     numpy.testing.assert_almost_equal(tardis.calc.physical_positions, [0] * 6)
+
+
+def interpret_LiveTable(data_table):
+    lines = data_table.strip().splitlines()
+    keys = [
+        k.strip()
+        for k in lines[1].split("|")[3:-1]
+    ]
+    data = {k: [] for k in keys}
+    for line in lines[3:-1]:
+        for i, value in enumerate(line.split("|")[3:-1]):
+            data[keys[i]].append(float(value))
+    return data
+
+
+def test_issue62(tardis, sample, constrain):
+    tardis.energy_units.put("eV")
+    tardis.energy.put(573)
+    tardis.calc['gamma'].limits = (-2.81, 183.1)
+    assert round(tardis.calc.energy, 5) == 0.573
+
+    # this test is not necessary
+    # ref = tardis.inverse(theta=41.996, omega=0, chi=0, phi=0, delta=6.410, gamma=0)
+    # # FIXME: assert round(ref.h, 2) == 0.1
+    # # FIXME: assert round(ref.k, 2) == 0.51
+    # # FIXME: assert round(ref.l, 2) == 0.1
+
+    # simulate the scan, computing hkl from angles
+    # RE(scan([hw.det, tardis],tardis.theta, 0, 0.3, tardis.delta,0,0.5, num=5))
+    # values as reported from LiveTable
+    livedata = """
+    +-----------+------------+--------------+--------------+------------+------------+------------+------------+--------------+
+    |   seq_num |       time | tardis_theta | tardis_delta |        det |   tardis_h |   tardis_k |   tardis_l | tardis_gamma |
+    +-----------+------------+--------------+--------------+------------+------------+------------+------------+--------------+
+    |         1 | 15:09:51.6 |        0.000 |        0.000 |      1.000 |      0.000 |      0.000 |      0.000 |        0.000 |
+    |         2 | 15:09:52.2 |        0.075 |        0.125 |      1.000 |     -0.006 |      0.013 |      0.000 |        0.000 |
+    |         3 | 15:09:52.8 |        0.150 |        0.250 |      1.000 |     -0.013 |      0.026 |      0.000 |        0.000 |
+    |         4 | 15:09:53.5 |        0.225 |        0.375 |      1.000 |     -0.019 |      0.038 |      0.000 |        0.000 |
+    |         5 | 15:09:54.0 |        0.300 |        0.500 |      1.000 |     -0.025 |      0.051 |      0.000 |        0.000 |
+    +-----------+------------+--------------+--------------+------------+------------+------------+------------+--------------+
+    """
+    run_data = interpret_LiveTable(livedata)
+    tolerance = 0.05    # empirical
+    tolerance = 0.055    # empirical
+
+    # test inverse() on each row in the table
+    for i in range(len(run_data["tardis_theta"])):
+        ref = tardis.inverse(
+            theta=run_data["tardis_theta"][i],
+            omega=0,
+            chi=0,
+            phi=0,
+            delta=run_data["tardis_delta"][i],
+            gamma=run_data["tardis_gamma"][i],
+        )
+        assert abs(ref.h - run_data["tardis_h"][i]) <= tolerance
+        assert abs(ref.k - run_data["tardis_k"][i]) <= tolerance
+        assert abs(ref.l - run_data["tardis_l"][i]) <= tolerance
