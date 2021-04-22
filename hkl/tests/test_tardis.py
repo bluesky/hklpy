@@ -119,16 +119,14 @@ def sample(tardis):
 def constrain(tardis):
     tardis.apply_constraints(
         dict(
-            theta = Constraint(-181, 181, 0, True),
-
+            theta=Constraint(-181, 181, 0, True),
             # we don't have these!! Fix to 0
-            phi = Constraint(0, 0, 0, False),
-            chi = Constraint(0, 0, 0, False),
-            omega = Constraint(0, 0, 0, False),
-
+            phi=Constraint(0, 0, 0, False),
+            chi=Constraint(0, 0, 0, False),
+            omega=Constraint(0, 0, 0, False),
             # Attention naming convention inverted at the detector stages!
-            delta = Constraint(-5, 180, 0, True),
-            gamma = Constraint(-5, 180, 0, True),
+            delta=Constraint(-5, 180, 0, True),
+            gamma=Constraint(-5, 180, 0, True),
         )
     )
 
@@ -219,10 +217,7 @@ def test_unreachable(tardis, sample):
 
 def interpret_LiveTable(data_table):
     lines = data_table.strip().splitlines()
-    keys = [
-        k.strip()
-        for k in lines[1].split("|")[3:-1]
-    ]
+    keys = [k.strip() for k in lines[1].split("|")[3:-1]]
     data = {k: [] for k in keys}
     for line in lines[3:-1]:
         for i, value in enumerate(line.split("|")[3:-1]):
@@ -233,7 +228,7 @@ def interpret_LiveTable(data_table):
 def test_issue62(tardis, sample, constrain):
     tardis.energy_units.put("eV")
     tardis.energy.put(573)
-    tardis.calc['gamma'].limits = (-2.81, 183.1)
+    tardis.calc["gamma"].limits = (-2.81, 183.1)
     assert round(tardis.calc.energy, 5) == 0.573
 
     # this test is not necessary
@@ -245,20 +240,11 @@ def test_issue62(tardis, sample, constrain):
     # simulate the scan, computing hkl from angles
     # RE(scan([hw.det, tardis],tardis.theta, 0, 0.3, tardis.delta,0,0.5, num=5))
     # values as reported from LiveTable
-    livedata = """
-    +-----------+------------+--------------+--------------+------------+------------+------------+------------+--------------+
-    |   seq_num |       time | tardis_theta | tardis_delta |        det |   tardis_h |   tardis_k |   tardis_l | tardis_gamma |
-    +-----------+------------+--------------+--------------+------------+------------+------------+------------+--------------+
-    |         1 | 15:09:51.6 |        0.000 |        0.000 |      1.000 |      0.000 |      0.000 |      0.000 |        0.000 |
-    |         2 | 15:09:52.2 |        0.075 |        0.125 |      1.000 |     -0.006 |      0.013 |      0.000 |        0.000 |
-    |         3 | 15:09:52.8 |        0.150 |        0.250 |      1.000 |     -0.013 |      0.026 |      0.000 |        0.000 |
-    |         4 | 15:09:53.5 |        0.225 |        0.375 |      1.000 |     -0.019 |      0.038 |      0.000 |        0.000 |
-    |         5 | 15:09:54.0 |        0.300 |        0.500 |      1.000 |     -0.025 |      0.051 |      0.000 |        0.000 |
-    +-----------+------------+--------------+--------------+------------+------------+------------+------------+--------------+
-    """
+    with open("livedata_issue62.txt", "r") as fp:
+        livedata = fp.read()
     run_data = interpret_LiveTable(livedata)
-    tolerance = 0.05    # empirical
-    tolerance = 0.055    # empirical
+    tolerance = 0.05  # empirical
+    tolerance = 0.055  # empirical
 
     # test inverse() on each row in the table
     for i in range(len(run_data["tardis_theta"])):
