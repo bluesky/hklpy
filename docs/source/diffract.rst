@@ -173,10 +173,8 @@ pseudo positioners.
     from ophyd import EpicsMotor
     from ophyd import EpicsSignal
     from ophyd import PseudoSingle
-    import pint
 
     logger = logging.getLogger(__name__)
-    ureg = pint.UnitRegistry()
 
     class LocalDiffractometer(E4CV):
         h = Component(PseudoSingle, '', kind="hinted")
@@ -189,7 +187,7 @@ pseudo positioners.
         tth = Component(EpicsMotor, "EPICS:m4", kind="hinted")
 
         energy = Component(EpicsSignal, "EPICS:energy")
-        energy_EGU = Component(EpicsSignal, "EPICS:energy.EGU")
+        energy_units = Component(EpicsSignal, "EPICS:energy.EGU")
         energy_offset = Component(EpicsSignal, "EPICS:energy:offset")
         energy_update_calc_flag = Component(EpicsSignal, "EPICS:energy:lock")
 
