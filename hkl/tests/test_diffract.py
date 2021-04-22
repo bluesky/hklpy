@@ -130,6 +130,9 @@ def test_energy_units_offset(fourc):
     assert fourc.calc.energy == 8.015
     assert round(fourc.energy.get(), 6) == 8
 
+    fourc.energy_offset.put(0.0)
+    assert fourc.calc.energy == 8.0
+
 
 def test_energy_units_issue86(fourc):
     # issue #86
