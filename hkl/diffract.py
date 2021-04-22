@@ -401,9 +401,9 @@ class Diffractometer(PseudoPositioner):
 
     def apply_constraints(self, constraints):
         """
-        Constrain the diffractometer's motions.
+        Constrain the solutions of the diffractometer's forward() computation.
 
-        This action will first the current constraints onto
+        This action will first save the current constraints onto
         a stack, enabling both *undo* and *reset* features.
         """
         self._push_current_constraints()
