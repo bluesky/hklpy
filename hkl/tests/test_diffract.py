@@ -93,7 +93,7 @@ def test_energy_offset_units(fourc):
         numpy.testing.assert_almost_equal((fourc.energy.get() + offset) / 1000, fourc.calc.energy)
 
 
-def test_energy_units(fourc):
+def test_energy_units_931eV(fourc):
     assert fourc.energy_units.get() == "keV"
     fourc.energy_units.put("eV")
     assert fourc.energy_units.get() == "eV"
@@ -103,6 +103,8 @@ def test_energy_units(fourc):
     numpy.testing.assert_almost_equal(fourc.energy.get(), eV)
     numpy.testing.assert_almost_equal(fourc.calc.energy, eV / 1000)
 
+
+def test_energy_units_issue79(fourc):
     # issue #79
     fourc.energy_units.put("eV")
     fourc.energy_offset.put(0)
@@ -116,26 +118,37 @@ def test_energy_units(fourc):
         # fmt: on
     )
 
+
+def test_energy_units_offset(fourc):
     fourc.energy_units.put("keV")
     fourc.energy.put(7.985)
     fourc.energy_offset.put(0.015)
     assert fourc.calc.energy == 8.0
     assert round(fourc.energy.get(), 6) == 7.985
+
     fourc.energy.put(8)
     assert fourc.calc.energy == 8.015
     assert round(fourc.energy.get(), 6) == 8
 
+
+def test_energy_units_issue86(fourc):
     # issue #86
     # changing units or offset changes .energy, not .calc.energy
+    fourc.energy.put(8)
+    fourc.energy_offset.put(0.015)
     fourc.energy_units.put("eV")
+    # test interim state when fourc.energy value has not change but units have
     assert round(fourc.calc.energy, 6) == 8.015e-3
     assert round(fourc.energy.get(), 1) == 8
+
     fourc.energy.put(8000)
     assert round(fourc.calc.energy, 8) == 8.000015
     assert round(fourc.energy.get(), 1) == 8000
+
     fourc.energy_offset.put(15)
     assert round(fourc.calc.energy, 8) == 8.015
     assert round(fourc.energy.get(), 1) == 8000
+
     fourc.energy.put(8000)
     assert round(fourc.calc.energy, 8) == 8.015
     assert round(fourc.energy.get(), 1) == 8000
