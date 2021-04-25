@@ -248,7 +248,7 @@ class Diffractometer(PseudoPositioner):
         doc="uz portion of the U matrix",
     )
 
-    _diffractometer = Cpt(
+    diffractometer_name = Cpt(
         AttributeSignal,
         attr="name",
         doc="Diffractometer name",
@@ -300,7 +300,7 @@ class Diffractometer(PseudoPositioner):
     sample_name lattice lattice_reciprocal reflections_details
     _pseudos _reals
     _constraints _mode
-    _diffractometer _hklpy_version
+    diffractometer_name _hklpy_version
     """.split()
     # fmt: on
 
