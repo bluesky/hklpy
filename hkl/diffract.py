@@ -41,13 +41,15 @@ class Constraint:
     Parameters
     ----------
     low_limit : float
-        minimum acceptable solution for position
+        Minimum acceptable solution for position.
     high_limit : float
-        maximum acceptable solution for position
+        Maximum acceptable solution for position.
     value : float
-        constant value when ``fit=False``
+        Constant value when ``fit=False``.
     fit : bool
-        when ``True``, accept positions between low and high, when ``False``, hold position to ``value``
+        ``True`` when axis will be fitted, otherwise, hold position to ``value``.
+    inverted : bool
+        ``True`` when axis is inverted.
 
 
     note: Patterned on collections.namedtuple
@@ -538,12 +540,14 @@ class Diffractometer(PseudoPositioner):
     def _constraints_dict(self):
         """Return the constraints."""
         return {
+            # fmt:off
             m: Constraint(
                 *self.calc[m].limits,
                 self.calc[m].value,
                 self.calc[m].fit,
                 self.calc[m].inverted
-                )
+            )
+            # fmt:on
             for m in self.RealPosition._fields
         }
 
@@ -579,12 +583,7 @@ class Diffractometer(PseudoPositioner):
     def _push_current_constraints(self):
         """push current constraints onto the stack"""
         constraints = {
-            m: Constraint(
-                *self.calc[m].limits,
-                self.calc[m].value,
-                self.calc[m].fit,
-                self.calc[m].inverted
-                )
+            m: Constraint(*self.calc[m].limits, self.calc[m].value, self.calc[m].fit, self.calc[m].inverted)
             for m in self.real_positioners._fields
             # TODO: any other positioner constraints
         }
