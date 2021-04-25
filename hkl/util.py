@@ -146,9 +146,9 @@ def list_orientation_runs(catalog, *args, limit=20):
         A list of additional data column names to be displayed,
         corresponding to the names of available orientation
         information in the descriptor document.
-        
+
         Example::
-    
+
             list_orientation_runs("class_name", energy", "energy_units", "lattice")
 
     catalog : object
@@ -200,8 +200,10 @@ def run_orientation_info(run):
     for device in run_conf:
         conf = run_conf[device].read()
         if f"{device}_orientation_attrs" in conf:
+            # fmt:off
             devices[device] = {
                 item[len(device)+1:]: conf[item].to_dict()["data"][0]
                 for item in conf
             }
+            # fmt:on
     return devices
