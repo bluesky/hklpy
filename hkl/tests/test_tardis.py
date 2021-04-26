@@ -4,7 +4,6 @@ import gi
 import numpy.testing
 import os
 import pytest
-import sys
 
 gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
