@@ -2,11 +2,13 @@ from ophyd import Component as Cpt
 from ophyd import PseudoSingle, SoftPositioner
 import gi
 import numpy.testing
+import os
 import pytest
+import sys
 
 gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
-from hkl.calc import UnreachableError
+import hkl.calc
 from hkl.diffract import Constraint
 from hkl.geometries import E6C
 from hkl.util import Lattice
@@ -202,7 +204,7 @@ def test_inversion(tardis, sample, constrain):
 
 def test_unreachable(tardis, sample):
     print("position is", tardis.position)
-    with pytest.raises(UnreachableError) as exinfo:
+    with pytest.raises(hkl.calc.UnreachableError) as exinfo:
         tardis.move((0, 0, 1.8))
 
     ex = exinfo.value
@@ -240,7 +242,8 @@ def test_issue62(tardis, sample, constrain):
     # simulate the scan, computing hkl from angles
     # RE(scan([hw.det, tardis],tardis.theta, 0, 0.3, tardis.delta,0,0.5, num=5))
     # values as reported from LiveTable
-    with open("livedata_issue62.txt", "r") as fp:
+    path = os.path.join(os.path.dirname(hkl.calc.__file__), "tests")
+    with open(os.path.join(path, "livedata_issue62.txt"), "r") as fp:
         livedata = fp.read()
     run_data = interpret_LiveTable(livedata)
     # TODO: can this tolerance be made much smaller (was 0.05)?  < 0.01?  How?
