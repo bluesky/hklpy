@@ -205,14 +205,14 @@ def test_pa(fourc, capsys):
         "                      phi   0.00000",
         "                      tth   0.00000",
         "                      ===== =======",
-        "constraints           ===== ========= ========== ===== ==== ========",
-        "                      axis  low_limit high_limit value fit  inverted",
-        "                      ===== ========= ========== ===== ==== ========",
-        "                      omega -180.0    180.0      0.0   True False",
-        "                      chi   -180.0    180.0      0.0   True False",
-        "                      phi   -180.0    180.0      0.0   True False",
-        "                      tth   -180.0    180.0      0.0   True False",
-        "                      ===== ========= ========== ===== ==== ========",
+        "constraints           ===== ========= ========== ===== ====",
+        "                      axis  low_limit high_limit value fit",
+        "                      ===== ========= ========== ===== ====",
+        "                      omega -180.0    180.0      0.0   True",
+        "                      chi   -180.0    180.0      0.0   True",
+        "                      phi   -180.0    180.0      0.0   True",
+        "                      tth   -180.0    180.0      0.0   True",
+        "                      ===== ========= ========== ===== ====",
         "sample: main          ================ ===================================================",
         "                      term             value",
         "                      ================ ===================================================",
@@ -268,14 +268,14 @@ def test_show_constraints(fourc, capsys):
     assert err == ""
     out = [v.rstrip() for v in out.strip().splitlines()]
     expected = [
-        "===== ========= ========== ===== ==== ========",
-        "axis  low_limit high_limit value fit  inverted",
-        "===== ========= ========== ===== ==== ========",
-        "omega -180.0    180.0      0.0   True False",
-        "chi   -180.0    180.0      0.0   True False",
-        "phi   -180.0    180.0      0.0   True False",
-        "tth   -180.0    180.0      0.0   True False",
-        "===== ========= ========== ===== ==== ========",
+        "===== ========= ========== ===== ====",
+        "axis  low_limit high_limit value fit",
+        "===== ========= ========== ===== ====",
+        "omega -180.0    180.0      0.0   True",
+        "chi   -180.0    180.0      0.0   True",
+        "phi   -180.0    180.0      0.0   True",
+        "tth   -180.0    180.0      0.0   True",
+        "===== ========= ========== ===== ====",
     ]
     for r, e in zip(out, expected):
         assert r.rstrip() == e.rstrip()
@@ -286,8 +286,8 @@ def test_apply_constraints(fourc):
     # fmt: off
     fourc.apply_constraints(
         {
-            "tth": Constraint(0, 180, 0, True, False),
-            "chi": Constraint(0, 180, 0, True, False),
+            "tth": Constraint(0, 180, 0, True),
+            "chi": Constraint(0, 180, 0, True),
         }
     )
     # fmt: on
