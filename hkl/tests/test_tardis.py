@@ -243,7 +243,7 @@ def test_issue62(tardis, sample, constrain):
     with open("livedata_issue62.txt", "r") as fp:
         livedata = fp.read()
     run_data = interpret_LiveTable(livedata)
-    tolerance = 0.05  # empirical
+    # TODO: can this tolerance be made much smaller (was 0.05)?  < 0.01?  How?
     tolerance = 0.055  # empirical
 
     # test inverse() on each row in the table
