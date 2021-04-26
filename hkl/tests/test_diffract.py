@@ -140,7 +140,7 @@ def test_energy_units_issue86(fourc):
     fourc.energy.put(8)
     fourc.energy_offset.put(0.015)
     fourc.energy_units.put("eV")
-    # test interim state when fourc.energy value has not change but units have
+    # test interim state when fourc.energy value has not changed but units have
     assert round(fourc.calc.energy, 6) == 8.015e-3
     assert round(fourc.energy.get(), 1) == 8
 
