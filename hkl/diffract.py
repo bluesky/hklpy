@@ -48,22 +48,28 @@ class Constraint:
         Constant value when ``fit=False``.
     fit : bool
         ``True`` when axis will be fitted, otherwise, hold position to ``value``.
-    inverted : bool
-        ``True`` when axis is inverted.
 
 
     note: Patterned on collections.namedtuple
     """
 
-    def __init__(self, low_limit, high_limit, value, fit, inverted):
-        self.low_limit = low_limit
-        self.high_limit = high_limit
-        self.value = value
-        self.fit = fit
-        self.inverted = inverted
+    def __init__(self, low_limit, high_limit, value, fit):
+        self.low_limit = float(low_limit)
+        self.high_limit = float(high_limit)
+        self.value = float(value)
+        self.fit = bool(fit)
 
-        self._fields = "low_limit high_limit value fit inverted".split()
-        self._repr_fmt = "(" + ", ".join(name + "=" + repr(getattr(self, name)) for name in self._fields) + ")"
+        self._fields = "low_limit high_limit value fit".split()
+        # fmt: off
+        self._repr_fmt = (
+            "("
+            + ", ".join(
+                name + "=" + repr(getattr(self, name))
+                for name in self._fields
+                )
+            + ")"
+        )
+        # fmt: on
 
     def _asdict(self):
         "Return a new dict which maps field names to their values."
@@ -545,7 +551,6 @@ class Diffractometer(PseudoPositioner):
                 *self.calc[m].limits,
                 self.calc[m].value,
                 self.calc[m].fit,
-                self.calc[m].inverted
             )
             # fmt:on
             for m in self.RealPosition._fields
@@ -556,17 +561,25 @@ class Diffractometer(PseudoPositioner):
         """
         Return the constraints for databroker.
 
-        Cannot write a dictionary from bluesky, so make the
-        dictionary into ``[[k, *v] for k, v in dict.items()]``.
+        Cannot write a dictionary from bluesky because all values must
+        be of the same data type, chosen from the first item in the
+        list. Just write the values (the boolean will be written as a
+        float.) The constraints will be written in the order of the real
+        positioners.
         """
-        return [[k, *v] for k, v in self._constraints_dict.items()]
+        # fmt: off
+        return [
+            tuple(self._constraints_dict[p]._asdict().values())
+            for p in self.RealPosition._fields
+        ]
+        # fmt: on
 
     def show_constraints(self, fmt="simple", printing=True):
         """Print the current constraints in a table."""
         tbl = pyRestTable.Table()
-        tbl.labels = "axis low_limit high_limit value fit inverted".split()
-        for c in self._constraints_for_databroker:
-            tbl.addRow(c)
+        tbl.labels = "axis low_limit high_limit value fit".split()
+        for k, c in self._constraints_dict.items():
+            tbl.addRow((k, *c))
 
         if printing:
             print(tbl.reST(fmt=fmt))
@@ -583,19 +596,18 @@ class Diffractometer(PseudoPositioner):
     def _push_current_constraints(self):
         """push current constraints onto the stack"""
         constraints = {
-            m: Constraint(*self.calc[m].limits, self.calc[m].value, self.calc[m].fit, self.calc[m].inverted)
+            m: Constraint(*self.calc[m].limits, self.calc[m].value, self.calc[m].fit)
             for m in self.real_positioners._fields
-            # TODO: any other positioner constraints
         }
         self._constraints_stack.append(constraints)
 
     def _set_constraints(self, constraints):
         """set diffractometer's constraints"""
         for axis, constraint in constraints.items():
-            self.calc[axis].limits = (
-                constraint.low_limit,
-                constraint.high_limit,
-            )
+            self.calc[axis].limits = (list(constraint)[0:2])
+            #     constraint.low_limit,
+            #     constraint.high_limit,
+            # )
             self.calc[axis].value = constraint.value
             self.calc[axis].fit = constraint.fit
 
