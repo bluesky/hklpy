@@ -94,7 +94,7 @@ def to_hkl(arr):
 
 
 def hkl_euler_matrix(euler_x, euler_y, euler_z):
-    """"""
+    """ """
     return libhkl.Matrix.new_euler(euler_x, euler_y, euler_z)
 
 
@@ -120,7 +120,7 @@ _position_tuples = {}
 
 
 def get_position_tuple(axis_names, class_name="Position"):
-    """"""
+    """ """
     global _position_tuples
 
     key = frozenset(axis_names)
