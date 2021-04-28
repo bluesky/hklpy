@@ -36,6 +36,8 @@ New Features and/or Enhancements
 
   - ``hkl.geometries.SimMixin`` for simulators.
 
+* ``compute_UB()`` now returns the **UB** matrix or ``None`` (previously returned 1 or 0)
+
 Fixes
 -----
 
