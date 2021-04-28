@@ -18,15 +18,52 @@ release date.
 
 .. [#] https://github.com/bluesky/hklpy/milestone/5
 
+v0.3.16 (expected by 2021-04-30)
+================================
+
+Full list of changes is on the `wiki
+<https://github.com/bluesky/hklpy/wiki/release-notes-v0.3.16>`_.
+
+New Features and/or Enhancements
+--------------------------------
+
+* Diffractometer additions from apstools
+
+  - simple user interface for a diffractometer
+  - constraints
+
+* Create simulators for common geometries.
+
+  - ``hkl.geometries.SimMixin`` for simulators.
+
+Fixes
+-----
+
+* Ensure that diffractometer energy is read-only (and not modified) by changes in units or energy offset.
+* Diffractometer responds to energy, energy units, and energy offset PV updates now.
+
+Maintenance
+-----------
+
+* separate diffractometer geometry instances from base class
+* refer to the hkl C++ library code as **libhkl**
+* add Python 3.9 to unit test suite
+* now can use Python f-strings
+* re-arrange documentation structure
+* define ``__all__`` in modules
+
 v0.3.15 (2020-12-20)
 ====================
+
+Full list of changes is on the `wiki
+<https://github.com/bluesky/hklpy/wiki/release-notes-v0.3.15>`_.
 
 Breaking Changes
 ----------------
 
 * Diffractometer wavelength **must** use *angstrom* units to match the
   lattice constants.  Previously, wavelength was stated to be in
-  `nm`. Instruments upgrading to this release should verify the units
+  ``nm``. Instruments upgrading to this release should verify the units
   actually in use.
 
 New Features and/or Enhancements
