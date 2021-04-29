@@ -239,9 +239,7 @@ class Diffractometer(PseudoPositioner):
             self.read_attrs = list(self.PseudoPosition._fields) + list(self.RealPosition._fields)
 
         self.energy.subscribe(self._energy_changed, event_type=Signal.SUB_VALUE)
-
         self.energy_offset.subscribe(self._energy_offset_changed, event_type=Signal.SUB_VALUE)
-
         self.energy_units.subscribe(self._energy_units_changed, event_type=Signal.SUB_VALUE)
 
     @property
@@ -269,7 +267,7 @@ class Diffractometer(PseudoPositioner):
             return
 
         if self._calc_energy_update_permitted:
-            self._update_calc_energy(value)
+            self._update_calc_energy()
 
     def _energy_offset_changed(self, value=None, **kwargs):
         """
@@ -282,20 +280,15 @@ class Diffractometer(PseudoPositioner):
         if not self.connected:
             logger.warning(
                 # fmt: off
-                ("%s not fully connected, '%s.calc.energy_offset' not updated"),
+                "%s not fully connected, %s.calc.energy not updated",
                 self.name,
                 self.name,
                 # fmt: on
             )
             return
 
-        # TODO: is there a loop back through _update_calc_energy?
-        units = self.energy_units.get()
-        try:
-            energy = pint.Quantity(self.calc.energy, "keV").to(units)
-        except Exception as exc:
-            raise NotImplementedError(f"units = {units}: {exc}")
-        self.energy.put(energy.magnitude - value)
+        if self._calc_energy_update_permitted:
+            self._update_calc_energy()
 
     def _energy_units_changed(self, value=None, **kwargs):
         """
@@ -308,16 +301,15 @@ class Diffractometer(PseudoPositioner):
         if not self.connected:
             logger.warning(
                 # fmt: off
-                ("%s not fully connected, '%s.calc.energy_units' not updated"),
+                "%s not fully connected, %s.calc.energy not updated",
                 self.name,
                 self.name,
                 # fmt: on
             )
             return
 
-        # TODO: is there a loop back through _update_calc_energy?
-        energy = pint.Quantity(self.calc.energy, "keV").to(value)
-        self.energy.put(energy.magnitude - self.energy_offset.get())
+        if self._calc_energy_update_permitted:
+            self._update_calc_energy()
 
     def _update_calc_energy(self, value=None, **kwargs):
         """
@@ -333,8 +325,7 @@ class Diffractometer(PseudoPositioner):
             )
             return
 
-        # use either supplied value or get from signal
-        value = float(value or self.energy.get())
+        value = float(self.energy.get())
 
         # energy_offset has same units as energy
         value += self.energy_offset.get()
@@ -345,7 +336,10 @@ class Diffractometer(PseudoPositioner):
             keV = pint.Quantity(value, units).to("keV")
             value = keV.magnitude
 
-        logger.debug("setting %s.calc.energy = %f (keV)", self.name, value)
+        if value <= 0:
+            logger.debug("Computed energy(%s) is not positive", value)
+            return
+        logger.debug("setting %s.calc.energy = %s (keV)", self.name, value)
         self.calc.energy = value
         self._update_position()
 
@@ -401,9 +395,9 @@ class Diffractometer(PseudoPositioner):
 
     def apply_constraints(self, constraints):
         """
-        Constrain the diffractometer's motions.
+        Constrain the solutions of the diffractometer's forward() computation.
 
-        This action will first the current constraints onto
+        This action will first save the current constraints onto
         a stack, enabling both *undo* and *reset* features.
         """
         self._push_current_constraints()

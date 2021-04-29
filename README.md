@@ -8,7 +8,7 @@ hklpy
 Controls for using diffractometers within the [Bluesky
 Framework](https://blueskyproject.io).
 
-Based on the *hkl*  C++ library (described here as *libhkl*), with
+Based on the *hkl*  C++ library (described here as [*libhkl*](https://people.debian.org/~picca/hkl/hkl.html#)), with
 slightly cleaner abstractions when compared to the auto-generated
 `gobject-introspection` classes. Integrates with ophyd
 pseudopositioners.
@@ -20,7 +20,7 @@ and require ``Hkl`` version 5.0, as in:
 import gi
 gi.require_version('Hkl', '5.0')
 
-from hkl.diffract import E4CV
+from hkl.geometries import E4CV
 ```
 
 **NOTE**: main repository: https://repo.or.cz/hkl.git (GitHub repo
