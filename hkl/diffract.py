@@ -12,7 +12,6 @@ Common Support for diffractometers
 """
 
 
-import collections
 from ophyd import Component as Cpt
 from ophyd import PositionerBase
 from ophyd import PseudoPositioner
@@ -25,6 +24,7 @@ import pint
 import pyRestTable
 
 from . import calc
+from . import __version__
 
 
 __all__ = """
@@ -34,7 +34,70 @@ __all__ = """
 logger = logging.getLogger(__name__)
 
 
-Constraint = collections.namedtuple("Constraint", ("low_limit", "high_limit", "value", "fit"))
+class Constraint:
+    """
+    Limitations on acceptable positions from computed forward() solutions.
+
+    Parameters
+    ----------
+    low_limit : float
+        Minimum acceptable solution for position.
+    high_limit : float
+        Maximum acceptable solution for position.
+    value : float
+        Constant value when ``fit=False``.
+    fit : bool
+        ``True`` when axis will be fitted, otherwise, hold position to ``value``.
+
+
+    note: Patterned on collections.namedtuple
+    """
+
+    def __init__(self, low_limit, high_limit, value, fit):
+        self.low_limit = float(low_limit)
+        self.high_limit = float(high_limit)
+        self.value = float(value)
+        self.fit = bool(fit)
+
+        self._fields = "low_limit high_limit value fit".split()
+        # fmt: off
+        self._repr_fmt = (
+            "("
+            + ", ".join(
+                name + "=" + repr(getattr(self, name))
+                for name in self._fields
+            )
+            + ")"
+        )
+        # fmt: on
+
+    def _asdict(self):
+        "Return a new dict which maps field names to their values."
+        return dict(zip(self._fields, self))
+
+    class ConstraintIterator:
+        "Iterator"
+
+        def __init__(self, constraint):
+            self.constraint = constraint
+            self._index = 0
+
+        def __next__(self):
+            if self._index < len(self.constraint._fields):
+                c = getattr(self.constraint, self.constraint._fields[self._index])
+                self._index += 1
+                return c
+            else:
+                raise StopIteration
+
+    def __iter__(self):
+        "Iterate through the fields."
+        return self.ConstraintIterator(self)
+
+    def __repr__(self):
+        "Return a nicely formatted representation string."
+        content = "(" + ", ".join([f"{k}={getattr(self,k)}" for k in self._fields]) + ")"
+        return self.__class__.__name__ + content
 
 
 class Diffractometer(PseudoPositioner):
@@ -53,7 +116,16 @@ class Diffractometer(PseudoPositioner):
         ~undo_last_constraints
         ~pa
         ~wh
+        ~_calc_energy_update_permitted
+        ~_constraints_dict
+        ~_constraints_for_databroker
         ~_energy_changed
+        ~_energy_changed
+        ~_energy_offset_changed
+        ~_energy_units_changed
+        ~_push_current_constraints
+        ~_set_constraints
+        ~_update_calc_energy
         ~_update_calc_energy
 
 
@@ -181,6 +253,61 @@ class Diffractometer(PseudoPositioner):
         attr="calc.sample.uz.value",
         doc="uz portion of the U matrix",
     )
+
+    diffractometer_name = Cpt(
+        AttributeSignal,
+        attr="name",
+        doc="Diffractometer name",
+        write_access=False,
+    )
+    _hklpy_version_ = __version__
+    _hklpy_version = Cpt(
+        AttributeSignal,
+        attr="_hklpy_version_",
+        doc="hklpy version",
+        write_access=False,
+    )
+    _pseudos = Cpt(
+        AttributeSignal,
+        attr="PseudoPosition._fields",
+        doc="Pseudo Positioners",
+        write_access=False,
+    )
+    _reals = Cpt(
+        AttributeSignal,
+        attr="RealPosition._fields",
+        doc="Real Positioners",
+        write_access=False,
+    )
+    _constraints = Cpt(
+        ArrayAttributeSignal,
+        attr="_constraints_for_databroker",
+        doc="Constraints",
+        write_access=False,
+    )
+    _mode = Cpt(
+        AttributeSignal,
+        attr="calc.engine.mode",
+        doc="Mode of Operation",
+        write_access=False,
+    )
+    orientation_attrs = Cpt(
+        AttributeSignal,
+        attr="_orientation_attrs",
+        doc="Orientation Attributes",
+        write_access=False,
+    )
+
+    _orientation_attrs = """
+    orientation_attrs
+    geometry_name class_name
+    UB U ux uy uz
+    energy energy_units energy_offset
+    sample_name lattice lattice_reciprocal reflections_details
+    _pseudos _reals
+    _constraints _mode
+    diffractometer_name _hklpy_version
+    """.split()
     # fmt: on
 
     def __init__(
@@ -231,6 +358,8 @@ class Diffractometer(PseudoPositioner):
             # fmt: on
         )
 
+        # write the crystal orientation information in descriptor doc
+        self.configuration_attrs += self._orientation_attrs
         self._constraints_stack = []
 
         if read_attrs is None:
@@ -409,21 +538,44 @@ class Diffractometer(PseudoPositioner):
             self._set_constraints(self._constraints_stack[0])
             self._constraints_stack = []
 
+    @property
+    def _constraints_dict(self):
+        """Return the constraints."""
+        return {
+            # fmt:off
+            m: Constraint(
+                *self.calc[m].limits,
+                self.calc[m].value,
+                self.calc[m].fit,
+            )
+            # fmt:on
+            for m in self.RealPosition._fields
+        }
+
+    @property
+    def _constraints_for_databroker(self):
+        """
+        Return the constraints for databroker.
+
+        Cannot write a dictionary from bluesky because all values must
+        be of the same data type, chosen from the first item in the
+        list. Just write the values (the boolean will be written as a
+        float.) The constraints will be written in the order of the real
+        positioners.
+        """
+        # fmt: off
+        return [
+            tuple(self._constraints_dict[p]._asdict().values())
+            for p in self.RealPosition._fields
+        ]
+        # fmt: on
+
     def show_constraints(self, fmt="simple", printing=True):
         """Print the current constraints in a table."""
         tbl = pyRestTable.Table()
         tbl.labels = "axis low_limit high_limit value fit".split()
-        for m in self.real_positioners._fields:
-            # fmt: off
-            tbl.addRow(
-                (
-                    m,
-                    *self.calc[m].limits,
-                    self.calc[m].value,
-                    self.calc[m].fit,
-                )
-            )
-            # fmt: on
+        for k, c in self._constraints_dict.items():
+            tbl.addRow((k, *c))
 
         if printing:
             print(tbl.reST(fmt=fmt))
@@ -442,17 +594,16 @@ class Diffractometer(PseudoPositioner):
         constraints = {
             m: Constraint(*self.calc[m].limits, self.calc[m].value, self.calc[m].fit)
             for m in self.real_positioners._fields
-            # TODO: any other positioner constraints
         }
         self._constraints_stack.append(constraints)
 
     def _set_constraints(self, constraints):
         """set diffractometer's constraints"""
         for axis, constraint in constraints.items():
-            self.calc[axis].limits = (
-                constraint.low_limit,
-                constraint.high_limit,
-            )
+            self.calc[axis].limits = list(constraint)[0:2]
+            #     constraint.low_limit,
+            #     constraint.high_limit,
+            # )
             self.calc[axis].value = constraint.value
             self.calc[axis].fit = constraint.fit
 

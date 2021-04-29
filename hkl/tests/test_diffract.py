@@ -286,7 +286,7 @@ def test_show_constraints(fourc, capsys):
     out = [v.rstrip() for v in out.strip().splitlines()]
     expected = [
         "===== ========= ========== ===== ====",
-        "axis  low_limit high_limit value fit ",
+        "axis  low_limit high_limit value fit",
         "===== ========= ========== ===== ====",
         "omega -180.0    180.0      0.0   True",
         "chi   -180.0    180.0      0.0   True",
