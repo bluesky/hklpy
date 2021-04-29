@@ -190,7 +190,6 @@ def test_reflections_details(fourc):
 
 def test_swap_orientation_reflections(fourc):
     sample = fourc.calc.sample
-    default_UB = sample.UB
 
     fourc.calc.wavelength = 1.54
     #  compute the UB matrix from two reflections
