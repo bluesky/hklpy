@@ -12,6 +12,7 @@ FUNCTIONS
     ~calc_UB
     ~list_samples
     ~new_sample
+    ~or_swap
     ~select_diffractometer
     ~set_energy
     ~setor
@@ -29,6 +30,7 @@ __all__ = """
     change_sample
     list_samples
     new_sample
+    or_swap
     pa
     select_diffractometer
     set_energy
@@ -154,6 +156,13 @@ def new_sample(nm, a, b, c, alpha, beta, gamma):
         lattice = Lattice(a=a, b=b, c=c, alpha=alpha, beta=beta, gamma=gamma)
         _geom_.calc.new_sample(nm, lattice=lattice)
     show_sample()
+
+
+def or_swap():
+    """Swap the 2 [UB] reflections, re-compute & return new [UB]."""
+    # note: or_swap is how the community of SPEC users knows this function
+    _check_geom_selected()
+    return _geom_.calc.sample.swap_orientation_reflections()
 
 
 def select_diffractometer(instrument=None):

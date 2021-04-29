@@ -424,3 +424,15 @@ class HklSample(object):
                 # deleted from the list in libhkl.
                 refls.append(r)
         return [self._get_reflection_dict(r) for r in refls]
+
+    def swap_orientation_reflections(self):
+        """Swap the 2 [UB] reflections, re-compute & return new [UB]."""
+        if len(self._orientation_reflections) != 2:
+            raise ValueError(
+                "Must have exactly 2 orientation reflections defined"
+                " in order to make a swap and re-compute [UB]."
+                f"  There are {len(self._orientation_reflections)}"
+                " orientation reflection(s) defined now."
+            )
+        refls = self._orientation_reflections
+        return self.compute_UB(*refls[::-1])

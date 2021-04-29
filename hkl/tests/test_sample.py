@@ -186,3 +186,47 @@ def test_reflections_details(fourc):
 
     details = sample.reflections_details
     compare(expected, details)
+
+
+def test_swap_orientation_reflections(fourc):
+    sample = fourc.calc.sample
+
+    fourc.calc.wavelength = 1.54
+    #  compute the UB matrix from two reflections
+    assert len(sample._orientation_reflections) == 0
+
+    with pytest.raises(ValueError) as exinfo:
+        sample.swap_orientation_reflections()
+    expected = "Must have exactly 2 orientation reflections defined"
+    assert expected in str(exinfo.value)
+
+    r1 = sample.add_reflection(-1, 0, 0, (30, 0, -90, 60))
+    assert len(sample._orientation_reflections) == 0
+
+    r2 = sample.add_reflection(0, 1, 1, (45, 45, 0, 90))
+    assert len(sample._orientation_reflections) == 0
+
+    ub12 = sample.compute_UB(r1, r2)
+    assert len(sample._orientation_reflections) == 2
+    assert sample._orientation_reflections == [r1, r2]
+
+    ub21 = sample.swap_orientation_reflections()
+    assert len(sample._orientation_reflections) == 2
+    assert sample._orientation_reflections == [r2, r1]
+    assert (ub12 != ub21).any()
+
+    r3 = sample.add_reflection(1, 1, 1, (1, 2, 3, 4))
+    assert len(sample._orientation_reflections) == 2
+
+    ubswap = sample.swap_orientation_reflections()
+    assert len(sample._orientation_reflections) == 2
+    assert sample._orientation_reflections == [r1, r2]
+    assert (ub12 == ubswap).all()
+
+    sample._orientation_reflections.append(r3)
+    assert len(sample._orientation_reflections) == 3
+    assert sample._orientation_reflections == [r1, r2, r3]
+    with pytest.raises(ValueError) as exinfo:
+        sample.swap_orientation_reflections()
+    expected = "Must have exactly 2 orientation reflections defined"
+    assert expected in str(exinfo.value)
