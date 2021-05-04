@@ -9,7 +9,7 @@ gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
 import hkl.calc
 from hkl.diffract import Constraint
-from hkl.geometries import E6C
+from hkl.geometries import E6C, SimMixin
 from hkl.util import Lattice
 
 
@@ -17,11 +17,7 @@ def setup_module(module):
     pass
 
 
-class Tardis(E6C):
-    h = Cpt(PseudoSingle, "")
-    k = Cpt(PseudoSingle, "")
-    l = Cpt(PseudoSingle, "")
-
+class Tardis(SimMixin, E6C):
     # theta
     theta = Cpt(SoftPositioner)
     omega = Cpt(SoftPositioner)
@@ -30,12 +26,6 @@ class Tardis(E6C):
     # delta, gamma
     delta = Cpt(SoftPositioner)
     gamma = Cpt(SoftPositioner)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        for p in self.real_positioners:
-            p._set_position(0)  # give each a starting position
 
 
 @pytest.fixture(scope="function")
