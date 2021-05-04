@@ -181,6 +181,8 @@ class Diffractometer(PseudoPositioner):
         attr="calc.sample.uz.value",
         doc="uz portion of the U matrix",
     )
+
+    max_forward_iterations = Cpt(Signal, value=100, kind="config")
     # fmt: on
 
     def __init__(
@@ -360,12 +362,22 @@ class Diffractometer(PseudoPositioner):
 
     @pseudo_position_argument
     def forward(self, pseudo):
-        solutions = self.calc.forward_iter(start=self.position, end=pseudo, max_iters=100)
+        """
+        Calculate the real positions given the pseudo positions (hkl -> angles).
+
+        Return the default solution using the ``_decision_fcn()``.
+        """
+        solutions = self.calc.forward_iter(
+            start=self.position, end=pseudo, max_iters=self.max_forward_iterations.get()
+        )
         logger.debug("pseudo to real: %s", solutions)
         return self._decision_fcn(pseudo, solutions)
 
     @real_position_argument
     def inverse(self, real):
+        """
+        Calculate the pseudo positions given the real positions (angles -> hkl).
+        """
         self.calc.physical_positions = real
         return self.PseudoPosition(*self.calc.pseudo_positions)
 
