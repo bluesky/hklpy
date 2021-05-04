@@ -47,9 +47,16 @@ def tardis():
 
 @pytest.fixture(scope="function")
 def kcf_sample(tardis):
+    # note: orientation matrix (below) was pre-computed with this wavelength
+    # wavelength units must match lattice unit cell length units
+    tardis.calc.wavelength = 13.317314715359827
+    print("calc.wavelength is", tardis.calc.wavelength)
+    print("sample is", tardis.calc.sample)
+    print("position is", tardis.position)
+
     # lengths must have same units as wavelength
     # angles are in degrees
-    lattice = Lattice(a=0.5857, b=0.5857, c=0.7849, alpha=90.0, beta=90.0, gamma=90.0)
+    lattice = Lattice(a=5.857, b=5.857, c=7.849, alpha=90.0, beta=90.0, gamma=90.0)
 
     # add the sample to the calculation engine
     tardis.calc.new_sample("KCF", lattice=lattice)
@@ -80,13 +87,6 @@ def kcf_sample(tardis):
     )
     r2 = tardis.calc.sample.add_reflection(1, 1, 0, position=p2)
     tardis.calc.sample.compute_UB(r1, r2)
-
-    # note: orientation matrix (below) was pre-computed with this wavelength
-    # wavelength units must match lattice unit cell length units
-    tardis.calc.wavelength = 1.3317314715359827
-    print("calc.wavelength is", tardis.calc.wavelength)
-    print("sample is", tardis.calc.sample)
-    print("position is", tardis.position)
 
     print("sample name is", tardis.sample_name.get())
     print("u matrix is", tardis.U.get(), tardis.U.describe())
@@ -211,54 +211,50 @@ def test_unreachable(tardis, kcf_sample):
     numpy.testing.assert_almost_equal(tardis.calc.physical_positions, [0] * 6)
 
 
-def interpret_LiveTable(data_table):
-    lines = data_table.strip().splitlines()
-    keys = [k.strip() for k in lines[1].split("|")[3:-1]]
-    data = {k: [] for k in keys}
-    for line in lines[3:-1]:
-        for i, value in enumerate(line.split("|")[3:-1]):
-            data[keys[i]].append(float(value))
-    return data
+@pytest.mark.parametrize(
+    "theta, delta, gamma, h, k, l",
+    [
+        # original table, cannot compute inverse() to reasonable precision
+        # (0.000, 0.000, 0.000, 0.000, 0.000, 0.000),
+        # (0.075, 0.125, 0.000, -0.006, 0.013, 0.000),
+        # (0.150, 0.250, 0.000, -0.013, 0.026, 0.000),
+        # (0.225, 0.375, 0.000, -0.019, 0.038, 0.000),
+        # (0.300, 0.500, 0.000, -0.025, 0.051, 0.000),
+        # table recomputed using this UB matrix
+        (0.000, 0.000, 0.0, 0.000000, 0.000000, 0.000000),
+        (0.075, 0.125, 0.0, 0.000053, 0.000083, 0.000780),
+        (0.150, 0.250, 0.0, 0.000107, 0.000166, 0.001561),
+        (0.225, 0.375, 0.0, 0.000160, 0.000249, 0.002341),
+        (0.300, 0.500, 0.0, 0.000214, 0.000333, 0.003121),
+    ],
+)
+def test_issue62(tardis, kcf_sample, constrain, theta, delta, gamma, h, k, l):
+    # simulate the scan, computing hkl from angles
+    # RE(scan([hw.det, tardis],tardis.theta, 0, 0.3, tardis.delta,0,0.5, num=5))
+    # values as reported from LiveTable
 
-
-def test_issue62(tardis, kcf_sample, constrain):
     tardis.energy_units.put("eV")
     tardis.energy.put(573)
     tardis.calc["gamma"].limits = (-2.81, 183.1)
     assert round(tardis.calc.energy, 5) == 0.573
 
     assert tardis.max_forward_iterations.get() == 100
-    tardis.max_forward_iterations.put(5000)  # TODO: Can this guess be improved?
-
-    # this test is not necessary
-    # ref = tardis.inverse(theta=41.996, omega=0, chi=0, phi=0, delta=6.410, gamma=0)
-    # # FIXME: assert round(ref.h, 2) == 0.1
-    # # FIXME: assert round(ref.k, 2) == 0.51
-    # # FIXME: assert round(ref.l, 2) == 0.1
-
-    # simulate the scan, computing hkl from angles
-    # RE(scan([hw.det, tardis],tardis.theta, 0, 0.3, tardis.delta,0,0.5, num=5))
-    # values as reported from LiveTable
-    path = os.path.join(os.path.dirname(hkl.calc.__file__), "tests")
-    with open(os.path.join(path, "livedata_issue62.txt"), "r") as fp:
-        livedata = fp.read()
-    run_data = interpret_LiveTable(livedata)
-    # TODO: can this tolerance be made much smaller (was 0.05)?  < 0.01?  How?
-    tolerance = 0.051  # empirical: > 0.05096673366532117
+    tardis.max_forward_iterations.put(500)  # increase from the default
 
     # test inverse() on each row in the table
-    for i in range(len(run_data["tardis_theta"])):
-        ref = tardis.inverse(
-            theta=run_data["tardis_theta"][i],
-            omega=0,
-            chi=0,
-            phi=0,
-            delta=run_data["tardis_delta"][i],
-            gamma=run_data["tardis_gamma"][i],
-        )
-        assert abs(ref.h - run_data["tardis_h"][i]) <= tolerance
-        assert abs(ref.k - run_data["tardis_k"][i]) <= tolerance
-        assert abs(ref.l - run_data["tardis_l"][i]) <= tolerance
+    ref = tardis.inverse(
+        theta=theta,
+        omega=0,
+        chi=0,
+        phi=0,
+        delta=delta,
+        gamma=gamma,
+    )
+    result = (ref.h, ref.k, ref.l)
+    expected = (h, k, l)
+    numpy.testing.assert_almost_equal(
+        result, expected, decimal=6, err_msg=f"result={result}  expected={expected}"
+    )
 
 
 # =========================================================
