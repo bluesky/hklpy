@@ -1,5 +1,5 @@
 from ophyd import Component as Cpt
-from ophyd import PseudoSingle, SoftPositioner
+from ophyd import SoftPositioner
 import gi
 import numpy as np
 import numpy.testing
@@ -15,6 +15,7 @@ from hkl.util import Lattice
 
 
 TARDIS_TEST_MODE = "lifting_detector_mu"
+
 
 class Tardis(SimMixin, E6C):
     # theta
@@ -128,9 +129,7 @@ def test_params(tardis):
     calc = tardis.calc
     assert calc.pseudo_axis_names == "h k l".split()
     assert tuple(calc.physical_axis_names) == tardis.real_positioners._fields
-    assert tardis.real_positioners._fields == tuple(
-        "theta omega chi phi delta gamma".split()
-    )
+    assert tardis.real_positioners._fields == tuple("theta omega chi phi delta gamma".split())
     assert calc.engine.mode == TARDIS_TEST_MODE
 
     # gamma
@@ -267,6 +266,7 @@ def test_issue62(tardis, kcf_sample, constrain):
 # the second only tests the calc and below (canonical axis names and
 # energy in keV).
 
+
 @pytest.fixture(scope="function")
 def sample1(tardis):
     # test with remapped names, not canonical names
@@ -274,18 +274,14 @@ def sample1(tardis):
     # lattice cell lengths are in Angstrom, angles are in degrees
     a = 9.069
     c = 10.390
-    tardis.calc.new_sample('sample1', lattice=(a, a, c, 90, 90, 120))
+    tardis.calc.new_sample("sample1", lattice=(a, a, c, 90, 90, 120))
 
     tardis.energy_offset.put(0)
     tardis.energy_units.put("keV")
     tardis.energy.put(hkl.calc.A_KEV / 1.61198)
 
-    pos_330 = tardis.calc.Position(
-        delta=64.449, theta=25.285, chi=0.0, phi=0.0, omega=0.0, gamma=-0.871
-    )
-    pos_520 = tardis.calc.Position(
-        delta=79.712, theta=46.816, chi=0.0, phi=0.0, omega=0.0, gamma=-1.374
-    )
+    pos_330 = tardis.calc.Position(delta=64.449, theta=25.285, chi=0.0, phi=0.0, omega=0.0, gamma=-0.871)
+    pos_520 = tardis.calc.Position(delta=79.712, theta=46.816, chi=0.0, phi=0.0, omega=0.0, gamma=-1.374)
 
     r_330 = tardis.calc.sample.add_reflection(3, 3, 0, position=pos_330)
     r_520 = tardis.calc.sample.add_reflection(5, 2, 0, position=pos_520)
@@ -314,14 +310,14 @@ def test_sample1(sample1, tardis):
     assert sample.name == "sample1"
     assert abs(tardis.calc.wavelength - wavelength) < 1e-6
     assert len(sample.reflections) == 2
-    assert sample.reflections == [(3,3,0), (5,2,0)]
+    assert sample.reflections == [(3, 3, 0), (5, 2, 0)]
     assert len(sample.reflections_details) == 2
     assert sample.reflections_details[0] == dict(
         # sorted alphabetically
-        reflection = dict(h=3.0, k=3.0, l=0.0),
-        flag = 1,
-        wavelength = wavelength,
-        position = dict(
+        reflection=dict(h=3.0, k=3.0, l=0.0),
+        flag=1,
+        wavelength=wavelength,
+        position=dict(
             # FIXME: reflections_details uses canonical names, not remapped names!
             chi=0.0,
             delta=-0.871,  # FIXME: gamma
@@ -330,14 +326,14 @@ def test_sample1(sample1, tardis):
             omega=0.0,
             phi=0.0,
         ),
-        orientation_reflection = True
+        orientation_reflection=True,
     )
     assert sample.reflections_details[1] == dict(
         # sorted alphabetically
-        reflection = dict(h=5.0, k=2.0, l=0.0),
-        flag = 1,
-        wavelength = wavelength,
-        position = dict(
+        reflection=dict(h=5.0, k=2.0, l=0.0),
+        flag=1,
+        wavelength=wavelength,
+        position=dict(
             # FIXME: reflections_details uses canonical names, not remapped names!
             chi=0.0,
             delta=-1.374,  # FIXME: gamma
@@ -346,18 +342,18 @@ def test_sample1(sample1, tardis):
             omega=0.0,
             phi=0.0,
         ),
-        orientation_reflection = True
+        orientation_reflection=True,
     )
     numpy.testing.assert_almost_equal(
         sample.UB,
         np.array(
             [
-                [ 0.31323551, -0.4807593 ,  0.01113654],
-                [ 0.73590724,  0.63942704,  0.01003773],
-                [-0.01798898, -0.00176066,  0.60454803]
+                [0.31323551, -0.4807593, 0.01113654],
+                [0.73590724, 0.63942704, 0.01003773],
+                [-0.01798898, -0.00176066, 0.60454803],
             ]
         ),
-        7
+        7,
     )
 
 
@@ -378,15 +374,11 @@ def test_sample1_calc_only():
     # lattice cell lengths are in Angstrom, angles are in degrees
     a = 9.069
     c = 10.390
-    sample = tardis_calc.new_sample('sample1', lattice=(a, a, c, 90, 90, 120))
+    sample = tardis_calc.new_sample("sample1", lattice=(a, a, c, 90, 90, 120))
     assert sample.name == "sample1"
 
-    pos_330 = tardis_calc.Position(
-        gamma=64.449, mu=25.285, chi=0.0, phi=0.0, omega=0.0, delta=-0.871
-    )
-    pos_520 = tardis_calc.Position(
-        gamma=79.712, mu=46.816, chi=0.0, phi=0.0, omega=0.0, delta=-1.374
-    )
+    pos_330 = tardis_calc.Position(gamma=64.449, mu=25.285, chi=0.0, phi=0.0, omega=0.0, delta=-0.871)
+    pos_520 = tardis_calc.Position(gamma=79.712, mu=46.816, chi=0.0, phi=0.0, omega=0.0, delta=-1.374)
 
     r_330 = sample.add_reflection(3, 3, 0, position=pos_330)
     r_520 = sample.add_reflection(5, 2, 0, position=pos_520)
@@ -395,12 +387,12 @@ def test_sample1_calc_only():
     UB = tardis_calc.sample.compute_UB(r_330, r_520)
     expected = np.array(
         [
-            [ 0.31323551, -0.4807593 ,  0.01113654],
-            [ 0.73590724,  0.63942704,  0.01003773],
-            [-0.01798898, -0.00176066,  0.60454803]
+            [0.31323551, -0.4807593, 0.01113654],
+            [0.73590724, 0.63942704, 0.01003773],
+            [-0.01798898, -0.00176066, 0.60454803],
         ]
     )
-    abs_diff = np.abs(UB-expected)
+    abs_diff = np.abs(UB - expected)
     numpy.testing.assert_array_less(abs_diff, 1e-3)
     numpy.testing.assert_allclose(UB, expected, 7, verbose=True)
 
@@ -410,12 +402,12 @@ def test_sample1_UB(sample1, tardis):
         tardis.calc.sample.UB,
         np.array(
             [
-                [ 0.31323551, -0.4807593 ,  0.01113654],
-                [ 0.73590724,  0.63942704,  0.01003773],
-                [-0.01798898, -0.00176066,  0.60454803]
+                [0.31323551, -0.4807593, 0.01113654],
+                [0.73590724, 0.63942704, 0.01003773],
+                [-0.01798898, -0.00176066, 0.60454803],
             ]
         ),
-        7
+        7,
     )
 
 
@@ -423,13 +415,13 @@ def test_sample1_UB(sample1, tardis):
     "wavelength, h, k, l, angles",
     [
         # lambda  h  k  l   delta    theta   chi phi omega gamma
-        (1.61198, 4, 4, 0, [90.6303,  38.3762, 0,  0,  0,    -1.1613]),
-        (1.61198, 4, 1, 0, [56.0970,  40.2200, 0,  0,  0,    -1.0837]),
-        (1.60911, 6, 0, 0, [75.8452,  60.9935, 0,  0,  0,    -1.5840]),
-        (1.60954, 3, 2, 0, [53.0521,  26.1738, 0,  0,  0,    -0.8438]),
-        (1.60954, 5, 4, 0, [106.3205, 49.8923, 0,  0,  0,    -1.4237]),
-        (1.60954, 4, 5, 0, [106.3189, 42.5493, 0,  0,  0,    -1.1854]),
-    ]
+        (1.61198, 4, 4, 0, [90.6303, 38.3762, 0, 0, 0, -1.1613]),
+        (1.61198, 4, 1, 0, [56.0970, 40.2200, 0, 0, 0, -1.0837]),
+        (1.60911, 6, 0, 0, [75.8452, 60.9935, 0, 0, 0, -1.5840]),
+        (1.60954, 3, 2, 0, [53.0521, 26.1738, 0, 0, 0, -0.8438]),
+        (1.60954, 5, 4, 0, [106.3205, 49.8923, 0, 0, 0, -1.4237]),
+        (1.60954, 4, 5, 0, [106.3189, 42.5493, 0, 0, 0, -1.1854]),
+    ],
 )
 def test_tardis_forward(sample1, tardis, wavelength, h, k, l, angles):
     # Experimentally found reflections @ Lambda = 1.61198 A
