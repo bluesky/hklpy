@@ -13,10 +13,6 @@ from hkl.geometries import E6C, SimMixin
 from hkl.util import Lattice
 
 
-def setup_module(module):
-    pass
-
-
 class Tardis(SimMixin, E6C):
     # theta
     theta = Cpt(SoftPositioner)
