@@ -3,7 +3,6 @@ from ophyd import SoftPositioner
 import gi
 import numpy as np
 import numpy.testing
-import os
 import pytest
 
 gi.require_version("Hkl", "5.0")
