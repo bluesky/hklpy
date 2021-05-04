@@ -23,3 +23,4 @@ convenient web tool to view:
 * https://nbviewer.jupyter.org/github/bluesky/hklpy/blob/main/examples/tst_e4cv_fourc.ipynb
 * https://nbviewer.jupyter.org/github/bluesky/hklpy/blob/main/examples/tst_e6c_test_calculations.ipynb
 * https://nbviewer.jupyter.org/github/bluesky/hklpy/blob/main/examples/var_e4cv_renamed_axes.ipynb
+* https://nbviewer.jupyter.org/github/bluesky/hklpy/blob/main/examples/var_nslsii_tardis.ipynb
