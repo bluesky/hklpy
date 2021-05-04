@@ -227,6 +227,9 @@ def test_issue62(tardis, kcf_sample, constrain):
     tardis.calc["gamma"].limits = (-2.81, 183.1)
     assert round(tardis.calc.energy, 5) == 0.573
 
+    assert tardis.max_forward_iterations.get() == 100
+    tardis.max_forward_iterations.put(5000)  # TODO: Can this guess be improved?
+
     # this test is not necessary
     # ref = tardis.inverse(theta=41.996, omega=0, chi=0, phi=0, delta=6.410, gamma=0)
     # # FIXME: assert round(ref.h, 2) == 0.1
@@ -241,7 +244,7 @@ def test_issue62(tardis, kcf_sample, constrain):
         livedata = fp.read()
     run_data = interpret_LiveTable(livedata)
     # TODO: can this tolerance be made much smaller (was 0.05)?  < 0.01?  How?
-    tolerance = 0.055  # empirical
+    tolerance = 0.051  # empirical: > 0.05096673366532117
 
     # test inverse() on each row in the table
     for i in range(len(run_data["tardis_theta"])):
