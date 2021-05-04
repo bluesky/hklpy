@@ -304,6 +304,8 @@ def test_sample1(sample1, tardis):
     assert abs(tardis.calc.wavelength - wavelength) < 1e-6
     assert len(sample.reflections) == 2
     assert sample.reflections == [(3, 3, 0), (5, 2, 0)]
+
+    # NOTE: reflections_details() uses canonical names for real positioners
     assert len(sample.reflections_details) == 2
     assert sample.reflections_details[0] == dict(
         # sorted alphabetically
@@ -311,11 +313,11 @@ def test_sample1(sample1, tardis):
         flag=1,
         wavelength=wavelength,
         position=dict(
-            # FIXME: reflections_details uses canonical names, not remapped names!
+            # note: reflections_details uses canonical names, not remapped names!
             chi=0.0,
-            delta=-0.871,  # FIXME: gamma
-            gamma=64.449,  # FIXME: delta
-            mu=25.285,  # FIXME: theta
+            delta=-0.871,  # Tardis: gamma
+            gamma=64.449,  # Tardis: delta
+            mu=25.285,  # Tardis: theta
             omega=0.0,
             phi=0.0,
         ),
@@ -327,11 +329,11 @@ def test_sample1(sample1, tardis):
         flag=1,
         wavelength=wavelength,
         position=dict(
-            # FIXME: reflections_details uses canonical names, not remapped names!
+            # note: reflections_details uses canonical names, not remapped names!
             chi=0.0,
-            delta=-1.374,  # FIXME: gamma
-            gamma=79.712,  # FIXME: delta
-            mu=46.816,  # FIXME: theta
+            delta=-1.374,  # Tardis: gamma
+            gamma=79.712,  # Tardis: delta
+            mu=46.816,  # Tardis: theta
             omega=0.0,
             phi=0.0,
         ),
@@ -439,9 +441,3 @@ def test_tardis_forward(sample1, tardis, wavelength, h, k, l, angles):
         axis = getattr(result, ax_name)
         expected = angles[i]
         assert abs(axis - expected) <= tolerance, f"({h} {k} {l}) {ax_name}"
-
-        # TODO: remove or activate before final revision
-        # numpy.testing.assert_almost_equal(
-        #     axis, expected, decimal=2,
-        #     err_msg=f"({h} {k} {l}) {ax_name}"
-        # )

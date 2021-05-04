@@ -416,7 +416,13 @@ class HklSample(object):
 
     @property
     def reflections_details(self):
-        """Return a list with details of all reflections."""
+        """
+        Return a list with details of all reflections.
+
+        NOTE: reflections_details() uses the canonical
+        names for the real positioners.  The mapping
+        to physical axis names happens in :mod`hkl.calc`.
+        """
         refls = self._sample.reflections_get()
         for r in self._orientation_reflections:
             if r not in refls:
