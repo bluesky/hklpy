@@ -241,7 +241,11 @@ def test_issue62(tardis, kcf_sample, constrain, theta, delta, gamma, h, k, l):
     tardis.max_forward_iterations.put(500)  # increase from the default
 
     # test inverse() on each row in the table
-    ref = tardis.inverse(theta=theta, omega=0, chi=0, phi=0, delta=delta, gamma=gamma,)
+    # fmt: off
+    ref = tardis.inverse(
+        theta=theta, omega=0, chi=0, phi=0, delta=delta, gamma=gamma
+    )
+    # fmt: on
     result = (ref.h, ref.k, ref.l)
     expected = (h, k, l)
     numpy.testing.assert_almost_equal(result, expected, decimal=6, err_msg=f"result={result}  expected={expected}")
