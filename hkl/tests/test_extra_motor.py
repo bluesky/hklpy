@@ -30,14 +30,14 @@ def test_plain_fourc_not_fatal(testdir):
     result.stderr.no_fnmatch_line("*Fatal Python error*")
 
 
-def test_extra_real_fatal(testdir):
+def test_extra_real_but_not_fatal(testdir):
     test_code = FOURC_SETUP_CODE
     test_code += "\n" + "class FourcSub(Fourc):"
     test_code += "\n" + "    extra = Cpt(SoftPositioner)"
     test_code += "\n" + "fourc = FourcSub('', name='fourc')"
     testdir.makepyfile(test_code)
     result = testdir.runpytest_subprocess()
-    result.stderr.fnmatch_lines(["*Fatal Python error*"])
+    result.stderr.no_fnmatch_line(["*Fatal Python error*"])
 
 
 def test_extra_real_not_fatal(testdir):

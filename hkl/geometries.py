@@ -165,50 +165,42 @@ class SimMixin(Device):
     k = Cpt(PseudoSingle, "")
     l = Cpt(PseudoSingle, "")
 
-    def __init__(self, *args, **kwargs):
-        """
-        start the SoftPositioner objects with initial values
-        """
-        super().__init__(*args, **kwargs)
-        for axis in self.real_positioners:
-            axis.move(0)
-
 
 class SimulatedE4CV(SimMixin, E4CV):
     """SimulatedE4CV: Eulerian 4-circle diffractometer, vertical"""
 
-    omega = Cpt(SoftPositioner, limits=(-180, 180))
-    chi = Cpt(SoftPositioner, limits=(-180, 180))
-    phi = Cpt(SoftPositioner, limits=(-180, 180))
-    tth = Cpt(SoftPositioner, limits=(-180, 180))
+    omega = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    chi = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    phi = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    tth = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
 
 
 class SimulatedE6C(SimMixin, E6C):
     """SimulatedE6C: Eulerian 6-circle diffractometer"""
 
-    mu = Cpt(SoftPositioner, limits=(-180, 180))
-    omega = Cpt(SoftPositioner, limits=(-180, 180))
-    chi = Cpt(SoftPositioner, limits=(-180, 180))
-    phi = Cpt(SoftPositioner, limits=(-180, 180))
-    gamma = Cpt(SoftPositioner, limits=(-180, 180))
-    delta = Cpt(SoftPositioner, limits=(-180, 180))
+    mu = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    omega = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    chi = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    phi = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    gamma = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    delta = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
 
 
 class SimulatedK4CV(SimMixin, K4CV):
     """SimulatedK4CV: Kappa 4-circle diffractometer, vertical"""
 
-    komega = Cpt(SoftPositioner, limits=(-180, 180))
-    kappa = Cpt(SoftPositioner, limits=(-180, 180))
-    kphi = Cpt(SoftPositioner, limits=(-180, 180))
-    tth = Cpt(SoftPositioner, limits=(-180, 180))
+    komega = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    kappa = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    kphi = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    tth = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
 
 
 class SimulatedK6C(SimMixin, K6C):
     """SimulatedK6C: Kappa 6-circle diffractometer"""
 
-    mu = Cpt(SoftPositioner, limits=(-180, 180))
-    komega = Cpt(SoftPositioner, limits=(-180, 180))
-    kappa = Cpt(SoftPositioner, limits=(-180, 180))
-    kphi = Cpt(SoftPositioner, limits=(-180, 180))
-    gamma = Cpt(SoftPositioner, limits=(-180, 180))
-    delta = Cpt(SoftPositioner, limits=(-180, 180))
+    mu = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    komega = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    kappa = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    kphi = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    gamma = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+    delta = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
