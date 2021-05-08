@@ -40,18 +40,10 @@ to the 6-circle example :ref:`geometries.sim6c`.)
         k = Component(PseudoSingle, '')
         l = Component(PseudoSingle, '')
 
-        omega = Component(SoftPositioner)
-        chi = Component(SoftPositioner)
-        phi = Component(SoftPositioner)
-        tth = Component(SoftPositioner)
-
-        def __init__(self, *args, **kwargs):
-            """
-            start the SoftPositioner objects with initial values
-            """
-            super().__init__(*args, **kwargs)
-            for axis in self.real_positioners:
-                axis.move(0)
+        omega = Component(SoftPositioner, limits=(-180, 180), init_pos=0)
+        chi = Component(SoftPositioner, limits=(-180, 180), init_pos=0)
+        phi = Component(SoftPositioner, limits=(-180, 180), init_pos=0)
+        tth = Component(SoftPositioner, limits=(-180, 180), init_pos=0)
 
 Then, create the ``fourc`` object for these examples::
 
