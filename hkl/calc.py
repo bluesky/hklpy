@@ -709,89 +709,104 @@ class CalcRecip(object):
 
 class CalcE4CH(CalcRecip):
     """Geometry: E4CH"""
+
     def __init__(self, **kwargs):
         super().__init__("E4CH", **kwargs)
 
 
 class CalcE4CV(CalcRecip):
     """Geometry: E4CV"""
+
     def __init__(self, **kwargs):
         super().__init__("E4CV", **kwargs)
 
 
 class CalcE6C(CalcRecip):
     """Geometry: E6C"""
+
     def __init__(self, **kwargs):
         super().__init__("E6C", **kwargs)
 
 
 class CalcK4CV(CalcRecip):
     """Geometry: K4CV"""
+
     def __init__(self, **kwargs):
         super().__init__("K4CV", **kwargs)
 
 
 class CalcK6C(CalcRecip):
     """Geometry: K6C"""
+
     def __init__(self, **kwargs):
         super().__init__("K6C", **kwargs)
 
 
 class CalcPetra3_p09_eh2(CalcRecip):
     """Geometry: PETRA3 P09 EH2"""
+
     def __init__(self, **kwargs):
         super().__init__("PETRA3 P09 EH2", **kwargs)
 
 
 class CalcSoleilMars(CalcRecip):
     """Geometry: SOLEIL MARS"""
+
     def __init__(self, **kwargs):
         super().__init__("SOLEIL MARS", **kwargs)
 
 
 class CalcSoleilSiriusKappa(CalcRecip):
     """Geometry: SOLEIL SIRIUS KAPPA"""
+
     def __init__(self, **kwargs):
         super().__init__("SOLEIL SIRIUS KAPPA", **kwargs)
 
 
 class CalcSoleilSiriusTurret(CalcRecip):
     """Geometry: SOLEIL SIRIUS TURRET"""
+
     def __init__(self, **kwargs):
         super().__init__("SOLEIL SIRIUS TURRET", **kwargs)
 
 
 class CalcSoleilSixsMed1p2(CalcRecip):
     """Geometry: SOLEIL SIXS MED1+2"""
+
     def __init__(self, **kwargs):
         super().__init__("SOLEIL SIXS MED1+2", **kwargs)
 
 
 class CalcSoleilSixsMed2p2(CalcRecip):
     """Geometry: SOLEIL SIXS MED2+2"""
+
     def __init__(self, **kwargs):
         super().__init__("SOLEIL SIXS MED2+2", **kwargs)
 
 
 class CalcSoleilSixs(CalcRecip):
     """Geometry: SOLEIL SIXS"""
+
     def __init__(self, **kwargs):
         super().__init__("SOLEIL SIXS", **kwargs)
 
 
 class CalcMed2p3(CalcRecip):
     """Geometry: MED2+3"""
+
     def __init__(self, **kwargs):
         super().__init__("MED2+3", **kwargs)
 
 
 class CalcTwoC(CalcRecip):
     """Geometry: TwoC"""
+
     def __init__(self, **kwargs):
         super().__init__("TwoC", **kwargs)
 
 
 class CalcZaxis(CalcRecip):
     """Geometry: ZAXIS"""
+
     def __init__(self, **kwargs):
         super().__init__("ZAXIS", **kwargs)
