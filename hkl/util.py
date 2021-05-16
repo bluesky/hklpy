@@ -165,7 +165,8 @@ def list_orientation_runs(catalog, *args, limit=20):
         if len(info):
             scan_id = run.metadata["start"]["scan_id"]
             uid = run.name[:7]
-            for device, orientation in info.items():
+            for device in sorted(info.keys()):
+                orientation = info[device]
                 row = dict(scan_id=scan_id)
                 for f in display_columns:
                     if f in orientation:
@@ -197,7 +198,7 @@ def run_orientation_info(run):
     """
     devices = {}
     run_conf = run.primary.config
-    for device in run_conf:
+    for device in sorted(run_conf):
         conf = run_conf[device].read()
         if f"{device}_orientation_attrs" in conf:
             # fmt:off
