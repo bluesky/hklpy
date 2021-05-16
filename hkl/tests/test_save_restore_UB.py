@@ -9,9 +9,7 @@ from hkl.calc import A_KEV
 from hkl.geometries import SimulatedE4CV
 from hkl.geometries import SimulatedK4CV
 from ophyd.sim import hw
-import bluesky.plan_stubs as bps
 import bluesky.plans as bp
-import bluesky.preprocessors as bpp
 import databroker
 import hkl.util
 import numpy.testing
@@ -121,13 +119,13 @@ def test_fourc_run_orientation_info(fourc):
     RE = RunEngine({})
     RE.subscribe(cat.v1.insert)
 
-    _uids = RE(bp.count([fourc]))
+    RE(bp.count([fourc]))
     info = hkl.util.run_orientation_info(cat[1])
     assert info is not None
     assert isinstance(info, dict)
     assert "fourc" in info
-    fourc_info = info["fourc"]
-    assert "orientation_attrs" in fourc_info
+    fourc_orient = info["fourc"]
+    assert "orientation_attrs" in fourc_orient
 
 
 def test_list_orientation_runs(fourc, kappa):
@@ -142,36 +140,96 @@ def test_list_orientation_runs(fourc, kappa):
         yield from bp.count([kappa])
         yield from bp.count([fourc, kappa])
 
-    _uids = RE(scans())
+    RE(scans())
     runs = hkl.util.list_orientation_runs(cat)
     # four sets of orientation info
     # (last scan has 2, first scan has none)
     assert len(runs.scan_id) == 4
-    assert 1 not in runs.scan_id.to_list() # no orientation
+    assert 1 not in runs.scan_id.to_list()  # no orientation
     assert runs.scan_id.to_list() == [2, 3, 4, 4]
     assert runs.diffractometer_name.to_list() == "fourc kappa fourc kappa".split()
 
 
-def test_restore_orientation(fourc, kappa):
+def test_restore_orientation(fourc):
     cat = databroker.temp().v2
     RE = RunEngine({})
     RE.subscribe(cat.v1.insert)
-    det = hw().noisy_det
 
-    def scans():
-        yield from bp.count([det])
-        yield from bp.count([fourc])
-        yield from bp.count([kappa])
-        yield from bp.count([fourc, kappa])
+    RE(bp.count([fourc]))
+    fourc_orient = hkl.util.run_orientation_info(cat[-1])["fourc"]
 
-    _uids = RE(scans())
-    assert len(_uids) == 4
-
-    info = hkl.util.run_orientation_info(cat[2])
     e4cv = Fourc("", name="e4cv")
-    # TODO: This should succeed.
-    # hkl.util.restore_orientation(info["fourc"], e4cv)
+    assert len(e4cv.calc._samples) == 1
 
+    # typical case : good match, restores successfully
+    hkl.util.restore_orientation(fourc_orient, e4cv)
+    assert len(e4cv.calc._samples) == 2
+    sample = e4cv.calc.sample
+    assert sample.name == "Si"
+    assert len(sample.reflections) == 2
+    numpy.testing.assert_array_equal(sample.reflections, [[4, 0, 0], [0, 4, 0]])
+    numpy.testing.assert_array_almost_equal(
+        fourc.calc.sample.UB, e4cv.calc.sample.UB,
+    )
+
+    # geometry mismatch, cannot restore
     k4cv = Kappa("", name="k4cv")
-    # TODO: This should fail with ValueError exception.
-    # hkl.util.restore_orientation(info["fourc"], k4cv)
+    assert len(k4cv.calc._samples) == 1
+    assert len(k4cv.calc.sample.reflections) == 0
+    with pytest.raises(ValueError) as exinfo:
+        hkl.util.restore_orientation(fourc_orient, k4cv)
+    args = exinfo.value.args
+    assert len(args) == 1
+    expected = "Geometries do not match: " "Orientation=E4CV, k4cv=K4CV, will not restore."
+    assert args[0] == expected
+
+    # different class name, restores successfully
+    e4cv = SimulatedE4CV("", name="e4cv")
+    assert len(e4cv.calc._samples) == 1
+    assert len(e4cv.calc.sample.reflections) == 0
+    hkl.util.restore_orientation(fourc_orient, e4cv)
+    assert len(e4cv.calc._samples) == 2
+    assert len(e4cv.calc.sample.reflections) == 2
+    numpy.testing.assert_array_almost_equal(
+        fourc.calc.sample.UB, e4cv.calc.sample.UB,
+    )
+
+    # different real axis names, restores successfully
+    e4cv = Fourc("", name="e4cv")
+    # change the real axis names
+    e4cv.calc.physical_axis_names = {
+        "omega": "john",
+        "chi": "paul",
+        "phi": "george",
+        "tth": "ringo",
+    }
+    assert len(e4cv.calc._samples) == 1
+    assert len(e4cv.calc.sample.reflections) == 0
+    hkl.util.restore_orientation(fourc_orient, e4cv)
+    assert len(e4cv.calc._samples) == 2
+    assert len(e4cv.calc.sample.reflections) == 2
+    numpy.testing.assert_array_almost_equal(
+        fourc.calc.sample.UB, e4cv.calc.sample.UB,
+    )
+
+
+def test_restore_sample(fourc):
+    cat = databroker.temp().v2
+    RE = RunEngine({})
+    RE.subscribe(cat.v1.insert)
+
+    RE(bp.count([fourc]))
+    fourc_orient = hkl.util.run_orientation_info(cat[-1])["fourc"]
+
+    # Add sample to new diffractometer.
+    e4cv = Fourc("", name="e4cv")
+    hkl.util.restore_sample(fourc_orient, e4cv)
+    assert len(e4cv.calc._samples) == 2
+    assert len(e4cv.calc.sample.reflections) == 0
+    assert e4cv.calc.sample.name == fourc.calc.sample.name
+
+    # Sample already defined, will not make another.
+    with pytest.raises(ValueError) as exinfo:
+        hkl.util.restore_sample(fourc_orient, e4cv)
+    expected = "Sample 'Si' already exists in e4cv."
+    assert exinfo.value.args[0] == expected

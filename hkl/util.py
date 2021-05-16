@@ -1,9 +1,29 @@
+"""
+Utility functions and structures.
+
+.. autosummary::
+    ~diffractometer_types
+    ~get_position_tuple
+    ~Lattice
+    ~list_orientation_runs
+    ~new_detector
+    ~reformat_reflections
+    ~restore_constraints
+    ~restore_energy
+    ~restore_orientation
+    ~restore_reflections
+    ~restore_sample
+    ~restore_UB
+    ~run_orientation_info
+"""
+
 from __future__ import print_function
-import logging
-import sys
+from .diffract import Constraint
 from collections import namedtuple
+import logging
 import numpy as np
 import pandas as pd
+import sys
 
 try:
     from gi.repository import Hkl as libhkl
@@ -26,6 +46,13 @@ __all__ = """
     Lattice
     list_orientation_runs
     new_detector
+    reformat_reflections
+    restore_constraints
+    restore_energy
+    restore_orientation
+    restore_reflections
+    restore_sample
+    restore_UB
     run_orientation_info
 """.split()
 logger = logging.getLogger(__name__)
@@ -208,3 +235,100 @@ def run_orientation_info(run):
             }
             # fmt:on
     return devices
+
+
+def reformat_reflections(orientation):
+    """
+    Reformat orientation reflections information for use in restore.
+
+    Parameters
+    ----------
+    orientation : dict
+        Dictionary of orientation parameters recovered from run.
+    """
+    reflections = []
+    for ref_base in orientation["reflections_details"]:
+        # can't just use the dictionaries in ``info`` since order is important
+        # Get the canonical order from the orientation data.
+        miller_indices = [ref_base["reflection"][key] for key in orientation["_pseudos"]]
+        positions = [ref_base["position"][key] for key in orientation["_reals"]]
+        ppp = namedtuple("PositionTuple", tuple(orientation["_reals"]))(*positions)
+
+        # assemble the final form
+        reflections.append(tuple([*miller_indices, ppp]))
+    return reflections
+
+
+def _smart_signal_update(value, signal):
+    """Write value to signal if not equal.  Not a plan."""
+    if signal.get() != value:
+        signal.put(value)
+
+
+def _check_geometry(orientation, diffractometer):
+    """
+    Check that geometry of recovered orientation matches diffractometer.
+
+    Raise ValueError if mismatched.
+    """
+    if orientation["geometry_name"] != diffractometer.geometry_name.get():
+        raise ValueError(
+            "Geometries do not match:"
+            f" Orientation={orientation['geometry_name']},"
+            f" {diffractometer.name}={diffractometer.geometry_name.get()},"
+            " will not restore."
+        )
+
+
+def restore_constraints(orientation, diffractometer):
+    """Restore any constraints from orientation information."""
+    _check_geometry(orientation, diffractometer)
+
+    # fmt:off
+    if len(orientation["_constraints"]):
+        con_dict = {
+            k: Constraint(*v)
+            for k, v in zip(orientation["_reals"], orientation["_constraints"])
+        }
+        diffractometer.apply_constraints(con_dict)
+    # fmt:on
+
+
+def restore_energy(orientation, diffractometer):
+    """Restore energy from orientation information."""
+    for attr in "energy energy_units energy_offset".split():
+        _smart_signal_update(orientation[attr], getattr(diffractometer, attr))
+
+
+def restore_reflections(orientation, diffractometer):
+    """Restore any reflections from orientation information."""
+    _check_geometry(orientation, diffractometer)
+    for i, r in enumerate(reformat_reflections(orientation)):
+        diffractometer.calc.sample.add_reflection(*r, compute_ub=(i > 0))
+
+
+def restore_orientation(orientation, diffractometer):
+    """Restore all orientation information."""
+    # TODO: options for what to restore?
+    _check_geometry(orientation, diffractometer)
+    restore_energy(orientation, diffractometer)
+    restore_sample(orientation, diffractometer)
+    restore_constraints(orientation, diffractometer)
+    restore_reflections(orientation, diffractometer)
+
+
+def restore_sample(orientation, diffractometer):
+    """Restore sample & lattice from orientation information."""
+    nm = orientation["sample_name"]
+    lattice = orientation["lattice"]
+    if nm not in diffractometer.calc._samples:
+        diffractometer.calc.new_sample(nm, lattice=lattice)
+    else:
+        # TODO: How to modify existing lattice?
+        raise ValueError(f"Sample '{nm}' already exists in {diffractometer.name}.")
+
+
+def restore_UB(orientation, diffractometer):
+    """Restore **UB** matrix from orientation information."""
+    _check_geometry(orientation, diffractometer)
+    _smart_signal_update(orientation["UB"], diffractometer.UB)
