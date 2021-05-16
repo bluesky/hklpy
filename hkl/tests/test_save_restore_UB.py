@@ -168,9 +168,12 @@ def test_restore_orientation(fourc):
     assert sample.name == "Si"
     assert len(sample.reflections) == 2
     numpy.testing.assert_array_equal(sample.reflections, [[4, 0, 0], [0, 4, 0]])
+    # fmt: off
     numpy.testing.assert_array_almost_equal(
-        fourc.calc.sample.UB, e4cv.calc.sample.UB,
+        fourc.calc.sample.UB, 
+        e4cv.calc.sample.UB,
     )
+    # fmt: on
 
     # geometry mismatch, cannot restore
     k4cv = Kappa("", name="k4cv")
@@ -190,9 +193,12 @@ def test_restore_orientation(fourc):
     hkl.util.restore_orientation(fourc_orient, e4cv)
     assert len(e4cv.calc._samples) == 2
     assert len(e4cv.calc.sample.reflections) == 2
+    # fmt: off
     numpy.testing.assert_array_almost_equal(
-        fourc.calc.sample.UB, e4cv.calc.sample.UB,
+        fourc.calc.sample.UB,
+        e4cv.calc.sample.UB,
     )
+    # fmt: on
 
     # different real axis names, restores successfully
     e4cv = Fourc("", name="e4cv")
@@ -208,9 +214,12 @@ def test_restore_orientation(fourc):
     hkl.util.restore_orientation(fourc_orient, e4cv)
     assert len(e4cv.calc._samples) == 2
     assert len(e4cv.calc.sample.reflections) == 2
+    # fmt: off
     numpy.testing.assert_array_almost_equal(
-        fourc.calc.sample.UB, e4cv.calc.sample.UB,
+        fourc.calc.sample.UB,
+        e4cv.calc.sample.UB,
     )
+    # fmt: on
 
 
 def test_restore_sample(fourc):
