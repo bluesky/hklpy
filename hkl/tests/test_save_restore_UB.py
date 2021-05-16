@@ -170,7 +170,7 @@ def test_restore_orientation(fourc):
     numpy.testing.assert_array_equal(sample.reflections, [[4, 0, 0], [0, 4, 0]])
     # fmt: off
     numpy.testing.assert_array_almost_equal(
-        fourc.calc.sample.UB, 
+        fourc.calc.sample.UB,
         e4cv.calc.sample.UB,
     )
     # fmt: on
