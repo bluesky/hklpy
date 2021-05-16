@@ -165,7 +165,7 @@ def list_orientation_runs(catalog, *args, limit=20):
 
     Returns
     -------
-    Pandas DataFrame object
+    orientation information: Pandas DataFrame object
 
     Parameters
     ----------
@@ -212,16 +212,16 @@ def run_orientation_info(run):
     """
     Return a dictionary with orientation information in this run.
 
-    Parameters
-    ----------
-    run : from Databroker
-        A Bluesky run, from databroker v2, such as ``cat.v2[-1]``.
-
     Dictionary is keyed by "detector" name (in case more than one
     diffractometer was added as a "detector" to the run).
 
     The orientation information is found in the descriptor document
     of the primary stream.
+
+    Parameters
+    ----------
+    run : from Databroker
+        A Bluesky run, from databroker v2, such as ``cat.v2[-1]``.
     """
     devices = {}
     run_conf = run.primary.config
@@ -244,7 +244,8 @@ def reformat_reflections(orientation):
     Parameters
     ----------
     orientation : dict
-        Dictionary of orientation parameters recovered from run.
+        Dictionary of orientation parameters (from
+        :func:`~hkl.util.run_orientation_info()`) recovered from run.
     """
     reflections = []
     for ref_base in orientation["reflections_details"]:
@@ -269,6 +270,14 @@ def _check_geometry(orientation, diffractometer):
     """
     Check that geometry of recovered orientation matches diffractometer.
 
+    Parameters
+    ----------
+    orientation : dict
+        Dictionary of orientation parameters (from
+        :func:`~hkl.util.run_orientation_info()`) recovered from run.
+    diffractometer : :class:`~hkl.diffract.Diffractometer()`
+        Diffractometer object.
+
     Raise ValueError if mismatched.
     """
     if orientation["geometry_name"] != diffractometer.geometry_name.get():
@@ -281,7 +290,17 @@ def _check_geometry(orientation, diffractometer):
 
 
 def restore_constraints(orientation, diffractometer):
-    """Restore any constraints from orientation information."""
+    """
+    Restore any constraints from orientation information.
+
+    Parameters
+    ----------
+    orientation : dict
+        Dictionary of orientation parameters (from
+        :func:`~hkl.util.run_orientation_info()`) recovered from run.
+    diffractometer : :class:`~hkl.diffract.Diffractometer()`
+        Diffractometer object.
+    """
     _check_geometry(orientation, diffractometer)
 
     # fmt:off
@@ -295,20 +314,61 @@ def restore_constraints(orientation, diffractometer):
 
 
 def restore_energy(orientation, diffractometer):
-    """Restore energy from orientation information."""
+    """
+    Restore energy from orientation information.
+
+    NOTE: This makes blocking calls so do not use in bluesky plan.
+
+    Parameters
+    ----------
+    orientation : dict
+        Dictionary of orientation parameters (from
+        :func:`~hkl.util.run_orientation_info()`) recovered from run.
+    diffractometer : :class:`~hkl.diffract.Diffractometer()`
+        Diffractometer object.
+    """
     for attr in "energy energy_units energy_offset".split():
         _smart_signal_update(orientation[attr], getattr(diffractometer, attr))
 
 
 def restore_reflections(orientation, diffractometer):
-    """Restore any reflections from orientation information."""
+    """
+    Restore any reflections from orientation information.
+
+    Parameters
+    ----------
+    orientation : dict
+        Dictionary of orientation parameters (from
+        :func:`~hkl.util.run_orientation_info()`) recovered from run.
+    diffractometer : :class:`~hkl.diffract.Diffractometer()`
+        Diffractometer object.
+    """
     _check_geometry(orientation, diffractometer)
+    # remeber this wavelength
+    wavelength0 = diffractometer.calc.wavelength
+
     for i, r in enumerate(reformat_reflections(orientation)):
+        # TODO: use the reflection's wavelength
+        # diffractometer.calc.wavelength =
         diffractometer.calc.sample.add_reflection(*r, compute_ub=(i > 0))
+
+    # restore previous wavelength
+    if diffractometer.calc.wavelength != wavelength0:
+        diffractometer.calc.wavelength = wavelength0
 
 
 def restore_orientation(orientation, diffractometer):
-    """Restore all orientation information."""
+    """
+    Restore all orientation information.
+
+    Parameters
+    ----------
+    orientation : dict
+        Dictionary of orientation parameters (from
+        :func:`~hkl.util.run_orientation_info()`) recovered from run.
+    diffractometer : :class:`~hkl.diffract.Diffractometer()`
+        Diffractometer object.
+    """
     # TODO: options for what to restore?
     _check_geometry(orientation, diffractometer)
     restore_energy(orientation, diffractometer)
@@ -318,7 +378,17 @@ def restore_orientation(orientation, diffractometer):
 
 
 def restore_sample(orientation, diffractometer):
-    """Restore sample & lattice from orientation information."""
+    """
+    Restore sample & lattice from orientation information.
+
+    Parameters
+    ----------
+    orientation : dict
+        Dictionary of orientation parameters (from
+        :func:`~hkl.util.run_orientation_info()`) recovered from run.
+    diffractometer : :class:`~hkl.diffract.Diffractometer()`
+        Diffractometer object.
+    """
     nm = orientation["sample_name"]
     lattice = orientation["lattice"]
     if nm not in diffractometer.calc._samples:
@@ -329,6 +399,16 @@ def restore_sample(orientation, diffractometer):
 
 
 def restore_UB(orientation, diffractometer):
-    """Restore **UB** matrix from orientation information."""
+    """
+    Restore **UB** matrix from orientation information.
+
+    Parameters
+    ----------
+    orientation : dict
+        Dictionary of orientation parameters (from
+        :func:`~hkl.util.run_orientation_info()`) recovered from run.
+    diffractometer : :class:`~hkl.diffract.Diffractometer()`
+        Diffractometer object.
+    """
     _check_geometry(orientation, diffractometer)
     _smart_signal_update(orientation["UB"], diffractometer.UB)
