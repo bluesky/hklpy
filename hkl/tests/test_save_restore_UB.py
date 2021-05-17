@@ -126,6 +126,12 @@ def test_fourc_run_orientation_info(fourc):
     assert "fourc" in info
     fourc_orient = info["fourc"]
     assert "orientation_attrs" in fourc_orient
+    assert "reflections_details" in fourc_orient["orientation_attrs"]
+    assert "reflections_details" in fourc_orient
+    refls = fourc_orient["reflections_details"]
+    assert len(refls) == 2
+    assert "wavelength" in refls[0]
+    assert refls[0]["wavelength"] == 1.54
 
 
 def test_list_orientation_runs(fourc, kappa):

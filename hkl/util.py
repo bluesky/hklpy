@@ -7,7 +7,6 @@ Utility functions and structures.
     ~Lattice
     ~list_orientation_runs
     ~new_detector
-    ~reformat_reflections
     ~restore_constraints
     ~restore_energy
     ~restore_orientation
@@ -46,7 +45,6 @@ __all__ = """
     Lattice
     list_orientation_runs
     new_detector
-    reformat_reflections
     restore_constraints
     restore_energy
     restore_orientation
@@ -237,29 +235,6 @@ def run_orientation_info(run):
     return devices
 
 
-def reformat_reflections(orientation):
-    """
-    Reformat orientation reflections information for use in restore.
-
-    Parameters
-    ----------
-    orientation : dict
-        Dictionary of orientation parameters (from
-        :func:`~hkl.util.run_orientation_info()`) recovered from run.
-    """
-    reflections = []
-    for ref_base in orientation["reflections_details"]:
-        # can't just use the dictionaries in ``info`` since order is important
-        # Get the canonical order from the orientation data.
-        miller_indices = [ref_base["reflection"][key] for key in orientation["_pseudos"]]
-        positions = [ref_base["position"][key] for key in orientation["_reals"]]
-        ppp = namedtuple("PositionTuple", tuple(orientation["_reals"]))(*positions)
-
-        # assemble the final form
-        reflections.append(tuple([*miller_indices, ppp]))
-    return reflections
-
-
 def _smart_signal_update(value, signal):
     """Write value to signal if not equal.  Not a plan."""
     if signal.get() != value:
@@ -347,10 +322,31 @@ def restore_reflections(orientation, diffractometer):
     # remeber this wavelength
     wavelength0 = diffractometer.calc.wavelength
 
-    for i, r in enumerate(reformat_reflections(orientation)):
-        # TODO: use the reflection's wavelength
-        # diffractometer.calc.wavelength =
-        diffractometer.calc.sample.add_reflection(*r, compute_ub=(i > 0))
+    # short aliases
+    pseudos = orientation["_pseudos"]
+    reals = orientation["_reals"]
+    orientation_reflections = []
+
+    for ref_base in orientation["reflections_details"]:
+        # every reflection has its own wavelength
+        diffractometer.calc.wavelength = ref_base["wavelength"]
+
+        # Order of the items is important.
+        # Can't just use the dictionaries in ``orientation``.
+        # Get the canonical order from the orientation data.
+        miller_indices = [ref_base["reflection"][key] for key in pseudos]
+        positions = [ref_base["position"][key] for key in reals]
+        ppp = namedtuple("PositionTuple", tuple(reals))(*positions)
+
+        # assemble the final form of the reflection for add_reflection()
+        reflection = tuple([*miller_indices, ppp])
+        r = diffractometer.calc.sample.add_reflection(*reflection)
+        if ref_base["orientation_reflection"]:
+            orientation_reflections.append(r)
+
+    if len(orientation_reflections) > 1:
+        # compute **UB** from the last two orientation reflections
+        diffractometer.calc.sample.compute_UB(*orientation_reflections[-2:])
 
     # restore previous wavelength
     if diffractometer.calc.wavelength != wavelength0:
