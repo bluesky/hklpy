@@ -193,9 +193,14 @@ def setor(h, k, l, *args, wavelength=None, **kwargs):
             # fmt: on
     else:
         pos = args
-    # TODO: How does libhkl get the wavelength on a reflection?
+
+    # NOTE: libhkl gets the wavelength on a reflection from hkl.calc
+    # when the wavelength is set, it calls libhkl directly
+    # as self._geometry.wavelength_set(wavelength, self._units)
+    # The code here uses that procedure.
     if wavelength not in (None, 0):
         _geom_.calc.wavelength = wavelength
+
     refl = _geom_.calc.sample.add_reflection(h, k, l, position=pos)
     return refl
 
