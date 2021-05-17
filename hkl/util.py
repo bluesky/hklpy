@@ -365,7 +365,6 @@ def restore_orientation(orientation, diffractometer):
     diffractometer : :class:`~hkl.diffract.Diffractometer()`
         Diffractometer object.
     """
-    # TODO: options for what to restore?
     _check_geometry(orientation, diffractometer)
     restore_energy(orientation, diffractometer)
     restore_sample(orientation, diffractometer)
@@ -390,7 +389,6 @@ def restore_sample(orientation, diffractometer):
     if nm not in diffractometer.calc._samples:
         diffractometer.calc.new_sample(nm, lattice=lattice)
     else:
-        # TODO: How to modify existing lattice?
         raise ValueError(f"Sample '{nm}' already exists in {diffractometer.name}.")
 
 
