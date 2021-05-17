@@ -17,6 +17,15 @@ Diffractometer Geometries
 
    notebooks/geo_*
 
+How-to Guides
+-------------
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   notebooks/how_*
+
 Variations
 ----------
 
