@@ -312,7 +312,7 @@ Keep in mind these considerations:
    other scans.  Recorded data includes diffractometer name and
    geometry, sample name and lattice, orientation reflections, ...  A
    complete list of the metadata keys is available from the
-   diffractometer object as either an ophyd 
+   diffractometer object as either an ophyd
    `Signal <https://blueskyproject.io/ophyd/signals.html#signals>`_
    (such as ``fourc.orientation_attrs.get()``) or a direct attribute (such
    as ``fourc._orientation_attrs``).
