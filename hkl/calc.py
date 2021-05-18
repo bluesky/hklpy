@@ -24,7 +24,6 @@ __all__ = """
     CalcSoleilMars
     CalcSoleilSiriusKappa
     CalcSoleilSiriusTurret
-    CalcSoleilSixs
     CalcSoleilSixsMed1p2
     CalcSoleilSixsMed2p2
     CalcTwoC
@@ -686,11 +685,6 @@ class CalcSoleilSixsMed1p2(CalcRecip):
 class CalcSoleilSixsMed2p2(CalcRecip):
     def __init__(self, **kwargs):
         super().__init__("SOLEIL SIXS MED2+2", **kwargs)
-
-
-class CalcSoleilSixs(CalcRecip):
-    def __init__(self, **kwargs):
-        super().__init__("SOLEIL SIXS", **kwargs)
 
 
 class CalcMed2p3(CalcRecip):

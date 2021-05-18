@@ -29,7 +29,6 @@ SPECIAL-USE DIFFRACTOMETER GEOMETRIES
     ~SoleilMars
     ~SoleilSiriusKappa
     ~SoleilSiriusTurret
-    ~SoleilSixs
     ~SoleilSixsMed1p2
     ~SoleilSixsMed2p2
 
@@ -59,7 +58,6 @@ __all__ = """
     SoleilMars
     SoleilSiriusKappa
     SoleilSiriusTurret
-    SoleilSixs
     SoleilSixsMed1p2
     SoleilSixsMed2p2
     TwoC
@@ -132,12 +130,6 @@ class SoleilSixsMed2p2(Diffractometer):
     """Used at Soleil"""
 
     calc_class = calc.CalcSoleilSixsMed2p2
-
-
-class SoleilSixs(Diffractometer):
-    """Used at Soleil"""
-
-    calc_class = calc.CalcSoleilSixs
 
 
 class Med2p3(Diffractometer):
