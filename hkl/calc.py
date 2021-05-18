@@ -695,7 +695,7 @@ class CalcSoleilSixs(CalcRecip):
 
 class CalcMed2p3(CalcRecip):
     def __init__(self, **kwargs):
-        super().__init__("MED2+3", **kwargs)
+        super().__init__("SOLEIL SIXS MED2+3", **kwargs)
 
 
 class CalcTwoC(CalcRecip):
