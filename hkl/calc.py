@@ -26,7 +26,6 @@ __all__ = """
     CalcSoleilSixsMed1p2
     CalcSoleilSixsMed2p2
     CalcSoleilSixsMed2p3
-    CalcTwoC
     CalcZaxis
     default_decision_function
     NM_KEV
@@ -690,13 +689,6 @@ class CalcSoleilSixsMed2p2(CalcRecip):
 class CalcSoleilSixsMed2p3(CalcRecip):
     def __init__(self, **kwargs):
         super().__init__("SOLEIL SIXS MED2+3", **kwargs)
-
-
-class CalcTwoC(CalcRecip):
-    def __init__(self, **kwargs):
-        # FIXME: Cannot create: TwoC has **no engines** defined in libhkl
-        # CalcRecip has default engine="hkl" as constructor kwarg.
-        super().__init__("TwoC", **kwargs)
 
 
 class CalcZaxis(CalcRecip):

@@ -13,7 +13,6 @@ DIFFRACTOMETER GEOMETRIES
     ~E6C
     ~K4CV
     ~K6C
-    ~TwoC
     ~Zaxis
     ~SimulatedE4CV
     ~SimulatedE6C
@@ -48,7 +47,6 @@ __all__ = """
     E6C
     K4CV
     K6C
-    Med2p3
     Petra3_p09_eh2
     SimMixin
     SimulatedE4CV
@@ -60,7 +58,7 @@ __all__ = """
     SoleilSiriusTurret
     SoleilSixsMed1p2
     SoleilSixsMed2p2
-    TwoC
+    SoleilSixsMed2p3
     Zaxis
 """.split()
 logger = logging.getLogger(__name__)
@@ -136,12 +134,6 @@ class SoleilSixsMed2p3(Diffractometer):
     """Used at Soleil"""
 
     calc_class = calc.CalcSoleilSixsMed2p3
-
-
-class TwoC(Diffractometer):
-    """Two circle geometry"""
-
-    calc_class = calc.CalcTwoC
 
 
 class Zaxis(Diffractometer):
