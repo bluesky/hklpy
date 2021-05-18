@@ -18,7 +18,6 @@ __all__ = """
     CalcE6C
     CalcK4CV
     CalcK6C
-    CalcMed2p3
     CalcPetra3_p09_eh2
     CalcRecip
     CalcSoleilMars
@@ -26,6 +25,7 @@ __all__ = """
     CalcSoleilSiriusTurret
     CalcSoleilSixsMed1p2
     CalcSoleilSixsMed2p2
+    CalcSoleilSixsMed2p3
     CalcTwoC
     CalcZaxis
     default_decision_function
@@ -687,7 +687,7 @@ class CalcSoleilSixsMed2p2(CalcRecip):
         super().__init__("SOLEIL SIXS MED2+2", **kwargs)
 
 
-class CalcMed2p3(CalcRecip):
+class CalcSoleilSixsMed2p3(CalcRecip):
     def __init__(self, **kwargs):
         super().__init__("SOLEIL SIXS MED2+3", **kwargs)
 

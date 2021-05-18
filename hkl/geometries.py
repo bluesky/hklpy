@@ -24,13 +24,13 @@ SPECIAL-USE DIFFRACTOMETER GEOMETRIES
 
 .. autosummary::
 
-    ~Med2p3
     ~Petra3_p09_eh2
     ~SoleilMars
     ~SoleilSiriusKappa
     ~SoleilSiriusTurret
     ~SoleilSixsMed1p2
     ~SoleilSixsMed2p2
+    ~SoleilSixsMed2p3
 
 """
 
@@ -132,10 +132,10 @@ class SoleilSixsMed2p2(Diffractometer):
     calc_class = calc.CalcSoleilSixsMed2p2
 
 
-class Med2p3(Diffractometer):
+class SoleilSixsMed2p3(Diffractometer):
     """Used at Soleil"""
 
-    calc_class = calc.CalcMed2p3
+    calc_class = calc.CalcSoleilSixsMed2p3
 
 
 class TwoC(Diffractometer):
