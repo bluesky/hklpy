@@ -700,6 +700,8 @@ class CalcMed2p3(CalcRecip):
 
 class CalcTwoC(CalcRecip):
     def __init__(self, **kwargs):
+        # FIXME: Cannot create: TwoC has **no engines** defined in libhkl
+        # CalcRecip has default engine="hkl" as constructor kwarg.
         super().__init__("TwoC", **kwargs)
 
 
