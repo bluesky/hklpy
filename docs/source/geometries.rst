@@ -4,6 +4,13 @@
 geometries
 ----------
 
+.. toctree::
+   :maxdepth: 2
+   :glob:
+   :caption: Ready-to-Use Devices
+
+   geometry_tables
+
 Source code documentation
 +++++++++++++++++++++++++
 
