@@ -8,8 +8,12 @@ All examples are available as
 from the *hklpy* source
 code website: https://github.com/bluesky/hklpy/tree/main/examples
 
+.. _examples.diffractometer:
+
 Diffractometer Geometries
 -------------------------
+
+See also the documentation for the :ref:`geometries` module.
 
 .. toctree::
    :maxdepth: 1

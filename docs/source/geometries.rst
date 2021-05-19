@@ -4,6 +4,8 @@
 geometries
 ----------
 
+See examples in the :ref:`examples.diffractometer` section.
+
 .. toctree::
    :maxdepth: 2
    :glob:
