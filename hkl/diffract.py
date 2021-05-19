@@ -108,7 +108,6 @@ class Diffractometer(PseudoPositioner):
     :class:`~hkl.geometries.SoleilSixs`
     :class:`~hkl.geometries.SoleilSixsMed1p2`
     :class:`~hkl.geometries.SoleilSixsMed2p2`
-    :class:`~hkl.geometries.TwoC`
     :class:`~hkl.geometries.Zaxis`
     """
 
