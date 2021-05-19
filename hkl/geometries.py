@@ -4,6 +4,12 @@ diffract
 
 Support for diffractometer instances.
 
+SUPPORT
+
+.. autosummary::
+
+    ~SimMixin
+
 DIFFRACTOMETER GEOMETRIES
 
 .. autosummary::
@@ -143,7 +149,7 @@ class Zaxis(Diffractometer):
 
 
 class SimMixin(Device):
-    """Common setup for simulated geometries."""
+    """Defines `h`, `k`, & `l` pseudo-positioners."""
 
     h = Cpt(PseudoSingle, "")
     k = Cpt(PseudoSingle, "")
