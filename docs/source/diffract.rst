@@ -22,7 +22,6 @@ name                            description
 :class:`~hkl.geometries.E6C`    Eulerian 6-circle
 :class:`~hkl.geometries.K4CV`   Kappa 4-circle, vertical scattering plane
 :class:`~hkl.geometries.K6C`    Kappa 6-circle
-:class:`~hkl.geometries.TwoC`   2-circle
 :class:`~hkl.geometries.Zaxis`  Z-axis
 ==============================  ==========================
 
