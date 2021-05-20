@@ -1,3 +1,34 @@
+"""
+Calculation support for diffractometers
+
+.. autosummary::
+
+    ~default_decision_function
+    ~UnreachableError
+    ~CalcRecip
+
+**Specific Geometries**
+
+.. autosummary::
+
+    ~CalcE4CH
+    ~CalcE4CV
+    ~CalcE6C
+    ~CalcK4CV
+    ~CalcK6C
+    ~CalcPetra3_p09_eh2
+    ~CalcSoleilMars
+    ~CalcSoleilSiriusKappa
+    ~CalcSoleilSiriusTurret
+    ~CalcSoleilSixsMed1p2
+    ~CalcSoleilSixsMed2p2
+    ~CalcSoleilSixs
+    ~CalcMed2p3
+    ~CalcTwoC
+    ~CalcZaxis
+
+"""
+
 import logging
 import functools
 from collections import OrderedDict
@@ -33,13 +64,16 @@ __all__ = """
 """.split()
 logger = logging.getLogger(__name__)
 
-A_KEV = 12.39842  # 1 Angstrom = 12.39842 keV
-NM_KEV = 1.239842  # lambda = 1.24 / E (nm, keV or um, eV)
+# per NIST publication of CODATA Fundamental Physical Constants
+# https://www.nist.gov/programs-projects/codata-values-fundamental-physical-constants
+A_KEV = 12.3984198  # 1 Angstrom ~= 12.39842 keV
+# A_KEV = 12.39842  # 1 Angstrom ~= 12.39842 keV
+NM_KEV = A_KEV * 0.1  # 1 nm ~= 1.239842 keV
 # Note: NM_KEV is not used by hklpy now, remains here as legacy
 
 
 def default_decision_function(position, solutions):
-    """The default decision function - returns the first solution"""
+    """The default decision function - returns the first solution."""
     return solutions[0]
 
 
@@ -93,6 +127,35 @@ class UnreachableError(ValueError):
 class CalcRecip(object):
     """Reciprocal space calculations
 
+    .. autosummary::
+
+        ~add_sample
+        ~calc_linear_path
+        ~energy
+        ~engine
+        ~engine_locked
+        ~engines
+        ~forward
+        ~forward_iter
+        ~geometry_name
+        ~get_path
+        ~inverse
+        ~inverted_axes
+        ~new_sample
+        ~parameters
+        ~physical_axes
+        ~physical_axis_names
+        ~physical_positions
+        ~Position
+        ~pseudo_axes
+        ~pseudo_axis_names
+        ~pseudo_positions
+        ~sample
+        ~sample_name
+        ~units
+        ~update
+        ~wavelength
+
     Parameters
     ----------
     dtype : str
@@ -111,7 +174,7 @@ class CalcRecip(object):
         Don't allow the engine to be changed during
         the life of this object
     inverted_axes : list, optional
-        Names of axes to invert the sign of
+        Names of axes to invert the sign
     """
 
     def __init__(
@@ -190,6 +253,7 @@ class CalcRecip(object):
 
     @property
     def engine(self):
+        """ """
         return self._engine
 
     @engine.setter
@@ -236,6 +300,7 @@ class CalcRecip(object):
 
     @property
     def sample(self):
+        """Currently selected sample."""
         return self._sample
 
     @sample.setter
@@ -541,7 +606,7 @@ class CalcRecip(object):
 
     @_keep_physical_position
     def forward(self, position, engine=None):
-        """Forward-calculate a position from pseudo to real space"""
+        """Calculate real positions from pseudo positions."""
 
         with UsingEngine(self, engine):
             if self.engine is None:
@@ -552,13 +617,24 @@ class CalcRecip(object):
 
     @_keep_physical_position
     def inverse(self, real):
+        """Calculate pseudo positions from real positions."""
         self.physical_positions = real
         # self.update()  # done implicitly in setter
         return self.pseudo_positions
 
     def calc_linear_path(self, start, end, n, num_params=0, **kwargs):
-        # start = [h1, k1, l1]
-        # end   = [h2, k2, l2]
+        """
+        Construct a trajectory from start to end with n steps (n+1 points).
+
+        Example (for ``hkl`` engine)::
+
+            >>> e4cv.calc.calc_linear_path((1,1,0), (1,-1,0), 4, num_params=3)
+            [(1.0, 1.0, 0.0),
+            (1.0, 0.5, 0.0),
+            (1.0, 0.0, 0.0),
+            (1.0, -0.5, 0.0),
+            (1.0, -1.0, 0.0)]
+        """
 
         # from start to end, in a linear path
         singles = [np.linspace(start[i], end[i], n + 1) for i in range(num_params)]
@@ -572,6 +648,7 @@ class CalcRecip(object):
             raise ValueError("Invalid path type specified (%s)" % path_type)
 
     def get_path(self, start, end=None, n=100, path_type="linear", **kwargs):
+        """ """
         num_params = len(self.pseudo_axis_names)
 
         start = np.array(start)
@@ -632,56 +709,78 @@ class CalcRecip(object):
 
 
 class CalcE4CH(CalcRecip):
+    """Geometry: E4CH"""
+
     def __init__(self, **kwargs):
         super().__init__("E4CH", **kwargs)
 
 
 class CalcE4CV(CalcRecip):
+    """Geometry: E4CV"""
+
     def __init__(self, **kwargs):
         super().__init__("E4CV", **kwargs)
 
 
 class CalcE6C(CalcRecip):
+    """Geometry: E6C"""
+
     def __init__(self, **kwargs):
         super().__init__("E6C", **kwargs)
 
 
 class CalcK4CV(CalcRecip):
+    """Geometry: K4CV"""
+
     def __init__(self, **kwargs):
         super().__init__("K4CV", **kwargs)
 
 
 class CalcK6C(CalcRecip):
+    """Geometry: K6C"""
+
     def __init__(self, **kwargs):
         super().__init__("K6C", **kwargs)
 
 
 class CalcPetra3_p09_eh2(CalcRecip):
+    """Geometry: PETRA3 P09 EH2"""
+
     def __init__(self, **kwargs):
         super().__init__("PETRA3 P09 EH2", **kwargs)
 
 
 class CalcSoleilMars(CalcRecip):
+    """Geometry: SOLEIL MARS"""
+
     def __init__(self, **kwargs):
         super().__init__("SOLEIL MARS", **kwargs)
 
 
 class CalcSoleilSiriusKappa(CalcRecip):
+    """Geometry: SOLEIL SIRIUS KAPPA"""
+
     def __init__(self, **kwargs):
         super().__init__("SOLEIL SIRIUS KAPPA", **kwargs)
 
 
 class CalcSoleilSiriusTurret(CalcRecip):
+    """Geometry: SOLEIL SIRIUS TURRET"""
+
     def __init__(self, **kwargs):
         super().__init__("SOLEIL SIRIUS TURRET", **kwargs)
 
 
 class CalcSoleilSixsMed1p2(CalcRecip):
+    """Geometry: SOLEIL SIXS MED1+2"""
+
     def __init__(self, **kwargs):
         super().__init__("SOLEIL SIXS MED1+2", **kwargs)
 
 
 class CalcSoleilSixsMed2p2(CalcRecip):
+    """Geometry: SOLEIL SIXS MED2+2"""
+
     def __init__(self, **kwargs):
         super().__init__("SOLEIL SIXS MED2+2", **kwargs)
 
@@ -692,5 +791,7 @@ class CalcSoleilSixsMed2p3(CalcRecip):
 
 
 class CalcZaxis(CalcRecip):
+    """Geometry: ZAXIS"""
+
     def __init__(self, **kwargs):
         super().__init__("ZAXIS", **kwargs)

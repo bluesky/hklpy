@@ -1,11 +1,19 @@
-# vi: ts=4 sw=4 sts=4 expandtab
+"""
+Low-level support to Hkl computation engine support for diffractometers
+
+.. autosummary::
+
+    ~CalcParameter
+    ~Engine
+    ~Parameter
+    ~Solution
+
+"""
 
 from __future__ import print_function
-import logging
-from collections import OrderedDict
-
-from .util import GLib
 from . import util
+from collections import OrderedDict
+import logging
 
 __all__ = """
     CalcParameter
@@ -18,6 +26,17 @@ logger = logging.getLogger(__name__)
 
 class Parameter(object):
     """HKL library parameter object
+
+    .. autosummary::
+
+        ~inverted
+        ~hkl_parameter
+        ~units
+        ~name
+        ~value
+        ~user_units
+        ~default_units
+        ~limits
 
     Example::
 
@@ -50,10 +69,12 @@ class Parameter(object):
 
     @property
     def units(self):
+        """Either ``user`` or ``default``."""
         return self._unit_name
 
     @property
     def name(self):
+        """ """
         name = self._param.name_get()
         if self._name != name:
             return f"{self._name} (internally: {name})"
@@ -61,6 +82,7 @@ class Parameter(object):
 
     @property
     def value(self):
+        """ """
         return self._param.value_get(self._units)
 
     @property
@@ -91,6 +113,7 @@ class Parameter(object):
 
     @property
     def limits(self):
+        """(low, high)"""
         if self._inverted:
             low, high = self._param.min_max_get(self._units)
             return (-high, -low)
@@ -132,7 +155,14 @@ class Parameter(object):
 
 class Solution(object):
     """
-    solution of the conversion from (hkl) to axes
+    Solution of the conversion from (hkl) to axes.
+
+    .. autosummary::
+
+        ~axis_names
+        ~positions
+        ~select
+        ~units
     """
 
     def __init__(self, engine, list_item, class_):
@@ -146,17 +176,21 @@ class Solution(object):
 
     @property
     def axis_names(self):
+        """List real axis names of the solution."""
         return self._geometry.axis_names_get()
 
     @property
     def positions(self):
+        """List real axis values of the solution."""
         return self._class(*self._geometry.axis_values_get(self._engine._units))
 
     @property
     def units(self):
+        """ """
         return self._engine.units
 
     def select(self):
+        """Select a solution."""
         self._engine._engine_list.select_solution(self._list_item)
 
     def _repr_info(self):
@@ -172,7 +206,23 @@ class Solution(object):
 
 
 class Engine(object):
-    """HKL calculation engine"""
+    """
+    HKL calculation engine
+
+    .. autosummary::
+
+        ~engine
+        ~mode
+        ~name
+        ~parameters
+        ~parameters_values
+        ~pseudo_axes
+        ~pseudo_axis_names
+        ~pseudo_positions
+        ~solutions
+        ~units
+        ~update
+    """
 
     def __init__(self, calc, engine, engine_list):
         self._calc = calc
@@ -181,6 +231,7 @@ class Engine(object):
 
     @property
     def name(self):
+        """Name of this engine."""
         return self._engine.name_get()
 
     @property
@@ -201,10 +252,11 @@ class Engine(object):
 
     @property
     def solutions(self):
+        """Allowed real solutions given the pseudo position."""
         return tuple(self._solutions)
 
     def update(self):
-        """Calculate the pseudo axis positions from the real axis positions"""
+        """Calculate the pseudo axis positions from the real axis positions."""
         # TODO: though this works, maybe it could be named better on the hkl
         # side? either the 'get' function name or the fact that the EngineList
         # is more than just a list...
@@ -213,26 +265,34 @@ class Engine(object):
 
     @property
     def parameters(self):
-        # TODO using additional engine parameters easily
+        """List the names of the additional parameters."""
         return self._engine.parameters_names_get()
 
     @property
+    def parameters_values(self):
+        """List the values of the additional parameters."""
+        return self._engine.parameters_values_get(self._units)
+
+    @property
     def pseudo_axis_names(self):
+        """List the names of the pseudo axes."""
         return self._engine.pseudo_axis_names_get()
 
     @property
     def pseudo_axes(self):
+        """List of pseudo axes as tuples: ``[(name, value)]``."""
         return OrderedDict(zip(self.pseudo_axis_names, self.pseudo_positions))
 
     @property
     def pseudo_positions(self):
+        """List the values of the pseudo positioners."""
         return self._engine.pseudo_axis_values_get(self._units)
 
     @pseudo_positions.setter
     def pseudo_positions(self, values):
         try:
             geometry_list = self._engine.pseudo_axis_values_set(values, self._units)
-        except GLib.GError as ex:
+        except util.GLib.GError as ex:
             raise ValueError("Calculation failed (%s)" % ex)
 
         Position = self._calc.Position
@@ -294,6 +354,12 @@ class CalcParameter(Parameter):
     Like calc parameter but needs reference to a geometry object.
     Updates to the parameter should be propagated back to the geometry.
 
+    .. autosummary::
+
+        ~fit
+        ~limits
+        ~value
+
     Parameters
     ----------
         param : HklParameter
@@ -309,6 +375,7 @@ class CalcParameter(Parameter):
 
     @property
     def limits(self):
+        """Allowed range of values (low, high)."""
         axis = self._geometry.axis_get(self.param_name)
         low, high = axis.min_max_get(self._units)
         if self._inverted:
@@ -328,6 +395,7 @@ class CalcParameter(Parameter):
 
     @property
     def value(self):
+        """Position of this axis."""
         axis = self._geometry.axis_get(self.param_name)
         return axis.value_get(self._units)
 
