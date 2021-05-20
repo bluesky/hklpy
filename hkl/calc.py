@@ -22,9 +22,7 @@ Calculation support for diffractometers
     ~CalcSoleilSiriusTurret
     ~CalcSoleilSixsMed1p2
     ~CalcSoleilSixsMed2p2
-    ~CalcSoleilSixs
-    ~CalcMed2p3
-    ~CalcTwoC
+    ~CalcSoleilSixsMed2p3
     ~CalcZaxis
 
 """
