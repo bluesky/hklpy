@@ -96,7 +96,7 @@ class Constraint:
 
     def __repr__(self):
         "Return a nicely formatted representation string."
-        content = "(" + ", ".join([f"{k}={getattr(self,k)}" for k in self._fields]) + ")"
+        content = "(" + ", ".join([f"{k}={getattr(self, k)}" for k in self._fields]) + ")"
         return self.__class__.__name__ + content
 
 
