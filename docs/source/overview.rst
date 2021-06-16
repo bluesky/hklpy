@@ -274,7 +274,7 @@ Keep in mind these considerations:
    can list any recent runs with orientation information.  It needs
    the databroker catalog object.)  With the run, use
    :func:`hkl.util.run_orientation_info()` to obtain
-   the orientation infromation.
+   the orientation information.
    Then call :func:`hkl.util.restore_orientation()`
    with the run's orientation information.  Here is an example
    with the `fourc` object created above and a previous run with
