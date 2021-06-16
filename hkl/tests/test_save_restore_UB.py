@@ -189,7 +189,7 @@ def test_restore_orientation(fourc):
         hkl.util.restore_orientation(fourc_orient, k4cv)
     args = exinfo.value.args
     assert len(args) == 1
-    expected = "Geometries do not match: " "Orientation=E4CV, k4cv=K4CV, will not restore."
+    expected = "Geometries do not match: Orientation=E4CV, k4cv=K4CV, will not restore."
     assert args[0] == expected
 
     # different class name, restores successfully
