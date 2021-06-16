@@ -319,7 +319,7 @@ def restore_reflections(orientation, diffractometer):
         Diffractometer object.
     """
     _check_geometry(orientation, diffractometer)
-    # remeber this wavelength
+    # remember this wavelength
     wavelength0 = diffractometer.calc.wavelength
 
     # short aliases
