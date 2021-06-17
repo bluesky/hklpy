@@ -364,7 +364,7 @@ def test_sample1_calc_only():
     assert tardis_calc.wavelength == 1.54
     tardis_calc.wavelength = 1.61198
     assert tardis_calc.wavelength != 1.54
-    assert abs(tardis_calc.energy - 7.69142297) < 1e-8
+    assert abs(tardis_calc.energy - 7.69142297) < 5e-8
 
     # lattice cell lengths are in Angstrom, angles are in degrees
     a = 9.069
