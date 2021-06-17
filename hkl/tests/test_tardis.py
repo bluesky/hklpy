@@ -40,7 +40,7 @@ def tardis():
         "gamma": "delta",
         "delta": "gamma",
     }
-    tardis.wait_for_connection()
+    # tardis.wait_for_connection()
     return tardis
 
 
