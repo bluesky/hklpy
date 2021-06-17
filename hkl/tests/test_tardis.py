@@ -229,7 +229,7 @@ def test_unreachable(tardis, kcf_sample):
 )
 def test_issue62(tardis, kcf_sample, constrain, theta, delta, gamma, h, k, l):
     # simulate the scan, computing hkl from angles
-    # RE(scan([hw.det, tardis],tardis.theta, 0, 0.3, tardis.delta,0,0.5, num=5))
+    # RE(scan([hw.det, tardis], tardis.theta, 0, 0.3, tardis.delta, 0, 0.5, num=5))
     # values as reported from LiveTable
 
     tardis.energy_units.put("eV")
