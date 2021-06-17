@@ -114,7 +114,7 @@ def constrain(tardis):
             phi=Constraint(0, 0, 0, False),
             chi=Constraint(0, 0, 0, False),
             omega=Constraint(0, 0, 0, False),
-            # Attention naming convention inverted at the detector stages!
+            # NOTE: Tardis detector stage names are swapped from canonical!
             delta=Constraint(-5, 180, 0, True),
             gamma=Constraint(-5, 180, 0, True),
         )
@@ -393,6 +393,7 @@ def test_sample1_calc_only():
 
 
 def test_sample1_UB(sample1, tardis):
+    # test the sample1 lattice and orientation
     numpy.testing.assert_almost_equal(
         tardis.calc.sample.UB,
         np.array(
