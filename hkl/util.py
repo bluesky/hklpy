@@ -2,6 +2,7 @@
 Utility functions and structures.
 
 .. autosummary::
+    ~Constraint
     ~diffractometer_types
     ~get_position_tuple
     ~Lattice
@@ -17,7 +18,6 @@ Utility functions and structures.
 """
 
 from __future__ import print_function
-from .diffract import Constraint
 from collections import namedtuple
 import logging
 import numpy as np
@@ -40,6 +40,7 @@ except ImportError as ex:
     )
 
 __all__ = """
+    Constraint
     diffractometer_types
     get_position_tuple
     Lattice
@@ -138,6 +139,69 @@ def _gi_info(gi_val):
                 return f"({ex.__class__.__name__}: {ex})"
 
     return {attr: get(attr) for attr in dir(gi_val) if attr.endswith("_get")}
+
+
+class Constraint:
+    """
+    Limitations on acceptable positions from computed forward() solutions.
+
+    Parameters
+    ----------
+    low_limit : float
+        Minimum acceptable solution for position.
+    high_limit : float
+        Maximum acceptable solution for position.
+    value : float
+        Constant value when ``fit=False``.
+    fit : bool
+        ``True`` when axis will be fitted, otherwise, hold position to ``value``.
+
+
+    note: Patterned on collections.namedtuple
+    """
+
+    def __init__(self, low_limit, high_limit, value, fit):
+        self.low_limit = float(low_limit)
+        self.high_limit = float(high_limit)
+        self.value = float(value)
+        self.fit = bool(fit)
+
+        self._fields = "low_limit high_limit value fit".split()
+        # fmt: off
+        _fields = ", ".join(
+            name + "=" + repr(getattr(self, name))
+            for name in self._fields
+        )
+        # fmt: on
+        self._repr_fmt = f"({_fields})"
+
+    def _asdict(self):
+        "Return a new dict which maps field names to their values."
+        return dict(zip(self._fields, self))
+
+    class _ConstraintIterator:
+        "Iterator"
+
+        def __init__(self, constraint):
+            self.constraint = constraint
+            self._index = 0
+
+        def __next__(self):
+            if self._index < len(self.constraint._fields):
+                c = getattr(self.constraint, self.constraint._fields[self._index])
+                self._index += 1
+                return c
+            else:
+                raise StopIteration
+
+    def __iter__(self):
+        "Iterate through the fields."
+        return self._ConstraintIterator(self)
+
+    def __repr__(self):
+        "Return a nicely formatted representation string."
+        content = "(" + ", ".join([f"{k}={getattr(self, k)}" for k in self._fields]) + ")"
+        return self.__class__.__name__ + content
 
 
 Lattice = namedtuple("LatticeTuple", "a b c alpha beta gamma")
