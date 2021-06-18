@@ -76,4 +76,4 @@ def test_shortcuts(module_name, attribute):
     assert hasattr(hkl, attribute)
     shortcut = getattr(hkl, attribute)
 
-    assert shortcut == actual
+    assert shortcut is actual
