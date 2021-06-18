@@ -26,7 +26,9 @@ from . import __version__
 from .util import Constraint
 
 
-__all__ = ["Diffractometer", ]
+__all__ = """
+    Diffractometer
+""".split()
 logger = logging.getLogger(__name__)
 
 
