@@ -24,6 +24,18 @@ class Kappa(SimulatedK4CV):
     ...
 
 
+@pytest.fixture
+def cat():
+    return databroker.temp().v2
+
+
+@pytest.fixture
+def RE(cat):
+    engine = RunEngine({})
+    engine.subscribe(cat.v1.insert)
+    return engine
+
+
 @pytest.fixture(scope="function")
 def fourc():
     fourc = Fourc("", name="fourc")
@@ -67,11 +79,7 @@ def test_basic_setup(fourc, kappa):
     assert fourc.calc.wavelength == kappa.calc.wavelength
 
 
-def test_fourc_orientation_save(fourc):
-    cat = databroker.temp().v2
-    RE = RunEngine({})
-    RE.subscribe(cat.v1.insert)
-
+def test_fourc_orientation_save(cat, RE, fourc):
     assert len(cat) == 0
     det = hw().noisy_det
 
@@ -106,19 +114,19 @@ def test_fourc_orientation_save(fourc):
         key_name = f"fourc_{key}"
         assert hasattr(xarray_data, key_name)
         assert key_name in descriptors["data_vars"]
+
     assert xarray_data.fourc_class_name == "Fourc"
     assert xarray_data.fourc_geometry_name == "E4CV"
     assert xarray_data.fourc_diffractometer_name == "fourc"
     assert xarray_data.fourc_sample_name == "Si"
-    numpy.testing.assert_array_equal(xarray_data.fourc__pseudos, ["h k l".split()])
-    numpy.testing.assert_array_equal(xarray_data.fourc__reals, ["omega chi phi tth".split()])
+
+    assert len(xarray_data.fourc__pseudos) == 1
+    assert xarray_data.fourc__pseudos[0].values.tolist() == "h k l".split()
+    assert len(xarray_data.fourc__reals) == 1
+    assert xarray_data.fourc__reals.values[0].tolist() == "omega chi phi tth".split()
 
 
-def test_fourc_run_orientation_info(fourc):
-    cat = databroker.temp().v2
-    RE = RunEngine({})
-    RE.subscribe(cat.v1.insert)
-
+def test_fourc_run_orientation_info(cat, RE, fourc):
     RE(bp.count([fourc]))
     info = hkl.util.run_orientation_info(cat[1])
     assert info is not None
@@ -134,10 +142,7 @@ def test_fourc_run_orientation_info(fourc):
     assert refls[0]["wavelength"] == 1.54
 
 
-def test_list_orientation_runs(fourc, kappa):
-    cat = databroker.temp().v2
-    RE = RunEngine({})
-    RE.subscribe(cat.v1.insert)
+def test_list_orientation_runs(cat, RE, fourc, kappa):
     det = hw().noisy_det
 
     def scans():
@@ -156,11 +161,7 @@ def test_list_orientation_runs(fourc, kappa):
     assert runs.diffractometer_name.to_list() == "fourc kappa fourc kappa".split()
 
 
-def test_restore_orientation(fourc):
-    cat = databroker.temp().v2
-    RE = RunEngine({})
-    RE.subscribe(cat.v1.insert)
-
+def test_restore_orientation(cat, RE, fourc):
     RE(bp.count([fourc]))
     fourc_orient = hkl.util.run_orientation_info(cat[-1])["fourc"]
 
@@ -228,11 +229,7 @@ def test_restore_orientation(fourc):
     # fmt: on
 
 
-def test_restore_sample(fourc):
-    cat = databroker.temp().v2
-    RE = RunEngine({})
-    RE.subscribe(cat.v1.insert)
-
+def test_restore_sample(cat, RE, fourc):
     RE(bp.count([fourc]))
     fourc_orient = hkl.util.run_orientation_info(cat[-1])["fourc"]
 

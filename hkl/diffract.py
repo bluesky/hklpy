@@ -61,21 +61,18 @@ class Constraint:
 
         self._fields = "low_limit high_limit value fit".split()
         # fmt: off
-        self._repr_fmt = (
-            "("
-            + ", ".join(
-                name + "=" + repr(getattr(self, name))
-                for name in self._fields
-            )
-            + ")"
+        _fields = ", ".join(
+            name + "=" + repr(getattr(self, name))
+            for name in self._fields
         )
         # fmt: on
+        self._repr_fmt = f"({_fields})"
 
     def _asdict(self):
         "Return a new dict which maps field names to their values."
         return dict(zip(self._fields, self))
 
-    class ConstraintIterator:
+    class _ConstraintIterator:
         "Iterator"
 
         def __init__(self, constraint):
@@ -92,7 +89,7 @@ class Constraint:
 
     def __iter__(self):
         "Iterate through the fields."
-        return self.ConstraintIterator(self)
+        return self._ConstraintIterator(self)
 
     def __repr__(self):
         "Return a nicely formatted representation string."
@@ -120,12 +117,10 @@ class Diffractometer(PseudoPositioner):
         ~_constraints_dict
         ~_constraints_for_databroker
         ~_energy_changed
-        ~_energy_changed
         ~_energy_offset_changed
         ~_energy_units_changed
         ~_push_current_constraints
         ~_set_constraints
-        ~_update_calc_energy
         ~_update_calc_energy
 
 
