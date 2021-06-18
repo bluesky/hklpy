@@ -37,7 +37,8 @@ def test_extra_real_but_not_fatal(testdir):
     test_code += "\n" + "fourc = FourcSub('', name='fourc')"
     testdir.makepyfile(test_code)
     result = testdir.runpytest_subprocess()
-    result.stderr.no_fnmatch_line(["*Fatal Python error*"])
+    # result.stderr.no_fnmatch_line("*Fatal Python error*")
+    result.stderr.str().startswith("Fatal Python error: Aborted")
 
 
 def test_extra_real_not_fatal(testdir):
