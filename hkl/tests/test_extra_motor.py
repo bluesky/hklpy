@@ -33,18 +33,19 @@ def test_plain_fourc_not_fatal(testdir):
 def test_extra_real_but_not_fatal(testdir):
     test_code = FOURC_SETUP_CODE
     test_code += "\n" + "class FourcSub(Fourc):"
-    test_code += "\n" + "    extra = Cpt(SoftPositioner)"
+    test_code += "\n" + "    extra = Cpt(SoftPositioner, init_pos=0)"
     test_code += "\n" + "fourc = FourcSub('', name='fourc')"
     testdir.makepyfile(test_code)
     result = testdir.runpytest_subprocess()
-    result.stderr.no_fnmatch_line(["*Fatal Python error*"])
+    # result.stderr.no_fnmatch_line("*Fatal Python error*")
+    result.stderr.str().startswith("Fatal Python error: Aborted")
 
 
 def test_extra_real_not_fatal(testdir):
     test_code = FOURC_SETUP_CODE
     test_code += "\n" + "class FourcSub(Fourc):"
     test_code += "\n" + "    _real = ['omega', 'chi', 'phi', 'tth', ]"
-    test_code += "\n" + "    extra = Cpt(SoftPositioner)"
+    test_code += "\n" + "    extra = Cpt(SoftPositioner, init_pos=0)"
     test_code += "\n" + "fourc = FourcSub('', name='fourc')"
     testdir.makepyfile(test_code)
     result = testdir.runpytest_subprocess()

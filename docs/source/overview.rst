@@ -204,3 +204,115 @@ Steps to define a diffractometer object
 #. Connect the real positioners with the control system motors.
 #. (optional) Connect energy to the control system.
 #. Define the diffractometer object from the custom subclass.
+
+Use a Diffractometer with the bluesky RunEngine
+===============================================
+
+The positioners of a :class:`~hkl.diffract.Diffractometer` object may be
+used with the `bluesky RunEngine
+<https://blueskyproject.io/bluesky/generated/bluesky.run_engine.RunEngine.html?highlight=runengine>`_
+with any of the `pre-assembled plans
+<https://blueskyproject.io/bluesky/plans.html#pre-assembled-plans>`_ or
+in custom plans of your own.  ::
+
+    fourc = hkl.geometries.SimulatedE4CV("", name="fourc")
+    # steps not shown here:
+    #   define a sample & orientation reflections, and compute UB matrix
+
+    # record the diffractometer metadata to a run
+    RE(bp.count([fourc]))
+
+    # relative *(h00)* scan
+    RE(bp.rel_scan([scaler, fourc], fourc.h, -0.1, 0.1, 21))
+
+    # absolute *(0kl)* scan
+    RE(bp.scan([scaler, fourc], fourc.k, 0.9, 1.1, fourc.l, 2, 3, 21))
+
+    # absolute ``chi`` scan
+    RE(bp.scan([scaler, fourc], fourc.chi, 30, 60, 31))
+
+Keep in mind these considerations:
+
+1. Don't mix axis types (pseudos *v.* reals) in a scan.  You can only
+   scan with either *pseudo* axes (``h``, ``k``, ``l``, ``q``, ...) or *real*
+   axes (``omega``, ``tth``, ``chi``, ...) at one time.  You cannot scan with
+   both types (such as ``h`` and ``tth``) in a single scan (because the
+   :meth:`~hkl.diffract.Diffractometer.forward()` and
+   :meth:`~hkl.diffract.Diffractometer.inverse()` methods cannot
+   resolve).  Example::
+
+       # Cannot scan both ``k`` and ``chi`` at the same time.
+       # This will raise a `ValueError` exception.
+       RE(bp.scan([scaler, fourc], fourc.k, 0.9, 1.1, fourc.chi, 2, 3, 21))
+
+
+2. When scanning with pseudo axes (``h``, ``k``, ``l``, ``q``, ...), first
+   check that all steps in the scan can be computed successfully with
+   the :meth:`~hkl.diffract.Diffractometer.forward()` computation::
+
+        fourc.forward(1.9, 0, 0)
+
+3. Include the diffractometer object as an additional detector
+   to record the diffractometer metadata [#]_ as part of the scan.
+   For example::
+
+       fourc = hkl.geometries.SimulatedE4CV("", name="fourc")
+       RE(bp.scan([scaler, fourc], fourc.h, 1.9, 2.1, 21))
+
+4. To save crystal orientation and reflections for later use,
+   include the diffractometer object as an additional detector
+   (as stated in consideration 3 above)::
+
+       RE(bp.scan([scaler, fourc], fourc.chi, 30, 60, 31))
+       #                   ^^^^^
+
+
+5. To restore crystal lattice and orientation reflections from a previous
+   run, first use the `databroker
+   <https://blueskyproject.io/databroker/tutorials/search-and-lookup.html#find-runs-in-a-catalog>`_
+   to find the run.  (The :func:`hkl.util.list_orientation_runs()` function
+   can list any recent runs with orientation information.  It needs
+   the databroker catalog object.)  With the run, use
+   :func:`hkl.util.run_orientation_info()` to obtain
+   the orientation information.
+   Then call :func:`hkl.util.restore_orientation()`
+   with the run's orientation information.  Here is an example
+   with the `fourc` object created above and a previous run with
+   ``scan_id = 457``::
+
+        # find a run
+        hkl.util.list_orientation_runs(cat)
+
+        # get the run's orientation metadata
+        info = hkl.util.run_orientation_info(cat[457])
+
+        # restore the orientation
+        hkl.util.restore_orientation(info["fourc"], fourc)
+
+6. You should only restore orientation reflections from a **matching**
+   diffractometer geometry (such as ``E4CV``).  A `ValueError`
+   exception will be raised if the geometry names (one of the names
+   in :mod:`hkl.geometries`) do not match.  To override this check
+   (at your own risk), replace :func:`hkl.util._check_geometry`
+   with your own code.
+
+7. A sample lattice can be restored into any
+   :class:`~hkl.diffract.Diffractometer` object, as long
+   as it has not already been defined (by name) in that object::
+
+        info = hkl.util.run_orientation_info(cat[457])
+        hkl.util.restore_sample(info["fourc"], fourc)
+
+8. If you want to save other information during a run, or save
+   this information in a different format, it is suggested to
+   write that information as a separate stream using a custom plan.
+
+.. [#] The diffractometer metadata will be recorded in the scan's
+   descriptor document and can be retrieved later for analysis or use in
+   other scans.  Recorded data includes diffractometer name and
+   geometry, sample name and lattice, orientation reflections, ...  A
+   complete list of the metadata keys is available from the
+   diffractometer object as either an ophyd
+   `Signal <https://blueskyproject.io/ophyd/signals.html#signals>`_
+   (such as ``fourc.orientation_attrs.get()``) or a direct attribute (such
+   as ``fourc._orientation_attrs``).
