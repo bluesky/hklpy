@@ -416,7 +416,13 @@ class HklSample(object):
 
     @property
     def reflections_details(self):
-        """Return a list with details of all reflections."""
+        """
+        Return a list with details of all reflections.
+
+        NOTE: reflections_details() uses the canonical
+        names for the real positioners.  The mapping
+        to physical axis names happens in :mod`hkl.calc`.
+        """
         refls = self._sample.reflections_get()
         for r in self._orientation_reflections:
             if r not in refls:
@@ -424,3 +430,15 @@ class HklSample(object):
                 # deleted from the list in libhkl.
                 refls.append(r)
         return [self._get_reflection_dict(r) for r in refls]
+
+    def swap_orientation_reflections(self):
+        """Swap the 2 [UB] reflections, re-compute & return new [UB]."""
+        if len(self._orientation_reflections) != 2:
+            raise ValueError(
+                "Must have exactly 2 orientation reflections defined"
+                " in order to make a swap and re-compute [UB]."
+                f"  There are {len(self._orientation_reflections)}"
+                " orientation reflection(s) defined now."
+            )
+        refls = self._orientation_reflections
+        return self.compute_UB(*refls[::-1])

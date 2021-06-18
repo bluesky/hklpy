@@ -21,8 +21,13 @@ release date.
 v0.3.16 (2021-04-28)
 ================================
 
-Full list of changes is on the `wiki
+Full list of changes is on the `wiki v0.3.16
 <https://github.com/bluesky/hklpy/wiki/release-notes-v0.3.16>`_.
+
+Breaking Changes
+----------------
+
+* Diffractometer geometries have moved from ``hkl.diffract`` to (the new) ``hkl.geometries``, such as ``hkl.geometries.E4CV``.
 
 New Features and/or Enhancements
 --------------------------------
@@ -57,7 +62,7 @@ Maintenance
 v0.3.15 (2020-12-20)
 ====================
 
-Full list of changes is on the `wiki
+Full list of changes is on the `wiki v0.3.15
 <https://github.com/bluesky/hklpy/wiki/release-notes-v0.3.15>`_.
 
 Breaking Changes

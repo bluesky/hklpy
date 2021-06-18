@@ -78,3 +78,6 @@ docs/source/generated
 
 # PyTest cache
 .pytest_cache/
+
+# Bluesky session logger
+.logs/
