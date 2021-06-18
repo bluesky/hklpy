@@ -47,8 +47,8 @@ import gi
 gi.require_version("Hkl", "5.0")
 logger = logging.getLogger(__name__)
 
-from hkl.diffract import Diffractometer
-from hkl.util import Lattice
+from .diffract import Diffractometer
+from .util import Lattice
 import numpy
 import pyRestTable
 

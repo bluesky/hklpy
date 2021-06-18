@@ -28,7 +28,9 @@ and require ``Hkl`` version 5.0, as in::
    import gi
    gi.require_version('Hkl', '5.0')
 
-   from hkl.diffract import E4CV
+   from hkl import E4CV
+   # note: before v1.0 release use:
+   # from hkl.geometries import E4CV
 
 
 .. toctree::
