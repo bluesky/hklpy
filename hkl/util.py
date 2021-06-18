@@ -3,6 +3,7 @@ Utility functions and structures.
 
 .. autosummary::
     ~diffractometer_types
+    ~get_package_info
     ~get_position_tuple
     ~Lattice
     ~list_orientation_runs
@@ -18,10 +19,11 @@ Utility functions and structures.
 
 from __future__ import print_function
 from .diffract import Constraint
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 import logging
 import numpy as np
 import pandas as pd
+import subprocess
 import sys
 
 try:
@@ -41,6 +43,7 @@ except ImportError as ex:
 
 __all__ = """
     diffractometer_types
+    get_package_info
     get_position_tuple
     Lattice
     list_orientation_runs
@@ -406,3 +409,47 @@ def restore_UB(orientation, diffractometer):
     """
     _check_geometry(orientation, diffractometer)
     _smart_signal_update(orientation["UB"], diffractometer.UB)
+
+
+def _installed_package_information():
+    """Index information about packages known by conda and/or pip."""
+    packages = defaultdict(dict)
+
+    # pip
+    s = subprocess.run("pip list".split(), capture_output=True)
+    for line in s.stdout.splitlines():
+        if not line.decode().startswith("#"):
+            args = line.decode().strip().split()
+            key = args[0]
+            packages[key]["version"] = args[1]
+            packages[key]["pip"] = True
+            if len(args) == 3:
+                packages[key]["location"] = args[2]
+
+    # conda
+    s = subprocess.run("conda list".split(), capture_output=True)
+    for line in s.stdout.splitlines():
+        if not line.decode().startswith("#"):
+            args = line.decode().strip().split()
+            key = args[0]
+            packages[key]["version"] = args[1]
+            packages[key]["build"] = args[2]
+            packages[key]["conda"] = True
+            if len(args) == 4:
+                packages[key]["channel"] = args[3]
+
+    return packages
+
+
+# cache of discovered installed package information
+_package_info = None
+
+
+def get_package_info(package_name):
+    """Return dict of information about installed package, by name."""
+    global _package_info
+    if _package_info is None:
+        # index the known packages
+        # This is not expected to change once the process has started.
+        _package_info = _installed_package_information()
+    return _package_info.get(package_name)
