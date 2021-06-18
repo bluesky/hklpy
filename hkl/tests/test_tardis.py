@@ -18,13 +18,13 @@ TARDIS_TEST_MODE = "lifting_detector_mu"
 
 class Tardis(SimMixin, E6C):
     # theta
-    theta = Cpt(SoftPositioner)
-    omega = Cpt(SoftPositioner)
-    chi = Cpt(SoftPositioner)
-    phi = Cpt(SoftPositioner)
+    theta = Cpt(SoftPositioner, init_pos=0)
+    omega = Cpt(SoftPositioner, init_pos=0)
+    chi = Cpt(SoftPositioner, init_pos=0)
+    phi = Cpt(SoftPositioner, init_pos=0)
     # delta, gamma
-    delta = Cpt(SoftPositioner)
-    gamma = Cpt(SoftPositioner)
+    delta = Cpt(SoftPositioner, init_pos=0)
+    gamma = Cpt(SoftPositioner, init_pos=0)
 
 
 @pytest.fixture(scope="function")
@@ -40,7 +40,7 @@ def tardis():
         "gamma": "delta",
         "delta": "gamma",
     }
-    # tardis.wait_for_connection()
+    tardis.wait_for_connection()
     return tardis
 
 
