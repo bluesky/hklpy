@@ -279,6 +279,7 @@ class HklSample(object):
         UB matrix or raises ``gi.repository.GLib.GError``
         """
         if self._sample.compute_UB_busing_levy(r1, r2):
+            # TODO: this list defines the order of the orientation reflections
             self._orientation_reflections = [r1, r2]
             return self.UB
 
