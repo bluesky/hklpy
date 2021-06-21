@@ -15,6 +15,7 @@ Utility functions and structures.
     ~restore_sample
     ~restore_UB
     ~run_orientation_info
+    ~software_versions
 """
 
 from __future__ import print_function
@@ -55,6 +56,7 @@ __all__ = """
     restore_sample
     restore_UB
     run_orientation_info
+    software_versions
 """.split()
 logger = logging.getLogger(__name__)
 
@@ -453,3 +455,13 @@ def get_package_info(package_name):
         # This is not expected to change once the process has started.
         _package_info = _installed_package_information()
     return _package_info.get(package_name)
+
+
+def software_versions(keys=[]):
+    """Just the package versions, in a dictionary."""
+    if keys is None or len(keys) == 0:
+        keys = "hkl hklpy gobject-introspection".split()
+        return {
+            key: get_package_info(key).get("version")
+            for key in keys
+        }
