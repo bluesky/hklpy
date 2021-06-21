@@ -4,6 +4,7 @@ gi.require_version("Hkl", "5.0")
 
 # FIXME: comment remainder for now until #185 is resolved
 
+
 def test_true():
     assert True
     # FIXME: remove when #185 is solved.
@@ -29,4 +30,3 @@ def test_true():
 #     assert v["hkl"].startswith("5.0.0.")
 #     # TODO: assert v.get("no-such-package") is None
 #     # TODO: assert v.get("hklpy") >= "0.3.16"
-
