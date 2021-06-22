@@ -1,4 +1,5 @@
 import gi
+
 gi.require_version("Hkl", "5.0")
 # import pytest
 
@@ -8,6 +9,7 @@ gi.require_version("Hkl", "5.0")
 def test_true():
     assert True
     # FIXME: remove when #185 is solved.
+
 
 # from hkl.util import get_package_info, _package_info
 

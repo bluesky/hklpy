@@ -461,7 +461,4 @@ def software_versions(keys=[]):
     """Just the package versions, in a dictionary."""
     if keys is None or len(keys) == 0:
         keys = "hkl hklpy gobject-introspection".split()
-        return {
-            key: get_package_info(key).get("version")
-            for key in keys
-        }
+        return {key: get_package_info(key).get("version") for key in keys}
