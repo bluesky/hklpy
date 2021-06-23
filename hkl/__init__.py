@@ -21,8 +21,6 @@ del get_versions
 
 from .calc import A_KEV, UnreachableError  # noqa: F401, F402, E402
 
-from .util import Constraint  # noqa: F401, F402, E402
-
 from .geometries import (  # noqa: F401, F402, E402
     E4CH,
     E4CV,
@@ -63,6 +61,7 @@ from .user import (  # noqa: F401, F402, E402
 )
 
 from .util import (  # noqa: F401, F402, E402
+    Constraint,
     diffractometer_types,
     get_position_tuple,
     Lattice,
