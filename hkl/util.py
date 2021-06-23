@@ -2,6 +2,7 @@
 Utility functions and structures.
 
 .. autosummary::
+
     ~Constraint
     ~diffractometer_types
     ~get_position_tuple

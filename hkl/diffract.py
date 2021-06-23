@@ -5,6 +5,7 @@ diffract
 Common Support for diffractometers
 
 .. autosummary::
+
     ~Diffractometer
 
 """
