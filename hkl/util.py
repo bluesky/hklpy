@@ -28,20 +28,25 @@ import pandas as pd
 import subprocess
 import sys
 
-try:
-    from gi.repository import Hkl as libhkl
-    from gi.repository import GLib
-except ImportError as ex:
-    libhkl = None
-    GLib = None
+import gi
+gi.require_version('Hkl', '5.0')
+from gi.repository import Hkl as libhkl
+from gi.repository import GLib
 
-    print(
-        # fmt: off
-        "[!!] Failed to import Hkl library;"
-        f" diffractometer support disabled ({ex})",
-        file=sys.stderr,
-        # fmt: on
-    )
+# try:
+#     from gi.repository import Hkl as libhkl
+#     from gi.repository import GLib
+# except ImportError as ex:
+#     libhkl = None
+#     GLib = None
+
+#     print(
+#         # fmt: off
+#         "[!!] Failed to import Hkl library;"
+#         f" diffractometer support disabled ({ex})",
+#         file=sys.stderr,
+#         # fmt: on
+#     )
 
 __all__ = """
     Constraint
