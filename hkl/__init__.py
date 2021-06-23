@@ -21,7 +21,7 @@ del get_versions
 
 from .calc import A_KEV, UnreachableError  # noqa: F401, F402, E402
 
-from .diffract import Constraint  # noqa: F401, F402, E402
+from .util import Constraint  # noqa: F401, F402, E402
 
 from .geometries import (  # noqa: F401, F402, E402
     E4CH,
