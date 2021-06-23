@@ -594,7 +594,7 @@ class Diffractometer(PseudoPositioner):
 
         EXAMPLE::
 
-            In [1]: from hkl.geometries import SimulatedK4CV
+            In [1]: from hkl import SimulatedK4CV
 
             In [2]: k4cv = SimulatedK4CV('', name='k4cv')
 
@@ -739,7 +739,7 @@ class Diffractometer(PseudoPositioner):
 
         EXAMPLE::
 
-            In [1]: from hkl.geometries import SimulatedK4CV
+            In [1]: from hkl import SimulatedK4CV
 
             In [2]: k4cv = SimulatedK4CV('', name='k4cv')
 
