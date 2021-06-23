@@ -535,7 +535,29 @@ def get_package_info(package_name):
 
 
 def software_versions(keys=[]):
-    """Just the package versions, in a dictionary."""
+    """
+    Report the package versions, in a dictionary.
+
+    EXAMPLE::
+
+        In [1]: import gi
+        ...:
+        ...: gi.require_version("Hkl", "5.0")
+        ...:
+        ...: import hkl.util
+
+        In [2]: hkl.util.software_versions()
+        Out[2]:
+        {'hkl': '5.0.0.2173',
+        'hklpy': '0.3.16+131.ga5a449a.dirty',
+        'gobject-introspection': '1.68.0'}
+
+    Here, it shows (albeit indirectly) *Hkl 5.0.0 tag 2173*.  Proceed to the Hkl
+    source repository, list of tags [#]_, and find tag ``2173`` [#]_.
+
+    .. [#] Hkl source tags: https://repo.or.cz/hkl.git/refs
+    .. [#] Hkl tag 2173: https://repo.or.cz/hkl.git/tree/refs/tags/v5.0.0.2173)
+    """
     if keys is None or len(keys) == 0:
         keys = DEFAULT_PACKAGE_LIST
     v_dict = {}
