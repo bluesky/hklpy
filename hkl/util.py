@@ -499,26 +499,23 @@ def _installed_package_information():
             s = subprocess.run([tool, "list"], stdout=subprocess.PIPE)
         return s
 
-    s = run("pip")
-    for line in s.stdout.splitlines():
-        if not line.decode().startswith("#"):
-            args = line.decode().strip().split()
-            key = args[0]
-            packages[key]["version"] = args[1]
-            packages[key]["pip"] = True
-            if len(args) == 3:
-                packages[key]["location"] = args[2]
+    for tool in "conda pip".split():
+        s = run(tool)
+        for line in s.stdout.splitlines():
+            if not line.decode().startswith("#"):
+                args = line.decode().strip().split()
+                key = args[0]
+                packages[key]["version"] = args[1]
+                packages[key][tool] = True
+                if tool == "conda":
+                    packages[key]["build"] = args[2]
+                    packages[key]["conda"] = True
+                    if len(args) == 4:
+                        packages[key]["channel"] = args[3]
 
-    s = run("conda")
-    for line in s.stdout.splitlines():
-        if not line.decode().startswith("#"):
-            args = line.decode().strip().split()
-            key = args[0]
-            packages[key]["version"] = args[1]
-            packages[key]["build"] = args[2]
-            packages[key]["conda"] = True
-            if len(args) == 4:
-                packages[key]["channel"] = args[3]
+                elif tool == "pip":
+                    if len(args) == 3:
+                        packages[key]["location"] = args[2]
 
     return packages
 
