@@ -56,7 +56,7 @@ Load the simulated 6-circle geometry from *hklpy*:
     import gi
     gi.require_version("Hkl", "5.0")
     # MUST come before `import hkl`
-    from hkl.geometries import SimulatedE6C
+    from hkl import SimulatedE6C
 
 Create an instance of this diffractometer with::
 

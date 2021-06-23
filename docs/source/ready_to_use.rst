@@ -15,7 +15,7 @@ SimulatedE4CV
     import gi
     gi.require_version("Hkl", "5.0")
     # MUST come before `import hkl`
-    from hkl.geometries import SimulatedE4CV
+    from hkl import SimulatedE4CV
 
     sim4c = SimulatedE4CV("", name="sim4c")
 
@@ -34,7 +34,7 @@ SimulatedE6C
     import gi
     gi.require_version("Hkl", "5.0")
     # MUST come before `import hkl`
-    from hkl.geometries import SimulatedE6C
+    from hkl import SimulatedE6C
 
     sim6c = SimulatedE6C("", name="sim6c")
 
@@ -53,7 +53,7 @@ SimulatedK4CV
     import gi
     gi.require_version("Hkl", "5.0")
     # MUST come before `import hkl`
-    from hkl.geometries import SimulatedK4CV
+    from hkl import SimulatedK4CV
 
     simk4c = SimulatedK4CV("", name="simk4c")
 
@@ -72,7 +72,7 @@ SimulatedK6C
     import gi
     gi.require_version("Hkl", "5.0")
     # MUST come before `import hkl`
-    from hkl.geometries import SimulatedK6C
+    from hkl import SimulatedK6C
 
     simk6c = SimulatedK6C("", name="simk6c")
 

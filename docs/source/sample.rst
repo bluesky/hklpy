@@ -58,7 +58,7 @@ and degrees for the angles.
 
 ::
 
-    from hkl.util import Lattice
+    from hkl import Lattice
     fourc.calc.new_sample('EuPtIn4_eh1_ver',
         lattice=Lattice(
             a=4.542, b=16.955, c=7.389,

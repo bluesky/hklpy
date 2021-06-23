@@ -166,7 +166,7 @@ pseudo positioners.
 
     import gi
     gi.require_version('Hkl', '5.0')
-    from hkl.geometries import E4CV
+    from hkl import E4CV
     import logging
     from ophyd import Component
     from ophyd import EpicsMotor
