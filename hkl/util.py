@@ -26,12 +26,11 @@ import logging
 import numpy as np
 import pandas as pd
 import subprocess
-import sys
 
 import gi
 gi.require_version('Hkl', '5.0')
 from gi.repository import Hkl as libhkl
-from gi.repository import GLib
+from gi.repository import GLib  # noqa: F401
 
 # try:
 #     from gi.repository import Hkl as libhkl
