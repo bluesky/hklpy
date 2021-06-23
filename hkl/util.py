@@ -490,8 +490,16 @@ def _installed_package_information():
     """Index information about packages known by conda and/or pip."""
     packages = defaultdict(dict)
 
-    # pip
-    s = subprocess.run("pip list".split(), capture_output=True)
+    def run(tool):
+        try:
+            # Python 3.7+
+            s = subprocess.run([tool, "list"], capture_output=True)
+        except TypeError:
+            # Python < 3.7
+            s = subprocess.run([tool, "list"], stdout=subprocess.PIPE)
+        return s
+
+    s = run("pip")
     for line in s.stdout.splitlines():
         if not line.decode().startswith("#"):
             args = line.decode().strip().split()
@@ -501,8 +509,7 @@ def _installed_package_information():
             if len(args) == 3:
                 packages[key]["location"] = args[2]
 
-    # conda
-    s = subprocess.run("conda list".split(), capture_output=True)
+    s = run("conda")
     for line in s.stdout.splitlines():
         if not line.decode().startswith("#"):
             args = line.decode().strip().split()
