@@ -22,7 +22,7 @@ def test__package_info_states():
         ("bluesky", "1.6"),
         ("gobject-introspection", "1.68.0"),
         ("hkl", "5.0.0"),
-        ("hklpy", "0.3.16"),
+        ("hklpy", "0"),  # minimum test for unversioned use
         (NO_SUCH_PACKAGE_NAME, "---"),
         ("ophyd", "1.6"),
     ],
@@ -65,7 +65,7 @@ def test_software_versions_default_list(case):
         ("bluesky", "1.6"),
         ("gobject-introspection", "1.68.0"),
         ("hkl", "5.0.0"),
-        ("hklpy", "0.3.16"),
+        ("hklpy", "0"),  # minimum test for unversioned use
         (NO_SUCH_PACKAGE_NAME, "---"),
         ("ophyd", "1.6"),
     ],
