@@ -43,7 +43,14 @@ def test_get_package_info(package_name, minimum_version):
 
 
 @pytest.mark.parametrize(
-    "case", [(None), ([]), ("")],
+    # fmt: off
+    "case",
+    [
+        (None),
+        ([]),
+        ("")
+    ],
+    # fmt: on
 )
 def test_software_versions_default_list(case):
     v = hkl.util.software_versions(case)
