@@ -7,6 +7,7 @@ register that instance here calling `select_diffractometer(instance)`.
 FUNCTIONS
 
 .. autosummary::
+
     ~cahkl
     ~cahkl_table
     ~calc_UB
