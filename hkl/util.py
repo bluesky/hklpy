@@ -63,6 +63,10 @@ __all__ = """
 logger = logging.getLogger(__name__)
 
 
+# when getting software package versions
+DEFAULT_PACKAGE_LIST = "hkl hklpy gobject-introspection".split()
+
+
 def new_detector(dtype=0):
     """Create a new HKL-library detector"""
     return libhkl.Detector.factory_new(libhkl.DetectorType(dtype))
@@ -525,5 +529,10 @@ def get_package_info(package_name):
 def software_versions(keys=[]):
     """Just the package versions, in a dictionary."""
     if keys is None or len(keys) == 0:
-        keys = "hkl hklpy gobject-introspection".split()
-        return {key: get_package_info(key).get("version") for key in keys}
+        keys = DEFAULT_PACKAGE_LIST
+    v_dict = {}
+    for key in keys:
+        info = get_package_info(key)
+        if info is not None:
+            v_dict[key] = info.get("version")
+    return v_dict
