@@ -22,12 +22,12 @@ Utility functions and structures.
 
 from __future__ import print_function
 from collections import defaultdict, namedtuple
+import gi
 import logging
 import numpy as np
 import pandas as pd
 import subprocess
 
-import gi
 gi.require_version('Hkl', '5.0')
 from gi.repository import Hkl as libhkl
 from gi.repository import GLib  # noqa: F401
