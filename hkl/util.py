@@ -18,6 +18,11 @@ Utility functions and structures.
     ~restore_UB
     ~run_orientation_info
     ~software_versions
+
+Also provides `SI_LATTICE_PARAMETER` as defined by the
+*2018 CODATA recommended lattice parameter of silicon*. [#]_
+
+.. [#] https://physics.nist.gov/cgi-bin/cuu/Value?asil
 """
 
 from __future__ import print_function
@@ -47,6 +52,7 @@ __all__ = """
     restore_sample
     restore_UB
     run_orientation_info
+    SI_LATTICE_PARAMETER
     software_versions
 """.split()
 logger = logging.getLogger(__name__)
@@ -54,6 +60,12 @@ logger = logging.getLogger(__name__)
 
 # when getting software package versions
 DEFAULT_PACKAGE_LIST = "hkl hklpy gobject-introspection".split()
+
+# 2018 CODATA recommended lattice parameter of silicon, Angstrom.
+# see: https://physics.nist.gov/cgi-bin/cuu/Value?asil
+SI_LATTICE_PARAMETER = 5.431020511
+# also provide the reported uncertainty, in case anyone is interested
+SI_LATTICE_PARAMETER_UNCERTAINTY = 0.000000089
 
 
 def new_detector(dtype=0):
