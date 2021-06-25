@@ -32,21 +32,6 @@ gi.require_version("Hkl", "5.0")
 from gi.repository import Hkl as libhkl
 from gi.repository import GLib  # noqa: F401
 
-# try:
-#     from gi.repository import Hkl as libhkl
-#     from gi.repository import GLib
-# except ImportError as ex:
-#     libhkl = None
-#     GLib = None
-
-#     print(
-#         # fmt: off
-#         "[!!] Failed to import Hkl library;"
-#         f" diffractometer support disabled ({ex})",
-#         file=sys.stderr,
-#         # fmt: on
-#     )
-
 __all__ = """
     Constraint
     diffractometer_types
