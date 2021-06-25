@@ -64,6 +64,7 @@ import hkl.util
         ("util", "restore_reflections"),
         ("util", "restore_UB"),
         ("util", "run_orientation_info"),
+        ("util", "software_versions"),
     ],
 )
 def test_shortcuts(module_name, attribute):

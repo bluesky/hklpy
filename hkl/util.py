@@ -5,6 +5,7 @@ Utility functions and structures.
 
     ~Constraint
     ~diffractometer_types
+    ~get_package_info
     ~get_position_tuple
     ~Lattice
     ~list_orientation_runs
@@ -16,33 +17,25 @@ Utility functions and structures.
     ~restore_sample
     ~restore_UB
     ~run_orientation_info
+    ~software_versions
 """
 
 from __future__ import print_function
-from collections import namedtuple
+from collections import defaultdict, namedtuple
+import gi
 import logging
 import numpy as np
 import pandas as pd
-import sys
+import subprocess
 
-try:
-    from gi.repository import Hkl as libhkl
-    from gi.repository import GLib
-except ImportError as ex:
-    libhkl = None
-    GLib = None
-
-    print(
-        # fmt: off
-        "[!!] Failed to import Hkl library;"
-        f" diffractometer support disabled ({ex})",
-        file=sys.stderr,
-        # fmt: on
-    )
+gi.require_version("Hkl", "5.0")
+from gi.repository import Hkl as libhkl
+from gi.repository import GLib  # noqa: F401
 
 __all__ = """
     Constraint
     diffractometer_types
+    get_package_info
     get_position_tuple
     Lattice
     list_orientation_runs
@@ -54,8 +47,13 @@ __all__ = """
     restore_sample
     restore_UB
     run_orientation_info
+    software_versions
 """.split()
 logger = logging.getLogger(__name__)
+
+
+# when getting software package versions
+DEFAULT_PACKAGE_LIST = "hkl hklpy gobject-introspection".split()
 
 
 def new_detector(dtype=0):
@@ -471,3 +469,85 @@ def restore_UB(orientation, diffractometer):
     """
     _check_geometry(orientation, diffractometer)
     _smart_signal_update(orientation["UB"], diffractometer.UB)
+
+
+def _installed_package_information():
+    """Index information about packages known by conda and/or pip."""
+    packages = defaultdict(dict)
+
+    def run(tool):
+        try:
+            # Python 3.7+
+            s = subprocess.run([tool, "list"], capture_output=True)
+        except TypeError:
+            # Python < 3.7
+            s = subprocess.run([tool, "list"], stdout=subprocess.PIPE)
+        return s
+
+    for tool in "conda pip".split():
+        s = run(tool)
+        for line in s.stdout.splitlines():
+            if not line.decode().startswith("#"):
+                args = line.decode().strip().split()
+                key = args[0]
+                packages[key]["version"] = args[1]
+                packages[key][tool] = True
+                if tool == "conda":
+                    packages[key]["build"] = args[2]
+                    packages[key]["conda"] = True
+                    if len(args) == 4:
+                        packages[key]["channel"] = args[3]
+
+                elif tool == "pip":
+                    if len(args) == 3:
+                        packages[key]["location"] = args[2]
+
+    return packages
+
+
+# cache of discovered installed package information
+_package_info = None
+
+
+def get_package_info(package_name):
+    """Return dict of information about installed package, by name."""
+    global _package_info
+    if _package_info is None:
+        # index the known packages
+        # This is not expected to change once the process has started.
+        _package_info = _installed_package_information()
+    return _package_info.get(package_name)
+
+
+def software_versions(keys=[]):
+    """
+    Report the package versions, in a dictionary.
+
+    EXAMPLE::
+
+        In [1]: import gi
+        ...:
+        ...: gi.require_version("Hkl", "5.0")
+        ...:
+        ...: import hkl.util
+
+        In [2]: hkl.util.software_versions()
+        Out[2]:
+        {'hkl': '5.0.0.2173',
+        'hklpy': '0.3.16+131.ga5a449a.dirty',
+        'gobject-introspection': '1.68.0'}
+
+    Here, it shows (albeit indirectly) *Hkl 5.0.0 tag 2173*.  Proceed to the Hkl
+    source repository, list of tags [#]_, and find tag ``2173`` [#]_.
+
+    .. [#] Hkl source tags: https://repo.or.cz/hkl.git/refs
+    .. [#] Hkl tag 2173: https://repo.or.cz/hkl.git/tree/refs/tags/v5.0.0.2173)
+    """
+    if keys is None or len(keys) == 0:
+        keys = DEFAULT_PACKAGE_LIST
+    v_dict = {}
+    for key in keys:
+        info = get_package_info(key)
+        if info is not None:
+            v_dict[key] = info.get("version")
+    return v_dict
