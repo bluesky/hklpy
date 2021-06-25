@@ -11,6 +11,7 @@ dependencies:
   - ipython
   - numpy
   - ophyd
+  - packaging
   - pint
   - pip
   - prettytable
