@@ -8,9 +8,9 @@ import pytest
 gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
 import hkl.calc
-from hkl.diffract import Constraint
-from hkl.geometries import E6C, SimMixin
-from hkl.util import Lattice
+from hkl import Constraint
+from hkl import E6C, SimMixin
+from hkl import Lattice
 
 
 TARDIS_TEST_MODE = "lifting_detector_mu"

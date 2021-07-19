@@ -6,8 +6,9 @@ gi.require_version("Hkl", "5.0")
 
 from bluesky import RunEngine
 from hkl.calc import A_KEV
-from hkl.geometries import SimulatedE4CV
-from hkl.geometries import SimulatedK4CV
+from hkl import SimulatedE4CV
+from hkl import SimulatedK4CV
+from hkl import SI_LATTICE_PARAMETER
 from ophyd.sim import hw
 import bluesky.plans as bp
 import databroker
@@ -43,7 +44,7 @@ def fourc():
     fourc._update_calc_energy()
 
     fourc.energy.put(A_KEV / 1.54)
-    a0 = 5.4310196
+    a0 = SI_LATTICE_PARAMETER
     sample = fourc.calc.new_sample("Si", lattice=(a0, a0, a0, 90, 90, 90))
     r_400 = sample.add_reflection(4, 0, 0, (-145.451, 0, 0, 69.0966))
     r_040 = sample.add_reflection(0, 4, 0, (-145.451, 0, 90, 69.0966))
@@ -59,7 +60,7 @@ def kappa():
     kappa._update_calc_energy()
 
     kappa.energy.put(A_KEV / 1.54)
-    a0 = 5.4310196
+    a0 = SI_LATTICE_PARAMETER
     sample = kappa.calc.new_sample("Si", lattice=(a0, a0, a0, 90, 90, 90))
     r_400 = sample.add_reflection(4, 0, 0, (55.4507, 0, 90, -69.0966))
     r_040 = sample.add_reflection(0, 4, 0, (-1.5950, 134.7568, 123.3554, -69.0966))

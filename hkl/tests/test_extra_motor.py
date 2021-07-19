@@ -3,7 +3,7 @@ from ophyd import Component as Cpt
 from ophyd import PseudoSingle
 
 gi.require_version("Hkl", "5.0")
-from hkl.geometries import SimulatedE4CV
+from hkl import SimulatedE4CV
 
 
 class Fourc(SimulatedE4CV):
@@ -15,7 +15,7 @@ from ophyd import Component as Cpt
 from ophyd import SoftPositioner
 import gi
 gi.require_version('Hkl', '5.0')
-from hkl.geometries import SimulatedE4CV
+from hkl import SimulatedE4CV
 
 class Fourc(SimulatedE4CV):
     ...
