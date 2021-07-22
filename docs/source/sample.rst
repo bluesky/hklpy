@@ -31,10 +31,10 @@ to the 6-circle example :ref:`geometries.sim6c`.)
     import gi
     gi.require_version('Hkl', '5.0')
     # MUST come before `import hkl`
-    import hkl.diffract
+    import hkl
     from ophyd import Component, PseudoSingle, SoftPositioner
 
-    class SimulatedE4CV(hkl.diffract.E4CV):
+    class SimulatedE4CV(hkl.E4CV):
 
         h = Component(PseudoSingle, '')
         k = Component(PseudoSingle, '')
