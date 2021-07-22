@@ -80,6 +80,8 @@ class Diffractometer(PseudoPositioner):
         The decision function to use when multiple solutions exist for a given
         forward calculation. Defaults to arbitrarily picking the first
         solution.
+    engine : str, optional
+        Calculation engine name.  Default: ``hkl``
     read_attrs : list, optional
         Read attributes default to all pseudo and real positioners
     configuration_attrs : list, optional
@@ -248,6 +250,7 @@ class Diffractometer(PseudoPositioner):
         calc_kw=None,
         decision_fcn=None,
         calc_inst=None,
+        engine="hkl",
         *,
         configuration_attrs=None,
         read_attrs=None,
@@ -255,20 +258,25 @@ class Diffractometer(PseudoPositioner):
     ):
         if calc_inst is not None:
             if not isinstance(calc_inst, self.calc_class):
-                raise ValueError("Calculation instance must be derived  from the class {self.calc_class}")
+                raise ValueError(
+                    "Calculation instance must be derived"
+                    f" from the class {self.calc_class}"
+                )
             self._calc = calc_inst
 
         else:
             if calc_kw is None:
                 calc_kw = {}
 
-            self._calc = self.calc_class(lock_engine=True, **calc_kw)
+            self._calc = self.calc_class(engine=engine, lock_engine=True, **calc_kw)
 
         if not self.calc.engine_locked:
             # Reason for this is that the engine determines the pseudomotor
             # names, so if the engine is switched from underneath, the
             # pseudomotor will no longer function properly
-            raise ValueError("Calculation engine must be locked  (CalcDiff.lock_engine set)")
+            raise ValueError(
+                "Calculation engine must be locked (CalcDiff.lock_engine set)"
+            )
 
         if configuration_attrs is None:
             configuration_attrs = """
