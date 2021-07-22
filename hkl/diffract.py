@@ -244,6 +244,7 @@ class Diffractometer(PseudoPositioner):
     max_forward_iterations = Cpt(Signal, value=100, kind="config")
     # fmt: on
 
+    # fmt: off
     def __init__(
         self,
         prefix,
@@ -256,12 +257,15 @@ class Diffractometer(PseudoPositioner):
         read_attrs=None,
         **kwargs,
     ):
+    # fmt: on
         if calc_inst is not None:
             if not isinstance(calc_inst, self.calc_class):
+                # fmt: off
                 raise ValueError(
                     "Calculation instance must be derived"
                     f" from the class {self.calc_class}"
                 )
+            # fmt: on
             self._calc = calc_inst
 
         else:
@@ -274,9 +278,11 @@ class Diffractometer(PseudoPositioner):
             # Reason for this is that the engine determines the pseudomotor
             # names, so if the engine is switched from underneath, the
             # pseudomotor will no longer function properly
+            # fmt: off
             raise ValueError(
                 "Calculation engine must be locked (CalcDiff.lock_engine set)"
             )
+            # fmt: on
 
         if configuration_attrs is None:
             configuration_attrs = """

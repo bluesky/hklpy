@@ -334,8 +334,8 @@ def test_specify_engine():
 
     q4c = Q4C("", name="q4c", engine="q")
     assert q4c.calc.engine.name == "q"
-    q = 1.
-    angle = 2*np.arcsin(q*q4c.calc.wavelength/4/np.pi)*180/np.pi
+    q = 1.0
+    angle = 2 * np.arcsin(q * q4c.calc.wavelength / 4 / np.pi) * 180 / np.pi
     value = q4c.forward(q)
     assert round(value.tth, 5) == round(angle, 5)
     assert value.omega == 0.0
