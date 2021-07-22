@@ -313,3 +313,31 @@ def test_apply_constraints(fourc):
     assert pytest.approx(sol.chi, 1e-5) == 0
     assert pytest.approx(sol.phi, 1e-5) == 90
     assert pytest.approx(sol.tth, 1e-5) == 60
+
+
+def test_specify_engine():
+    import hkl
+    import numpy as np
+    from ophyd import Component as Cpt
+    from ophyd import PseudoSingle
+    from ophyd import SoftPositioner
+
+    class Q4C(hkl.E4CV):
+        q = Cpt(PseudoSingle, "")
+        omega = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+        chi = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+        phi = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+        tth = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0)
+
+    q4c = Q4C("", name="q4c")
+    assert q4c.calc.engine.name == "hkl"
+
+    q4c = Q4C("", name="q4c", engine="q")
+    assert q4c.calc.engine.name == "q"
+    q = 1.
+    angle = 2*np.arcsin(q*q4c.calc.wavelength/4/np.pi)*180/np.pi
+    value = q4c.forward(q)
+    assert round(value.tth, 5) == round(angle, 5)
+    assert value.omega == 0.0
+    assert value.chi == 0.0
+    assert value.phi == 0.0
