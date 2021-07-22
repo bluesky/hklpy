@@ -257,7 +257,7 @@ class Diffractometer(PseudoPositioner):
         read_attrs=None,
         **kwargs,
     ):
-    # fmt: on
+        # fmt: on
         if calc_inst is not None:
             if not isinstance(calc_inst, self.calc_class):
                 # fmt: off
