@@ -95,12 +95,12 @@ connect our motor PVs to the positioners for the *real axes*:
     import gi
     gi.require_version("Hkl", "5.0")
     # MUST come before `import hkl`
-    import hkl.geometries
+    import hkl
     from ophyd import Component
     from ophyd import EpicsMotor
     from ophyd import PseudoSingle
 
-    class KappaK4CV(hkl.geometries.K4CV):
+    class KappaK4CV(hkl.K4CV):
         """K4CV: kappa diffractometer in 4-circle geometry"""
 
         h = Component(PseudoSingle, "")
@@ -163,7 +163,7 @@ energy signals.  Create the custom kappa 4-circle subclass with energy:
     import gi
     gi.require_version("Hkl", "5.0")
     # MUST come before `import hkl`
-    import hkl.geometries
+    import hkl
     from ophyd import Component
     from ophyd import PseudoSingle
     from ophyd import EpicsMotor
@@ -171,7 +171,7 @@ energy signals.  Create the custom kappa 4-circle subclass with energy:
     from ophyd import Signal
     import pint
 
-    class KappaK4CV_Energy(hkl.geometries.K4CV):
+    class KappaK4CV_Energy(hkl.K4CV):
         """
         K4CV: kappa diffractometer in 4-circle geometry with energy
         """

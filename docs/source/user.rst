@@ -54,7 +54,8 @@ EXAMPLES::
     select_diffractometer(fourc)
 
     # sample is the silicon standard
-    a0 = 5.4310196; new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
+    a0 = hkl.SI_LATTICE_PARAMETER  # 5.4310...
+    new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
 
     list_samples()
 

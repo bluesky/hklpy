@@ -4,7 +4,7 @@ import pytest
 
 gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
-from hkl.geometries import SimulatedE4CV
+from hkl import SimulatedE4CV
 
 
 class Fourc(SimulatedE4CV):

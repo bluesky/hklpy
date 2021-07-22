@@ -5,7 +5,8 @@ import gi
 
 gi.require_version("Hkl", "5.0")
 # NOTE: MUST call gi.require_version() BEFORE import hkl
-from hkl.geometries import SimulatedE4CV
+from hkl import SimulatedE4CV
+from hkl import SI_LATTICE_PARAMETER
 import hkl.user
 
 
@@ -73,7 +74,7 @@ def test_cahkl_table(capsys, fourc):
 
 def test_calc_UB(fourc):
     hkl.user.select_diffractometer(fourc)
-    a0 = 5.4310196
+    a0 = SI_LATTICE_PARAMETER
     hkl.user.new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
     r1 = hkl.user.setor(4, 0, 0, tth=69.0966, omega=-145.451, chi=0, phi=0, wavelength=1.54)
     fourc.omega.move(-145.451)
@@ -92,7 +93,7 @@ def test_calc_UB(fourc):
 
 def test_list_samples(capsys, fourc):
     hkl.user.select_diffractometer(fourc)
-    a0 = 5.431
+    a0 = SI_LATTICE_PARAMETER
     hkl.user.new_sample("silicon", a0, a0, a0, 90, 90, 90)
     capsys.readouterr()  # flush the output buffers
 
@@ -100,7 +101,7 @@ def test_list_samples(capsys, fourc):
     out, err = capsys.readouterr()
     assert err == ""
     expected = """
-    silicon (*): [5.431, 5.431, 5.431, 90.0, 90.0, 90.0]
+    silicon (*): [5.431020511, 5.431020511, 5.431020511, 90.0, 90.0, 90.0]
     main: [1.54, 1.54, 1.54, 90.0, 90.0, 90.0]
     """.strip().splitlines()
     for e, r in list(zip(expected, str(out).strip().splitlines())):
@@ -112,18 +113,18 @@ def test_list_samples(capsys, fourc):
     expected = """
     Sample: silicon (*)
 
-    ======= =======================================
+    ======= =========================================================
     key     value
-    ======= =======================================
+    ======= =========================================================
     name    silicon
-    lattice [5.431, 5.431, 5.431, 90.0, 90.0, 90.0]
+    lattice [5.431020511, 5.431020511, 5.431020511, 90.0, 90.0, 90.0]
     U       [[1. 0. 0.]
              [0. 1. 0.]
              [0. 0. 1.]]
     UB      [[ 1.15691 -0.      -0.     ]
              [ 0.       1.15691 -0.     ]
              [ 0.       0.       1.15691]]
-    ======= =======================================
+    ======= =========================================================
 
 
     Sample: main
@@ -149,13 +150,13 @@ def test_new_sample(fourc):
     hkl.user.select_diffractometer(fourc)
 
     # sample is the silicon standard
-    a0 = 5.4310196
+    a0 = SI_LATTICE_PARAMETER
     hkl.user.new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
     assert fourc.calc.sample.name == "silicon standard"
     lattice = fourc.calc.sample.lattice
-    assert round(lattice.a, 7) == a0
-    assert round(lattice.b, 7) == a0
-    assert round(lattice.c, 7) == a0
+    assert round(lattice.a, 9) == a0
+    assert round(lattice.b, 9) == a0
+    assert round(lattice.c, 9) == a0
     assert round(lattice.alpha, 7) == 90
     assert round(lattice.beta, 7) == 90
     assert round(lattice.gamma, 7) == 90
@@ -196,7 +197,7 @@ def test_set_energy(fourc):
 
 def test_setor(fourc):
     hkl.user.select_diffractometer(fourc)
-    a0 = 5.4310196
+    a0 = SI_LATTICE_PARAMETER
     hkl.user.new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
 
     assert len(fourc.calc.sample.reflections) == 0
@@ -215,13 +216,13 @@ def test_setor(fourc):
 
 def test_show_sample(capsys, fourc):
     hkl.user.select_diffractometer(fourc)
-    a0 = 5.431
+    a0 = SI_LATTICE_PARAMETER
     hkl.user.new_sample("silicon", a0, a0, a0, 90, 90, 90)
     capsys.readouterr()  # flush the output buffers
 
     hkl.user.show_sample(verbose=False)
     out, err = capsys.readouterr()
-    assert str(out).strip() == ("silicon (*):" " [5.431, 5.431, 5.431, 90.0, 90.0, 90.0]")
+    assert str(out).strip() == ("silicon (*):" " [5.431020511, 5.431020511, 5.431020511, 90.0, 90.0, 90.0]")
     assert err == ""
 
     hkl.user.show_sample()
@@ -230,18 +231,18 @@ def test_show_sample(capsys, fourc):
     expected = """
     Sample: silicon (*)
 
-    ======= =======================================
+    ======= =========================================================
     key     value
-    ======= =======================================
+    ======= =========================================================
     name    silicon
-    lattice [5.431, 5.431, 5.431, 90.0, 90.0, 90.0]
+    lattice [5.431020511, 5.431020511, 5.431020511, 90.0, 90.0, 90.0]
     U       [[1. 0. 0.]
              [0. 1. 0.]
              [0. 0. 1.]]
     UB      [[ 1.15691 -0.      -0.     ]
              [ 0.       1.15691 -0.     ]
              [ 0.       0.       1.15691]]
-    ======= =======================================
+    ======= =========================================================
     """.strip().splitlines()
     for e, r in list(zip(expected, str(out).strip().splitlines())):
         assert r.strip() == e.strip()
