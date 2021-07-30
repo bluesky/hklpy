@@ -18,6 +18,11 @@ release date.
 
 .. [#] https://github.com/bluesky/hklpy/milestone/5
 
+Breaking Changes
+----------------
+
+* Python 3.6 no longer supported.
+
 v0.3.16 (2021-04-28)
 ================================
 
