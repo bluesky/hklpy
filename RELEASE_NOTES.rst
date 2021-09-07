@@ -41,7 +41,7 @@ New Features and/or Enhancements
 * Import any diffractometer from top level ``hkl`` (not from ``hkl.diffract``):  ``from hkl import E4CV``
 * Support save and restore of **UB** matrix
 * Can swap the order of the two crystal orientation reflections.
-* constant: ``hkl.SI_LATTICE_PARAMETER``
+* Constant: ``hkl.SI_LATTICE_PARAMETER``
 * How-To guides
   * add extra axes to a diffractometer
   * rename physical axes of a diffractometer
