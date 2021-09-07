@@ -65,6 +65,7 @@ Contributors
 * Andi Barbour, NSLS-II
 * Jennifer Bui, (NSLS-II) Brown Univ.
 * Thomas Caswell, NSLS-II
+* Yongseong Choi, APS
 * Gilberto Fabbris, APS
 * Jong Woo Kim, APS
 * Katherine Perez, (NSLS-II) LSU
