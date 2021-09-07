@@ -37,7 +37,7 @@ Breaking Changes
 New Features and/or Enhancements
 --------------------------------
 
-* conda package available on conda-forge: ``conda install -c conda-forge hklpy``
+* Conda package available on conda-forge: ``conda install -c conda-forge hklpy``
 * Import any diffractometer from top level ``hkl`` (not from ``hkl.diffract``):  ``from hkl import E4CV``
 * Support save and restore of **UB** matrix
 * Can swap the order of the two crystal orientation reflections.
