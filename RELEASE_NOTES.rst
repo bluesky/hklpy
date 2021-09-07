@@ -70,7 +70,7 @@ Contributors
 * Katherine Perez, (NSLS-II) LSU
 * Fanny Rodolakis, APS
 * Jorg Strempfer, APS
-* A. Walter, NSLS-II
+* Andrew Walter, NSLS-II
 * Stuart Wilkins, NSLS-II
 
 v0.3.16 (2021-04-28)
