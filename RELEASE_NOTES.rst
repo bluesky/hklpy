@@ -32,7 +32,7 @@ Breaking Changes
 * ``TwoC`` geometry removed since no calculation engines are defined for it in _libhkl_
 * ``SOLEIL_SIXS`` geometry removed since it is not described in _libhkl_
 * ``MED2+3`` renamed to ``SOLEIL SIXS MED2+3``
-* conda package is built for ``linux-64`` only  due to _libhkl_ requirement
+* Conda package is built for ``linux-64`` only  due to _libhkl_ requirement
 
 New Features and/or Enhancements
 --------------------------------
