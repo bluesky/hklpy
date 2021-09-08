@@ -9,19 +9,70 @@ Release History
     Fixes
     Maintenance
     Deprecations
+    Contributors
 
-v1.0.0 (tba)
-============
+v1.0.0 (by 2021-09-30)
+======================
 
-Consult the 1.0.0 milestone [#]_ on GitHub for an expected
-release date.
+First production release.
 
-.. [#] https://github.com/bluesky/hklpy/milestone/5
+..
+  Consult the 1.0.0 milestone [#]_ on GitHub for an expected
+  release date.
+
+  .. [#] https://github.com/bluesky/hklpy/milestone/5
 
 Breaking Changes
 ----------------
 
 * Python 3.6 no longer supported.
+* ``Constraint`` moved from ``hkl.diffract`` to ``hkl.util``
+* Wavelength now saved with each reflection
+* Wavelength and lattice parameters in Angstroms now
+* ``TwoC`` geometry removed since no calculation engines are defined for it in _libhkl_
+* ``SOLEIL_SIXS`` geometry removed since it is not described in _libhkl_
+* ``MED2+3`` renamed to ``SOLEIL SIXS MED2+3``
+* Conda package is built for ``linux-64`` only  due to _libhkl_ requirement
+
+New Features and/or Enhancements
+--------------------------------
+
+* Conda package available on conda-forge: ``conda install -c conda-forge hklpy``
+* Import any diffractometer from top level ``hkl`` (not from ``hkl.diffract``):  ``from hkl import E4CV``
+* Support save and restore of **UB** matrix
+* Can swap the order of the two crystal orientation reflections.
+* Constant: ``hkl.SI_LATTICE_PARAMETER``
+* How-To guides
+  * add extra axes to a diffractometer
+  * rename physical axes of a diffractometer
+  * use additional diffractometer parameters
+  * use the Q calculation engine of E4CV
+* Specify calculation engine when creating a diffractometer.
+* Simplified user interface when working with one diffractometer.
+* Versions of component software packages now available.
+
+Maintenance
+-----------
+
+* Clarify 6-circle geometries with drawings & labels
+* Table of all defined diffractometers and their supported engines
+* Show the value used by kappa geometry angle $\alpha$ (50 degrees)
+* Show how wavelength and other reflection information are held in _libhkl_
+
+Contributors
+------------
+
+* Andi Barbour, NSLS-II
+* Jennifer Bui, (NSLS-II) Brown Univ.
+* Thomas Caswell, NSLS-II
+* Yongseong Choi, APS
+* Gilberto Fabbris, APS
+* Jong Woo Kim, APS
+* Katherine Perez, (NSLS-II) LSU
+* Fanny Rodolakis, APS
+* Jorg Strempfer, APS
+* Andrew Walter, NSLS-II
+* Stuart Wilkins, NSLS-II
 
 v0.3.16 (2021-04-28)
 ================================
