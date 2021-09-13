@@ -11,16 +11,12 @@ Release History
     Deprecations
     Contributors
 
-v1.0.0 (by 2021-09-30)
+v1.0.0 (2021-09-13)
 ======================
 
 First production release.
 
-..
-  Consult the 1.0.0 milestone [#]_ on GitHub for an expected
-  release date.
-
-  .. [#] https://github.com/bluesky/hklpy/milestone/5
+.. https://github.com/bluesky/hklpy/milestone/5
 
 Breaking Changes
 ----------------
