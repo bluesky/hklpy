@@ -173,6 +173,12 @@ def test_forward_solutions_table(fourc):
     assert pytest.approx(sol.phi, 1e-5) == -90
     assert pytest.approx(sol.tth, 1e-5) == -60
 
+    fourc.apply_constraints(
+        {
+            "tth": Constraint(0, 180, 0, True),
+        }
+    )
+
     tbl = fourc.forward_solutions_table(
         # fmt: off
         [
