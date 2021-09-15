@@ -11,6 +11,17 @@ Release History
     Deprecations
     Contributors
 
+v1.0.1 (2021-09-20 or thereabouts)
+======================
+
+Maintenance release.
+
+Maintenance
+-----------
+
+* Increase precision of ``A_KEV`` constant to match 2018 CODATA value.
+* Provide project description for PyPI packaging.
+
 v1.0.0 (2021-09-13)
 ======================
 
