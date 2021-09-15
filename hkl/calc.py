@@ -64,7 +64,7 @@ logger = logging.getLogger(__name__)
 
 # per NIST publication of CODATA Fundamental Physical Constants
 # https://www.nist.gov/programs-projects/codata-values-fundamental-physical-constants
-A_KEV = 12.3984198  # 1 Angstrom ~= 12.39842 keV
+A_KEV = 12.39841984  # 1 Angstrom ~= 12.39842 keV
 # A_KEV = 12.39842  # 1 Angstrom ~= 12.39842 keV
 NM_KEV = A_KEV * 0.1  # 1 nm ~= 1.239842 keV
 # Note: NM_KEV is not used by hklpy now, remains here as legacy
