@@ -97,7 +97,7 @@ class Diffractometer(PseudoPositioner):
         (as used in `hkl.diffract.Diffractometer`), `calc_inst` must be
         specified upon initialization.
 
-    max_forward_iterations : integer (default 100)
+    max_forward_iterations : ``ophyd.Signal`` (default value: 100)
         Maximum allowed number of iterations in the ``forward()``
         method before failing to find a forward() solution.
 
