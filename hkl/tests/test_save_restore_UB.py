@@ -76,7 +76,7 @@ def test_basic_setup(fourc, kappa):
     assert fourc != kappa
     assert fourc._reals != kappa._reals
 
-    assert fourc.calc.wavelength == 1.54
+    assert round(fourc.calc.wavelength, 2) == 1.54
     assert fourc.calc.wavelength == kappa.calc.wavelength
 
 
@@ -140,7 +140,7 @@ def test_fourc_run_orientation_info(cat, RE, fourc):
     refls = fourc_orient["reflections_details"]
     assert len(refls) == 2
     assert "wavelength" in refls[0]
-    assert refls[0]["wavelength"] == 1.54
+    assert round(refls[0]["wavelength"], 2) == 1.54
 
 
 def test_list_orientation_runs(cat, RE, fourc, kappa):
