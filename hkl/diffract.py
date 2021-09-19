@@ -59,7 +59,6 @@ class Diffractometer(PseudoPositioner):
         ~_set_constraints
         ~_update_calc_energy
 
-
     This has a corresponding calculation engine from **hklpy** that does
     forward and inverse calculations.
 
@@ -97,6 +96,10 @@ class Diffractometer(PseudoPositioner):
         Reciprocal calculation class used with this diffractometer. If ``None``
         (as used in `hkl.diffract.Diffractometer`), `calc_inst` must be
         specified upon initialization.
+
+    max_forward_iterations : ``ophyd.Signal`` (default value: 100)
+        Maximum allowed number of iterations in the ``forward()``
+        method before failing to find a forward() solution.
 
     See Also
     --------
