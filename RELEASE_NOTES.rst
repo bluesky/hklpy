@@ -11,8 +11,8 @@ Release History
     Deprecations
     Contributors
 
-v1.0.1 (2021-09-20 or thereabouts)
-==================================
+v1.0.1 (2021-09-20)
+===================
 
 Maintenance release.
 
@@ -20,10 +20,16 @@ Maintenance
 -----------
 
 * Increase precision of ``A_KEV`` constant to match 2018 CODATA value.
+* Document the ``max_forward_iterations`` attribute.
 * Provide project description for PyPI packaging.
 
+Contributors
+------------
+
+* Andi Barbour, NSLS-II
+
 v1.0.0 (2021-09-13)
-======================
+===================
 
 First production release.
 
@@ -82,7 +88,7 @@ Contributors
 * Stuart Wilkins, NSLS-II
 
 v0.3.16 (2021-04-28)
-================================
+====================
 
 Full list of changes is on the `wiki v0.3.16
 <https://github.com/bluesky/hklpy/wiki/release-notes-v0.3.16>`_.
