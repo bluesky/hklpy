@@ -73,7 +73,7 @@ jobs:
         env | sort | grep -i CONDA
         # make -C examples/
         # make -C docs/ html
-        make clean_docs examples html
+        make
 
     - name: Deploy documentation to blueskyproject.io.
       # We pin to the SHA, not the tag, for security reasons.
