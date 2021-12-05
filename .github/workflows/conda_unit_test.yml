@@ -57,7 +57,7 @@ jobs:
       shell: bash -l {0}
       run: |
         pwd
-        las -lAFgh
+        ls -lAFgh
         conda list -r
         conda list
 
