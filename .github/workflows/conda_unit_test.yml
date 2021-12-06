@@ -53,6 +53,14 @@ jobs:
       run: |
         pip install -e .
 
+    - name: Diagnostics
+      shell: bash -l {0}
+      run: |
+        pwd
+        ls -lAFgh
+        conda list -r
+        conda list
+
     - name: Test with coverage and pytest
       shell: bash -l {0}
       run: |
