@@ -28,9 +28,6 @@ to the 6-circle example :ref:`geometries.sim6c`.)
 .. code-block:: python
     :linenos:
 
-    import gi
-    gi.require_version('Hkl', '5.0')
-    # MUST come before `import hkl`
     import hkl
     from ophyd import Component, PseudoSingle, SoftPositioner
 

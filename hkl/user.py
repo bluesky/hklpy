@@ -43,9 +43,7 @@ __all__ = """
 """.split()
 
 import logging
-import gi
 
-gi.require_version("Hkl", "5.0")
 logger = logging.getLogger(__name__)
 
 from .diffract import Diffractometer

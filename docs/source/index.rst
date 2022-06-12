@@ -22,17 +22,6 @@ Integrates with ophyd pseudopositioners.
 Documentation about *ophyd* and the *bluesky* framework
 (https://blueskyproject.io/).
 
-Always import the ``gobject-introspection`` package first
-and require ``Hkl`` version 5.0, as in::
-
-   import gi
-   gi.require_version('Hkl', '5.0')
-
-   from hkl import E4CV
-   # note: before v1.0 release use:
-   # from hkl.geometries import E4CV
-
-
 .. toctree::
    :maxdepth: 2
    :glob:

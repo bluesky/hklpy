@@ -164,8 +164,6 @@ pseudo positioners.
 .. code-block:: python
    :caption: Connecting control system energy to a 4-circle diffractometer.
 
-    import gi
-    gi.require_version('Hkl', '5.0')
     from hkl import E4CV
     import logging
     from ophyd import Component

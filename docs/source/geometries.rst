@@ -53,9 +53,6 @@ Load the simulated 6-circle geometry from *hklpy*:
 .. code-block:: python
     :linenos:
 
-    import gi
-    gi.require_version("Hkl", "5.0")
-    # MUST come before `import hkl`
     from hkl import SimulatedE6C
 
 Create an instance of this diffractometer with::
@@ -92,9 +89,6 @@ connect our motor PVs to the positioners for the *real axes*:
 .. code-block:: python
     :linenos:
 
-    import gi
-    gi.require_version("Hkl", "5.0")
-    # MUST come before `import hkl`
     import hkl
     from ophyd import Component
     from ophyd import EpicsMotor
@@ -160,9 +154,6 @@ energy signals.  Create the custom kappa 4-circle subclass with energy:
 .. code-block:: python
     :linenos:
 
-    import gi
-    gi.require_version("Hkl", "5.0")
-    # MUST come before `import hkl`
     import hkl
     from ophyd import Component
     from ophyd import PseudoSingle
