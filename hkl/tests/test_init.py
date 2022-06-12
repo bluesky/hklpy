@@ -1,16 +1,10 @@
-import gi
-import pytest
-
-
-gi.require_version("Hkl", "5.0")
-# NOTE: MUST call gi.require_version() BEFORE any import from hkl
-
 import hkl
 import hkl.calc
 import hkl.diffract
 import hkl.geometries
 import hkl.user
 import hkl.util
+import pytest
 
 
 @pytest.mark.parametrize(

@@ -1,16 +1,12 @@
-from ophyd import Component as Cpt
-from ophyd import SoftPositioner
-import gi
-import numpy as np
-import numpy.testing
-import pytest
-
-gi.require_version("Hkl", "5.0")
-# NOTE: MUST call gi.require_version() BEFORE import hkl
-import hkl.calc
 from hkl import Constraint
 from hkl import E6C, SimMixin
 from hkl import Lattice
+from ophyd import Component as Cpt
+from ophyd import SoftPositioner
+import hkl.calc
+import numpy as np
+import numpy.testing
+import pytest
 
 
 TARDIS_TEST_MODE = "lifting_detector_mu"

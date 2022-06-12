@@ -1,15 +1,10 @@
 from bluesky import plans as bp
 from bluesky.simulators import check_limits
+from hkl import SimulatedE4CV
 from ophyd.positioner import LimitError
-import gi
 import numpy as np
 import numpy.testing
 import pytest
-
-
-gi.require_version("Hkl", "5.0")
-# NOTE: MUST call gi.require_version() BEFORE import hkl
-from hkl import SimulatedE4CV
 
 
 class Fourc(SimulatedE4CV):

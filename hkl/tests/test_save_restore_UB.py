@@ -1,14 +1,8 @@
-# NOTE: MUST call gi.require_version() BEFORE import hkl
-import gi
-
-gi.require_version("Hkl", "5.0")
-
-
 from bluesky import RunEngine
-from hkl.calc import A_KEV
+from hkl import SI_LATTICE_PARAMETER
 from hkl import SimulatedE4CV
 from hkl import SimulatedK4CV
-from hkl import SI_LATTICE_PARAMETER
+from hkl.calc import A_KEV
 from ophyd.sim import hw
 import bluesky.plans as bp
 import databroker
