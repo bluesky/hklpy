@@ -17,6 +17,11 @@ from ._version import get_versions  # noqa: F402, E402
 __version__ = get_versions()["version"]
 del get_versions
 
+# gobject-introspection, to access libhkl
+import gi
+
+gi.require_version("Hkl", "5.0")
+
 # import shortcuts
 
 from .calc import A_KEV, UnreachableError  # noqa: F401, F402, E402
