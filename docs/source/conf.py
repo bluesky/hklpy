@@ -21,9 +21,6 @@ import sphinx_rtd_theme
 sys.path.insert(0, os.path.abspath(os.path.join("..", "..",)))
 # fmt: on
 # imports here for sphinx to build the documents without many WARNINGS.
-import gi
-
-gi.require_version("Hkl", "5.0")
 import hkl
 import hkl.calc
 import hkl.diffract

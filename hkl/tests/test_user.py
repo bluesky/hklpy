@@ -1,13 +1,8 @@
-import pytest
-import numpy.testing
-
-import gi
-
-gi.require_version("Hkl", "5.0")
-# NOTE: MUST call gi.require_version() BEFORE import hkl
-from hkl import SimulatedE4CV
 from hkl import SI_LATTICE_PARAMETER
+from hkl import SimulatedE4CV
 import hkl.user
+import numpy.testing
+import pytest
 
 
 class Fourc(SimulatedE4CV):

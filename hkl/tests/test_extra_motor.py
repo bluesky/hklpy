@@ -1,9 +1,6 @@
-import gi
+from hkl import SimulatedE4CV
 from ophyd import Component as Cpt
 from ophyd import PseudoSingle
-
-gi.require_version("Hkl", "5.0")
-from hkl import SimulatedE4CV
 
 
 class Fourc(SimulatedE4CV):
@@ -13,8 +10,6 @@ class Fourc(SimulatedE4CV):
 FOURC_SETUP_CODE = """
 from ophyd import Component as Cpt
 from ophyd import SoftPositioner
-import gi
-gi.require_version('Hkl', '5.0')
 from hkl import SimulatedE4CV
 
 class Fourc(SimulatedE4CV):

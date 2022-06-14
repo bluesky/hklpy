@@ -1,10 +1,6 @@
-import gi
-
-gi.require_version("Hkl", "5.0")
-import pytest
-
-import hkl.util
 from packaging import version
+import hkl.util
+import pytest
 
 
 NO_SUCH_PACKAGE_NAME = "no-such-package"

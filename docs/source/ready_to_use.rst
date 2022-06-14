@@ -12,9 +12,6 @@ SimulatedE4CV
 .. code-block:: python
    :caption: Create a simulated 4-circle Eulerian diffractometer.
 
-    import gi
-    gi.require_version("Hkl", "5.0")
-    # MUST come before `import hkl`
     from hkl import SimulatedE4CV
 
     sim4c = SimulatedE4CV("", name="sim4c")
@@ -31,9 +28,6 @@ SimulatedE6C
 .. code-block:: python
    :caption: Create a simulated 6-circle Eulerian diffractometer.
 
-    import gi
-    gi.require_version("Hkl", "5.0")
-    # MUST come before `import hkl`
     from hkl import SimulatedE6C
 
     sim6c = SimulatedE6C("", name="sim6c")
@@ -50,9 +44,6 @@ SimulatedK4CV
 .. code-block:: python
    :caption: Create a simulated 4-circle Kappa diffractometer.
 
-    import gi
-    gi.require_version("Hkl", "5.0")
-    # MUST come before `import hkl`
     from hkl import SimulatedK4CV
 
     simk4c = SimulatedK4CV("", name="simk4c")
@@ -69,9 +60,6 @@ SimulatedK6C
 .. code-block:: python
    :caption: Create a simulated 6-circle Kappa diffractometer.
 
-    import gi
-    gi.require_version("Hkl", "5.0")
-    # MUST come before `import hkl`
     from hkl import SimulatedK6C
 
     simk6c = SimulatedK6C("", name="simk6c")
