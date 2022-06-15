@@ -11,8 +11,8 @@ Release History
     Deprecations
     Contributors
 
-v1.0.2 (expected by end of 2022-06
-==================================
+v1.0.2 (expected by end of 2022-06)
+===================================
 
 Maintenance release.
 
@@ -20,6 +20,7 @@ Maintenance
 -----------
 
 * No longer need to ``import gi; gi.require_version('Hkl', '5.0')`` first.
+  Just ``import hkl`` and the other steps will be done by the package.
 
 v1.0.1 (2021-09-20)
 ===================
