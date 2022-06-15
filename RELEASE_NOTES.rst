@@ -11,8 +11,8 @@ Release History
     Deprecations
     Contributors
 
-v1.0.2 (expected by end of 2022-06)
-===================================
+v1.0.2 (2022-06-14)
+===================
 
 Maintenance release.
 
