@@ -42,6 +42,7 @@ Documentation about *ophyd* and the *bluesky* framework
    :glob:
    :caption: Developer Notes
 
+   install
    api
    release_notes
 
