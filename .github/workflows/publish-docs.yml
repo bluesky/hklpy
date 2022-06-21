@@ -71,8 +71,7 @@ jobs:
         # conda list jupyter
         # conda list nbconvert
         env | sort | grep -i CONDA
-        # make -C examples/
-        # make -C docs/ html
+        # make html
         make
 
     - name: Deploy documentation to blueskyproject.io.

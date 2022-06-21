@@ -10,7 +10,7 @@ include requirements.txt
 include versioneer.py
 
 recursive-include docs *.rst conf.py Makefile make.bat
-recursive-include examples Makefile README.md *.ipynb resources/*
+recursive-include Makefile README.md *.ipynb resources/*
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
