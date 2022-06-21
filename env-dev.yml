@@ -1,0 +1,38 @@
+# env-dev.yml
+
+# Developer's environment for hklpy
+
+# conda env create -f env-dev.yml
+# micromamba create -n dev-hklpy -f env-dev.yml
+
+name: dev-hklpy
+
+channels:
+  - defaults
+  - conda-forge
+
+dependencies:
+  - python >=3.7
+  - black
+  - bluesky >=1.6.7
+  - databroker =1.2
+  - flake8
+  - hkl
+  - ipython
+  - jupyter
+  - numpy
+  - ophyd
+  - packaging
+  - pandoc
+  - pint
+  - pip
+  - pyepics
+  - pygobject
+  - pyRestTable
+  - spec2nexus
+  - sphinx
+  - sphinx_rtd_theme
+  - pip:
+    - coveralls
+    - pytest
+    - pytest-cov
