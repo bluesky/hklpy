@@ -1,13 +1,20 @@
+# environment.yml
+
+# User's minimal environment for hklpy
+
+# conda env create -f environment.yml
+# micromamba create -n hklpy -f environment.yml
+
 name: hklpy
+
 channels:
-  - nsls2forge
-  - conda-forge
   - defaults
-  - aps-anl-tag
+  - conda-forge
+
 dependencies:
   - python >=3.7
-  - bluesky >=1.6.7
-  - gobject-introspection
+  - bluesky
+  - databroker =1
   - hkl
   - ipython
   - numpy
@@ -16,6 +23,7 @@ dependencies:
   - pint
   - pip
   - pyepics
+  - pygobject
   - pyRestTable
   - spec2nexus
   - pip:
