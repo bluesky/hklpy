@@ -8,11 +8,11 @@
 name: dev-hklpy
 
 channels:
+  - conda-forge  # must come before defaults (for gsl version)
   - defaults
-  - conda-forge
 
 dependencies:
-  - python >=3.7
+  - python >=3.7,<3.10
   - black
   - bluesky
   - databroker =1.2
