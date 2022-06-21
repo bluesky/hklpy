@@ -40,30 +40,19 @@ Conda for Development
 
 We strongly recommend creating a fresh environment (here, named ``hklpy-dev``),
 first installing *hklpy* (from the ``conda-forge`` conda channel [#conda]_) and
-other packages.  This will add all required packages to the new environment.  As
-before, but we'll add some packages for developers:
-
-.. code:: bash
-
-   conda create \
-       -n hklpy-dev \
-       -c conda-forge \
-       hklpy \
-       jupyter \
-       black \
-       flake8 \
-       pytest \
-       bluesky \
-       "databroker=1" \
-       sphinx \
-       sphinx_rtd_theme
-   conda activate hklpy-dev
-
-Next, change to the root of the source directory and install from the source:
+other packages.  This will add all required packages to the new environment.
+Start from the source directory:
 
 .. code:: bash
 
    cd hklpy
+   conda create -n dev-hklpy -f env-dev.yml
+   conda activate hklpy-dev
+
+Next, pip install the source directory:
+
+.. code:: bash
+
    pip install -e . --no-deps
 
 .. FIXME:
