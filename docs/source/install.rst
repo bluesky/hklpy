@@ -3,28 +3,27 @@
 How to install `hklpy`
 ======================
 
-This tutorial covers
+This tutorial covers:
 
-* Installation using :ref:`install.conda`
+* Installation for users using :ref:`install.conda.user`
+* Installation for users using :ref:`install.conda.developer`
 
-.. TODO:
-    * Installation using :ref:`install.pip`
-    * Installation from :ref:`install.source`
+.. * Installation using :ref:`install.pip`
+.. * Installation from :ref:`install.source`
 
-.. note:: *hklpy* only runs on Linux
-
-    *hklpy* relies on the *hkl* library which is only available for Linux.
+.. note:: *hklpy* only runs on Linux, since it relies on the *hkl*
+    library which is only available for Linux.
 
 It is not required to have an EPICS IOC server running; all diffractometers may
 be run with simulated axes.
 
-.. _install.conda:
+.. _install.conda.user:
 
-Conda
------
+Conda for *hklpy* Users
+-----------------------
 
 We strongly recommend creating a fresh environment (here, named ``try-hklpy``),
-installing *hklpy* (from the ``conda-forge`` conda channel [#]_) and other
+installing *hklpy* (from the ``conda-forge`` conda channel [#conda]_) and other
 required packages from the very start.
 
 .. code:: bash
@@ -32,9 +31,42 @@ required packages from the very start.
    conda create -n try-hklpy -c conda-forge hklpy
    conda activate try-hklpy
 
-.. [#] conda-forge: https://anaconda.org/conda-forge
+.. [#conda] conda-forge: https://anaconda.org/conda-forge
 
-.. TODO:
+.. _install.conda.developer:
+
+Conda for Development
+---------------------
+
+We strongly recommend creating a fresh environment (here, named ``hklpy-dev``),
+first installing *hklpy* (from the ``conda-forge`` conda channel [#conda]_) and
+other packages.  This will add all required packages to the new environment.  As
+before, but we'll add some packages for developers:
+
+.. code:: bash
+
+   conda create \
+       -n hklpy-dev \
+       -c conda-forge \
+       hklpy \
+       jupyter \
+       black \
+       flake8 \
+       pytest \
+       bluesky \
+       "databroker=1" \
+       sphinx \
+       sphinx_rtd_theme
+   conda activate hklpy-dev
+
+Next, change to the root of the source directory and install from the source:
+
+.. code:: bash
+
+   cd hklpy
+   pip install -e . --no-deps
+
+.. FIXME:
     .. _install.pip:
 
     Pip
@@ -64,24 +96,9 @@ required packages from the very start.
 
     .. code:: bash
 
-    python3 -m pip install hklpy pygobject
+        python3 -m pip install hklpy pygobject
 
-    If you intend to use ophyd with EPICS, you should also install an EPICS client
-    library for ophyd to use---either pyepics (recommended) or caproto (experimental).
-
-    .. code:: bash
-
-    python3 -m pip install pyepics  # or caproto if you are feeling adventurous
-
-    Finally, to follow along with the EPICS tutorials, you should also install
-    ``caproto`` to run EPICS servers with simulated hardware and ``bluesky`` to
-    orchestrate scans with the RunEngine.
-
-    .. code:: bash
-
-    python3 -m pip install bluesky caproto[standard]
-
-.. TODO:
+.. FIXME:
     .. _install.source:
 
     Source
@@ -91,6 +108,9 @@ required packages from the very start.
 
     .. code:: bash
 
-    git clone https://github.com/bluesky/ophyd
-    cd ophyd
-    pip install -e .
+        git clone https://github.com/bluesky/hklpy
+        cd hklpy
+        pip install -e .
+
+
+.. conda create -n try-hklpy -c conda-forge hklpy jupyter black flake8 pytest bluesky "databroker=1" sphinx sphinx_rtd_theme

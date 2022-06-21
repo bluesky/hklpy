@@ -28,6 +28,7 @@ Documentation about *ophyd* and the *bluesky* framework
    :caption: Core Functionality
 
    overview
+   install
 
 .. toctree::
    :maxdepth: 2
@@ -42,7 +43,6 @@ Documentation about *ophyd* and the *bluesky* framework
    :glob:
    :caption: Developer Notes
 
-   install
    api
    release_notes
 
