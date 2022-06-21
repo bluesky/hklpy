@@ -6,10 +6,10 @@ How to install `hklpy`
 This tutorial covers:
 
 * Installation for users using :ref:`install.conda.user`
-* Installation for users using :ref:`install.conda.developer`
-
-.. * Installation using :ref:`install.pip`
-.. * Installation from :ref:`install.source`
+* Installation for developers using :ref:`install.conda.developer`
+* Installation for users using :ref:`install.pip.user`
+* Installation for developers using :ref:`install.pip.developer`
+* Test the installation using :ref:`install.test`
 
 .. note:: *hklpy* only runs on Linux, since it relies on the *hkl*
     library which is only available for Linux.
@@ -55,51 +55,74 @@ Next, pip install the source directory:
 
    pip install -e . --no-deps
 
-.. FIXME:
-    .. _install.pip:
+.. _install.pip.user:
 
-    Pip
-    ---
+Pip for *hklpy* Users
+---------------------
 
-    We strongly recommend creating a fresh environment (here, named ``try-hklpy``).
+We strongly recommend creating a fresh environment (here, named ``try-hklpy``).
+Both Python and the *hkl* library must already be installed.  Here, we create
+a conda environment with just these packages required:
 
-    .. FIXME:
+.. .. code:: bash
 
-        (base) prjemian@zap:~/Documents$ source try-hklpy/bin/activate
-        (try-hklpy) (base) prjemian@zap:~/Documents$ python
-        Python 3.8.12 (default, Oct 12 2021, 13:49:34)
-        [GCC 7.5.0] :: Anaconda, Inc. on linux
-        Type "help", "copyright", "credits" or "license" for more information.
-        >>> import hkl
-        Traceback (most recent call last):
-        File "<stdin>", line 1, in <module>
-        ModuleNotFoundError: No module named 'hkl'
-        >>>
+..     python3 -m venv try-hklpy
+..     source try-hklpy/bin/activate
 
-    .. code:: bash
+.. code:: bash
 
-    python3 -m venv try-hklpy
-    source try-hklpy/bin/activate
+    conda create -y -n try-hklpy python=3.9 hkl -c conda-forge
+    conda activate try-hklpy
 
-    Install hklpy from PyPI.
+Install *hklpy* from PyPI.
 
-    .. code:: bash
+.. code:: bash
 
-        python3 -m pip install hklpy pygobject
+    python3 -m pip install hklpy
 
-.. FIXME:
-    .. _install.source:
+Until a new version after 1.0.2 is release, you'll also need to download the
+the `requirements.txt` file from the source code, then install using:
 
-    Source
-    ------
+.. code:: bash
 
-    To install an editable installation for local development:
+    pip install -r requirements.txt
 
-    .. code:: bash
+.. _install.pip.developer:
 
-        git clone https://github.com/bluesky/hklpy
-        cd hklpy
-        pip install -e .
+Pip for *hklpy* Developers
+--------------------------
 
+We strongly recommend creating a fresh environment (here, named ``dev-hklpy``).
+Both Python and the *hkl* library must already be installed.  Here, we create
+a conda environment with just these packages required:
 
-.. conda create -n try-hklpy -c conda-forge hklpy jupyter black flake8 pytest bluesky "databroker=1" sphinx sphinx_rtd_theme
+.. code:: bash
+
+    conda create -y -n dev-hklpy python=3.9 hkl -c conda-forge
+    conda activate dev-hklpy
+
+Install requirements from PyPI.
+
+.. code:: bash
+
+    python3 -m pip install -r requirements.txt
+
+Install *hklpy* from source directory.  If necessary, clone from github.
+
+.. code:: bash
+
+    git clone https://github.com/bluesky/hklpy
+    cd hklpy
+    python3 -m pip install -e . --no-deps
+
+.. _install.test:
+
+Test that *hklpy* is installed
+------------------------------
+
+Test the *hklpy* has been installed by creating a simulated 4-circle
+diffractometer and showing its defaults:
+
+.. code:: bash
+
+    python -c "import hkl; fourc=hkl.SimulatedE4CV('', name='fourc'); fourc.wh()"
