@@ -16,7 +16,7 @@ def test__package_info_states():
     "package_name, minimum_version",
     [
         ("bluesky", "1.6"),
-        ("gobject-introspection", "1.68.0"),
+        ("pygobject", "3.40"),
         ("hkl", "5.0.0"),
         ("hklpy", "0"),  # minimum test for unversioned use
         (NO_SUCH_PACKAGE_NAME, "---"),
@@ -59,7 +59,7 @@ def test_software_versions_default_list(case):
     "package_name, minimum_version",
     [
         ("bluesky", "1.6"),
-        ("gobject-introspection", "1.68.0"),
+        ("pygobject", "3.40"),
         ("hkl", "5.0.0"),
         ("hklpy", "0"),  # minimum test for unversioned use
         (NO_SUCH_PACKAGE_NAME, "---"),
