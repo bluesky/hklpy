@@ -28,6 +28,7 @@ Documentation about *ophyd* and the *bluesky* framework
    :caption: Core Functionality
 
    overview
+   install
 
 .. toctree::
    :maxdepth: 2
