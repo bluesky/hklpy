@@ -59,7 +59,7 @@ logger = logging.getLogger(__name__)
 
 
 # when getting software package versions
-DEFAULT_PACKAGE_LIST = "hkl hklpy gobject-introspection".split()
+DEFAULT_PACKAGE_LIST = "hkl hklpy pygobject".split()
 
 # 2018 CODATA recommended lattice parameter of silicon, Angstrom.
 # see: https://physics.nist.gov/cgi-bin/cuu/Value?asil
@@ -547,7 +547,7 @@ def software_versions(keys=[]):
         Out[2]:
         {'hkl': '5.0.0.2173',
         'hklpy': '0.3.16+131.ga5a449a.dirty',
-        'gobject-introspection': '1.68.0'}
+        'pygobject': '3.40.1'}
 
     Here, it shows (albeit indirectly) *Hkl 5.0.0 tag 2173*.  Proceed to the Hkl
     source repository, list of tags [#]_, and find tag ``2173`` [#]_.
