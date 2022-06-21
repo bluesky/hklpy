@@ -8,15 +8,14 @@
 name: hklpy
 
 channels:
+  - conda-forge  # must come before defaults (for gsl version)
   - defaults
-  - conda-forge
 
 dependencies:
   - python >=3.7
   - bluesky
-  - databroker =1
+  - databroker =1.2
   - hkl
-  - ipython
   - numpy
   - ophyd
   - packaging
