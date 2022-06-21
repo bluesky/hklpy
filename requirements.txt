@@ -1,0 +1,14 @@
+bluesky
+databroker ==1.2
+numpy
+ophyd
+packaging
+pint
+pip
+pyepics
+pygobject
+pyRestTable
+spec2nexus
+coveralls
+pytest
+pytest-cov
