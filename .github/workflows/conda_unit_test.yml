@@ -64,6 +64,6 @@ jobs:
     - name: Test with coverage and pytest
       shell: bash -l {0}
       run: |
-        coverage run --concurrency=thread --parallel-mode -m pytest -vvv --ignore=examples
+        coverage run --concurrency=thread --parallel-mode -m pytest -vvv
         coverage combine
         coverage report

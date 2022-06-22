@@ -1,8 +1,0 @@
-# ignore any built content from notebooks
-
-# written by nbconvert from root/examples/*.ipynb
-*.rst
-*_files/
-
-# copied from root/examples/resources/*
-resources/

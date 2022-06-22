@@ -56,7 +56,7 @@ jobs:
     - name: Install publishing requirements
       shell: bash -l {0}
       run: |
-        conda install jupyter nbconvert sphinx sphinxcontrib-napoleon make flake8 black pandoc -c defaults -c conda-forge
+        conda install jupyter nbconvert sphinx nbsphinx sphinxcontrib-napoleon make flake8 black pandoc -c defaults -c conda-forge
         pip install sphinx-rtd-theme
 
     - name: Install the package locally
@@ -71,8 +71,7 @@ jobs:
         # conda list jupyter
         # conda list nbconvert
         env | sort | grep -i CONDA
-        # make -C examples/
-        # make -C docs/ html
+        # make html
         make
 
     - name: Deploy documentation to blueskyproject.io.

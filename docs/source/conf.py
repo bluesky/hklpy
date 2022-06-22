@@ -43,6 +43,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",  # see NOTE below
     "sphinx.ext.viewcode",
+    "nbsphinx",
 ]
 # NOTE: Requires sphinxcontrib-napoleon from conda-forge or PyPI.
 
@@ -83,7 +84,7 @@ release = version
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns = ["**.ipynb_checkpoints"]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None
