@@ -11,6 +11,20 @@ Release History
     Deprecations
     Contributors
 
+v1.0.3 (expected by 2022-06-24)
+===================
+
+Maintenance release.
+
+Maintenance
+-----------
+
+* Publish to PyPI from GitHub Actions workflow.
+* Enable installation by pip.
+* Update the conda environment.
+* Show how to install *hklpy*.
+* Revise how Jupyter notebook examples are published.
+
 v1.0.2 (2022-06-14)
 ===================
 
