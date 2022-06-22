@@ -32,6 +32,8 @@ import logging
 import numpy as np
 import pandas as pd
 import subprocess
+import sys
+import tqdm
 
 gi.require_version("Hkl", "5.0")
 from gi.repository import Hkl as libhkl
@@ -260,24 +262,26 @@ def list_orientation_runs(catalog, *args, limit=20):
     _count = 0
     default_columns = "sample_name diffractometer_name geometry_name".split()
     display_columns = default_columns + list(args)
-    for run in catalog.v2.values():
-        info = run_orientation_info(run)
-        if len(info):
-            scan_id = run.metadata["start"]["scan_id"]
-            uid = run.name[:7]
-            for device in sorted(info.keys()):
-                orientation = info[device]
-                row = dict(scan_id=scan_id)
-                for f in display_columns:
-                    if f in orientation:
-                        row[f] = orientation[f]
-                row["uid"] = uid
-                buffer.append(row)
-                _count += 1
-                if _count >= limit:
-                    break
-        if _count >= limit:
-            break
+    with tqdm.tqdm(total=len(catalog.v2), file=sys.stdout) as progress_bar:
+        for run in catalog.v2.values():
+            info = run_orientation_info(run)
+            if len(info):
+                scan_id = run.metadata["start"]["scan_id"]
+                uid = run.name[:7]
+                for device in sorted(info.keys()):
+                    orientation = info[device]
+                    row = dict(scan_id=scan_id)
+                    for f in display_columns:
+                        if f in orientation:
+                            row[f] = orientation[f]
+                    row["uid"] = uid
+                    buffer.append(row)
+                    _count += 1
+                    if _count >= limit:
+                        break
+            if _count >= limit:
+                break
+            progress_bar.update()
     return pd.DataFrame(buffer)
 
 
@@ -297,7 +301,7 @@ def run_orientation_info(run):
         A Bluesky run, from databroker v2, such as ``cat.v2[-1]``.
     """
     devices = {}
-    if hasattr(run, "primary"):
+    try:
         run_conf = run.primary.config
         for device in sorted(run_conf):
             conf = run_conf[device].read()
@@ -308,6 +312,8 @@ def run_orientation_info(run):
                     for item in conf
                 }
                 # fmt:on
+    except Exception as exc:
+        logger.warning("Could not process run %s, due to %s", run, exc)
     return devices
 
 
