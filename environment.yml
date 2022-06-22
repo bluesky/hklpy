@@ -25,6 +25,7 @@ dependencies:
   - pygobject
   - pyRestTable
   - spec2nexus
+  - tqdm
   - pip:
     - coveralls
     - pytest

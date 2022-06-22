@@ -33,6 +33,7 @@ dependencies:
   - spec2nexus
   - sphinx
   - sphinx_rtd_theme
+  - tqdm
   - pip:
     - coveralls
     - pytest
