@@ -30,18 +30,6 @@ jobs:
       uses: mamba-org/provision-with-micromamba@main
       with:
         environment-file: conda_env.yml
-        # environment-name: ${{ ENV_NAME }}
-
-    # - name: Setup Miniconda ${{ matrix.python-version }}
-    #   uses: conda-incubator/setup-miniconda@v2
-    #   with:
-    #     activate-environment: test-hklpy
-    #     auto-update-conda: true
-    #     channel-priority: true
-    #     channels: defaults,conda-forge
-    #     environment-file: conda_env.yml
-    #     mamba-version: "*"
-    #     use-only-tar-bz2: true  # required for caching
 
     - name: conda environments
       shell: bash -l {0}
