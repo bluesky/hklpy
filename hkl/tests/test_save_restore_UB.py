@@ -5,6 +5,7 @@ from hkl import SimulatedE4CV
 from hkl import SimulatedK4CV
 from hkl.calc import A_KEV
 from ophyd.sim import hw
+import pandas as pd
 import bluesky.plans as bp
 import databroker
 import hkl.util
@@ -157,7 +158,7 @@ def test_list_orientation_runs(cat, RE, fourc, kappa):
     assert runs.diffractometer_name.to_list() == "fourc kappa fourc kappa".split()
 
 
-def test_no_primary_stream(cat, RE, fourc, kappa):
+def test_no_primary_stream(cat, RE, fourc):
     det = hw().noisy_det
 
     def my_plan():
@@ -171,10 +172,40 @@ def test_no_primary_stream(cat, RE, fourc, kappa):
         yield from bp.count([fourc])
         yield from my_plan()
 
-    RE(scans())
+    uids = RE(scans())
+    assert len(uids) == 2
+
     runs = hkl.util.list_orientation_runs(cat)
     # my_plan() has no primary stream
     assert len(runs.scan_id) == 1
+
+
+def test_missing_energy_key(cat, RE, fourc):
+    """Issue 216."""
+
+    def scans():
+        yield from bp.count([fourc])
+
+    uids = RE(scans())
+    assert len(uids) == 1
+    assert uids[0] in cat
+
+    runs = hkl.util.list_orientation_runs(cat)
+    assert isinstance(runs, pd.DataFrame)
+
+    run = cat[uids[0]]
+    orientations = hkl.util.run_orientation_info(run)
+    assert len(orientations) == 1
+
+    assert fourc.name in orientations
+    orientation = orientations[fourc.name]
+    assert "energy" in orientation
+
+    # trigger the error by removing the "energy" key
+    with pytest.raises(KeyError) as exinfo:
+        orientation.pop("energy")
+        hkl.util.restore_energy(orientation, fourc)
+    assert " Cannot restore diffractometer energy " in str(exinfo.value)
 
 
 def test_restore_orientation(cat, RE, fourc):
