@@ -297,16 +297,17 @@ def run_orientation_info(run):
         A Bluesky run, from databroker v2, such as ``cat.v2[-1]``.
     """
     devices = {}
-    run_conf = run.primary.config
-    for device in sorted(run_conf):
-        conf = run_conf[device].read()
-        if f"{device}_orientation_attrs" in conf:
-            # fmt:off
-            devices[device] = {
-                item[len(device)+1:]: conf[item].to_dict()["data"][0]
-                for item in conf
-            }
-            # fmt:on
+    if hasattr(run, "primary"):
+        run_conf = run.primary.config
+        for device in sorted(run_conf):
+            conf = run_conf[device].read()
+            if f"{device}_orientation_attrs" in conf:
+                # fmt:off
+                devices[device] = {
+                    item[len(device)+1:]: conf[item].to_dict()["data"][0]
+                    for item in conf
+                }
+                # fmt:on
     return devices
 
 

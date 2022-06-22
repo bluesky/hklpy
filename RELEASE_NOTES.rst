@@ -11,6 +11,16 @@ Release History
     Deprecations
     Contributors
 
+v1.1 (expected by 2022-07-24)
+======================================
+
+User-requested changes
+
+Fixes
+-----
+
+* ``util.run_orientation_info()`` failed when no primary stream present.
+
 v1.0.3 (expected by 2022-06-24)
 ======================================
 

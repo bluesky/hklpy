@@ -1,4 +1,5 @@
 from bluesky import RunEngine
+from bluesky import plan_stubs as bps
 from hkl import SI_LATTICE_PARAMETER
 from hkl import SimulatedE4CV
 from hkl import SimulatedK4CV
@@ -154,6 +155,26 @@ def test_list_orientation_runs(cat, RE, fourc, kappa):
     assert 1 not in runs.scan_id.to_list()  # no orientation
     assert runs.scan_id.to_list() == [2, 3, 4, 4]
     assert runs.diffractometer_name.to_list() == "fourc kappa fourc kappa".split()
+
+
+def test_no_primary_stream(cat, RE, fourc, kappa):
+    det = hw().noisy_det
+
+    def my_plan():
+        yield from bps.open_run()
+        yield from bps.create(name="not_primary")
+        yield from bps.read(det)
+        yield from bps.save()
+        yield from bps.close_run()
+
+    def scans():
+        yield from bp.count([fourc])
+        yield from my_plan()
+
+    RE(scans())
+    runs = hkl.util.list_orientation_runs(cat)
+    # my_plan() has no primary stream
+    assert len(runs.scan_id) == 1
 
 
 def test_restore_orientation(cat, RE, fourc):
