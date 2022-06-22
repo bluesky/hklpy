@@ -42,10 +42,10 @@ jobs:
         micromamba env list
         python --version
 
-    - name: install pip requirements separately
-      shell: bash -l {0}
-      run: |
-        pip install -r pip_req.txt
+    # - name: install pip requirements separately
+    #   shell: bash -l {0}
+    #   run: |
+    #     pip install -r pip_req.txt
 
     - name: Install the hklpy package
       shell: bash -l {0}
