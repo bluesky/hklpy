@@ -11,9 +11,6 @@ on:
 
 jobs:
   build:
-    # env:
-    #   ENV_NAME: test
-    #   # will define PACKAGE in steps, obtained from GITHUB_REPOSITORY
 
     if: github.repository_owner == 'bluesky'
     runs-on: ubuntu-latest
@@ -34,28 +31,11 @@ jobs:
 
     - uses: actions/checkout@v2
 
-    # - name: set environment name in YAML file
-    #   shell: bash -l {0}
-    #   run: |
-    #     sed -i.bak "s/name: ${PACKAGE}/name: ${ENV_NAME}/g" environment.yml
-    #     head envir*
-
     - name: Install Python ${{ matrix.python-version }} Conda environment with micromamba from env-dev.yml
       uses: mamba-org/provision-with-micromamba@main
       with:
         environment-file: env-dev.yml
         environment-name: test
-
-    # - name: Setup Miniconda ${{ matrix.python-version }}
-    #   uses: conda-incubator/setup-miniconda@v2
-    #   with:
-    #     auto-update-conda: true
-    #     channel-priority: true
-    #     channels: nsls2forge,conda-forge,defaults
-    #     environment-file: env-dev.yml
-    #     mamba-version: "*"
-    #     python-version: ${{ matrix.python-version }}
-    #     use-only-tar-bz2: true  # required for caching
 
     - name: Install the package locally
       shell: bash -l {0}
