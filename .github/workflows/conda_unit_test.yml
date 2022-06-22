@@ -5,9 +5,9 @@ on: [push, pull_request]
 jobs:
 
   build:
-    env:
-      ENV_NAME: hklpy-test-${{ matrix.python-version }}
-      PACKAGE: hklpy
+    # env:
+    #   ENV_NAME: hklpy-test-${{ matrix.python-version }}
+    #   PACKAGE: hklpy
 
     runs-on: ubuntu-latest
     strategy:
@@ -17,23 +17,22 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: customize environment requirements for conda & pip
-      shell: bash -l {0}
-      run: |
-        python ./.github/edit_test_environment.py ${ENV_NAME}
-        echo "# ------ new conda environment"
-        cat conda_env.yml
-        echo "# ------ new pip requirements"
-        cat pip_req.txt
+    # - name: customize environment requirements for conda & pip
+    #   shell: bash -l {0}
+    #   run: |
+    #     python ./.github/edit_test_environment.py ${ENV_NAME}
+    #     echo "# ------ new conda environment"
+    #     cat conda_env.yml
+    #     echo "# ------ new pip requirements"
+    #     cat pip_req.txt
 
     - name: Create Python ${{ matrix.python-version }} environment
       uses: mamba-org/provision-with-micromamba@main
       with:
         environment-file: conda_env.yml
-        environment-name: ${{ ENV_NAME }}
+        environment-name: hklpy-test-${{ matrix.python-version }}
       # env:
-      #   PY_VER: ${{ matrix.python-version }}
-      #   ENV_NAME: anaconda-test-env-py-${{ matrix.python-version }}
+      #   ENV_NAME: hklpy-test-${{ matrix.python-version }}
 
     - name: conda environments
       shell: bash -l {0}
