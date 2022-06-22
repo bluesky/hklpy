@@ -26,7 +26,7 @@ jobs:
         echo "# ------ new pip requirements"
         cat pip_req.txt
 
-    - name: Python ${{ matrix.python-version }} environment ${{ ENV_NAME }}
+    - name: Create Python ${{ matrix.python-version }} environment
       uses: mamba-org/provision-with-micromamba@main
       with:
         environment-file: conda_env.yml
