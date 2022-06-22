@@ -182,6 +182,7 @@ def test_no_primary_stream(cat, RE, fourc):
 
 def test_missing_energy_key(cat, RE, fourc):
     """Issue 216."""
+
     def scans():
         yield from bp.count([fourc])
 

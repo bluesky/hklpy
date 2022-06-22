@@ -385,8 +385,22 @@ def restore_energy(orientation, diffractometer):
     diffractometer : :class:`~hkl.diffract.Diffractometer()`
         Diffractometer object.
     """
-    for attr in "energy energy_units energy_offset".split():
-        _smart_signal_update(orientation[attr], getattr(diffractometer, attr))
+    # get _all_ the expected keys
+    try:
+        kv_dict = {
+            orientation[attr]: getattr(diffractometer, attr)
+            for attr in "energy energy_units energy_offset".split()
+        }
+    except KeyError as exc:
+        # fmt: off
+        raise KeyError(
+            f"{diffractometer.name}: Cannot restore "
+            f"diffractometer energy due to missing {exc} term."
+        )
+        # fmt: on
+    # update the signals
+    for k, v in kv_dict.items():
+        _smart_signal_update(k, v)
 
 
 def restore_reflections(orientation, diffractometer):
