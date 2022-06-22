@@ -9,6 +9,7 @@ pyepics
 pygobject
 pyRestTable
 spec2nexus
+tqdm
 coveralls
 pytest
 pytest-cov
