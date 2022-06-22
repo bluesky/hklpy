@@ -30,6 +30,10 @@ jobs:
       uses: mamba-org/provision-with-micromamba@main
       with:
         environment-file: conda_env.yml
+        environment-name: ${{ ENV_NAME }}
+      # env:
+      #   PY_VER: ${{ matrix.python-version }}
+      #   ENV_NAME: anaconda-test-env-py-${{ matrix.python-version }}
 
     - name: conda environments
       shell: bash -l {0}
