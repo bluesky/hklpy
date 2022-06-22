@@ -29,7 +29,8 @@ jobs:
     - name: Create Python ${{ matrix.python-version }} environment
       uses: mamba-org/provision-with-micromamba@main
       with:
-        environment-file: conda_env.yml
+        # environment-file: conda_env.yml
+        environment-file: environment.yml
         environment-name: hklpy-test-${{ matrix.python-version }}
       # env:
       #   ENV_NAME: hklpy-test-${{ matrix.python-version }}
