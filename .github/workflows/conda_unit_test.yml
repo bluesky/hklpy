@@ -30,7 +30,7 @@ jobs:
       uses: mamba-org/provision-with-micromamba@main
       with:
         environment-file: conda_env.yml
-        environment-name: ${{ ENV_NAME }}
+        # environment-name: ${{ ENV_NAME }}
 
     # - name: Setup Miniconda ${{ matrix.python-version }}
     #   uses: conda-incubator/setup-miniconda@v2
