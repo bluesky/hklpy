@@ -16,10 +16,18 @@ v1.1 (expected by 2022-07-24)
 
 User-requested changes
 
+Maintenance
+-----------
+
 Fixes
 -----
 
 * ``util.run_orientation_info()`` failed when no primary stream present.
+
+Maintenance
+-----------
+
+* ``util.list_orientation_runs()`` added progress bar.
 
 v1.0.3 (expected by 2022-06-24)
 ======================================

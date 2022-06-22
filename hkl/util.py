@@ -251,7 +251,8 @@ def list_orientation_runs(catalog, *args, limit=20):
 
         Example::
 
-            list_orientation_runs("class_name", energy", "energy_units", "lattice")
+            list_orientation_runs(
+                "class_name", energy", "energy_units", "lattice")
 
     catalog : object
         Instance of a databroker catalog.
