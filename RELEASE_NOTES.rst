@@ -12,7 +12,7 @@ Release History
     Contributors
 
 v1.0.3 (expected by 2022-06-24)
-===================
+======================================
 
 Maintenance release.
 
