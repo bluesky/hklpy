@@ -81,3 +81,7 @@ docs/source/generated
 
 # Bluesky session logger
 .logs/
+
+# (local) developer code
+dev_*.py
+dev_*.ipynb
