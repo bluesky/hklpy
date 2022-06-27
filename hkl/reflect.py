@@ -28,14 +28,8 @@ class Reflection:
         self.wavelength = wavelength
 
     def _repr_info(self):
-        p = [
-            f"{obj.attr_name}={obj.position}"
-            for obj in self.pseudos
-        ]
-        r = [
-            f"{obj.attr_name}={obj.position}"
-            for obj in self.reals
-        ]
+        p = [f"{obj.attr_name}={obj.position}" for obj in self.pseudos]
+        r = [f"{obj.attr_name}={obj.position}" for obj in self.reals]
 
         s = [
             f"({', '.join(p)})",
