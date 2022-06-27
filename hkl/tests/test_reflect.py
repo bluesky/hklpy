@@ -1,7 +1,6 @@
 from ..reflect import Reflection
 from ..reflect import ReflectionManager
 from .. import SimulatedE4CV
-import numpy as np
 import pytest
 
 
