@@ -67,12 +67,12 @@ class ReflectionManager:
     def add(self, pseudos, reals, wavelength, use_UB=True):
         """
         Add a reflection to the list.
-
+        """
         # TODO: do not add same reflection twice
         # TODO: support this existing use:
         #     r1 = sample.add_reflection(-1, 0, 0, (30, 0, -90, 60))
         #     r2 = sample.add_reflection(0, 1, 1, (45, 45, 0, 90))
-        """
+
         reflection = Reflection(pseudos, reals, wavelength)
         self._reflections.append(reflection)
         if use_UB:
@@ -102,8 +102,6 @@ class ReflectionManager:
 
         pop_it(reflection, self._reflections)
         pop_it(reflection, self._UB_reflections)
-
-        # TODO: return anything?
 
     def _repr_info(self):
         s = []

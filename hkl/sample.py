@@ -2,11 +2,12 @@ import logging
 
 import numpy as np
 
-from .engine import Parameter
-from .util import libhkl
 from . import util
-from .util import Lattice
 from .context import TemporaryGeometry
+from .engine import Parameter
+from .reflect import ReflectionManager
+from .util import Lattice
+from .util import libhkl
 
 
 __all__ = """
@@ -94,6 +95,7 @@ class HklSample(object):
         self._calc = calc
         self._sample = sample
         self._sample_dict = calc._samples
+        self.refl_mgr = ReflectionManager()
 
         self._unit_name = units
         try:
@@ -254,6 +256,7 @@ class HklSample(object):
         if detector is None:
             detector = self._calc._detector
 
+        # TODO: self.refl_mgr.add(pseudos, reals, wavelength)
         return libhkl.SampleReflection.new(self._calc._geometry, detector, h, k, l)
 
     def compute_UB(self, r1, r2):
@@ -339,11 +342,11 @@ class HklSample(object):
 
     def remove_reflection(self, refl):
         """Remove a specific reflection"""
-        if not isinstance(refl, libhkl.SampleReflection):
+        if not isinstance(refl, libhkl.SampleReflection): # TODO:
             index = self.reflections.index(refl)
             refl = self._sample.reflections_get()[index]
 
-        return self._sample.del_reflection(refl)
+        return self._sample.del_reflection(refl)  # TODO: not used
 
     def clear_reflections(self):
         """Clear all reflections for the current sample."""
