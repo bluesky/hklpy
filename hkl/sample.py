@@ -256,7 +256,6 @@ class HklSample(object):
         if detector is None:
             detector = self._calc._detector
 
-        # TODO: self.refl_mgr.add(pseudos, reals, wavelength)
         return libhkl.SampleReflection.new(self._calc._geometry, detector, h, k, l)
 
     def compute_UB(self, r1, r2):
@@ -333,6 +332,7 @@ class HklSample(object):
         with TemporaryGeometry(calc):
             if position is not None:
                 calc.physical_positions = position
+            # TODO: self.refl_mgr.add((h, k, l), position, calc.wavelength)
             r2 = self._sample.add_reflection(calc._geometry, detector, h, k, l)
 
         if compute_ub:

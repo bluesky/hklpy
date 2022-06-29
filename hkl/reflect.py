@@ -20,23 +20,16 @@ class Reflection:
     reals = []
 
     def __init__(self, pseudos, reals, wavelength) -> None:
-        # fmt: off
-        # confirm pseudos and reals are lists of appropriate objects
-        # TODO: must generalize to allow pseudos = (0, 0, 1), for example
-        for var in (pseudos, reals):
-            for obj in var:
-                for attr in "attr_name position".split():
-                    if not hasattr(obj, attr):
-                        raise AttributeError(f"{var}, '{obj}.{attr}' not found")
-        # fmt: on
+        # pseudos & reals are simple list of numbers now
+        # TODO: need configurable "standard form" for pseudos & reals
 
-        self.pseudos = pseudos
-        self.reals = reals
+        self.pseudos = pseudos  # TODO: should convert lists to "standard form"
+        self.reals = reals  # TODO: should convert lists to "standard form"
         self.wavelength = wavelength
 
     def _repr_info(self):
-        p = [f"{obj.attr_name}={obj.position}" for obj in self.pseudos]
-        r = [f"{obj.attr_name}={obj.position}" for obj in self.reals]
+        p = list(map(str, self.pseudos))
+        r = list(map(str, self.reals))
 
         s = [
             f"({', '.join(p)})",
@@ -48,6 +41,17 @@ class Reflection:
 
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(self._repr_info())})"
+
+    def __eq__(self, refl):
+        return (
+            isinstance(refl, self.__class__)
+            and
+            self.pseudos == refl.pseudos
+            and
+            self.reals == refl.reals
+            and
+            self.wavelength == refl.wavelength
+        )
 
 
 class ReflectionManager:
