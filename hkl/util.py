@@ -25,19 +25,19 @@ Also provides `SI_LATTICE_PARAMETER` as defined by the
 .. [#] https://physics.nist.gov/cgi-bin/cuu/Value?asil
 """
 
-from __future__ import print_function
-from collections import defaultdict, namedtuple
 import gi
+
+gi.require_version("Hkl", "5.0")
+from gi.repository import Hkl as libhkl
+from gi.repository import GLib  # noqa: F401
+
+from collections import defaultdict, namedtuple
 import logging
 import numpy as np
 import pandas as pd
 import subprocess
 import sys
 import tqdm
-
-gi.require_version("Hkl", "5.0")
-from gi.repository import Hkl as libhkl
-from gi.repository import GLib  # noqa: F401
 
 __all__ = """
     Constraint
@@ -77,16 +77,9 @@ def new_detector(dtype=0):
 
 if libhkl:
     diffractometer_types = tuple(sorted(libhkl.factories().keys()))
-    UserUnits = libhkl.UnitEnum.USER
-    DefaultUnits = libhkl.UnitEnum.DEFAULT
-
-    # fmt: off
-    units = {
-        "user": UserUnits,
-        "default": DefaultUnits
-    }
-    # fmt: on
+    units = dict(user=libhkl.UnitEnum.USER, default=libhkl.UnitEnum.DEFAULT)
 else:
+    logger.warning("libhkl problem")
     diffractometer_types = ()
     units = {}
 
