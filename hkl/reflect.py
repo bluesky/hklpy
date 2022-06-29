@@ -45,12 +45,9 @@ class Reflection:
     def __eq__(self, refl):
         return (
             isinstance(refl, self.__class__)
-            and
-            self.pseudos == refl.pseudos
-            and
-            self.reals == refl.reals
-            and
-            self.wavelength == refl.wavelength
+            and self.pseudos == refl.pseudos
+            and self.reals == refl.reals
+            and self.wavelength == refl.wavelength
         )
 
 

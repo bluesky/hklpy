@@ -342,7 +342,7 @@ class HklSample(object):
 
     def remove_reflection(self, refl):
         """Remove a specific reflection"""
-        if not isinstance(refl, libhkl.SampleReflection): # TODO:
+        if not isinstance(refl, libhkl.SampleReflection):  # TODO:
             index = self.reflections.index(refl)
             refl = self._sample.reflections_get()[index]
 

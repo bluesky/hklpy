@@ -31,7 +31,7 @@ def fourc():
         [(0, 1, -1), (10, 20), 1.0, False],
         [(0, 1, -1), None, 1.0, False],
         [(0, 1, -1), (10, 20, 30, 40), 2.0, False],
-    ]
+    ],
 )
 def test_Reflection_equal(pseudos, reals, wavelength, ok):
     r0 = Reflection((0, 1, -1), (10, 20, 30, 40), 1.0)
@@ -107,8 +107,8 @@ def test_compute_UB(fourc):
     # assert manager.UB_reflections == manager.all_reflections
 
     # refl = Reflection(
-    #     (-1, 0, 0), 
-    #     (30, 0, -90, 60), 
+    #     (-1, 0, 0),
+    #     (30, 0, -90, 60),
     #     fourc.calc.wavelength
     # )
     # r0 = manager.all_reflections[0]
