@@ -40,7 +40,7 @@ def test_Reflection_equal(pseudos, reals, wavelength, ok):
         assert r0 == r1
     else:
         assert r0 != r1
-    assert r1 != None
+    assert r1 is not None
 
 
 def test_Reflection_class(fourc):
