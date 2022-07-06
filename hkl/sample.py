@@ -95,7 +95,7 @@ class HklSample(object):
         self._calc = calc
         self._sample = sample
         self._sample_dict = calc._samples
-        self.refl_mgr = ReflectionManager()
+        self.refl_mgr = ReflectionManager(calc)
 
         self._unit_name = units
         try:
@@ -128,14 +128,14 @@ class HklSample(object):
     @property
     def hkl_calc(self):
         """
-        The HklCalc instance associated with the sample
+        The hklpy calc instance associated with the sample
         """
         return self._calc
 
     @property
     def hkl_sample(self):
         """
-        The HKL library sample object
+        The libhkl library sample object
         """
         return self._sample
 

@@ -44,7 +44,31 @@ def test_Reflection_equal(pseudos, reals, wavelength, ok):
 
 
 def test_Reflection_class(fourc):
-    # TODO: test with default reflections
+    """
+    test with example reflections
+
+    ::
+
+        r1 = fourc.calc.sample.add_reflection(
+            4, 0, 0,
+            position=fourc.calc.Position(
+                tth=69.0966,
+                omega=-145.451,
+                chi=0,
+                phi=0,
+            )
+        )
+
+        r2 = fourc.calc.sample.add_reflection(
+            0, 4, 0,
+            position=fourc.calc.Position(
+                tth=69.0966,
+                omega=-145.451,
+                chi=90,
+                phi=0,
+            )
+        )
+    """
     r1 = Reflection(fourc._pseudo, fourc._real, fourc.calc.wavelength)
     assert r1.wavelength == fourc.calc.wavelength
 

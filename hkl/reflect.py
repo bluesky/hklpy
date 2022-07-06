@@ -19,12 +19,12 @@ class Reflection:
     pseudos = []
     reals = []
 
-    def __init__(self, pseudos, reals, wavelength) -> None:
-        # pseudos & reals are simple list of numbers now
-        # TODO: need configurable "standard form" for pseudos & reals
-
-        self.pseudos = pseudos  # TODO: should convert lists to "standard form"
-        self.reals = reals  # TODO: should convert lists to "standard form"
+    def __init__(self, pseudos, reals, wavelength, calc=None) -> None:
+        self.calc = calc
+        # if calc is not None:  # TODO:
+        #     calc.Position(reals)
+        self.pseudos = pseudos
+        self.reals = reals
         self.wavelength = wavelength
 
     def _repr_info(self):
@@ -59,7 +59,8 @@ class ReflectionManager:
     _reflections = []
     _UB_reflections = []
 
-    def __init__(self) -> None:
+    def __init__(self, calc=None) -> None:
+        self.calc = calc
         self.clear()
 
     def __len__(self) -> None:
@@ -74,7 +75,7 @@ class ReflectionManager:
         #     r1 = sample.add_reflection(-1, 0, 0, (30, 0, -90, 60))
         #     r2 = sample.add_reflection(0, 1, 1, (45, 45, 0, 90))
 
-        reflection = Reflection(pseudos, reals, wavelength)
+        reflection = Reflection(pseudos, reals, wavelength, calc=self.calc)
         self._reflections.append(reflection)
         if use_UB:
             self._UB_reflections.append(reflection)
