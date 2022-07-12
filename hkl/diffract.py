@@ -298,6 +298,9 @@ class Diffractometer(PseudoPositioner):
 
         self._decision_fcn = decision_fcn
 
+        # create a manager for the sample reflections
+        self.calc._setup_reflection_manager(self)
+
         super().__init__(
             # fmt: off
             prefix,

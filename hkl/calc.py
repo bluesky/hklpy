@@ -189,6 +189,8 @@ class CalcRecip(object):
         self._engine = None  # set below with property
         self._detector = util.new_detector()
         self._degrees = bool(degrees)
+        self._diffractometer = None
+        self._reflection_manager = None
         self._sample = None
         self._samples = {}
         self._unit_name = units
@@ -217,6 +219,11 @@ class CalcRecip(object):
                 self.new_sample(sample, lattice=lattice)
 
         self.engine = engine
+
+    def _setup_reflection_manager(self, diffractometer):
+        from .reflect import ReflectionManager
+        self._diffractometer = diffractometer
+        self._reflection_manager = ReflectionManager(diffractometer)
 
     @property
     def Position(self):
