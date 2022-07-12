@@ -15,12 +15,6 @@ def fourc():
     return fourc
 
 
-# def test_Reflection_class_raises_AttributeError():
-#     with pytest.raises(AttributeError) as exinfo:
-#         Reflection("h k l".split(), "omega chi phi tth".split(), 1.54)
-#     assert "'h.attr_name' not found" in str(exinfo.value)
-
-
 @pytest.mark.parametrize(
     "pseudos, reals, wavelength, ok",
     [
@@ -73,20 +67,34 @@ def test_Reflection_class(fourc):
     assert r1.wavelength == fourc.calc.wavelength
 
 
-# FIXME:
-# def test_Reflection_repr(fourc):
-#     r1 = Reflection(fourc._pseudo, fourc._real, fourc.calc.wavelength)
-#     # fmt: off
-#     expected = (
-#         "Reflection((0.0, 0.0, 0.0), "
-#         "(0, 0, 0, 0), wavelength=1.54)"
-#     )
-#     # fmt: on
-#     assert repr(r1) == expected
+def test_Reflection_repr(fourc):
+    # tuples, no diffractometer
+    expected = "Reflection((1, 2, 3), (4, 5, 6, 7), wavelength=8)"
+    pseudos = (1, 2, 3)
+    reals = (4, 5, 6, 7)
+    assert repr(Reflection(pseudos, reals, 8)) == expected
+
+    # tuples, specific diffractometer
+    expected = (
+        "Reflection(FourcPseudoPos(h=1, k=2, l=3), "
+        "FourcRealPos(omega=4, chi=5, phi=6, tth=7), "
+        "wavelength=8)"
+    )
+    assert repr(Reflection(pseudos, reals, 8, fourc)) == expected
+
+    # structures, specific diffractometer
+    pseudos = fourc.PseudoPosition(1, 2, 3)
+    reals = fourc.RealPosition(4, 5, 6, 7)
+    assert repr(Reflection(pseudos, reals, 8, fourc)) == expected
+
+    # angles in different order by name, specific diffractometer
+    pseudos = fourc.PseudoPosition(1, 2, 3)
+    reals = fourc.RealPosition(tth=7, phi=6, omega=4, chi=5)
+    assert repr(Reflection(pseudos, reals, 8, fourc)) == expected
 
 
 def test_ReflectionManager_class(fourc):
-    manager = ReflectionManager()
+    manager = ReflectionManager(fourc)
     assert manager.all_reflections == []
     assert manager.UB_reflections == []
 
@@ -112,6 +120,12 @@ def test_ReflectionManager_class(fourc):
 
     manager.remove(r1)  # no problem to repeat this
     assert len(manager) == 0
+
+
+def test_ReflectionManager_class_raises_TypeError(fourc):
+    with pytest.raises(TypeError) as exinfo:
+        ReflectionManager(fourc.calc)
+    assert "must be a subclass of Diffractometer" in str(exinfo.value)
 
 
 def test_compute_UB(fourc):
