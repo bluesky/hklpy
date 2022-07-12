@@ -5,7 +5,6 @@ import numpy as np
 from . import util
 from .context import TemporaryGeometry
 from .engine import Parameter
-from .reflect import ReflectionManager
 from .util import Lattice
 from .util import libhkl
 
@@ -50,6 +49,7 @@ def check_lattice(lattice):
     logger.debug("Lattice OK: %s", lt)
 
 
+# TODO: generalize this name (it's confusing, name is for (hkl) sample, not libhkl)
 class HklSample(object):
     """Represents a sample in diffractometer calculations
 
@@ -95,7 +95,6 @@ class HklSample(object):
         self._calc = calc
         self._sample = sample
         self._sample_dict = calc._samples
-        self.refl_mgr = ReflectionManager(calc)
 
         self._unit_name = units
         try:
