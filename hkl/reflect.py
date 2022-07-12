@@ -1,3 +1,21 @@
+"""
+Crystalline Sample Reflections on a Diffractometer
+
+A reflection represents a specific coordination between:
+
+* a set of diffractometer angles in real-space (known here as *reals*)
+* a set of crystalline coordinates in reciprocal-space (known here as *pseudos*)
+* an incident wavelength
+
+The names and ordering of the reals is specified by the diffractometer. The
+names and ordering of the pseudos is specified by the reciprocal-space
+computational engine.
+
+A diffractometer may have several samples, each with their own list of
+reflections.  The reciprocal-space computational engine cannot be changed once
+the diffractometer object is created.
+"""
+
 import logging
 
 
@@ -19,25 +37,24 @@ class Reflection:
     pseudos = []
     reals = []
 
-    def __init__(self, pseudos, reals, wavelength, calc=None) -> None:
-        self.calc = calc
-        # if calc is not None:  # TODO:
-        #     calc.Position(reals)
+    def __init__(self, pseudos, reals, wavelength, diffractometer=None) -> None:
+        if diffractometer is not None:
+            if isinstance(pseudos, (list, tuple)):
+                pseudos = diffractometer.PseudoPosition(*pseudos)
+            if isinstance(reals, (list, tuple)):
+                reals = diffractometer.RealPosition(*reals)
+
+        self.diffractometer = diffractometer
         self.pseudos = pseudos
         self.reals = reals
         self.wavelength = wavelength
 
     def _repr_info(self):
-        p = list(map(str, self.pseudos))
-        r = list(map(str, self.reals))
-
-        s = [
-            f"({', '.join(p)})",
-            f"({', '.join(r)})",
+        return [
+            repr(self.pseudos),
+            repr(self.reals),
             f"wavelength={self.wavelength!r}",
         ]
-
-        return s
 
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(self._repr_info())})"
@@ -53,14 +70,22 @@ class Reflection:
 
 class ReflectionManager:
     """
-    Manage a set of Reflection objects.
+    Manage a set of Reflection objects for a diffractometer sample.
     """
 
+    # TODO: refactor as dict? {sample: value is dict(reflections, UB_reflections)}
     _reflections = []
     _UB_reflections = []
 
-    def __init__(self, calc=None) -> None:
-        self.calc = calc
+    def __init__(self, diffractometer) -> None:
+        from .diffract import Diffractometer
+
+        if not isinstance(diffractometer, Diffractometer):
+            raise TypeError(
+                "'diffractometer' must be a subclass of Diffractometer. "
+                f" Received: {type(diffractometer)}"
+            )
+        self.diffractometer = diffractometer
         self.clear()
 
     def __len__(self) -> None:
@@ -70,12 +95,15 @@ class ReflectionManager:
         """
         Add a reflection to the list.
         """
+        # TODO: sample
         # TODO: do not add same reflection twice
         # TODO: support this existing use:
         #     r1 = sample.add_reflection(-1, 0, 0, (30, 0, -90, 60))
         #     r2 = sample.add_reflection(0, 1, 1, (45, 45, 0, 90))
 
-        reflection = Reflection(pseudos, reals, wavelength, calc=self.calc)
+        reflection = Reflection(
+            pseudos, reals, wavelength, diffractometer=self.diffractometer
+        )
         self._reflections.append(reflection)
         if use_UB:
             self._UB_reflections.append(reflection)
