@@ -34,7 +34,12 @@ dependencies:
   - sphinx
   - sphinx_rtd_theme
   - tqdm
-  - pip:
-    - coveralls
-    - pytest
-    - pytest-cov
+
+  - coveralls
+  - pytest
+  - pytest-cov
+  
+  # - pip:
+  #   - coveralls
+  #   - pytest
+  #   - pytest-cov
