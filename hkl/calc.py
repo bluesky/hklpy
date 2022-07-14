@@ -222,6 +222,7 @@ class CalcRecip(object):
 
     def _setup_reflection_manager(self, diffractometer):
         from .reflect import ReflectionManager
+
         self._diffractometer = diffractometer
         self._reflection_manager = ReflectionManager(diffractometer)
 

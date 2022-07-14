@@ -75,12 +75,14 @@ def test_Reflection_repr(fourc):
     assert repr(Reflection(pseudos, reals, 8)) == expected
 
     # tuples, specific diffractometer
+    # fmt: off
     expected = (
         "Reflection(FourcPseudoPos(h=1, k=2, l=3), "
         "FourcRealPos(omega=4, chi=5, phi=6, tth=7), "
         "wavelength=8)"
     )
     assert repr(Reflection(pseudos, reals, 8, fourc)) == expected
+    # fmt: on
 
     # structures, specific diffractometer
     pseudos = fourc.PseudoPosition(1, 2, 3)

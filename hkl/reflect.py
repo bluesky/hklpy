@@ -80,6 +80,7 @@ class ReflectionManager:
     def __init__(self, diffractometer) -> None:
         from .diffract import Diffractometer
 
+        # fmt: off
         if not isinstance(diffractometer, Diffractometer):
             raise TypeError(
                 "'diffractometer' must be a subclass of Diffractometer. "
@@ -87,6 +88,7 @@ class ReflectionManager:
             )
         self.diffractometer = diffractometer
         self.clear()
+        # fmt: on
 
     def __len__(self) -> None:
         return len(self._reflections)
@@ -101,9 +103,7 @@ class ReflectionManager:
         #     r1 = sample.add_reflection(-1, 0, 0, (30, 0, -90, 60))
         #     r2 = sample.add_reflection(0, 1, 1, (45, 45, 0, 90))
 
-        reflection = Reflection(
-            pseudos, reals, wavelength, diffractometer=self.diffractometer
-        )
+        reflection = Reflection(pseudos, reals, wavelength, diffractometer=self.diffractometer)
         self._reflections.append(reflection)
         if use_UB:
             self._UB_reflections.append(reflection)
