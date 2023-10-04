@@ -1,14 +1,23 @@
-from bluesky import plans as bp
-from bluesky.simulators import check_limits
-from hkl import SimulatedE4CV
-from ophyd.positioner import LimitError
 import numpy as np
 import numpy.testing
 import pytest
+from bluesky import plans as bp
+from bluesky.run_engine import RunEngine
+from ophyd.positioner import LimitError
+
+from .. import SimulatedE4CV
+from ..calc import UnreachableError
 
 
 class Fourc(SimulatedE4CV):
     ...
+
+
+def check_hkl(diffractometer, h, k, l):
+    try:
+        diffractometer.check_value({"h": h, "k": k, "l": l})
+    except UnreachableError as exc:
+        assert False, f"({h}, {k}, {l}) : {exc}"
 
 
 @pytest.fixture(scope="function")
@@ -69,69 +78,61 @@ def test_move(fourc):
     numpy.testing.assert_almost_equal(tuple(fourc.real_position), rpos)
 
 
-def test_hl_scan(fourc):
-    fourc.move((1.2, 1.2, 0.001))
-    assert check_limits(bp.scan([fourc], fourc.h, 0.9, 1.1, fourc.l, 0, 0, 11)) is None
-
-
-def test_h00_scan(fourc):
-    fourc.move(1, 0, 0)
-    assert check_limits(bp.scan([fourc], fourc.h, 0.9, 1.1, fourc.l, 0, 0, 11)) is None
-
-
-def test_hkl_scan(fourc):
-    fourc.move(1, 1, 1)
-    assert (
-        check_limits(
-            # fmt: off
-            bp.scan(
-                [fourc],
-                fourc.h, 0.9, 1.1,
-                fourc.k, 0.9, 1.1,
-                fourc.l, 0.9, 1.1,
-                33,
-            )
-            # fmt: on
-        )
-        is None
-    )
+@pytest.mark.parametrize("start", [[1.2, 1.2, 0.001], [1, 0, 0], [1, 1, 1]])
+@pytest.mark.parametrize("h", np.arange(0.9, 1.1, 0.1))
+@pytest.mark.parametrize("k", np.arange(0.0, 1.2, 0.6))
+@pytest.mark.parametrize("l", np.arange(0, 1, 0.5))
+def test_hkl_scan(start, h, k, l, fourc):
+    assert len(start) == 3
+    fourc.move(start)
+    check_hkl(fourc, h, k, l)
 
 
 def test_hkl_range_error(fourc):
-    with pytest.raises(ValueError) as exinfo:
-        assert (
-            check_limits(
-                # fmt: off
-                bp.scan(
-                    [fourc],
-                    fourc.h, 0.9, 1.1,
-                    fourc.k, 0.9, 1.1,
-                    fourc.l, 0.09, 123.1,
-                    33,
-                )
-                # fmt: on
-            )
-            is None
-        )
+    with pytest.raises(UnreachableError) as exinfo:
+        fourc.check_value({"h": 0.9, "k": 0.9, "l": 123})
     assert "Unable to solve." in str(exinfo.value)
 
 
-def test_real_axis(fourc):
-    assert check_limits(bp.scan([fourc], fourc.tth, 10, 20, 3)) is None
+@pytest.mark.parametrize("start", [[1, 1, 1]])
+@pytest.mark.parametrize("tth", np.arange(10, 20, 4))
+def test_real_axis(start, tth, fourc):
+    assert len(start) == 3
+    fourc.move(start)
+    try:
+        fourc.check_value({"tth": tth})
+    except UnreachableError as exc:
+        assert False, f"{exc}"
+
+
+@pytest.mark.parametrize("start", [[1, 1, 1]])
+@pytest.mark.parametrize(
+    "target",
+    [
+        {"tth": 10},
+        {"tth": 20},
+        {"tth": 20, "chi": 7},
+    ],
+)
+def test_moves(start, target, fourc):
+    assert len(start) == 3
+    assert isinstance(target, dict)
+    fourc.move(start)
+    try:
+        fourc.inverse(target)
+    except UnreachableError as exc:
+        assert False, f"{target=} : {exc}"
 
 
 def test_axis_contention(fourc):
+    RE = RunEngine()
     # contention if move pseudo and real positioners together
     with pytest.raises(ValueError) as exinfo:
-        check_limits(bp.scan([fourc], fourc.tth, 10, 20, fourc.k, 0, 0, 3))
+        RE(bp.scan([fourc], fourc.tth, 10, 20, fourc.k, 0, 0, 3))
     assert "mix of real and pseudo" in str(exinfo.value)
-
-
-def test_real_axis_range_multi(fourc):
-    assert check_limits(bp.scan([fourc], fourc.tth, 10, 20, fourc.chi, 5, 7, 3)) is None
 
 
 def test_real_axis_range_error(fourc):
     with pytest.raises(LimitError) as exinfo:
-        check_limits(bp.scan([fourc], fourc.tth, 10, 20000, 3))
+        fourc.check_value({"tth": 10_000})
     assert "not within limits" in str(exinfo.value)
