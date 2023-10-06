@@ -25,6 +25,7 @@ Fixes
 -----
 
 * ``util.run_orientation_info()`` failed when no primary stream present.
+* Broken link in documentation.
 
 Maintenance
 -----------
