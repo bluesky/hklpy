@@ -29,6 +29,7 @@ Fixes
 Maintenance
 -----------
 
+* Move table with SPEC commands cross-reference to a HOWTO document.
 * ``util.list_orientation_runs()`` added progress bar.
 * Support Py3.8, 3.9, 3.10, & 3.11
 * Support libhkl v5.0.0.3001 (& v5.0.0.3357 when ready)
