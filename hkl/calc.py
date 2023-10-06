@@ -27,18 +27,18 @@ Calculation support for diffractometers
 
 """
 
-import logging
 import functools
+import logging
 from collections import OrderedDict
 from threading import RLock
 
 import numpy as np
 
-from .engine import Engine, CalcParameter
-from .sample import HklSample
 from . import util
-from .util import libhkl
 from .context import UsingEngine
+from .engine import CalcParameter, Engine
+from .sample import HklSample
+from .util import libhkl
 
 __all__ = """
     A_KEV
@@ -185,7 +185,6 @@ class CalcRecip(object):
         lock_engine=False,
         inverted_axes=None,
     ):
-
         self._engine = None  # set below with property
         self._detector = util.new_detector()
         self._degrees = bool(degrees)
@@ -683,7 +682,6 @@ class CalcRecip(object):
         **kwargs,
         # fmt: on
     ):
-
         with UsingEngine(self, engine):
             for pos in self.get_path(start, end=end, n=n, path_type=path_type, **kwargs):
                 yield self.forward(pos, engine=None, **kwargs)

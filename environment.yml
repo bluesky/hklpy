@@ -12,7 +12,7 @@ channels:
   - defaults
 
 dependencies:
-  - python >=3.7,<3.10
+  - python >=3.8,<3.12
   - bluesky
   - databroker =1.2
   - hkl

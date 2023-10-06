@@ -61,7 +61,7 @@ logger = logging.getLogger(__name__)
 
 
 # when getting software package versions
-DEFAULT_PACKAGE_LIST = "hkl hklpy pygobject".split()
+DEFAULT_PACKAGE_LIST = "hkl pygobject".split()
 
 # 2018 CODATA recommended lattice parameter of silicon, Angstrom.
 # see: https://physics.nist.gov/cgi-bin/cuu/Value?asil

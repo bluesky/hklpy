@@ -11,13 +11,15 @@ Release History
     Deprecations
     Contributors
 
-v1.1 (expected by 2022-07-24)
+v1.1 (expected 2024)
 ======================================
 
 User-requested changes
 
-Maintenance
------------
+v1.0.4 (expected by 2023-10-06)
+======================================
+
+Maintenance release.
 
 Fixes
 -----
@@ -28,8 +30,10 @@ Maintenance
 -----------
 
 * ``util.list_orientation_runs()`` added progress bar.
+* Support Py3.8, 3.9, 3.10, & 3.11
+* Support libhkl v5.0.0.3001 (& v5.0.0.3357 when ready)
 
-v1.0.3 (expected by 2022-06-24)
+v1.0.3 (released 2022-06-22)
 ======================================
 
 Maintenance release.
