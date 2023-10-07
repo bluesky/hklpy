@@ -16,7 +16,7 @@ v1.1 (expected 2024)
 
 User-requested changes
 
-v1.0.4 (expected by 2023-10-06)
+v1.0.4 (released 2023-10-06)
 ======================================
 
 Maintenance release.
