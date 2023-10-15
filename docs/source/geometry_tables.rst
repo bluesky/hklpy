@@ -16,23 +16,27 @@ the number of axes (circles) and the names of each.  This table is
 sorted first by the number of circles, and then the geometry name (as
 used here in *hklpy*).
 
-======== ==================================================== =======================================================================
-#circles geometry                                             real_axes
-======== ==================================================== =======================================================================
-4        :ref:`E4CH <E4CH_table>`                             ``omega``, ``chi``, ``phi``, ``tth``
-4        :ref:`E4CV <E4CV_table>`                             ``omega``, ``chi``, ``phi``, ``tth``
-4        :ref:`K4CV <K4CV_table>`                             ``komega``, ``kappa``, ``kphi``, ``tth``
-4        :ref:`SoleilMars <SoleilMars_table>`                 ``omega``, ``chi``, ``phi``, ``tth``
-4        :ref:`SoleilSixsMed1p2 <SoleilSixsMed1p2_table>`     ``pitch``, ``mu``, ``gamma``, ``delta``
-4        :ref:`Zaxis <Zaxis_table>`                           ``mu``, ``omega``, ``delta``, ``gamma``
-5        :ref:`SoleilSixsMed2p2 <SoleilSixsMed2p2_table>`     ``beta``, ``mu``, ``omega``, ``gamma``, ``delta``
-6        :ref:`E6C <E6C_table>`                               ``mu``, ``omega``, ``chi``, ``phi``, ``gamma``, ``delta``
-6        :ref:`K6C <K6C_table>`                               ``mu``, ``komega``, ``kappa``, ``kphi``, ``gamma``, ``delta``
-6        :ref:`Petra3_p09_eh2 <Petra3_p09_eh2_table>`         ``mu``, ``omega``, ``chi``, ``phi``, ``delta``, ``gamma``
-6        :ref:`SoleilSiriusKappa <SoleilSiriusKappa_table>`   ``mu``, ``komega``, ``kappa``, ``kphi``, ``delta``, ``gamma``
-6        :ref:`SoleilSiriusTurret <SoleilSiriusTurret_table>` ``basepitch``, ``thetah``, ``alphay``, ``alphax``, ``delta``, ``gamma``
-6        :ref:`SoleilSixsMed2p3 <SoleilSixsMed2p3_table>`     ``beta``, ``mu``, ``omega``, ``gamma``, ``delta``, ``eta_a``
-======== ==================================================== =======================================================================
+======== ============================================================== ========================================================================
+#circles geometry                                                       real_axes
+======== ============================================================== ========================================================================
+4        :ref:`E4CH <E4CH_table>`                                       ``omega``, ``chi``, ``phi``, ``tth``
+4        :ref:`E4CV <E4CV_table>`                                       ``omega``, ``chi``, ``phi``, ``tth``
+4        :ref:`K4CV <K4CV_table>`                                       ``komega``, ``kappa``, ``kphi``, ``tth``
+4        :ref:`Petra3_p23_4c <Petra3_p23_4c_table>`                     ``omega_t``, ``mu``, ``gamma``, ``delta``
+4        :ref:`SoleilMars <SoleilMars_table>`                           ``omega``, ``chi``, ``phi``, ``tth``
+4        :ref:`SoleilSixsMed1p2 <SoleilSixsMed1p2_table>`               ``pitch``, ``mu``, ``gamma``, ``delta``
+4        :ref:`Zaxis <Zaxis_table>`                                     ``mu``, ``omega``, ``delta``, ``gamma``
+5        :ref:`SoleilSixsMed2p2 <SoleilSixsMed2p2_table>`               ``beta``, ``mu``, ``omega``, ``gamma``, ``delta``
+5        :ref:`SoleilSixsMed2p3v2 <SoleilSixsMed2p3v2_table>`           ``mu``, ``omega``, ``gamma``, ``delta``, ``eta_a``
+6        :ref:`E6C <E6C_table>`                                         ``mu``, ``omega``, ``chi``, ``phi``, ``gamma``, ``delta``
+6        :ref:`K6C <K6C_table>`                                         ``mu``, ``komega``, ``kappa``, ``kphi``, ``gamma``, ``delta``
+6        :ref:`Petra3_p09_eh2 <Petra3_p09_eh2_table>`                   ``mu``, ``omega``, ``chi``, ``phi``, ``delta``, ``gamma``
+6        :ref:`SoleilNanoscopiumRobot <SoleilNanoscopiumRobot_table>`   ``rz``, ``rs``, ``rx``, ``r``, ``delta``, ``gamma``
+6        :ref:`SoleilSiriusKappa <SoleilSiriusKappa_table>`             ``mu``, ``komega``, ``kappa``, ``kphi``, ``delta``, ``gamma``
+6        :ref:`SoleilSiriusTurret <SoleilSiriusTurret_table>`           ``basepitch``, ``thetah``, ``alphay``, ``alphax``, ``delta``, ``gamma``
+6        :ref:`SoleilSixsMed2p3 <SoleilSixsMed2p3_table>`               ``beta``, ``mu``, ``omega``, ``gamma``, ``delta``, ``eta_a``
+7        :ref:`Petra3_p23_6c <Petra3_p23_6c_table>`                     ``omega_t``, ``mu``, ``omega``, ``chi``, ``phi``, ``gamma``, ``delta``
+======== ============================================================== ========================================================================
 
 Tables for each geometry
 ------------------------
@@ -206,6 +210,63 @@ hkl    ``h``, ``k``, ``l`` lifting detector chi
 hkl    ``h``, ``k``, ``l`` lifting detector phi
 ====== =================== =================================== ==========
 
+.. index:: Petra3_p23_4c, geometry; Petra3_p23_4c
+
+.. _Petra3_p23_4c_table:
+
+Geometry: `Petra3_p23_4c`
+++++++++++++++++++++++++++
+
+real axes: ``omega_t``, ``mu``, ``gamma``, ``delta``
+
+=========== =========================== =================================== ==========
+engine      pseudo_axes                 mode                                parameters
+=========== =========================== =================================== ==========
+hkl         ``h``, ``k``, ``l``         bisector vertical
+hkl         ``h``, ``k``, ``l``         lifting detector omega_t
+hkl         ``h``, ``k``, ``l``         lifting detector mu
+hkl         ``h``, ``k``, ``l``         bisector horizontal
+hkl         ``h``, ``k``, ``l``         psi constant                        h2, k2, l2, psi
+q2          ``q``, ``alpha``            q2
+qper_qpar   ``qper``, ``qpar``          qper_qpar                           x, y, z
+tth2        ``tth``, ``alpha``          tth2
+incidence   ``incidence``, ``azimuth``  incidence                           x, y, z
+emergence   ``emergence``, ``azimuth``  emergence                           x, y, z
+=========== =========================== =================================== ==========
+
+.. index:: Petra3_p23_6c, geometry; Petra3_p23_6c
+
+.. _Petra3_p23_6c_table:
+
+Geometry: `Petra3_p23_6c`
+++++++++++++++++++++++++++
+
+real axes: ``omega_t``, ``mu``, ``omega``, ``chi``, ``phi``, ``gamma``, ``delta``
+
+=========== =========================== =================================== ==========
+engine      pseudo_axes                 mode                                parameters
+=========== =========================== =================================== ==========
+hkl         ``h``, ``k``, ``l``         bisector vertical
+hkl         ``h``, ``k``, ``l``         constant omega vertical
+hkl         ``h``, ``k``, ``l``         constant chi vertical
+hkl         ``h``, ``k``, ``l``         constant phi vertical
+hkl         ``h``, ``k``, ``l``         lifting detector phi
+hkl         ``h``, ``k``, ``l``         lifting detector omega
+hkl         ``h``, ``k``, ``l``         lifting detector mu
+hkl         ``h``, ``k``, ``l``         double diffraction vertical         h2, k2, l2
+hkl         ``h``, ``k``, ``l``         bisector horizontal
+hkl         ``h``, ``k``, ``l``         double diffraction horizontal       h2, k2, l2
+hkl         ``h``, ``k``, ``l``         psi constant vertical               h2, k2, l2, psi
+hkl         ``h``, ``k``, ``l``         psi constant horizontal             h2, k2, l2, psi
+hkl         ``h``, ``k``, ``l``         constant mu horizontal
+psi         ``psi``                     psi vertical                        h2, k2, l2
+q2          ``q``, ``alpha``            q2
+qper_qpar   ``qper``, ``qpar``          qper_qpar                           x, y, z
+tth2        ``tth``, ``alpha``          tth2
+incidence   ``incidence``, ``azimuth``  incidence                           x, y, z
+emergence   ``emergence``, ``azimuth``  emergence                           x, y, z
+=========== =========================== =================================== ==========
+
 .. index:: SoleilMars, geometry; SoleilMars
 
 .. _SoleilMars_table:
@@ -228,6 +289,23 @@ psi       ``psi``                    psi                ``h2``, ``k2``, ``l2``
 q         ``q``                      q
 incidence ``incidence``, ``azimuth`` incidence          ``x``, ``y``, ``z``
 ========= ========================== ================== ===============================
+
+.. index:: SoleilNanoscopiumRobot, geometry; SoleilNanoscopiumRobot
+
+.. _SoleilNanoscopiumRobot_table:
+
+Geometry: `SoleilNanoscopiumRobot`
+++++++++++++++++++++++++++++++++++
+
+real axes: ``rz``, ``rs``, ``rx``, ``r``, ``delta``, ``gamma``
+
+========= ========================== =================== ==========
+engine    pseudo_axes                mode                parameters
+========= ========================== =================== ==========
+hkl       ``h``, ``k``, ``l``        lifting detector rz
+hkl       ``h``, ``k``, ``l``        lifting detector rs
+hkl       ``h``, ``k``, ``l``        lifting detector rx
+========= ========================== =================== ==========
 
 .. index:: SoleilSiriusKappa, geometry; SoleilSiriusKappa
 
@@ -335,6 +413,34 @@ Geometry: `SoleilSixsMed2p3`
 ++++++++++++++++++++++++++++
 
 real axes: ``beta``, ``mu``, ``omega``, ``gamma``, ``delta``, ``eta_a``
+
+.. note:: Compare with :ref:`SoleilSixsMed2p3v2_table` which does not have ``beta``.
+
+========= ========================== =============== ==================================
+engine    pseudo_axes                mode            parameters
+========= ========================== =============== ==================================
+hkl       ``h``, ``k``, ``l``        mu_fixed
+hkl       ``h``, ``k``, ``l``        gamma_fixed
+hkl       ``h``, ``k``, ``l``        emergence_fixed ``x``, ``y``, ``z``, ``emergence``
+q2        ``q``, ``alpha``           q2
+qper_qpar ``qper``, ``qpar``         qper_qpar       ``x``, ``y``, ``z``
+tth2      ``tth``, ``alpha``         tth2
+incidence ``incidence``, ``azimuth`` incidence       ``x``, ``y``, ``z``
+emergence ``emergence``, ``azimuth`` emergence       ``x``, ``y``, ``z``
+========= ========================== =============== ==================================
+
+.. index:: SoleilSixsMed2p3v2, geometry; SoleilSixsMed2p3v2
+
+.. _SoleilSixsMed2p3v2_table:
+
+Geometry: `SoleilSixsMed2p3v2`
+++++++++++++++++++++++++++++++
+
+real axes: ``mu``, ``omega``, ``gamma``, ``delta``, ``eta_a``
+
+global parameter: `eta_a_rotation`, rotation of the detector (zaxis-like)
+
+.. note:: Compare with :ref:`SoleilSixsMed2p3_table` which has an additional ``beta`` rotation.
 
 ========= ========================== =============== ==================================
 engine    pseudo_axes                mode            parameters

@@ -17,12 +17,16 @@ Calculation support for diffractometers
     ~CalcK4CV
     ~CalcK6C
     ~CalcPetra3_p09_eh2
+    ~CalcPetra3_p23_4c
+    ~CalcPetra3_p23_6c
     ~CalcSoleilMars
+    ~CalcSoleilNanoscopiumRobot
     ~CalcSoleilSiriusKappa
     ~CalcSoleilSiriusTurret
     ~CalcSoleilSixsMed1p2
     ~CalcSoleilSixsMed2p2
     ~CalcSoleilSixsMed2p3
+    ~CalcSoleilSixsMed2p3v2
     ~CalcZaxis
 
 """
@@ -48,8 +52,11 @@ __all__ = """
     CalcK4CV
     CalcK6C
     CalcPetra3_p09_eh2
+    CalcPetra3_p23_4c
+    CalcPetra3_p23_6c
     CalcRecip
     CalcSoleilMars
+    CalcSoleilNanoscopiumRobot
     CalcSoleilSiriusKappa
     CalcSoleilSiriusTurret
     CalcSoleilSixsMed1p2
@@ -745,11 +752,32 @@ class CalcPetra3_p09_eh2(CalcRecip):
         super().__init__("PETRA3 P09 EH2", **kwargs)
 
 
+class CalcPetra3_p23_4c(CalcRecip):
+    """Geometry: PETRA3 P23 4C"""
+
+    def __init__(self, **kwargs):
+        super().__init__("PETRA3 P23 4C", **kwargs)
+
+
+class CalcPetra3_p23_6c(CalcRecip):
+    """Geometry: PETRA3 P23 6C"""
+
+    def __init__(self, **kwargs):
+        super().__init__("PETRA3 P23 6C", **kwargs)
+
+
 class CalcSoleilMars(CalcRecip):
     """Geometry: SOLEIL MARS"""
 
     def __init__(self, **kwargs):
         super().__init__("SOLEIL MARS", **kwargs)
+
+
+class CalcSoleilNanoscopiumRobot(CalcRecip):
+    """Geometry: SOLEIL NANOSCOPIUM ROBOT"""
+
+    def __init__(self, **kwargs):
+        super().__init__("SOLEIL NANOSCOPIUM ROBOT", **kwargs)
 
 
 class CalcSoleilSiriusKappa(CalcRecip):
@@ -781,8 +809,17 @@ class CalcSoleilSixsMed2p2(CalcRecip):
 
 
 class CalcSoleilSixsMed2p3(CalcRecip):
+    """Geometry: SOLEIL SIXS MED2+3"""
+
     def __init__(self, **kwargs):
         super().__init__("SOLEIL SIXS MED2+3", **kwargs)
+
+
+class CalcSoleilSixsMed2p3v2(CalcRecip):
+    """Geometry: SOLEIL SIXS MED2+3 v2"""
+
+    def __init__(self, **kwargs):
+        super().__init__("SOLEIL SIXS MED2+3 v2", **kwargs)
 
 
 class CalcZaxis(CalcRecip):
