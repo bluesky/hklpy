@@ -5,6 +5,9 @@ import numpy.testing
 import pytest
 
 
+a0 = SI_LATTICE_PARAMETER
+
+
 class Fourc(SimulatedE4CV):
     ...
 
@@ -69,7 +72,6 @@ def test_cahkl_table(capsys, fourc):
 
 def test_calc_UB(fourc):
     hkl.user.select_diffractometer(fourc)
-    a0 = SI_LATTICE_PARAMETER
     hkl.user.new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
     r1 = hkl.user.setor(4, 0, 0, tth=69.0966, omega=-145.451, chi=0, phi=0, wavelength=1.54)
     fourc.omega.move(-145.451)
@@ -88,7 +90,6 @@ def test_calc_UB(fourc):
 
 def test_list_samples(capsys, fourc):
     hkl.user.select_diffractometer(fourc)
-    a0 = SI_LATTICE_PARAMETER
     hkl.user.new_sample("silicon", a0, a0, a0, 90, 90, 90)
     capsys.readouterr()  # flush the output buffers
 
@@ -145,7 +146,6 @@ def test_new_sample(fourc):
     hkl.user.select_diffractometer(fourc)
 
     # sample is the silicon standard
-    a0 = SI_LATTICE_PARAMETER
     hkl.user.new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
     assert fourc.calc.sample.name == "silicon standard"
     lattice = fourc.calc.sample.lattice
@@ -192,7 +192,6 @@ def test_set_energy(fourc):
 
 def test_setor(fourc):
     hkl.user.select_diffractometer(fourc)
-    a0 = SI_LATTICE_PARAMETER
     hkl.user.new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
 
     assert len(fourc.calc.sample.reflections) == 0
@@ -211,7 +210,6 @@ def test_setor(fourc):
 
 def test_show_sample(capsys, fourc):
     hkl.user.select_diffractometer(fourc)
-    a0 = SI_LATTICE_PARAMETER
     hkl.user.new_sample("silicon", a0, a0, a0, 90, 90, 90)
     capsys.readouterr()  # flush the output buffers
 
@@ -340,3 +338,29 @@ def test_wh(fourc, capsys):
     ]
     assert len(out) == len(expected)
     assert out == expected
+
+
+def test_or_swap(fourc, capsys):
+    hkl.user.select_diffractometer(fourc)
+    hkl.user.new_sample("silicon standard", a0, a0, a0, 90, 90, 90)
+    assert len(fourc.calc.sample.reflections) == 0
+
+    r400 = hkl.user.setor(4, 0, 0, tth=69.0966, omega=-145.451, chi=0, phi=0, wavelength=1.54)
+    r040 = hkl.user.setor(0, 4, 0, tth=69.0966, omega=-145.451, chi=0, phi=90, wavelength=1.54)
+    assert len(fourc.calc.sample.reflections) == 2
+    assert len(fourc.calc.sample._orientation_reflections) == 0
+
+    hkl.user.calc_UB(r400, r040)
+    assert len(fourc.calc.sample._orientation_reflections) == 2
+    assert fourc.calc.sample._orientation_reflections == [r400, r040]
+
+    hkl.user.or_swap()
+    assert fourc.calc.sample._orientation_reflections == [r040, r400]
+
+    fourc.calc.sample.clear_reflections()
+    with pytest.raises(ValueError) as exinfo:
+        hkl.user.or_swap()
+    assert "There are 0 orientation reflection(s)" in str(exinfo.value)
+
+    hkl.user.calc_UB(r400, r040)
+    assert len(fourc.calc.sample._orientation_reflections) == 2
