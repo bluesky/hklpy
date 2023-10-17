@@ -23,8 +23,9 @@ synchronized with the latest version from repo.or.cz)
 
 ## Conda Recipes
 
-Install the most recent build: `conda install hklpy -c nsls2forge`
+Install the most recent build: `conda install hklpy -c conda-forge`
 
-The recipes for `hkl` and `hklpy` are available in the following feedstocks:
-- https://github.com/nsls-ii-forge/hkl-feedstock
-- https://github.com/nsls-ii-forge/hklpy-feedstock
+The recipes for *libhkl* (`hkl`) and `hklpy` are available in the following feedstocks:
+
+- <https://github.com/conda-forge/hkl-feedstock>
+- <https://github.com/conda-forge/hklpy-feedstock>
