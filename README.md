@@ -13,19 +13,20 @@ slightly cleaner abstractions when compared to the auto-generated
 `gobject-introspection` classes. Integrates with ophyd
 pseudopositioners.
 
-**NOTE**: main repository: https://repo.or.cz/hkl.git (GitHub repo
-https://github.com/picca/hkl is a shadow copy that may not be
-synchronized with the latest version from repo.or.cz)
+## References
 
-**NOTE**: hklpy documentation: https://blueskyproject.io/hklpy
-
-**NOTE**: Bluesky framework documentation: https://blueskyproject.io
+- hklpy documentation: <https://blueskyproject.io/hklpy>
+- *libhkl* main repository: <https://repo.or.cz/hkl.git>
+  - ([GitHub repo](https://github.com/picca/hkl) is a shadow copy rarely
+    synchronized with the main repository.)
+- Bluesky framework documentation: <https://blueskyproject.io>
 
 ## Conda Recipes
 
 Install the most recent build: `conda install hklpy -c conda-forge`
 
-The recipes for *libhkl* (`hkl`) and `hklpy` are available in the following feedstocks:
+The recipes for *libhkl* (`hkl`) and `hklpy` are available in the following
+conda-forge feedstocks:
 
 - <https://github.com/conda-forge/hkl-feedstock>
 - <https://github.com/conda-forge/hklpy-feedstock>
