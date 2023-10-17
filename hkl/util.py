@@ -423,6 +423,10 @@ def restore_reflections(orientation, diffractometer):
     pseudos = orientation["_pseudos"]
     reals = orientation["_reals"]
     orientation_reflections = []
+    # might be renamed axes
+    renaming = diffractometer.calc._axis_name_to_original
+    if len(renaming) > 0:
+        reals = [renaming[k] for k in reals]
 
     for ref_base in orientation["reflections_details"]:
         # every reflection has its own wavelength
