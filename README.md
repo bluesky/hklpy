@@ -1,9 +1,9 @@
-| Name | Downloads | Version | Platforms | Testing |
-| --- | --- | --- | --- | --- |
-| [![Conda Recipe](https://img.shields.io/badge/recipe-hklpy-green.svg)](https://anaconda.org/conda-forge/hklpy) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/hklpy.svg)](https://anaconda.org/conda-forge/hklpy) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/hklpy.svg)](https://anaconda.org/conda-forge/hklpy) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/hklpy.svg)](https://anaconda.org/conda-forge/hklpy) | [![Build Status](https://img.shields.io/github/workflow/status/bluesky/hklpy/Unit%20Tests)](https://github.com/bluesky/hklpy/actions?query=workflow%3A%22Unit+Tests%22+branch%3Amain) |
-
 hklpy
 =====
+
+| Name | Downloads | Version | Platforms | PyPI |
+| --- | --- | --- | --- | --- |
+| [![Conda Package](https://img.shields.io/badge/package-hklpy-green.svg)](https://anaconda.org/conda-forge/hklpy) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/hklpy.svg)](https://anaconda.org/conda-forge/hklpy) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/hklpy.svg)](https://anaconda.org/conda-forge/hklpy) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/hklpy.svg)](https://anaconda.org/conda-forge/hklpy) | [![PyPi](https://img.shields.io/pypi/v/hklpy.svg)](https://pypi.python.org/pypi/hklpy) |
 
 Controls for using diffractometers within the [Bluesky
 Framework](https://blueskyproject.io).
