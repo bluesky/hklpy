@@ -16,6 +16,11 @@ v1.1 (expected 2024)
 
 User-requested changes
 
+Maintenance
+-----------
+
+* Update packaging to latest PyPA recommendations.
+
 v1.0.4 (released 2023-10-06)
 ======================================
 

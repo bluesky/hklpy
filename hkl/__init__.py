@@ -12,10 +12,16 @@ import logging
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
-from ._version import get_versions  # noqa: F402, E402
+try:
+    from setuptools_scm import get_version
 
-__version__ = get_versions()["version"]
-del get_versions
+    __version__ = get_version(root="..", relative_to=__file__)
+    del get_version
+except (LookupError, ModuleNotFoundError):
+    from importlib.metadata import version
+
+    __version__ = version("pkgdemo")
+    del version
 
 # gobject-introspection, to access libhkl
 import gi

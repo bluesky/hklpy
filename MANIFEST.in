@@ -7,7 +7,6 @@ include hkl/_version.py
 include pyproject.toml
 include pytest.ini
 include requirements.txt
-include versioneer.py
 
 recursive-include docs *.rst conf.py Makefile make.bat
 recursive-include Makefile README.md *.ipynb resources/*

@@ -4,7 +4,6 @@ exclude =
     __pycache__,
     build,
     dist,
-    versioneer.py,
     docs/source,
     hkl/_version.py,
     dev_*

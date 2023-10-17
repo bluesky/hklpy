@@ -3,6 +3,6 @@ source=hkl
 
 [report]
 omit=
-    # ignore _version.py and versioneer.py
+    # ignore _version.py
     .*version.*
     *_version.py

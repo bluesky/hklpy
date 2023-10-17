@@ -9,11 +9,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
-    - name: Set up Python
-      uses: actions/setup-python@v1
-      # with:
-      #   python-version: 3.9
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
 
+    - name: Install OS packages
+      run: >-
+        sudo apt update
+        && sudo apt install -y libgirepository1.0-dev
+    
     - name: Install pypa/build
       run: >-
         python -m
@@ -39,16 +43,6 @@ jobs:
     - name: Check package metadata
       run: >-
         twine check dist/*
-
-    # NOTE: "Secrets" page, not "Environments"
-    # NOTE: testpypi upload with versioneer only works on new tags.
-    # - name: Publish distribution 📦 to Test PyPI
-    #   uses: pypa/gh-action-pypi-publish@master
-    #   with:
-    #     user: __token__
-    #     password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-    #     repository_url: https://test.pypi.org/legacy/
-    #     verbose: true
 
     # TODO: restrict to tags on main branch only?
     - name: Publish distribution 📦 to PyPI
