@@ -63,7 +63,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "hklpy"
-copyright = "2014-2021, Brookhaven National Laboratory"
+copyright = "2014-2023, Brookhaven National Laboratory"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
