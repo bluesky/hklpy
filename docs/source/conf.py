@@ -11,14 +11,16 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import pathlib
 import sphinx_rtd_theme
+import sys
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # fmt: off
-sys.path.insert(0, os.path.abspath(os.path.join("..", "..",)))
+docs_source = pathlib.Path(__file__).parent
+sys.path.insert(0, str(docs_source / ".." / ".."))
 # fmt: on
 # imports here for sphinx to build the documents without many WARNINGS.
 import hkl
@@ -132,11 +134,12 @@ autodoc_default_options = {
 autodoc_mock_imports = [
     "pint",
 ]
+
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-sys.path.append(os.path.abspath("_themes"))
+sys.path.append(str(docs_source / "_themes"))
 html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
