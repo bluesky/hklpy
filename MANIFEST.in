@@ -3,10 +3,8 @@ include README.md
 include RELEASE_NOTES.rst
 include conftest.py
 include environment.yml
-include hkl/_version.py
 include pyproject.toml
 include pytest.ini
-include requirements.txt
 
 recursive-include docs *.rst conf.py Makefile make.bat
 recursive-include Makefile README.md *.ipynb resources/*
