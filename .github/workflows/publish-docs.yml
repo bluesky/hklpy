@@ -67,7 +67,7 @@ jobs:
     - name: Build Docs
       shell: bash -l {0}
       run: |
-        make
+        make -C docs clean html
 
     # comment here for development use
     - name: Deploy documentation to blueskyproject.io.
