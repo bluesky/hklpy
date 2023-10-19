@@ -158,7 +158,19 @@ def new_sample(nm, a, b, c, alpha, beta, gamma):
 
 
 def or_swap():
-    """Swap the 2 [UB] reflections, re-compute & return new [UB]."""
+    """
+    Swap the 2 [UB] reflections, re-compute & return new [UB].
+
+    Example::
+
+        # define 2 reflections
+        r400 = hkl.user.setor(4, 0, 0, tth=69.0966, omega=-145.451, chi=0, phi=0, wavelength=1.54)
+        r040 = hkl.user.setor(0, 4, 0, tth=69.0966, omega=-145.451, chi=0, phi=90, wavelength=1.54)
+        # calculate UB
+        hkl.user.calc_UB(r400, r040)
+        # swap the two reflections (and recalculate UB)
+        hkl.user.or_swap()
+    """
     # note: or_swap is how the community of SPEC users knows this function
     _check_geom_selected()
     return _geom_.calc.sample.swap_orientation_reflections()
