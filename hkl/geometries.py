@@ -30,12 +30,16 @@ SPECIAL-USE DIFFRACTOMETER GEOMETRIES
 .. autosummary::
 
     ~Petra3_p09_eh2
+    ~Petra3_p23_4c
+    ~Petra3_p23_6c
     ~SoleilMars
+    ~SoleilNanoscopiumRobot
     ~SoleilSiriusKappa
     ~SoleilSiriusTurret
     ~SoleilSixsMed1p2
     ~SoleilSixsMed2p2
     ~SoleilSixsMed2p3
+    ~SoleilSixsMed2p3v2
 
 """
 
@@ -54,17 +58,21 @@ __all__ = """
     K4CV
     K6C
     Petra3_p09_eh2
+    Petra3_p23_4c
+    Petra3_p23_6c
     SimMixin
     SimulatedE4CV
     SimulatedE6C
     SimulatedK4CV
     SimulatedK6C
     SoleilMars
+    SoleilNanoscopiumRobot
     SoleilSiriusKappa
     SoleilSiriusTurret
     SoleilSixsMed1p2
     SoleilSixsMed2p2
     SoleilSixsMed2p3
+    SoleilSixsMed2p3v2
     Zaxis
 """.split()
 logger = logging.getLogger(__name__)
@@ -101,15 +109,33 @@ class K6C(Diffractometer):
 
 
 class Petra3_p09_eh2(Diffractometer):
-    """Used at Petra3"""
+    """6-circle Used at Petra3 P09"""
 
     calc_class = calc.CalcPetra3_p09_eh2
+
+
+class Petra3_p23_4c(Diffractometer):
+    """4-circle Used at Petra3 P23"""
+
+    calc_class = calc.CalcPetra3_p23_4c
+
+
+class Petra3_p23_6c(Diffractometer):
+    """7-circle Used at Petra3 P23"""
+
+    calc_class = calc.CalcPetra3_p23_6c
 
 
 class SoleilMars(Diffractometer):
     """Used at Soleil"""
 
     calc_class = calc.CalcSoleilMars
+
+
+class SoleilNanoscopiumRobot(Diffractometer):
+    """Used at Soleil"""
+
+    calc_class = calc.CalcSoleilNanoscopiumRobot
 
 
 class SoleilSiriusKappa(Diffractometer):
@@ -140,6 +166,12 @@ class SoleilSixsMed2p3(Diffractometer):
     """Used at Soleil"""
 
     calc_class = calc.CalcSoleilSixsMed2p3
+
+
+class SoleilSixsMed2p3v2(Diffractometer):
+    """Used at Soleil"""
+
+    calc_class = calc.CalcSoleilSixsMed2p3v2
 
 
 class Zaxis(Diffractometer):
