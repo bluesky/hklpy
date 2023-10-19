@@ -20,7 +20,7 @@ on:
         default: false
 
 jobs:
-  build:
+  docs:
 
     if: github.repository_owner == 'bluesky'
     runs-on: ubuntu-latest
