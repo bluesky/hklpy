@@ -29,7 +29,7 @@ jobs:
       run: |
         env | sort | grep hklpy
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Install Python ${{ matrix.python-version }} Conda environment with micromamba from env-dev.yml
       uses: mamba-org/provision-with-micromamba@main
