@@ -2,7 +2,14 @@ name: pre-commit
 
 # from: https://github.com/NSLS-II/scientific-python-cookiecutter/ ... /.github/workflows/pre-commit.yml
 
-on: [pull_request, push, workflow_dispatch]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:   # allow manual triggering
 
 jobs:
   pre-commit:
