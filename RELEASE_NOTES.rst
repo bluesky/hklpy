@@ -26,6 +26,11 @@ Fixes
 
 * ``util.restore_reflections()`` use renamed motor axes if so defined.
 
+Maintenance
+-----------
+
+* Update packaging to latest PyPA recommendations.
+
 v1.0.4 (released 2023-10-06)
 ======================================
 
