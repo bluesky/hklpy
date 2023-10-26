@@ -10,6 +10,7 @@ Utility functions and structures.
     ~Lattice
     ~list_orientation_runs
     ~new_detector
+    ~new_lattice
     ~restore_constraints
     ~restore_energy
     ~restore_orientation
@@ -218,6 +219,11 @@ class Constraint:
 
 
 Lattice = namedtuple("LatticeTuple", "a b c alpha beta gamma")
+
+
+def new_lattice(a, b=None, c=None, alpha=90, beta=None, gamma=None):
+    """Simplify for high-symmetry crystal systems."""
+    return Lattice(a, b or a, c or a, alpha, beta or alpha, gamma or alpha)
 
 
 _position_tuples = {}

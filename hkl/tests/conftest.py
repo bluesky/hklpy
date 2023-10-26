@@ -13,7 +13,7 @@ from .. import SimMixin
 from .. import SimulatedE4CV
 from .. import SimulatedE6C
 from .. import SimulatedK4CV
-
+from ..util import new_lattice
 
 TARDIS_TEST_MODE = "lifting_detector_mu"
 
@@ -94,19 +94,18 @@ def new_sample(diffractometer, name, lattice):
 
 
 def sample_kryptonite(diffractometer):
-    triclinic = (4, 5, 6, 75, 85, 95)
+    triclinic = new_lattice(4, 5, 6, 75, 85, 95)
     new_sample(diffractometer, "kryptonite", lattice=triclinic)
 
 
 def sample_silicon(diffractometer):
     from .. import SI_LATTICE_PARAMETER
 
-    a0 = SI_LATTICE_PARAMETER
-    cubic = (a0, a0, a0, 90, 90, 90)
+    cubic = new_lattice(SI_LATTICE_PARAMETER)
     new_sample(diffractometer, "silicon", lattice=cubic)
 
 
 def sample_vibranium(diffractometer):
     a0 = 2 * numpy.pi
-    cubic = (a0, a0, a0, 90, 90, 90)
+    cubic = new_lattice(a0)
     new_sample(diffractometer, "vibranium", lattice=cubic)
