@@ -1,50 +1,46 @@
-canonical_axes:
-- omega
-- chi
-- phi
-- tth
-class: SimulatedE4CV
-constraints:
-    chi:
-        fit: true
-        high_limit: 180.0
-        low_limit: -180.0
-        value: 0.0
-    omega:
-        fit: true
-        high_limit: 180.0
-        low_limit: -180.0
-        value: 0.0
-    phi:
-        fit: true
-        high_limit: 180.0
-        low_limit: -180.0
-        value: 0.0
-    tth:
-        fit: true
-        high_limit: 180.0
-        low_limit: -180.0
-        value: 0.0
-datetime: '2023-10-26 16:58:20.819891'
-energy_keV: 8.050921974025975
-engine: hkl
+name: e4c
 geometry: E4CV
-hklpy_version: 1.0.4+28.gd9a56a4.dirty
+datetime: '2023-10-26 17:36:48.532883'
+class: SimulatedE4CV
+engine: hkl
+mode: bissector
+hklpy_version: 1.0.5.dev53+g1a1f94d.d20231026
 library: gi.repository.Hkl
 library_version: v5.0.0.3001
-mode: bissector
-name: e4c
-real_axes:
-- omega
-- chi
-- phi
-- tth
-reciprocal_axes:
-- h
-- k
-- l
+energy_keV: 8.050921974025975
+wavelength_angstrom: 1.54
+constraints:
+    omega:
+        low_limit: -180.0
+        high_limit: 180.0
+        value: 0.0
+        fit: true
+    chi:
+        low_limit: -180.0
+        high_limit: 180.0
+        value: 0.0
+        fit: true
+    phi:
+        low_limit: -180.0
+        high_limit: 180.0
+        value: 0.0
+        fit: true
+    tth:
+        low_limit: -180.0
+        high_limit: 180.0
+        value: 0.0
+        fit: true
 samples:
     main:
+        name: main
+        lattice:
+            a: 1.54
+            b: 1.54
+            c: 1.54
+            alpha: 90.0
+            beta: 90.0
+            gamma: 90.0
+        reflections: []
         U:
         -   - 1.0
             - 0.0
@@ -65,16 +61,52 @@ samples:
         -   - 0.0
             - 0.0
             - 4.079990459207523
-        lattice:
-            a: 1.54
-            alpha: 90.0
-            b: 1.54
-            beta: 90.0
-            c: 1.54
-            gamma: 90.0
-        name: main
-        reflections: []
     vibranium:
+        name: vibranium
+        lattice:
+            a: 6.283185307179586
+            b: 6.283185307179586
+            c: 6.283185307179586
+            alpha: 90.0
+            beta: 90.0
+            gamma: 90.0
+        reflections:
+        -   reflection:
+                h: 4.0
+                k: 0.0
+                l: 0.0
+            flag: 1
+            wavelength: 1.54
+            position:
+                omega: -145.451
+                chi: 0.0
+                phi: 0.0
+                tth: 69.0966
+            orientation_reflection: false
+        -   reflection:
+                h: 0.0
+                k: 4.0
+                l: 0.0
+            flag: 1
+            wavelength: 1.54
+            position:
+                omega: -145.451
+                chi: 0.0
+                phi: 90.0
+                tth: 69.0966
+            orientation_reflection: true
+        -   reflection:
+                h: 0.0
+                k: 0.0
+                l: 4.0
+            flag: 1
+            wavelength: 1.54
+            position:
+                omega: -145.451
+                chi: 90.0
+                phi: 0.0
+                tth: 69.0966
+            orientation_reflection: true
         U:
         -   - 1.2217304763701863e-05
             - -0.9999999999253688
@@ -95,49 +127,17 @@ samples:
         -   - 0.9999999999253688
             - 1.221730476364063e-05
             - -1.492626316575311e-10
-        lattice:
-            a: 6.283185307179586
-            alpha: 90.0
-            b: 6.283185307179586
-            beta: 90.0
-            c: 6.283185307179586
-            gamma: 90.0
-        name: vibranium
-        reflections:
-        -   flag: 1
-            orientation_reflection: false
-            position:
-                chi: 0.0
-                omega: -145.451
-                phi: 0.0
-                tth: 69.0966
-            reflection:
-                h: 4.0
-                k: 0.0
-                l: 0.0
-            wavelength: 1.54
-        -   flag: 1
-            orientation_reflection: true
-            position:
-                chi: 0.0
-                omega: -145.451
-                phi: 90.0
-                tth: 69.0966
-            reflection:
-                h: 0.0
-                k: 4.0
-                l: 0.0
-            wavelength: 1.54
-        -   flag: 1
-            orientation_reflection: true
-            position:
-                chi: 90.0
-                omega: -145.451
-                phi: 0.0
-                tth: 69.0966
-            reflection:
-                h: 0.0
-                k: 0.0
-                l: 4.0
-            wavelength: 1.54
-wavelength_angstrom: 1.54
+canonical_axes:
+- omega
+- chi
+- phi
+- tth
+real_axes:
+- omega
+- chi
+- phi
+- tth
+reciprocal_axes:
+- h
+- k
+- l

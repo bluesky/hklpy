@@ -434,7 +434,7 @@ class DiffractometerConfiguration:
 
     def to_yaml(self):
         """Report diffractometer configuration as YAML text."""
-        return yaml.dump(self.to_dict(), indent=4)
+        return yaml.dump(self.to_dict(), indent=4, sort_keys=False)
 
     @property
     def canonical_axes_names(self):
