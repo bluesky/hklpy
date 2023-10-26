@@ -8,7 +8,6 @@ This tutorial covers:
 * Installation for users using :ref:`install.conda.user`
 * Installation for developers using :ref:`install.conda.developer`
 * Installation for users using :ref:`install.pip.user`
-* Installation for developers using :ref:`install.pip.developer`
 * Test the installation using :ref:`install.test`
 
 .. note:: *hklpy* only runs on Linux, since it relies on the *hkl*
@@ -79,41 +78,6 @@ Install *hklpy* from PyPI.
 .. code:: bash
 
     python3 -m pip install hklpy
-
-Until a new version after 1.0.2 is release, you'll also need to download the
-the `requirements.txt` file from the source code, then install using:
-
-.. code:: bash
-
-    pip install -r requirements.txt
-
-.. _install.pip.developer:
-
-Pip for *hklpy* Developers
---------------------------
-
-We strongly recommend creating a fresh environment (here, named ``dev-hklpy``).
-Both Python and the *hkl* library must already be installed.  Here, we create
-a conda environment with just these packages required:
-
-.. code:: bash
-
-    conda create -y -n dev-hklpy python=3.9 hkl -c conda-forge
-    conda activate dev-hklpy
-
-Install requirements from PyPI.
-
-.. code:: bash
-
-    python3 -m pip install -r requirements.txt
-
-Install *hklpy* from source directory.  If necessary, clone from github.
-
-.. code:: bash
-
-    git clone https://github.com/bluesky/hklpy
-    cd hklpy
-    python3 -m pip install -e . --no-deps
 
 .. _install.test:
 
