@@ -564,10 +564,10 @@ class Diffractometer(PseudoPositioner):
     def _set_constraints(self, constraints):
         """set diffractometer's constraints"""
         for axis, constraint in constraints.items():
-            self.calc[axis].limits = list(constraint)[0:2]
-            #     constraint.low_limit,
-            #     constraint.high_limit,
-            # )
+            self.calc[axis].limits = [
+                constraint.low_limit,
+                constraint.high_limit,
+            ]
             self.calc[axis].value = constraint.value
             self.calc[axis].fit = constraint.fit
 
