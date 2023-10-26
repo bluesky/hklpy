@@ -19,14 +19,21 @@ def test_axes_names(e4cv, e4cv_renamed):
 
 def test_restore(e4cv_renamed, k4cv):
     config = DiffractometerConfiguration(e4cv_renamed)
-    before = config.export()
+    before = config.export("dict")
     config.restore(before)
-    assert before == config.export(), "should be same configuration"
+    after = config.export("dict")
+    assert before != after, "datetime difference"
+
+    before.pop("datetime")
+    after.pop("datetime")
+    assert before == after, "should be same configuration"
 
     with pytest.raises(ValueError):
         # cannot restore k4cv config to e4cv diffractometer
         config.restore(DiffractometerConfiguration(k4cv).export())
-    assert before == config.export(), "configuration should be unchanged"
+    after = config.export("dict")
+    after.pop("datetime")
+    assert before == after, "configuration should be unchanged"
 
 
 @pytest.mark.parametrize("fmt", [None] + EXPORT_FORMATS)
