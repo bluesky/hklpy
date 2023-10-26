@@ -39,8 +39,9 @@ Maintenance
 -----------
 
 * Add pre-commit checks.
-* Add test for ``or_swap()``
-* Expand testing to to Py3.8 - Py3.11
+* Add test for ``or_swap()``.
+* Fix code in ``util.restore_reflections()`` that failed unit tests locally.
+* Expand testing to to Py3.8 - Py3.11.
 * Make it easier to find the SPEC command cross-reference table.
 * Update packaging to latest PyPA recommendations.
 
