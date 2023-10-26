@@ -1,26 +1,6 @@
 """
 Save and restore Diffractometer Configuration.
 
-Users want to see a list of reflections, samples, etc. from their recent
-session, even after bluesky stops. Multiple sessions could (optionally) access
-the same list or use a different one.
-
-This code provides a core representation of a diffractometer's configuration.
-User code could choose to write the configuration to a file, an EPICS PV, or
-some other persistent location.
-
-Example::
-
-    config = DiffractometerConfiguration(fourc)
-
-    # save
-    with open("fourc-config.yml", "w") as f:
-        f.write(config.export("yaml"))
-
-    # restore
-    with open("fourc-config.yml") as f:
-        config.restore(f.read(), clear=True)
-
 .. autosummary::
 
     ~DiffractometerConfiguration
@@ -30,6 +10,7 @@ __all__ = [
     "DiffractometerConfiguration",
 ]
 
+import datetime
 import json
 from dataclasses import dataclass
 
@@ -41,6 +22,7 @@ EXPORT_FORMATS = "dict json yaml".split()
 EXPECTED_CONFIGURATION_KEYS_TYPES = {
     "name": str,
     "geometry": str,
+    "datetime": str,
     "class": str,
     "engine": str,
     "mode": str,
@@ -84,21 +66,41 @@ class DiffractometerConfiguration:
     diffractometer: Diffractometer
 
     def export(self, fmt="json"):
-        """Export configuration in a recognized format (dict, json, yaml)."""
-        fmt = fmt or "json"
+        """
+        Export configuration in a recognized format (dict, json, yaml).
+
+        PARAMETERS
+
+        fmt *str*:
+            One of these: ``None``, ``"dict"``, ``"json"``, ``"yaml"``. If
+            ``None`` (or empty string or no argument at all), then JSON will be
+            the default.
+        """
+        fmt = (fmt or "json").lower()
+        if fmt == "yml":
+            fmt = "yaml"  # a common substitution, just being friendly
         if fmt not in EXPORT_FORMATS:
             raise ValueError(
                 f"fmt must be one of {EXPORT_FORMATS}, received {fmt!r}"
             )
         return getattr(self, f"to_{fmt}")()
 
-    def restore(self, config):
+    def restore(self, config, clear=True):
         """
         Restore configuration from a recognized format (dict, json, yaml).
 
         Instead of guessing, recognize the kind of config data by its structure.
 
-        Can't name this method "import", it's a reserved Python word.
+        PARAMETERS
+
+        config *dict* or *str*:
+            structure (dict, json, or yaml) with diffractometer configuration
+        clear *bool*:
+            If ``True`` (default), remove any previous configuration of the
+            diffractometer and reset it to default values before restoring the
+            configuration.
+
+        Note: Can't name this method "import", it's a reserved Python word.
         """
         importer = None
 
@@ -112,7 +114,7 @@ class DiffractometerConfiguration:
         if importer is None:
             raise TypeError("Unrecognized configuration structure.")
 
-        importer(config)
+        importer(config, clear=clear)
 
     def reset_diffractometer(self):
         """Clear all diffractometer settings."""
@@ -144,7 +146,14 @@ class DiffractometerConfiguration:
         # fmt: on
 
     def validate_config_dict(self, config):
-        """Verify that the config dictionary is correctly formed."""
+        """
+        Verify that the config dictionary is correctly formed.
+
+        PARAMETERS
+
+        config *dict*:
+            structure (dict) with diffractometer configuration
+        """
         from .diffract import Diffractometer
         from .util import libhkl
 
@@ -181,7 +190,14 @@ class DiffractometerConfiguration:
             self.validate_config_dict_sample(sample)
 
     def validate_config_dict_sample(self, sample):
-        """Validate a sample dictionary in the configuration."""
+        """
+        Validate a sample dictionary in the configuration.
+
+        PARAMETERS
+
+        sample *dict*:
+            structure (dict) with sample configuration
+        """
         assert "lattice" in sample
         assert isinstance(sample["lattice"], dict)
         for k in "a b c alpha beta gamma".split():
@@ -209,7 +225,14 @@ class DiffractometerConfiguration:
         # fmt: on
 
     def validate_config_dict_sample_reflection(self, reflection):
-        """Validate a reflection dictionary in the configuration."""
+        """
+        Validate a reflection dictionary in the configuration.
+
+        PARAMETERS
+
+        reflection *dict*:
+            structure (dict) with reflection configuration
+        """
         # fmt: off
         assert isinstance(reflection.get("flag"), int), (
             "'flag' must be int"
@@ -308,7 +331,18 @@ class DiffractometerConfiguration:
                 self.diffractometer.calc.sample.compute_UB(r1, r2)
 
     def from_dict(self, config, clear=True):
-        """Restore diffractometer configuration from Python dictionary."""
+        """
+        Restore diffractometer configuration from Python dictionary.
+
+        PARAMETERS
+
+        config *dict*:
+            structure (dict) with diffractometer configuration
+        clear *bool*:
+            If ``True`` (default), remove any previous configuration of the
+            diffractometer and reset it to default values before restoring the
+            configuration.
+        """
         try:
             self.validate_config_dict(config)
         except AssertionError as exc:
@@ -330,6 +364,7 @@ class DiffractometerConfiguration:
         d = {
             "name": me.name,
             "geometry": me.calc._geometry.name_get(),
+            "datetime": str(datetime.datetime.now()),
             "class": me.__class__.__name__,
             "engine": me.calc.engine.name,
             "mode": me.calc.engine.mode,
@@ -364,7 +399,18 @@ class DiffractometerConfiguration:
         return d
 
     def from_json(self, text, clear=True):
-        """Restore diffractometer configuration from JSON text."""
+        """
+        Restore diffractometer configuration from JSON text.
+
+        PARAMETERS
+
+        config *str* (JSON):
+            structure (JSON string) with diffractometer configuration
+        clear *bool*:
+            If ``True`` (default), remove any previous configuration of the
+            diffractometer and reset it to default values before restoring the
+            configuration.
+        """
         self.from_dict(json.loads(text), clear=clear)
 
     def to_json(self):
@@ -372,7 +418,18 @@ class DiffractometerConfiguration:
         return json.dumps(self.to_dict(), indent=4)
 
     def from_yaml(self, text, clear=True):
-        """Restore diffractometer configuration from YAML text."""
+        """
+        Restore diffractometer configuration from YAML text.
+
+        PARAMETERS
+
+        config *str* (YAML):
+            structure (YAML string) with diffractometer configuration
+        clear *bool*:
+            If ``True`` (default), remove any previous configuration of the
+            diffractometer and reset it to default values before restoring the
+            configuration.
+        """
         self.from_dict(yaml.load(text, Loader=yaml.Loader), clear=clear)
 
     def to_yaml(self):
