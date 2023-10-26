@@ -1,6 +1,5 @@
 from hkl import Constraint
 from hkl import E6C, SimMixin
-from hkl import Lattice
 from ophyd import Component as Cpt
 from ophyd import SoftPositioner
 import hkl.calc
@@ -9,39 +8,13 @@ import numpy.testing
 import pytest
 
 
-TARDIS_TEST_MODE = "lifting_detector_mu"
-
-
-class Tardis(SimMixin, E6C):
-    # theta
-    theta = Cpt(SoftPositioner, init_pos=0)
-    omega = Cpt(SoftPositioner, init_pos=0)
-    chi = Cpt(SoftPositioner, init_pos=0)
-    phi = Cpt(SoftPositioner, init_pos=0)
-    # delta, gamma
-    delta = Cpt(SoftPositioner, init_pos=0)
-    gamma = Cpt(SoftPositioner, init_pos=0)
-
-
-@pytest.fixture(scope="function")
-def tardis():
-    tardis = Tardis("", name="tardis")
-    tardis.calc.engine.mode = TARDIS_TEST_MODE
-    # re-map Tardis' axis names onto what an E6C expects
-    tardis.calc.physical_axis_names = {
-        "mu": "theta",
-        "omega": "omega",
-        "chi": "chi",
-        "phi": "phi",
-        "gamma": "delta",
-        "delta": "gamma",
-    }
-    tardis.wait_for_connection()
-    return tardis
+from .conftest import TARDIS_TEST_MODE
 
 
 @pytest.fixture(scope="function")
 def kcf_sample(tardis):
+    from .conftest import new_sample
+
     # note: orientation matrix (below) was pre-computed with this wavelength
     # wavelength units must match lattice unit cell length units
     tardis.calc.wavelength = 13.317314715359827
@@ -51,10 +24,12 @@ def kcf_sample(tardis):
 
     # lengths must have same units as wavelength
     # angles are in degrees
-    lattice = Lattice(a=5.857, b=5.857, c=7.849, alpha=90.0, beta=90.0, gamma=90.0)
+    a0 = 5.857
+    c0 = 7.849
+    tetragonal = (a0, a0, c0, 90, 90, 90)
 
     # add the sample to the calculation engine
-    tardis.calc.new_sample("KCF", lattice=lattice)
+    new_sample(tardis, "KCF", tetragonal)
 
     # We can alternatively set the wavelength
     # (or photon energy) on the Tardis.calc instance.
