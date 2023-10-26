@@ -431,8 +431,6 @@ def restore_reflections(orientation, diffractometer):
     orientation_reflections = []
     # might be renamed axes
     renaming = diffractometer.calc._axis_name_to_original
-    if len(renaming) > 0:
-        reals = [renaming[k] for k in reals]
 
     for ref_base in orientation["reflections_details"]:
         # every reflection has its own wavelength
@@ -442,7 +440,11 @@ def restore_reflections(orientation, diffractometer):
         # Can't just use the dictionaries in ``orientation``.
         # Get the canonical order from the orientation data.
         miller_indices = [ref_base["reflection"][key] for key in pseudos]
-        positions = [ref_base["position"][key] for key in reals]
+        try:
+            positions = [ref_base["position"][key] for key in reals]
+        except KeyError:
+            # switch to use renamed keys
+            positions = [ref_base["position"][renaming[key]] for key in reals]
         ppp = namedtuple("PositionTuple", tuple(reals))(*positions)
 
         # assemble the final form of the reflection for add_reflection()
