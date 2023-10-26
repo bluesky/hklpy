@@ -21,10 +21,28 @@ v1.1 (expected 2023-12)
 
 Add new geometries from upstream *libhkl*.
 
+New Features and/or Enhancements
+--------------------------------
+
+* Add ``DiffractometerConfiguration`` to export & restore configuration and orientation.
+* Add ``Petra3_p23_4c`` diffractometer geometry.
+* Add ``Petra3_p23_6c`` diffractometer geometry.
+* Add ``SoleilNanoscopiumRobot`` diffractometer geometry.
+* Add ``SoleilSixsMed2p3v2`` diffractometer geometry.
+
 Fixes
 -----
 
 * ``util.restore_reflections()`` use renamed motor axes if so defined.
+
+Maintenance
+-----------
+
+* Add pre-commit checks.
+* Add test for ``or_swap()``
+* Expand testing to to Py3.8 - Py3.11
+* Make it easier to find the SPEC command cross-reference table.
+* Update packaging to latest PyPA recommendations.
 
 v1.0.4 (released 2023-10-06)
 ======================================
