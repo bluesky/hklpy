@@ -6,6 +6,7 @@ API Reference
    :glob:
 
    calc
+   configuration
    context
    diffract
    engine
