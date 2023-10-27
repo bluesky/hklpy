@@ -83,7 +83,7 @@ A single command is used to set a diffractometer's configuration from a Python o
 Assuming:
 
 * ``config`` is the object returned by calling :class:`~hkl.DiffractometerConfiguration()`
-* ``settings`` is contains the configuration object (dict, json, or yaml) to be restored
+* ``settings`` contains the configuration object (dict, json, or yaml) to be restored
 
 The same command is used to restore the configuration settings from either dict,
 JSON string, or YAML string.  The
