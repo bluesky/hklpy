@@ -1,7 +1,7 @@
 import pytest
 
 from .. import DiffractometerConfiguration
-from ..configuration import EXPECTED_CONFIGURATION_KEYS_TYPES
+from ..configuration import REQUIRED_CONFIGURATION_KEYS_TYPES
 from ..configuration import EXPORT_FORMATS
 
 
@@ -64,9 +64,9 @@ def test_format(fmt, e4cv):
 @pytest.mark.parametrize(
     "action, key, value, failure",
     # remove each of the expected keys, individually
-    [["rm", k, None, AssertionError] for k in EXPECTED_CONFIGURATION_KEYS_TYPES]
+    [["rm", k, None, AssertionError] for k in REQUIRED_CONFIGURATION_KEYS_TYPES]
     # set each of the expected keys, individually, to invalid value
-    + [["set", k, object, AssertionError] for k in EXPECTED_CONFIGURATION_KEYS_TYPES],
+    + [["set", k, object, AssertionError] for k in REQUIRED_CONFIGURATION_KEYS_TYPES],
 )
 def test_validation_fails(action, key, value, failure, tardis):
     assert len(tardis.calc._samples) == 1

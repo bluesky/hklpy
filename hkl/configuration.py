@@ -19,7 +19,7 @@ import yaml
 
 DEFAULT_WAVELENGTH = 1.54  # angstrom
 EXPORT_FORMATS = "dict json yaml".split()
-EXPECTED_CONFIGURATION_KEYS_TYPES = {
+REQUIRED_CONFIGURATION_KEYS_TYPES = {
     "name": str,
     "geometry": str,
     "datetime": str,
@@ -161,7 +161,7 @@ class DiffractometerConfiguration:
         assert isinstance(diffractometer, Diffractometer)
         assert isinstance(config, dict)
 
-        for k, types in EXPECTED_CONFIGURATION_KEYS_TYPES.items():
+        for k, types in REQUIRED_CONFIGURATION_KEYS_TYPES.items():
             assert k in config, f"Missing required parameter, {k}"
             assert isinstance(config[k], types), f"Bad value type for parameter, {k}"
 
