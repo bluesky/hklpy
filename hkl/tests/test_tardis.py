@@ -1,20 +1,20 @@
-from hkl import Constraint
-from hkl import E6C, SimMixin
-from ophyd import Component as Cpt
-from ophyd import SoftPositioner
-import hkl.calc
 import numpy as np
 import numpy.testing
 import pytest
+from ophyd import Component as Cpt
+from ophyd import SoftPositioner
 
-
-from .conftest import TARDIS_TEST_MODE
+from .. import E6C
+from .. import Constraint
+from .. import SimMixin
+from .. import calc as hkl_calc
+from ..util import new_lattice
+from .__init__ import TARDIS_TEST_MODE
+from .__init__ import new_sample
 
 
 @pytest.fixture(scope="function")
 def kcf_sample(tardis):
-    from .conftest import new_sample
-
     # note: orientation matrix (below) was pre-computed with this wavelength
     # wavelength units must match lattice unit cell length units
     tardis.calc.wavelength = 13.317314715359827
@@ -24,9 +24,7 @@ def kcf_sample(tardis):
 
     # lengths must have same units as wavelength
     # angles are in degrees
-    a0 = 5.857
-    c0 = 7.849
-    tetragonal = (a0, a0, c0, 90., 90., 90.)
+    tetragonal = new_lattice(5.857, c=7.849)
 
     # add the sample to the calculation engine
     new_sample(tardis, "KCF", tetragonal)
@@ -168,7 +166,7 @@ def test_inversion(tardis, kcf_sample, constrain):
 
 def test_unreachable(tardis, kcf_sample):
     print("position is", tardis.position)
-    with pytest.raises(hkl.calc.UnreachableError) as exinfo:
+    with pytest.raises(hkl_calc.UnreachableError) as exinfo:
         tardis.move((0, 0, 1.8))
 
     ex = exinfo.value
@@ -236,13 +234,12 @@ def sample1(tardis):
     # test with remapped names, not canonical names
 
     # lattice cell lengths are in Angstrom, angles are in degrees
-    a = 9.069
-    c = 10.390
-    tardis.calc.new_sample("sample1", lattice=(a, a, c, 90, 90, 120))
+    lattice = new_lattice(9.069, c=10.390, gamma=120.)
+    tardis.calc.new_sample("sample1", lattice=lattice)
 
     tardis.energy_offset.put(0)
     tardis.energy_units.put("keV")
-    tardis.energy.put(hkl.calc.A_KEV / 1.61198)
+    tardis.energy.put(hkl_calc.A_KEV / 1.61198)
 
     pos_330 = tardis.calc.Position(delta=64.449, theta=25.285, chi=0.0, phi=0.0, omega=0.0, gamma=-0.871)
     pos_520 = tardis.calc.Position(delta=79.712, theta=46.816, chi=0.0, phi=0.0, omega=0.0, gamma=-1.374)
@@ -326,7 +323,7 @@ def test_sample1(sample1, tardis):
 def test_sample1_calc_only():
     # These comparisons start with the Tardis' calc support (no Diffractometer object)
 
-    tardis_calc = hkl.calc.CalcE6C()
+    tardis_calc = hkl_calc.CalcE6C()
 
     assert tardis_calc.engine.mode == "bissector_vertical"
     tardis_calc.engine.mode = TARDIS_TEST_MODE
@@ -338,9 +335,8 @@ def test_sample1_calc_only():
     assert abs(tardis_calc.energy - 7.69142297) < 5e-7
 
     # lattice cell lengths are in Angstrom, angles are in degrees
-    a = 9.069
-    c = 10.390
-    sample = tardis_calc.new_sample("sample1", lattice=(a, a, c, 90, 90, 120))
+    lattice = new_lattice(9.069, c=10.390, gamma=120.)
+    sample = tardis_calc.new_sample("sample1", lattice=lattice)
     assert sample.name == "sample1"
 
     pos_330 = tardis_calc.Position(gamma=64.449, mu=25.285, chi=0.0, phi=0.0, omega=0.0, delta=-0.871)
