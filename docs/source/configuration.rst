@@ -86,7 +86,7 @@ Assuming:
 * ``settings`` is contains the configuration object (dict, json, or yaml) to be restored
 
 The same command is used to restore the configuration settings from either dict,
-json string, or yaml string.  The
+JSON string, or YAML string.  The
 :meth:`~hkl.DiffractometerConfiguration.restore` method will determine the
 data type from its structure::
 
