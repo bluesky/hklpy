@@ -318,11 +318,14 @@ class DiffractometerConfiguration:
                 # fmt: on
 
                 # temporarily, change the wavelength
-                # TODO: try..except..finally?
                 w0 = self.diffractometer.calc.wavelength
-                self.diffractometer.calc.wavelength = reflection["wavelength"]
-                r = self.diffractometer.calc.sample.add_reflection(*args)
-                self.diffractometer.calc.wavelength = w0
+                try:
+                    self.diffractometer.calc.wavelength = reflection["wavelength"]
+                    r = self.diffractometer.calc.sample.add_reflection(*args)
+                except RuntimeError as exc:
+                    print(f"RuntimeError when adding reflection({args}): {exc}")
+                finally:
+                    self.diffractometer.calc.wavelength = w0
 
                 if reflection["orientation_reflection"]:
                     reflection_list.append(r)
