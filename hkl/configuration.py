@@ -129,7 +129,7 @@ class DiffractometerConfiguration:
         # fmt: off
         self.diffractometer._set_constraints(
             {
-                k: Constraint(-180, 180, 0.0, True)
+                k: Constraint(-180., 180., 0.0, True)
                 for k in self.real_axes_names
             }
         )
