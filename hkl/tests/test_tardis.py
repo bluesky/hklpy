@@ -26,7 +26,7 @@ def kcf_sample(tardis):
     # angles are in degrees
     a0 = 5.857
     c0 = 7.849
-    tetragonal = (a0, a0, c0, 90, 90, 90)
+    tetragonal = (a0, a0, c0, 90., 90., 90.)
 
     # add the sample to the calculation engine
     new_sample(tardis, "KCF", tetragonal)
