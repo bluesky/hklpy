@@ -2,69 +2,75 @@
 Common structures for testing.
 """
 
-import numpy
 import pytest
 from ophyd import Component
 from ophyd import SoftPositioner
 
+from .__init__ import TARDIS_TEST_MODE
 from .. import E4CV
 from .. import E6C
 from .. import SimMixin
 from .. import SimulatedE4CV
 from .. import SimulatedE6C
 from .. import SimulatedK4CV
-from ..util import new_lattice
-
-TARDIS_TEST_MODE = "lifting_detector_mu"
 
 
 @pytest.fixture
 def e4cv():
-    e4cv = SimulatedE4CV("", name="e4cv")
-    e4cv.wait_for_connection()
-    e4cv._update_calc_energy()
-    return e4cv
+    """Standard E4CV."""
+    diffractometer = SimulatedE4CV("", name="e4cv")
+    diffractometer.wait_for_connection()
+    diffractometer._update_calc_energy()
+    return diffractometer
 
 
 @pytest.fixture
 def e4cv_renamed():
+    """E4CV with renamed axes."""
+
     class CustomFourCircle(SimMixin, E4CV):
+        """E4CV with renamed axes."""
+
         theta = Component(SoftPositioner, kind="hinted", init_pos=0)
         chi = Component(SoftPositioner, kind="hinted", init_pos=0)
         phi = Component(SoftPositioner, kind="hinted", init_pos=0)
         ttheta = Component(SoftPositioner, kind="hinted", init_pos=0)
 
-    e4cv_renamed = CustomFourCircle("", name="e4cv_renamed")
+    diffractometer = CustomFourCircle("", name="e4cv_renamed")
     # rename the physical axes
-    e4cv_renamed.calc.physical_axis_names = {
+    diffractometer.calc.physical_axis_names = {
         # E4CV: local
         "omega": "theta",
         "chi": "chi",
         "phi": "phi",
         "tth": "ttheta",
     }
-    return e4cv_renamed
+    return diffractometer
 
 
 @pytest.fixture
-def e6cv():
-    e6cv = SimulatedE6C("", name="e6cv")
-    e6cv.wait_for_connection()
-    e6cv._update_calc_energy()
-    return e6cv
+def e6c():
+    """Standard E6C."""
+    diffractometer = SimulatedE6C("", name="e6cv")
+    diffractometer.wait_for_connection()
+    diffractometer._update_calc_energy()
+    return diffractometer
 
 
 @pytest.fixture
 def k4cv():
-    ke4cv = SimulatedK4CV("", name="k4cv")
-    ke4cv.wait_for_connection()
-    ke4cv._update_calc_energy()
-    return ke4cv
+    """Standard K4CV."""
+    diffractometer = SimulatedK4CV("", name="k4cv")
+    diffractometer.wait_for_connection()
+    diffractometer._update_calc_energy()
+    return diffractometer
 
 
 @pytest.fixture
 def tardis():
     class Tardis(SimMixin, E6C):
+        """E6C variant at NSLS-II."""
+
         # theta
         theta = Component(SoftPositioner, init_pos=0)
         omega = Component(SoftPositioner, init_pos=0)
@@ -74,10 +80,10 @@ def tardis():
         delta = Component(SoftPositioner, init_pos=0)
         gamma = Component(SoftPositioner, init_pos=0)
 
-    tardis = Tardis("", name="tardis")
-    tardis.calc.engine.mode = TARDIS_TEST_MODE
+    diffractometer = Tardis("", name="tardis")
+    diffractometer.calc.engine.mode = TARDIS_TEST_MODE
     # re-map Tardis' axis names onto what an E6C expects
-    tardis.calc.physical_axis_names = {
+    diffractometer.calc.physical_axis_names = {
         "mu": "theta",
         "omega": "omega",
         "chi": "chi",
@@ -85,27 +91,5 @@ def tardis():
         "gamma": "delta",
         "delta": "gamma",
     }
-    tardis.wait_for_connection()
-    return tardis
-
-
-def new_sample(diffractometer, name, lattice):
-    diffractometer.calc.new_sample(name, lattice=lattice)
-
-
-def sample_kryptonite(diffractometer):
-    triclinic = new_lattice(4, 5, 6, 75, 85, 95)
-    new_sample(diffractometer, "kryptonite", lattice=triclinic)
-
-
-def sample_silicon(diffractometer):
-    from .. import SI_LATTICE_PARAMETER
-
-    cubic = new_lattice(SI_LATTICE_PARAMETER)
-    new_sample(diffractometer, "silicon", lattice=cubic)
-
-
-def sample_vibranium(diffractometer):
-    a0 = 2 * numpy.pi
-    cubic = new_lattice(a0)
-    new_sample(diffractometer, "vibranium", lattice=cubic)
+    diffractometer.wait_for_connection()
+    return diffractometer
