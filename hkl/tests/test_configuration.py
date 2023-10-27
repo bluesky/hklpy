@@ -1,8 +1,10 @@
+from contextlib import nullcontext as does_not_raise
+
 import pytest
 
 from .. import DiffractometerConfiguration
-from ..configuration import REQUIRED_CONFIGURATION_KEYS_TYPES
 from ..configuration import EXPORT_FORMATS
+from ..configuration import REQUIRED_CONFIGURATION_KEYS_TYPES
 
 
 def test_e4cv(e4cv):
@@ -43,10 +45,7 @@ def test_format(fmt, e4cv):
     cfg = config.export(fmt)
     assert isinstance(cfg, (dict, str)), f"{cfg=}"
 
-    class TestNoException(Exception):
-        """Raised when test has not had any exceptions."""
-
-    with pytest.raises(TestNoException):
+    with does_not_raise():
         # first, test restore by known type
         if fmt in [None, "json"]:
             config.from_json(cfg)  # default format
@@ -57,8 +56,6 @@ def test_format(fmt, e4cv):
         else:
             raise TypeError(f"Unexpected configuration type: {type(cfg)}")
         config.restore(cfg)  # test restore with automatic type recognition
-
-        raise TestNoException()
 
 
 @pytest.mark.parametrize(
