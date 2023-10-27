@@ -1,9 +1,19 @@
 """
 Save and restore Diffractometer Configuration.
 
+PUBLIC API
+
 .. autosummary::
 
     ~DiffractometerConfiguration
+
+PRIVATE API
+
+.. autosummary::
+
+    ~_check_key
+    ~_check_type
+    ~_check_value
 """
 
 __all__ = [
@@ -38,6 +48,24 @@ REQUIRED_CONFIGURATION_KEYS_TYPES = {
 }
 
 
+def _check_key(key, biblio, words):
+    """Raise KeyError if actual is not in expected."""
+    if key not in biblio:
+        raise KeyError(f"{words}:  expected {key!r} not in {biblio}")
+
+
+def _check_type(actual, expected, words):
+    """Raise TypeError if actual is not an instance of expected."""
+    if not isinstance(actual, expected):
+        raise TypeError(f"{words}:  received: {actual}  expected: {expected}")
+
+
+def _check_value(actual, expected, words):
+    """Raise ValueError if actual is not equal to expected."""
+    if actual != expected:
+        raise ValueError(f"{words}:  received: {actual}  expected: {expected}")
+
+
 @dataclass
 class DiffractometerConfiguration:
     """
@@ -61,7 +89,7 @@ class DiffractometerConfiguration:
         ~canonical_axes_names
         ~real_axes_names
         ~reciprocal_axes_names
-"""
+        """
 
     from .diffract import Diffractometer
 
@@ -82,9 +110,7 @@ class DiffractometerConfiguration:
         if fmt == "yml":
             fmt = "yaml"  # a common substitution, just being friendly
         if fmt not in EXPORT_FORMATS:
-            raise ValueError(
-                f"fmt must be one of {EXPORT_FORMATS}, received {fmt!r}"
-            )
+            raise ValueError(f"fmt must be one of {EXPORT_FORMATS}, received {fmt!r}")
         return getattr(self, f"to_{fmt}")()
 
     def restore(self, config, clear=True):
@@ -122,7 +148,7 @@ class DiffractometerConfiguration:
         """Clear all diffractometer settings."""
         from .diffract import Diffractometer
 
-        assert isinstance(self.diffractometer, Diffractometer)
+        _check_type(self.diffractometer, Diffractometer, "diffractometer should be 'Diffractometer' or subclass.")
 
         self.diffractometer.wavelength = DEFAULT_WAVELENGTH
         self.diffractometer.engine.mode = self.diffractometer.engine.modes[0]
@@ -167,33 +193,36 @@ class DiffractometerConfiguration:
         from .util import libhkl
 
         diffractometer = self.diffractometer
-        assert isinstance(diffractometer, Diffractometer)
-        assert isinstance(config, dict)
+
+        _check_type(
+            self.diffractometer, Diffractometer, "diffractometer should be 'Diffractometer' or subclass."
+        )
+        _check_type(config, dict, "config")
 
         for k, types in REQUIRED_CONFIGURATION_KEYS_TYPES.items():
-            assert k in config, f"Missing required parameter, {k}"
-            assert isinstance(config[k], types), f"Bad value type for parameter, {k}"
+            _check_key(k, config, "missing key")
+            _check_type(config[k], types, f"Wrong type for parameter, {k}")
 
-        calc = diffractometer.calc  # shortcut
-        assert config["canonical_axes"] == self.canonical_axes_names
-        assert config["engine"] == calc.engine.name
-        assert config["geometry"] == calc._geometry.name_get()
-        assert config["library"].split()[0] == libhkl.__name__
-        assert config["reciprocal_axes"] == self.reciprocal_axes_names
+        calc = diffractometer.calc
+        _check_value(
+            config["canonical_axes"],
+            self.canonical_axes_names,
+            "canonical_axes",
+        )
+        _check_value(config["engine"], calc.engine.name, "engine")
+        _check_value(config["geometry"], calc._geometry.name_get(), "geometry")
+        _check_value(config["library"], libhkl.__name__, "library")
+        _check_value(config["reciprocal_axes"], self.reciprocal_axes_names, "reciprocal_axes")
 
         for k, constraint in config["constraints"].items():
-            # fmt: off
-            assert k in self.real_axes_names, (
-                f"{k} not in {self.real_axes_names=}"
-            )
-            # fmt: on
-            assert isinstance(constraint, dict)
+            _check_key(k, self.real_axes_names, "missing key")
+            _check_type(constraint, dict, f"{constraint}")
             for k2 in "low_limit high_limit value fit".split():
-                assert k2 in constraint
+                _check_key(k2, constraint, "missing key")
                 if k2 == "fit":
-                    assert isinstance(constraint[k2], bool)
+                    _check_type(constraint[k2], bool, f"{constraint[k2]}")
                 else:
-                    assert isinstance(constraint[k2], (float, int))
+                    _check_type(constraint[k2], (float, int), f"{constraint[k2]}")
 
         for sample in config["samples"].values():
             self.validate_config_dict_sample(sample)
@@ -207,31 +236,22 @@ class DiffractometerConfiguration:
         sample *dict*:
             structure (dict) with sample configuration
         """
-        assert "lattice" in sample
-        assert isinstance(sample["lattice"], dict)
+        _check_key("lattice", sample, "missing key")
+        _check_type(sample["lattice"], dict, "sample lattice")
         for k in "a b c alpha beta gamma".split():
-            assert k in sample["lattice"]
-            assert isinstance(sample["lattice"][k], (float, int))
+            _check_key(k, sample["lattice"], "missing key")
+            _check_type(sample["lattice"][k], (float, int), f"{k}")
 
-        # fmt: off
-        assert "reflections" in sample, (
-            f"sample {sample['name']} must have"
-            " reflections list, even if it is empty."
-        )
-        assert isinstance(sample["reflections"], list), (
-            "reflections must be a list"
-        )
+        _check_key("reflections", sample, f"sample {sample['name']} reflections list required, even if empty")
+        _check_type(sample["reflections"], list, f"sample {sample['name']} reflections")
         for reflection in sample["reflections"]:
             self.validate_config_dict_sample_reflection(reflection)
 
         for k in "U UB".split():
             arr = sample.get(k, [])
             if len(arr) > 0:
-                assert numpy.array(arr).shape == (3, 3), f"{k} must be 3x3"
-                assert isinstance(arr[0][0], (float, numpy.floating)), (
-                    f"{k} must be numeric"
-                )
-        # fmt: on
+                _check_value(numpy.array(arr).shape, (3, 3), f"{k} must be 3x3")
+                _check_type(arr[0][0], (float, numpy.floating), f"{k} must be numeric")
 
     def validate_config_dict_sample_reflection(self, reflection):
         """
@@ -242,21 +262,9 @@ class DiffractometerConfiguration:
         reflection *dict*:
             structure (dict) with reflection configuration
         """
-        # fmt: off
-        assert isinstance(reflection.get("flag"), int), (
-            "'flag' must be int"
-        )
-        assert isinstance(
-            reflection.get("wavelength"), (float, int)
-        ), (
-            "'wavelength' must be numeric"
-        )
-        assert isinstance(
-            reflection.get("orientation_reflection"), bool
-        ), (
-            # TODO: or integer, in the future
-            "'orientation_reflection' must be True or False"
-        )
+        _check_type(reflection.get("fit"), int, "fit")
+        _check_type(reflection.get("wavelength"), (float, int), "wavelength")
+        _check_type(reflection.get("orientation_reflection"), bool, "orientation_reflection")
 
         groups = [
             ["reflection", "reciprocal", self.reciprocal_axes_names],
@@ -264,14 +272,10 @@ class DiffractometerConfiguration:
         ]
         for key, desc, names in groups:
             arr = reflection.get(key)
-            assert isinstance(arr, dict), (
-                f"{desc}-space coordinates must be a dict"
-            )
+            _check_type(arr, dict, f"{desc}-space coordinates")
             for k, v in arr.items():
-                assert k in names, f"{k!r} not in {names}"
-                assert isinstance(v, (float, int)), (
-                    f"{desc}-space {k!r} value must be a number, got {v}"
-                )
+                _check_key(k, names, f"{k!r} not in {names}")
+                _check_type(v, (float, int), f"{desc}-space {k!r} value")
         # fmt: on
 
     def _update(self, config):
@@ -371,7 +375,7 @@ class DiffractometerConfiguration:
         from .util import libhkl
 
         me = self.diffractometer
-        assert isinstance(me, Diffractometer)
+        _check_type(me, Diffractometer, "diffractometer should be 'Diffractometer' or subclass.")
 
         d = {
             "name": me.name,

@@ -59,28 +59,26 @@ def test_format(fmt, e4cv):
         config.restore(cfg)  # test restore with automatic type recognition
 
 
+@pytest.mark.parametrize("action", "rm set".split())  # remove or set keys incorrectly
 @pytest.mark.parametrize(
-    "action, key, value, failure",
-    # remove each of the expected keys, individually
-    [["rm", k, None, AssertionError] for k in REQUIRED_CONFIGURATION_KEYS_TYPES]
-    # set each of the expected keys, individually, to invalid value
-    + [["set", k, object, AssertionError] for k in REQUIRED_CONFIGURATION_KEYS_TYPES],
+    "key, value, failure",
+    [[k, object, AssertionError] for k in REQUIRED_CONFIGURATION_KEYS_TYPES]
 )
 def test_validation_fails(action, key, value, failure, tardis):
     assert len(tardis.calc._samples) == 1
     assert tardis.calc.sample.name == "main"
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(TypeError):
         cfg = DiffractometerConfiguration("wrong diffractometer object")
         cfg.validate_config_dict({})
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(TypeError):
         cfg = DiffractometerConfiguration(tardis)
         cfg.validate_config_dict("wrong configuration object")
 
     with pytest.raises(failure):
         cfg = DiffractometerConfiguration(tardis)
-        assert isinstance(cfg, dict)
+        assert isinstance(cfg, dict), f"{cfg}"
 
         if action == "rm":
             cfg.pop(key)
