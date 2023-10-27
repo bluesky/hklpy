@@ -133,7 +133,7 @@ configuration can be restored to any diffractometer with matching ``"geometry":
 
     with open("e4c-config.json") as f:
         settings = f.read()
-        config.restore(settings, clear=True)
+    config.restore(settings, clear=True)
 
 The extra keyword argument, ``clear=True`` (which is the default), means to
 first remove any previous configuration of the diffractometer and reset it to
