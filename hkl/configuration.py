@@ -50,6 +50,8 @@ class DiffractometerConfiguration:
         ~_update
         ~validate_config_dict
         ~reset_diffractometer
+        ~reset_diffractometer_constraints
+        ~reset_diffractometer_samples
         ~from_dict
         ~from_json
         ~from_yaml
@@ -118,12 +120,18 @@ class DiffractometerConfiguration:
 
     def reset_diffractometer(self):
         """Clear all diffractometer settings."""
-        from .util import Constraint
+        from .diffract import Diffractometer
 
         assert isinstance(self.diffractometer, Diffractometer)
 
         self.diffractometer.wavelength = DEFAULT_WAVELENGTH
         self.diffractometer.engine.mode = self.diffractometer.engine.modes[0]
+        self.reset_diffractometer_constraints()
+        self.reset_diffractometer_samples()
+
+    def reset_diffractometer_constraints(self):
+        """Reset the diffractometer constraints to defaults."""
+        from .util import Constraint
 
         # fmt: off
         self.diffractometer._set_constraints(
@@ -134,6 +142,8 @@ class DiffractometerConfiguration:
         )
         # fmt: on
 
+    def reset_diffractometer_samples(self):
+        """Reset the diffractometer sample dict to defaults."""
         for k in list(self.diffractometer.calc._samples):
             self.diffractometer.calc._samples.pop(k)
 
