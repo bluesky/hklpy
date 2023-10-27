@@ -115,7 +115,7 @@ Add a sample::
 
 Define some reflections.  Pick two of them to define its orientation::
 
-    _r400 = e4c.calc.sample.add_reflection(4, 0, 0, (-145.451, 0, 0, 69.0966)),
+    _r400 = e4c.calc.sample.add_reflection(4, 0, 0, (-145.451, 0, 0, 69.0966))
     _r040 = e4c.calc.sample.add_reflection(0, 4, 0, (-145.451, 0, 90, 69.0966))
     _r004 = e4c.calc.sample.add_reflection(0, 0, 4, (-145.451, 90, 0, 69.0966))
     e4c.calc.sample.compute_UB(_r040, _r004)
