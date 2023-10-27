@@ -425,9 +425,9 @@ class DiffractometerConfiguration:
         """
         self.from_dict(json.loads(text), clear=clear)
 
-    def to_json(self):
+    def to_json(self, indent=4):
         """Report diffractometer configuration as JSON text."""
-        return json.dumps(self.to_dict(), indent=4)
+        return json.dumps(self.to_dict(), indent=indent)
 
     def from_yaml(self, text, clear=True):
         """
@@ -444,9 +444,9 @@ class DiffractometerConfiguration:
         """
         self.from_dict(yaml.load(text, Loader=yaml.Loader), clear=clear)
 
-    def to_yaml(self):
+    def to_yaml(self, indent=4, sort_keys=False):
         """Report diffractometer configuration as YAML text."""
-        return yaml.dump(self.to_dict(), indent=4, sort_keys=False)
+        return yaml.dump(self.to_dict(), indent=indent, sort_keys=sort_keys)
 
     @property
     def canonical_axes_names(self):
