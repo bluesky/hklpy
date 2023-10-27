@@ -118,7 +118,6 @@ class DiffractometerConfiguration:
 
     def reset_diffractometer(self):
         """Clear all diffractometer settings."""
-        from .diffract import Diffractometer
         from .util import Constraint
 
         assert isinstance(self.diffractometer, Diffractometer)
