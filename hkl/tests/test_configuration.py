@@ -93,3 +93,5 @@ def test_validation_fails(action, key, value, failure, tardis):
 
 # TODO: test sample dictionary
 # TODO: test reflections dictionary
+# TODO: test that diffractometer is updated by config.restore()
+# TODO: Test the `clear` flag for config.restore()
