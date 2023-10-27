@@ -63,7 +63,7 @@ as `redis <https://redis.io>`_.
 Export
 ++++++
 
-The diffractometer configuration can be returned in any of the formats shown in
+The diffractometer configuration can be exported to any of the formats shown in
 the table below. Assuming ``config`` is the object returned by calling
 :class:`~hkl.DiffractometerConfiguration()`:
 
