@@ -141,7 +141,7 @@ class DiffractometerConfiguration:
         # fmt: off
         a0 = DEFAULT_WAVELENGTH  # coincidentally
         self.diffractometer.calc.new_sample(
-            "main", lattice=(a0, a0, a0, 90, 90, 90)
+            "main", lattice=(a0, a0, a0, 90., 90., 90.)
         )
         # fmt: on
 
