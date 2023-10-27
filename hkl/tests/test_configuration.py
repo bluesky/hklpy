@@ -38,7 +38,7 @@ def test_restore(e4cv_renamed, k4cv):
 
 @pytest.mark.parametrize("fmt", [None] + EXPORT_FORMATS)
 def test_format(fmt, e4cv):
-    """Test the various export formats can be imported."""
+    """Verify that various export formats can be imported."""
     config = DiffractometerConfiguration(e4cv)
     cfg = config.export(fmt)
     assert isinstance(cfg, (dict, str)), f"{cfg=}"
