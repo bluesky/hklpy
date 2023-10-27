@@ -162,8 +162,8 @@ class DiffractometerConfiguration:
         assert isinstance(config, dict)
 
         for k, types in EXPECTED_CONFIGURATION_KEYS_TYPES.items():
-            assert k in config
-            assert isinstance(config[k], types)
+            assert k in config, f"Missing required parameter, {k}"
+            assert isinstance(config[k], types), f"Bad value type for parameter, {k}"
 
         calc = diffractometer.calc  # shortcut
         assert config["canonical_axes"] == self.canonical_axes_names
