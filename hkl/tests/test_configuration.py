@@ -42,7 +42,8 @@ def test_restore(e4cv_renamed, k4cv):
 def test_format(fmt, e4cv):
     """Verify that various export formats can be imported."""
     config = DiffractometerConfiguration(e4cv)
-    cfg = config.export(fmt)
+    with does_not_raise():
+        cfg = config.export(fmt)
     assert isinstance(cfg, (dict, str)), f"{cfg=}"
 
     with does_not_raise():
@@ -54,7 +55,7 @@ def test_format(fmt, e4cv):
         elif fmt == "yaml":
             config.from_yaml(cfg)
         else:
-            raise TypeError(f"Unexpected configuration type: {type(cfg)}")
+            raise ValueError(f"Unrecognized configuration format: {fmt}")
         config.restore(cfg)  # test restore with automatic type recognition
 
 
