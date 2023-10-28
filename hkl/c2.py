@@ -35,6 +35,7 @@ from apischema import ValidationError
 from apischema import deserialize
 from apischema import serialize
 
+from hkl import A_KEV
 from hkl.util import libhkl
 
 # from apischema.json_schema import deserialization_schema
@@ -65,7 +66,7 @@ def _check_range(value, low, high, intro):
 
 def _check_type(actual, expected, intro):
     """Raise TypeError if actual is not an instance of expected."""
-    if not isinstance(actual, intro):
+    if not isinstance(actual, expected):
         raise TypeError(f"{intro}:  received: {actual}  expected: {expected}")
 
 
@@ -141,18 +142,16 @@ class DCReflection:
 
     def validate(self, dc_obj):
         """Check this reflection has values the diffractometer can accept."""
-        from hkl import A_KEV
-
         _check_range(self.wavelength, 1e-6, 1e6, "wavelength")
         energy = A_KEV / self.wavelength  # assumes X-rays
         q_max = energy  # physics: X-ray reciprocal-space won't stretch any further
         q_min = -q_max
-        for axis, reflection in self.reflection.items():
-            _check_key(axis, dc_obj.reciprocal_axes_names, f"reciprocal-space axis {axis}")
-            _check_range(reflection["axis"], q_min, q_max, f"reciprocal-space axis {axis}")
-        for axis, position in self.position.items():
-            _check_key(axis, dc_obj.canonical_axes_names, f"real-space axis {axis}")
-            _check_range(position["axis"], AX_MIN, AX_MAX, f"real-space axis {axis}")
+        for axis, value in self.reflection.items():
+            _check_key(axis, dc_obj.reciprocal_axes, f"reciprocal-space axis {axis}")
+            _check_range(value, q_min, q_max, f"reciprocal-space axis {axis}")
+        for axis, value in self.position.items():
+            _check_key(axis, dc_obj.canonical_axes, f"real-space axis {axis}")
+            _check_range(value, AX_MIN, AX_MAX, f"real-space axis {axis}")
         # TODO: How to validate 'flag'?
 
 
@@ -171,8 +170,10 @@ class DCSample:
         self.lattice.validate(dc_obj)
         for reflection in self.reflections:
             reflection.validate(dc_obj)
-        _check_value(numpy.array(self.U).shape, (3, 3), "U matrix shape")
-        _check_value(numpy.array(self.UB).shape, (3, 3), "UB matrix shape")
+        for k in "U UB".split():
+            arr = numpy.array(getattr(self, k))
+            _check_value(arr.shape, (3, 3), f"{k} matrix shape")
+            _check_type(arr[0][0], (float, numpy.floating), f"{k} matrix")
 
     def write(self, diffractometer):
         """Write sample details to diffractometer."""
@@ -184,8 +185,27 @@ class DCSample:
         else:
             s.lattice = lattice_parameters
 
+        reflection_list = []
         for reflection in self.reflections:
-            ...  # TODO:
+            rdict = serialize(DCReflection, reflection)
+            args = [*list(rdict["reflection"].values()), tuple(rdict["position"].values())]  # hkl values
+
+            # temporarily, change the wavelength
+            w0 = diffractometer.calc.wavelength
+            try:
+                diffractometer.calc.wavelength = rdict["wavelength"]
+                r = diffractometer.calc.sample.add_reflection(*args)
+            except RuntimeError as exc:
+                print(f"RuntimeError when adding reflection({args}): {exc}")
+            finally:
+                diffractometer.calc.wavelength = w0
+
+            if rdict["orientation_reflection"]:
+                reflection_list.append(r)
+
+            if len(reflection_list) > 1:
+                r1, r2 = reflection_list[0], reflection_list[1]
+                diffractometer.calc.sample.compute_UB(r1, r2)
 
 
 @dataclass
@@ -193,21 +213,23 @@ class DCConfiguration:
     """Full structure of the diffractometer configuration."""
 
     name: str
-    geometry: str
-    datetime: str  # TODO: optional?
-    python_class: str
-    engine: str
-    mode: str
-    hklpy_version: str
-    library: str
-    library_version: str
-    energy_keV: float  # assumes X-rays
+    geometry: str  # MUST match diffractometer to restore
+    library: str  # MUST match diffractometer to restore
+    mode: str  # MUST match a diffractometer mode to restore
+    canonical_axes: list[str]  # MUST match diffractometer to restore
+    real_axes: list[str]  # MUST match number of diffractometer axes to restore
+    reciprocal_axes: list[str]  # MUST match diffractometer to restore
     wavelength_angstrom: float
     constraints: dict[str, DCConstraint]
     samples: dict[str, DCSample]
-    canonical_axes: list[str]
-    real_axes: list[str]
-    reciprocal_axes: list[str]
+
+    # optional attributes
+    datetime: str = ""
+    energy_keV: float = A_KEV / DEFAULT_WAVELENGTH  # assumes X-rays
+    engine: str = ""
+    hklpy_version: str = ""
+    library_version: str = ""
+    python_class: str = ""
 
     def validate(self, dc_obj):
         """Check this configuration has values the diffractometer can accept."""
@@ -217,6 +239,12 @@ class DCConfiguration:
         _check_value(self.canonical_axes, dc_obj.canonical_axes_names, "canonical_axes")
         _check_value(self.reciprocal_axes, dc_obj.reciprocal_axes_names, "reciprocal_axes")
         _check_key(self.mode, diffractometer.engine.modes, "mode")
+
+        for k in "canonical real reciprocal".split():
+            # number of axes must match
+            _check_value(
+                len(getattr(self, f"{k}_axes")), len(getattr(dc_obj, f"{k}_axes_names")), f"number of {k}_axes"
+            )
 
         for cname, constraint in self.constraints.items():
             _check_key(cname, dc_obj.canonical_axes_names, "constraint axis")
@@ -306,26 +334,31 @@ class DiffractometerConfiguration:
     @property
     def model(self):
         """Return diffractometer configuration as a DCConfiguration object."""
-        me = self.diffractometer
+        diffractometer = self.diffractometer
         data = {
-            "name": me.name,
-            "geometry": me.calc._geometry.name_get(),
+            "name": diffractometer.name,
+            "geometry": diffractometer.calc._geometry.name_get(),
             "datetime": str(datetime.datetime.now()),
-            "python_class": me.__class__.__name__,
-            "engine": me.calc.engine.name,
-            "mode": me.calc.engine.mode,
+            "python_class": diffractometer.__class__.__name__,
+            "engine": diffractometer.calc.engine.name,
+            "mode": diffractometer.calc.engine.mode,
             "canonical_axes": self.canonical_axes_names,
             "real_axes": self.real_axes_names,
             "reciprocal_axes": self.reciprocal_axes_names,
-            "energy_keV": me.calc.energy,  # assumes X-rays!
-            "wavelength_angstrom": me.calc.wavelength,
-            "hklpy_version": me._hklpy_version_,
+            "energy_keV": diffractometer.calc.energy,  # assumes X-rays!
+            "wavelength_angstrom": diffractometer.calc.wavelength,
+            "hklpy_version": diffractometer._hklpy_version_,
             "library": libhkl.__name__,
             "library_version": libhkl.VERSION,
+            # fmt: off
             "constraints": {
-                axis: {parm: getattr(constraint, parm) for parm in "low_limit high_limit value fit".split()}
-                for axis, constraint in me._constraints_dict.items()
+                axis: {
+                    parm: getattr(constraint, parm)
+                    for parm in "low_limit high_limit value fit".split()
+                }
+                for axis, constraint in diffractometer._constraints_dict.items()
             },
+            # fmt: on
             "samples": {
                 sname: {
                     "name": sample.name,
@@ -334,7 +367,7 @@ class DiffractometerConfiguration:
                     "U": sample.U.tolist(),
                     "UB": sample.UB.tolist(),
                 }
-                for sname, sample in me.calc._samples.items()
+                for sname, sample in diffractometer.calc._samples.items()
             },
         }
         return deserialize(DCConfiguration, data)  # also validates
