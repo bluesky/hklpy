@@ -89,7 +89,7 @@ class DiffractometerConfiguration:
         ~canonical_axes_names
         ~real_axes_names
         ~reciprocal_axes_names
-        """
+    """
 
     from .diffract import Diffractometer
 
@@ -194,9 +194,7 @@ class DiffractometerConfiguration:
 
         diffractometer = self.diffractometer
 
-        _check_type(
-            self.diffractometer, Diffractometer, "diffractometer should be 'Diffractometer' or subclass."
-        )
+        _check_type(self.diffractometer, Diffractometer, "diffractometer should be 'Diffractometer' or subclass.")
         _check_type(config, dict, "config")
 
         for k, types in REQUIRED_CONFIGURATION_KEYS_TYPES.items():
