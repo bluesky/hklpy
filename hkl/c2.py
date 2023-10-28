@@ -209,7 +209,7 @@ class DCConfiguration:
     real_axes: list[str]
     reciprocal_axes: list[str]
 
-    def validate(self, config):  # TODO: refactor config to dc_bj and document it here & elsewhere
+    def validate(self, config):  # TODO: refactor config to dc_obj and document it here & elsewhere
         """Check this configuration has values the diffractometer can accept."""
         diffractometer = config.diffractometer
         _check_value(self.geometry, diffractometer.calc._geometry.name_get(), "geometry")
