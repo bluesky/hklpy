@@ -1,5 +1,5 @@
 """
-v2: Save and restore Diffractometer Configuration.
+Save and restore Diffractometer Configuration.
 
 PUBLIC API
 
@@ -51,13 +51,13 @@ EXPORT_FORMATS = "dict json yaml".split()
 
 # standard value checks, raise exception(s) when appropriate
 def _check_key(key, biblio, intro):
-    """(internal) CRaise KeyError if key is not in biblio."""
+    """(internal) Raise KeyError if key is not in biblio."""
     if key not in biblio:
         raise KeyError(f"{intro}:  expected {key!r} not in {biblio}")
 
 
 def _check_range(value, low, high, intro):
-    """(internal) CRaise ValueError if value is not between low & high."""
+    """(internal) Raise ValueError if value is not between low & high."""
     if low > high:
         raise ValueError(f"{intro}:  {low} should not be greater than {high}")
     if not (low <= value <= high):
@@ -65,13 +65,13 @@ def _check_range(value, low, high, intro):
 
 
 def _check_type(actual, expected, intro):
-    """(internal) CRaise TypeError if actual is not an instance of expected."""
+    """(internal) Raise TypeError if actual is not an instance of expected."""
     if not isinstance(actual, expected):
         raise TypeError(f"{intro}:  received: {actual}  expected: {expected}")
 
 
 def _check_value(actual, expected, intro):
-    """(internal) CRaise ValueError if actual is not equal to expected."""
+    """(internal) Raise ValueError if actual is not equal to expected."""
     if actual != expected:
         raise ValueError(f"{intro}:  received: {actual}  expected: {expected}")
 

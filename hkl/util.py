@@ -225,15 +225,19 @@ def new_lattice(a, b=None, c=None, alpha=90., beta=None, gamma=None):
     """
     Simplify for high-symmetry crystal systems.
 
-    EXAMPLES (highest to lowest symmetry)::
+    EXAMPLES (highest to lowest symmetry):
 
-        cubic = new_lattice(5.)  # (5., 5., 5., 90., 90., 90.)
-        hexagonal = new_lattice(4., c=3., gamma=120)  # (4., 4., 3., 90., 90., 120.)
-        rhombohedral = new_lattice(4., alpha=80.0)  # (4., 4., 4., 80., 80., 80.)
-        tetragonal = new_lattice(4, c=3)  # (4., 4., 3., 90., 90., 90.)
-        orthorhombic = new_lattice(4, 5, 3)  # (4., 5., 3., 90., 90., 90.)
-        monoclinic = new_lattice(4, 5, 3, beta=100)  # (4., 5., 3., 90., 100., 90.)
-        triclinic = new_lattice(4, 5, 3, 75., 85., 95.)  # (4, 5, 3, 75., 85., 95.)
+    =============== =================================== ==================================================
+    system          command                             Lattice
+    =============== =================================== ==================================================
+    cubic           new_lattice(5.)                     (a=5., b=5., c=5., alpha=90., beta=90., gamma=90.)
+    hexagonal       new_lattice(4., c=3., gamma=120)    (a=4., b=4., c=3., alpha=90., beta=90., gamma=120.)
+    rhombohedral    new_lattice(4., alpha=80.0)         (a=4., b=4., c=4., alpha=80., beta=80., gamma=80.)
+    tetragonal      new_lattice(4, c=3)                 (a=4., b=4., c=3., alpha=90., beta=90., gamma=90.)
+    orthorhombic    new_lattice(4, 5, 3)                (a=4., b=5., c=3., alpha=90., beta=90., gamma=90.)
+    monoclinic      new_lattice(4, 5, 3, beta=75)       (a=4., b=5., c=3., alpha=90., beta=75., gamma=90.)
+    triclinic       new_lattice(4, 5, 3, 75., 85., 95.) (a=4., b=5., c=3., alpha=75., beta=85., gamma=95.)
+    =============== =================================== ==================================================
     
     .. see: https://en.wikipedia.org/wiki/Crystal_system
     """
