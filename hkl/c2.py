@@ -254,15 +254,54 @@ class DiffractometerConfiguration:
             raise TypeError("diffractometer should be 'Diffractometer' or subclass.")
         self.diffractometer = diffractometer
 
-    def export(self):
+    def export(self, fmt="json"):
         """
         Export configuration in a recognized format (dict, json, yaml).
-        """
 
-    def restore(self, config):
+        PARAMETERS
+
+        fmt *str*:
+            One of these: ``None``, ``"dict"``, ``"json"``, ``"yaml"``. If
+            ``None`` (or empty string or no argument at all), then JSON will be
+            the default.
+        """
+        fmt = (fmt or "json").lower()
+        if fmt == "yml":
+            fmt = "yaml"  # a common substitution, just being friendly
+        if fmt not in EXPORT_FORMATS:
+            raise ValueError(f"fmt must be one of {EXPORT_FORMATS}, received {fmt!r}")
+        return getattr(self, f"to_{fmt}")()
+
+    def restore(self, config, clear=True):
         """
         Restore configuration from a recognized format (dict, json, yaml).
+
+        Instead of guessing, recognize the kind of config data by its structure.
+
+        PARAMETERS
+
+        config *dict* or *str*:
+            structure (dict, json, or yaml) with diffractometer configuration
+        clear *bool*:
+            If ``True`` (default), remove any previous configuration of the
+            diffractometer and reset it to default values before restoring the
+            configuration.
+
+        Note: Can't name this method "import", it's a reserved Python word.
         """
+        importer = None
+
+        if isinstance(config, dict):
+            importer = self.from_dict
+        elif isinstance(config, str):
+            if config.strip().startswith("{"):
+                importer = self.from_json
+            else:
+                importer = self.from_yaml
+        if importer is None:
+            raise TypeError("Unrecognized configuration structure.")
+
+        importer(config, clear=clear)
 
     @property
     def model(self):
