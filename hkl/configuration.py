@@ -1,5 +1,5 @@
 """
-Save and restore Diffractometer Configuration.
+v2: Save and restore Diffractometer Configuration.
 
 PUBLIC API
 
@@ -9,11 +9,19 @@ PUBLIC API
 
 PRIVATE API
 
+note: DC classes: Diffractometer Configuration
+
 .. autosummary::
 
     ~_check_key
+    ~_check_range
     ~_check_type
     ~_check_value
+    ~DCConstraint
+    ~DCLattice
+    ~DCReflection
+    ~DCSample
+    ~DCConfiguration
 """
 
 __all__ = [
@@ -26,47 +34,248 @@ from dataclasses import dataclass
 
 import numpy
 import yaml
+from apischema import ValidationError
+from apischema import deserialize
+from apischema import serialize
+
+from . import A_KEV
+from .util import libhkl
+
+# TODO: can these be learned from the diffractometer? (not constraints but axes?)
+AX_MIN = -360.0  # lowest allowed value for real-space axis
+AX_MAX = 360.0  # highest allowed value for real-space axis
 
 DEFAULT_WAVELENGTH = 1.54  # angstrom
 EXPORT_FORMATS = "dict json yaml".split()
-REQUIRED_CONFIGURATION_KEYS_TYPES = {
-    "name": str,
-    "geometry": str,
-    "datetime": str,
-    "class": str,
-    "engine": str,
-    "mode": str,
-    "hklpy_version": str,
-    "library": str,
-    "energy_keV": (int, float),
-    "wavelength_angstrom": (int, float),
-    "constraints": dict,
-    "samples": dict,
-    "canonical_axes": list,
-    "real_axes": list,
-    "reciprocal_axes": list,
-}
 
 
-def _check_key(key, biblio, words):
-    """Raise KeyError if actual is not in expected."""
+# standard value checks, raise exception(s) when appropriate
+def _check_key(key, biblio, intro):
+    """(internal) CRaise KeyError if key is not in biblio."""
     if key not in biblio:
-        raise KeyError(f"{words}:  expected {key!r} not in {biblio}")
+        raise KeyError(f"{intro}:  expected {key!r} not in {biblio}")
 
 
-def _check_type(actual, expected, words):
-    """Raise TypeError if actual is not an instance of expected."""
+def _check_range(value, low, high, intro):
+    """(internal) CRaise ValueError if value is not between low & high."""
+    if low > high:
+        raise ValueError(f"{intro}:  {low} should not be greater than {high}")
+    if not (low <= value <= high):
+        raise ValueError(f"{intro}:  {value} is not between {low} & {high}")
+
+
+def _check_type(actual, expected, intro):
+    """(internal) CRaise TypeError if actual is not an instance of expected."""
     if not isinstance(actual, expected):
-        raise TypeError(f"{words}:  received: {actual}  expected: {expected}")
+        raise TypeError(f"{intro}:  received: {actual}  expected: {expected}")
 
 
-def _check_value(actual, expected, words):
-    """Raise ValueError if actual is not equal to expected."""
+def _check_value(actual, expected, intro):
+    """(internal) CRaise ValueError if actual is not equal to expected."""
     if actual != expected:
-        raise ValueError(f"{words}:  received: {actual}  expected: {expected}")
+        raise ValueError(f"{intro}:  received: {actual}  expected: {expected}")
 
 
 @dataclass
+class DCConstraint:
+    """(internal) Configuration of one diffractometer axis constraint."""
+
+    low_limit: float
+    high_limit: float
+    value: float
+    fit: bool
+
+    @property
+    def values(self):
+        """Return the list of values in order."""
+        return list(self.__dict__.values())
+
+    def validate(self, cname):
+        """
+        Check this constraint has values the diffractometer can accept.
+
+        Assumes diffractometer real axis limits of AX_MIN to AX_MAX degrees.
+        """
+        _check_range(self.low_limit, AX_MIN, AX_MAX, f"{cname} low_limit")
+        _check_range(self.high_limit, AX_MIN, AX_MAX, f"{cname} high_limit")
+        _check_range(self.value, AX_MIN, AX_MAX, f"{cname} value")
+        # no additional validation needed for 'fit'
+
+
+@dataclass
+class DCLattice:
+    """(internal) Configuration of one crystal lattice."""
+
+    a: float
+    b: float
+    c: float
+    alpha: float
+    beta: float
+    gamma: float
+
+    def validate(self, dc_obj):
+        """Check this lattice has values the diffractometer can accept."""
+        for side in "a b c".split():
+            _check_range(getattr(self, side), 1e-6, 1e6, f"side {side}")
+        for angle in "alpha beta gamma".split():
+            _check_range(getattr(self, angle), AX_MIN, AX_MAX, f"angle {angle}")
+
+    @property
+    def values(self):
+        """Return the list of values in order."""
+        return list(self.__dict__.values())
+
+
+@dataclass
+class DCReflection:
+    """(internal) Configuration of one orientation reflection."""
+
+    reflection: dict[str, float]
+    position: dict[str, float]
+    wavelength: float
+    orientation_reflection: bool
+    flag: int
+
+    def validate(self, dc_obj):
+        """Check this reflection has values the diffractometer can accept."""
+        _check_range(self.wavelength, 1e-6, 1e6, "wavelength")
+        energy = A_KEV / self.wavelength  # assumes X-rays
+        q_max = energy  # physics: X-ray reciprocal-space won't stretch any further
+        q_min = -q_max
+        for axis, value in self.reflection.items():
+            _check_key(axis, dc_obj.reciprocal_axes, f"reciprocal-space axis {axis}")
+            _check_range(value, q_min, q_max, f"reciprocal-space axis {axis}")
+        for axis, value in self.position.items():
+            _check_key(axis, dc_obj.canonical_axes, f"real-space axis {axis}")
+            _check_range(value, AX_MIN, AX_MAX, f"real-space axis {axis}")
+        # TODO: How to validate 'flag'?
+
+
+@dataclass
+class DCSample:
+    """(internal) Configuration of one crystalline sample with a lattice."""
+
+    name: str
+    lattice: DCLattice
+    reflections: list[DCReflection]
+    U: list[list[float]]
+    UB: list[list[float]]
+
+    def validate(self, dc_obj):
+        """Check this sample has values the diffractometer can accept."""
+        self.lattice.validate(dc_obj)
+        for reflection in self.reflections:
+            reflection.validate(dc_obj)
+        for k in "U UB".split():
+            arr = numpy.array(getattr(self, k))
+            _check_value(arr.shape, (3, 3), f"{k} matrix shape")
+            _check_type(arr[0][0], (float, numpy.floating), f"{k} matrix")
+
+    def write(self, diffractometer):
+        """Write sample details to diffractometer."""
+        lattice_parameters = list(self.lattice.values)
+
+        s = diffractometer.calc._samples.get(self.name)
+        if s is None:
+            s = diffractometer.calc.new_sample(self.name, lattice=lattice_parameters)
+        else:
+            s.lattice = lattice_parameters
+
+        reflection_list = []
+        for reflection in self.reflections:
+            rdict = serialize(DCReflection, reflection)
+            args = [*list(rdict["reflection"].values()), tuple(rdict["position"].values())]  # hkl values
+
+            # temporarily, change the wavelength
+            w0 = diffractometer.calc.wavelength
+            try:
+                diffractometer.calc.wavelength = rdict["wavelength"]
+                r = diffractometer.calc.sample.add_reflection(*args)
+            except RuntimeError as exc:
+                print(f"RuntimeError when adding reflection({args}): {exc}")
+            finally:
+                diffractometer.calc.wavelength = w0
+
+            if rdict["orientation_reflection"]:
+                reflection_list.append(r)
+
+            if len(reflection_list) > 1:
+                r1, r2 = reflection_list[0], reflection_list[1]
+                diffractometer.calc.sample.compute_UB(r1, r2)
+
+
+@dataclass
+class DCConfiguration:
+    """(internal) Full structure of the diffractometer configuration."""
+
+    name: str
+    geometry: str  # MUST match diffractometer to restore
+    library: str  # MUST match diffractometer to restore
+    mode: str  # MUST match a diffractometer mode to restore
+    canonical_axes: list[str]  # MUST match diffractometer to restore
+    real_axes: list[str]  # MUST match number of diffractometer axes to restore
+    reciprocal_axes: list[str]  # MUST match diffractometer to restore
+    wavelength_angstrom: float
+    constraints: dict[str, DCConstraint]
+    samples: dict[str, DCSample]
+
+    # optional attributes
+    datetime: str = ""
+    energy_keV: float = A_KEV / DEFAULT_WAVELENGTH  # assumes X-rays
+    engine: str = ""
+    hklpy_version: str = ""
+    library_version: str = ""
+    python_class: str = ""
+
+    def validate(self, dc_obj):
+        """
+        Check this configuration has values the diffractometer can accept.
+
+        PARAMETERS
+
+        dc_obj *DiffractometerConfiguration*:
+            The DiffractometerConfiguration object.
+        """
+        diffractometer = dc_obj.diffractometer
+        _check_value(self.geometry, diffractometer.calc._geometry.name_get(), "geometry")
+        _check_value(self.library, libhkl.__name__, "library")
+        _check_value(self.canonical_axes, dc_obj.canonical_axes_names, "canonical_axes")
+        _check_value(self.reciprocal_axes, dc_obj.reciprocal_axes_names, "reciprocal_axes")
+        _check_key(self.mode, diffractometer.engine.modes, "mode")
+
+        for k in "canonical real reciprocal".split():
+            # number of axes must match
+            _check_value(
+                len(getattr(self, f"{k}_axes")), len(getattr(dc_obj, f"{k}_axes_names")), f"number of {k}_axes"
+            )
+
+        for cname, constraint in self.constraints.items():
+            try:
+                _check_key(cname, dc_obj.canonical_axes_names, "constraint axis")
+            except KeyError:
+                _check_key(cname, dc_obj.real_axes_names, "constraint axis")
+            constraint.validate(cname)
+
+        for sample in self.samples.values():
+            sample.validate(self)
+
+    def write(self, diffractometer):
+        """Update diffractometer with configuration."""
+        from .util import Constraint
+
+        # don't reset the wavelength
+        # don't reset the (real-space) positions
+        # don't reset the (reciprocal-space) positions
+        diffractometer.engine.mode = self.mode
+
+        diffractometer._set_constraints(
+            {k: Constraint(*constraint.values) for k, constraint in self.constraints.items()}
+        )
+
+        for sample in self.samples.values():
+            sample.write(diffractometer)
+
+
 class DiffractometerConfiguration:
     """
     Save and restore Diffractometer Configuration.
@@ -75,8 +284,7 @@ class DiffractometerConfiguration:
 
         ~export
         ~restore
-        ~_update
-        ~validate_config_dict
+        ~model
         ~reset_diffractometer
         ~reset_diffractometer_constraints
         ~reset_diffractometer_samples
@@ -91,13 +299,16 @@ class DiffractometerConfiguration:
         ~reciprocal_axes_names
     """
 
-    from .diffract import Diffractometer
+    def __init__(self, diffractometer):
+        from .diffract import Diffractometer
 
-    diffractometer: Diffractometer
+        if not isinstance(diffractometer, Diffractometer):
+            raise TypeError("diffractometer should be 'Diffractometer' or subclass.")
+        self.diffractometer = diffractometer
 
     def export(self, fmt="json"):
         """
-        Export configuration in a recognized format (dict, json, yaml).
+        Export configuration in a recognized format (dict, JSON, YAML).
 
         PARAMETERS
 
@@ -113,7 +324,7 @@ class DiffractometerConfiguration:
             raise ValueError(f"fmt must be one of {EXPORT_FORMATS}, received {fmt!r}")
         return getattr(self, f"to_{fmt}")()
 
-    def restore(self, config, clear=True):
+    def restore(self, data, clear=True):
         """
         Restore configuration from a recognized format (dict, json, yaml).
 
@@ -121,7 +332,7 @@ class DiffractometerConfiguration:
 
         PARAMETERS
 
-        config *dict* or *str*:
+        data *dict* or *str*:
             structure (dict, json, or yaml) with diffractometer configuration
         clear *bool*:
             If ``True`` (default), remove any previous configuration of the
@@ -132,24 +343,78 @@ class DiffractometerConfiguration:
         """
         importer = None
 
-        if isinstance(config, dict):
+        if isinstance(data, dict):
             importer = self.from_dict
-        elif isinstance(config, str):
-            if config.strip().startswith("{"):
+        elif isinstance(data, str):
+            if data.strip().startswith("{"):
                 importer = self.from_json
             else:
                 importer = self.from_yaml
         if importer is None:
             raise TypeError("Unrecognized configuration structure.")
 
-        importer(config, clear=clear)
+        importer(data, clear=clear)
+
+    @property
+    def canonical_axes_names(self):
+        """Names of the real-space axes, defined by the back-end library."""
+        return self.diffractometer.calc._geometry.axis_names_get()
+
+    @property
+    def real_axes_names(self):
+        """Names of the real-space axes, defined by the user."""
+        return list(self.diffractometer.RealPosition._fields)
+
+    @property
+    def reciprocal_axes_names(self):
+        """Names of the reciprocal-space axes, defined by the back-end library."""
+        return list(self.diffractometer.PseudoPosition._fields)
+
+    @property
+    def model(self) -> DCConfiguration:
+        """Return validated diffractometer configuration object."""
+        diffractometer = self.diffractometer
+        data = {
+            "name": diffractometer.name,
+            "geometry": diffractometer.calc._geometry.name_get(),
+            "datetime": str(datetime.datetime.now()),
+            "python_class": diffractometer.__class__.__name__,
+            "engine": diffractometer.calc.engine.name,
+            "mode": diffractometer.calc.engine.mode,
+            "canonical_axes": self.canonical_axes_names,
+            "real_axes": self.real_axes_names,
+            "reciprocal_axes": self.reciprocal_axes_names,
+            "energy_keV": diffractometer.calc.energy,  # assumes X-rays!
+            "wavelength_angstrom": diffractometer.calc.wavelength,
+            "hklpy_version": diffractometer._hklpy_version_,
+            "library": libhkl.__name__,
+            "library_version": libhkl.VERSION,
+            # fmt: off
+            "constraints": {
+                axis: {
+                    parm: getattr(constraint, parm)
+                    for parm in "low_limit high_limit value fit".split()
+                }
+                for axis, constraint in diffractometer._constraints_dict.items()
+            },
+            # fmt: on
+            "samples": {
+                sname: {
+                    "name": sample.name,
+                    "lattice": sample.lattice._asdict(),
+                    "reflections": sample.reflections_details,
+                    "U": sample.U.tolist(),
+                    "UB": sample.UB.tolist(),
+                }
+                for sname, sample in diffractometer.calc._samples.items()
+            },
+        }
+        obj = deserialize(DCConfiguration, data)  # also validates structure
+        obj.validate(self)  # check that values are valid
+        return obj
 
     def reset_diffractometer(self):
-        """Clear all diffractometer settings."""
-        from .diffract import Diffractometer
-
-        _check_type(self.diffractometer, Diffractometer, "diffractometer should be 'Diffractometer' or subclass.")
-
+        """Reset the diffractometer to the default configuration."""
         self.diffractometer.wavelength = DEFAULT_WAVELENGTH
         self.diffractometer.engine.mode = self.diffractometer.engine.modes[0]
         self.reset_diffractometer_constraints()
@@ -180,289 +445,71 @@ class DiffractometerConfiguration:
         )
         # fmt: on
 
-    def validate_config_dict(self, config):
+    def from_dict(self, data, clear=True):
         """
-        Verify that the config dictionary is correctly formed.
+        Load diffractometer configuration from Python dictionary.
 
         PARAMETERS
 
-        config *dict*:
-            structure (dict) with diffractometer configuration
-        """
-        from .diffract import Diffractometer
-        from .util import libhkl
-
-        diffractometer = self.diffractometer
-
-        _check_type(self.diffractometer, Diffractometer, "diffractometer should be 'Diffractometer' or subclass.")
-        _check_type(config, dict, "config")
-
-        for k, types in REQUIRED_CONFIGURATION_KEYS_TYPES.items():
-            _check_key(k, config, "missing key")
-            _check_type(config[k], types, f"Wrong type for parameter, {k}")
-
-        calc = diffractometer.calc
-        _check_value(
-            config["canonical_axes"],
-            self.canonical_axes_names,
-            "canonical_axes",
-        )
-        _check_value(config["engine"], calc.engine.name, "engine")
-        _check_value(config["geometry"], calc._geometry.name_get(), "geometry")
-        _check_value(config["library"], libhkl.__name__, "library")
-        _check_value(config["reciprocal_axes"], self.reciprocal_axes_names, "reciprocal_axes")
-
-        for k, constraint in config["constraints"].items():
-            _check_key(k, self.real_axes_names, "missing key")
-            _check_type(constraint, dict, f"{constraint}")
-            for k2 in "low_limit high_limit value fit".split():
-                _check_key(k2, constraint, "missing key")
-                if k2 == "fit":
-                    _check_type(constraint[k2], bool, f"{constraint[k2]}")
-                else:
-                    _check_type(constraint[k2], (float, int), f"{constraint[k2]}")
-
-        for sample in config["samples"].values():
-            self.validate_config_dict_sample(sample)
-
-    def validate_config_dict_sample(self, sample):
-        """
-        Validate a sample dictionary in the configuration.
-
-        PARAMETERS
-
-        sample *dict*:
-            structure (dict) with sample configuration
-        """
-        _check_key("lattice", sample, "missing key")
-        _check_type(sample["lattice"], dict, "sample lattice")
-        for k in "a b c alpha beta gamma".split():
-            _check_key(k, sample["lattice"], "missing key")
-            _check_type(sample["lattice"][k], (float, int), f"{k}")
-
-        _check_key("reflections", sample, f"sample {sample['name']} reflections list required, even if empty")
-        _check_type(sample["reflections"], list, f"sample {sample['name']} reflections")
-        for reflection in sample["reflections"]:
-            self.validate_config_dict_sample_reflection(reflection)
-
-        for k in "U UB".split():
-            arr = sample.get(k, [])
-            if len(arr) > 0:
-                _check_value(numpy.array(arr).shape, (3, 3), f"{k} must be 3x3")
-                _check_type(arr[0][0], (float, numpy.floating), f"{k} must be numeric")
-
-    def validate_config_dict_sample_reflection(self, reflection):
-        """
-        Validate a reflection dictionary in the configuration.
-
-        PARAMETERS
-
-        reflection *dict*:
-            structure (dict) with reflection configuration
-        """
-        _check_type(reflection.get("fit"), int, "fit")
-        _check_type(reflection.get("wavelength"), (float, int), "wavelength")
-        _check_type(reflection.get("orientation_reflection"), bool, "orientation_reflection")
-
-        groups = [
-            ["reflection", "reciprocal", self.reciprocal_axes_names],
-            ["position", "real", self.canonical_axes_names],
-        ]
-        for key, desc, names in groups:
-            arr = reflection.get(key)
-            _check_type(arr, dict, f"{desc}-space coordinates")
-            for k, v in arr.items():
-                _check_key(k, names, f"{k!r} not in {names}")
-                _check_type(v, (float, int), f"{desc}-space {k!r} value")
-        # fmt: on
-
-    def _update(self, config):
-        """Update diffractometer with configuration."""
-        from .util import Constraint
-
-        # don't reset the wavelength
-        self.diffractometer.engine.mode = config["mode"]
-
-        # fmt: off
-        self.diffractometer._set_constraints(
-            {
-                k: Constraint(
-                    constraint["low_limit"],
-                    constraint["high_limit"],
-                    constraint["value"],
-                    constraint["fit"],
-                )
-                for k, constraint in config["constraints"].items()
-            }
-        )
-        # fmt: on
-
-        for k, sample in config["samples"].items():
-            lattice_tuple = (
-                sample["lattice"]["a"],
-                sample["lattice"]["b"],
-                sample["lattice"]["c"],
-                sample["lattice"]["alpha"],
-                sample["lattice"]["beta"],
-                sample["lattice"]["gamma"],
-            )
-
-            s = self.diffractometer.calc._samples.get(k)
-            if s is None:
-                s = self.diffractometer.calc.new_sample(k, lattice=lattice_tuple)
-            else:
-                s.lattice = lattice_tuple
-
-            # reflections
-            reflection_list = []
-            for reflection in sample["reflections"]:
-                # fmt: off
-                args = [
-                    reflection["reflection"][nm]
-                    for nm in self.reciprocal_axes_names
-                ]
-                positions = tuple([
-                    reflection["position"][nm]
-                    for nm in self.canonical_axes_names
-                ])
-                args = [*args, positions]  # [h, k, l, (m1, m2, m3, ...)]
-                # fmt: on
-
-                # temporarily, change the wavelength
-                w0 = self.diffractometer.calc.wavelength
-                try:
-                    self.diffractometer.calc.wavelength = reflection["wavelength"]
-                    r = self.diffractometer.calc.sample.add_reflection(*args)
-                except RuntimeError as exc:
-                    print(f"RuntimeError when adding reflection({args}): {exc}")
-                finally:
-                    self.diffractometer.calc.wavelength = w0
-
-                if reflection["orientation_reflection"]:
-                    reflection_list.append(r)
-            if len(reflection_list) > 1:
-                r1, r2 = reflection_list[:2]
-                self.diffractometer.calc.sample.compute_UB(r1, r2)
-
-    def from_dict(self, config, clear=True):
-        """
-        Restore diffractometer configuration from Python dictionary.
-
-        PARAMETERS
-
-        config *dict*:
+        data *dict*:
             structure (dict) with diffractometer configuration
         clear *bool*:
             If ``True`` (default), remove any previous configuration of the
             diffractometer and reset it to default values before restoring the
             configuration.
         """
-        try:
-            self.validate_config_dict(config)
-        except AssertionError as exc:
-            raise ValueError(f"Cannot restore: {exc!r}")
-
+        # note: deserialize first runs a structural validation
+        model = deserialize(DCConfiguration, data)
+        model.validate(self)  # check that values are valid
         if clear:
             self.reset_diffractometer()
-
-        self._update(config)
+        # tell the model to update the diffractometer
+        model.write(self.diffractometer)
 
     def to_dict(self):
         """Report diffractometer configuration as Python dictionary."""
-        from .diffract import Diffractometer
-        from .util import libhkl
+        return serialize(DCConfiguration, self.model)
 
-        me = self.diffractometer
-        _check_type(me, Diffractometer, "diffractometer should be 'Diffractometer' or subclass.")
-
-        d = {
-            "name": me.name,
-            "geometry": me.calc._geometry.name_get(),
-            "datetime": str(datetime.datetime.now()),
-            "class": me.__class__.__name__,
-            "engine": me.calc.engine.name,
-            "mode": me.calc.engine.mode,
-            "hklpy_version": me._hklpy_version_,
-            "library": libhkl.__name__,
-            "library_version": libhkl.VERSION,
-            "energy_keV": me.calc.energy,
-            "wavelength_angstrom": me.calc.wavelength,
-            # fmt: off
-            "constraints": {
-                k: {
-                    nm: getattr(v, nm)
-                    for nm in "low_limit high_limit value fit".split()
-                }
-                for k, v in me._constraints_dict.items()
-            },
-            "samples": {
-                sname: {
-                    "name": sample.name,
-                    "lattice": sample.lattice._asdict(),
-                    "reflections": sample.reflections_details,
-                    "U": sample.U.tolist(),
-                    "UB": sample.UB.tolist(),
-                }
-                for sname, sample in me.calc._samples.items()
-            },
-            # fmt: on
-            "canonical_axes": self.canonical_axes_names,
-            "real_axes": self.real_axes_names,
-            "reciprocal_axes": self.reciprocal_axes_names,
-        }
-        return d
-
-    def from_json(self, text, clear=True):
+    def from_json(self, data, clear=True):
         """
-        Restore diffractometer configuration from JSON text.
+        Load diffractometer configuration from JSON text.
 
         PARAMETERS
 
-        config *str* (JSON):
+        data *str* (JSON):
             structure (JSON string) with diffractometer configuration
         clear *bool*:
             If ``True`` (default), remove any previous configuration of the
             diffractometer and reset it to default values before restoring the
             configuration.
         """
-        self.from_dict(json.loads(text), clear=clear)
+        self.from_dict(json.loads(data), clear=clear)
 
     def to_json(self, indent=4):
         """Report diffractometer configuration as JSON text."""
         return json.dumps(self.to_dict(), indent=indent)
 
-    def from_yaml(self, text, clear=True):
+    def from_yaml(self, data, clear=True):
         """
-        Restore diffractometer configuration from YAML text.
+        Load diffractometer configuration from YAML text.
 
         PARAMETERS
 
-        config *str* (YAML):
+        data *str* (YAML):
             structure (YAML string) with diffractometer configuration
         clear *bool*:
             If ``True`` (default), remove any previous configuration of the
             diffractometer and reset it to default values before restoring the
             configuration.
         """
-        self.from_dict(yaml.load(text, Loader=yaml.Loader), clear=clear)
+        self.from_dict(yaml.load(data, Loader=yaml.Loader), clear=clear)
 
-    def to_yaml(self, indent=4, sort_keys=False):
-        """Report diffractometer configuration as YAML text."""
-        return yaml.dump(self.to_dict(), indent=indent, sort_keys=sort_keys)
-
-    @property
-    def canonical_axes_names(self):
-        """Names of the real-space axes, defined by the back-end library."""
-        return self.diffractometer.calc._geometry.axis_names_get()
-
-    @property
-    def real_axes_names(self):
-        """Names of the real-space axes, defined by the user."""
-        return list(self.diffractometer.RealPosition._fields)
-
-    @property
-    def reciprocal_axes_names(self):
+    def to_yaml(self, indent=4):
         """
-        Names of the reciprocal-space axes, defined by the back-end library.
+        Report diffractometer configuration as YAML text.
+
+        Order of appearance may be important for some entries, such as the list
+        of reflections.  Use ``sort_keys=False`` here. Don't make ``sort_keys``
+        a keyword argument that could be changed.
         """
-        return list(self.diffractometer.PseudoPosition._fields)
+        return yaml.dump(self.to_dict(), indent=indent, sort_keys=False)

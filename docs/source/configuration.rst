@@ -143,6 +143,7 @@ API
 +++
 
 .. automodule:: hkl.configuration
-    :members: DiffractometerConfiguration
-    :exclude-members: Diffractometer
+    :members:
+    :private-members:
+    :undoc-members:
  
