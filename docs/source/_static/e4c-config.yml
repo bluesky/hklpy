@@ -1,7 +1,7 @@
 name: e4c
 geometry: E4CV
 datetime: '2023-10-26 17:36:48.532883'
-class: SimulatedE4CV
+python_class: SimulatedE4CV
 engine: hkl
 mode: bissector
 hklpy_version: 1.0.5.dev53+g1a1f94d.d20231026
