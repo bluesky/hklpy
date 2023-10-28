@@ -116,7 +116,7 @@ class DCLattice:
     beta: float
     gamma: float
 
-    def validate(self, config):
+    def validate(self, dc_obj):
         """Check this lattice has values the diffractometer can accept."""
         for side in "a b c".split():
             _check_range(getattr(self, side), 1e-6, 1e6, f"side {side}")
@@ -139,7 +139,7 @@ class DCReflection:
     orientation_reflection: bool
     flag: int
 
-    def validate(self, config):
+    def validate(self, dc_obj):
         """Check this reflection has values the diffractometer can accept."""
         from hkl import A_KEV
 
@@ -148,10 +148,10 @@ class DCReflection:
         q_max = energy  # physics: X-ray reciprocal-space won't stretch any further
         q_min = -q_max
         for axis, reflection in self.reflection.items():
-            _check_key(axis, config.reciprocal_axes_names, f"reciprocal-space axis {axis}")
+            _check_key(axis, dc_obj.reciprocal_axes_names, f"reciprocal-space axis {axis}")
             _check_range(reflection["axis"], q_min, q_max, f"reciprocal-space axis {axis}")
         for axis, position in self.position.items():
-            _check_key(axis, config.canonical_axes_names, f"real-space axis {axis}")
+            _check_key(axis, dc_obj.canonical_axes_names, f"real-space axis {axis}")
             _check_range(position["axis"], AX_MIN, AX_MAX, f"real-space axis {axis}")
         # TODO: How to validate 'flag'?
 
@@ -166,11 +166,11 @@ class DCSample:
     U: list[list[float]]
     UB: list[list[float]]
 
-    def validate(self, config):
+    def validate(self, dc_obj):
         """Check this sample has values the diffractometer can accept."""
-        self.lattice.validate(config)
+        self.lattice.validate(dc_obj)
         for reflection in self.reflections:
-            reflection.validate(config)
+            reflection.validate(dc_obj)
         _check_value(numpy.array(self.U).shape, (3, 3), "U matrix shape")
         _check_value(numpy.array(self.UB).shape, (3, 3), "UB matrix shape")
 
@@ -209,20 +209,20 @@ class DCConfiguration:
     real_axes: list[str]
     reciprocal_axes: list[str]
 
-    def validate(self, config):  # TODO: refactor config to dc_obj and document it here & elsewhere
+    def validate(self, dc_obj):
         """Check this configuration has values the diffractometer can accept."""
-        diffractometer = config.diffractometer
+        diffractometer = dc_obj.diffractometer
         _check_value(self.geometry, diffractometer.calc._geometry.name_get(), "geometry")
         _check_value(self.library, libhkl.__name__, "library")
-        _check_value(self.canonical_axes, config.canonical_axes_names, "canonical_axes")
-        _check_value(self.reciprocal_axes, config.reciprocal_axes_names, "reciprocal_axes")
+        _check_value(self.canonical_axes, dc_obj.canonical_axes_names, "canonical_axes")
+        _check_value(self.reciprocal_axes, dc_obj.reciprocal_axes_names, "reciprocal_axes")
         _check_key(self.mode, diffractometer.engine.modes, "mode")
 
         for cname, constraint in self.constraints.items():
-            _check_key(cname, config.canonical_axes_names, "constraint axis")
+            _check_key(cname, dc_obj.canonical_axes_names, "constraint axis")
             constraint.validate(cname)
 
-        for sname, sample in self.samples.items():
+        for sample in self.samples.values():
             sample.validate(self)
 
     def write(self, diffractometer):
@@ -419,9 +419,15 @@ class DiffractometerConfiguration:
         """
         self.from_dict(yaml.load(text, Loader=yaml.Loader), clear=clear)
 
-    def to_yaml(self, indent=4, sort_keys=False):
-        """Report diffractometer configuration as YAML text."""
-        return yaml.dump(self.to_dict(), indent=indent, sort_keys=sort_keys)
+    def to_yaml(self, indent=4):
+        """
+        Report diffractometer configuration as YAML text.
+
+        Order of appearance is is important for some entries, such as
+        the list of reflections.  Use ``sort_keys=False`` here. Don't
+        make ``sort_keys`` a keyword argument that could be changed.
+        """
+        return yaml.dump(self.to_dict(), indent=indent, sort_keys=False)
 
     @property
     def canonical_axes_names(self):
