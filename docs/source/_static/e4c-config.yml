@@ -1,13 +1,21 @@
 name: e4c
 geometry: E4CV
-datetime: '2023-10-26 17:36:48.532883'
-python_class: SimulatedE4CV
-engine: hkl
-mode: bissector
-hklpy_version: 1.0.5.dev53+g1a1f94d.d20231026
 library: gi.repository.Hkl
-library_version: v5.0.0.3001
-energy_keV: 8.050921974025975
+mode: bissector
+canonical_axes:
+- omega
+- chi
+- phi
+- tth
+real_axes:
+- omega
+- chi
+- phi
+- tth
+reciprocal_axes:
+- h
+- k
+- l
 wavelength_angstrom: 1.54
 constraints:
     omega:
@@ -75,38 +83,38 @@ samples:
                 h: 4.0
                 k: 0.0
                 l: 0.0
-            flag: 1
-            wavelength: 1.54
             position:
                 omega: -145.451
                 chi: 0.0
                 phi: 0.0
                 tth: 69.0966
+            wavelength: 1.54
             orientation_reflection: false
+            flag: 1
         -   reflection:
                 h: 0.0
                 k: 4.0
                 l: 0.0
-            flag: 1
-            wavelength: 1.54
             position:
                 omega: -145.451
                 chi: 0.0
                 phi: 90.0
                 tth: 69.0966
+            wavelength: 1.54
             orientation_reflection: true
+            flag: 1
         -   reflection:
                 h: 0.0
                 k: 0.0
                 l: 4.0
-            flag: 1
-            wavelength: 1.54
             position:
                 omega: -145.451
                 chi: 90.0
                 phi: 0.0
                 tth: 69.0966
+            wavelength: 1.54
             orientation_reflection: true
+            flag: 1
         U:
         -   - 1.2217304763701863e-05
             - -0.9999999999253688
@@ -127,17 +135,9 @@ samples:
         -   - 0.9999999999253688
             - 1.221730476364063e-05
             - -1.492626316575311e-10
-canonical_axes:
-- omega
-- chi
-- phi
-- tth
-real_axes:
-- omega
-- chi
-- phi
-- tth
-reciprocal_axes:
-- h
-- k
-- l
+datetime: '2023-10-28 14:36:59.562037'
+energy_keV: 8.050921974025975
+engine: hkl
+hklpy_version: 1.0.5.dev86+g5541eee
+library_version: v5.0.0.3001
+python_class: SimulatedE4CV

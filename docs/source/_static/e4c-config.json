@@ -1,14 +1,25 @@
 {
     "name": "e4c",
     "geometry": "E4CV",
-    "datetime": "2023-10-26 16:58:20.819009",
-    "python_class": "SimulatedE4CV",
-    "engine": "hkl",
-    "mode": "bissector",
-    "hklpy_version": "1.0.4+28.gd9a56a4.dirty",
     "library": "gi.repository.Hkl",
-    "library_version": "v5.0.0.3001",
-    "energy_keV": 8.050921974025975,
+    "mode": "bissector",
+    "canonical_axes": [
+        "omega",
+        "chi",
+        "phi",
+        "tth"
+    ],
+    "real_axes": [
+        "omega",
+        "chi",
+        "phi",
+        "tth"
+    ],
+    "reciprocal_axes": [
+        "h",
+        "k",
+        "l"
+    ],
     "wavelength_angstrom": 1.54,
     "constraints": {
         "omega": {
@@ -100,15 +111,15 @@
                         "k": 0.0,
                         "l": 0.0
                     },
-                    "flag": 1,
-                    "wavelength": 1.54,
                     "position": {
                         "omega": -145.451,
                         "chi": 0.0,
                         "phi": 0.0,
                         "tth": 69.0966
                     },
-                    "orientation_reflection": false
+                    "wavelength": 1.54,
+                    "orientation_reflection": false,
+                    "flag": 1
                 },
                 {
                     "reflection": {
@@ -116,15 +127,15 @@
                         "k": 4.0,
                         "l": 0.0
                     },
-                    "flag": 1,
-                    "wavelength": 1.54,
                     "position": {
                         "omega": -145.451,
                         "chi": 0.0,
                         "phi": 90.0,
                         "tth": 69.0966
                     },
-                    "orientation_reflection": true
+                    "wavelength": 1.54,
+                    "orientation_reflection": true,
+                    "flag": 1
                 },
                 {
                     "reflection": {
@@ -132,15 +143,15 @@
                         "k": 0.0,
                         "l": 4.0
                     },
-                    "flag": 1,
-                    "wavelength": 1.54,
                     "position": {
                         "omega": -145.451,
                         "chi": 90.0,
                         "phi": 0.0,
                         "tth": 69.0966
                     },
-                    "orientation_reflection": true
+                    "wavelength": 1.54,
+                    "orientation_reflection": true,
+                    "flag": 1
                 }
             ],
             "U": [
@@ -179,21 +190,10 @@
             ]
         }
     },
-    "canonical_axes": [
-        "omega",
-        "chi",
-        "phi",
-        "tth"
-    ],
-    "real_axes": [
-        "omega",
-        "chi",
-        "phi",
-        "tth"
-    ],
-    "reciprocal_axes": [
-        "h",
-        "k",
-        "l"
-    ]
+    "datetime": "2023-10-28 14:37:16.925861",
+    "energy_keV": 8.050921974025975,
+    "engine": "hkl",
+    "hklpy_version": "1.0.5.dev86+g5541eee",
+    "library_version": "v5.0.0.3001",
+    "python_class": "SimulatedE4CV"
 }
