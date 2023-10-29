@@ -14,6 +14,7 @@ note: DC classes: Diffractometer Configuration
 .. autosummary::
 
     ~_check_key
+    ~_check_not_value
     ~_check_range
     ~_check_type
     ~_check_value
@@ -54,6 +55,12 @@ def _check_key(key, biblio, intro):
     """(internal) Raise KeyError if key is not in biblio."""
     if key not in biblio:
         raise KeyError(f"{intro}:  expected {key!r} not in {biblio}")
+
+
+def _check_not_value(actual, avoid, intro):
+    """(internal) Raise ValueError if actual IS equal to expected."""
+    if actual == avoid:
+        raise ValueError(f"{intro}:  received: {actual}  cannot be: {avoid}")
 
 
 def _check_range(value, low, high, intro):
@@ -118,7 +125,9 @@ class DCLattice:
         for side in "a b c".split():
             _check_range(getattr(self, side), 1e-6, 1e6, f"side {side}")
         for angle in "alpha beta gamma".split():
-            _check_range(getattr(self, angle), AX_MIN, AX_MAX, f"angle {angle}")
+            v = getattr(self, angle)
+            _check_not_value(v, 0., f"angle {angle}")  # exclude zero
+            _check_range(v, AX_MIN, AX_MAX, f"angle {angle}")
 
     @property
     def values(self):
@@ -384,7 +393,7 @@ class DiffractometerConfiguration:
             "canonical_axes": self.canonical_axes_names,
             "real_axes": self.real_axes_names,
             "reciprocal_axes": self.reciprocal_axes_names,
-            "energy_keV": diffractometer.calc.energy,  # assumes X-rays!
+            "energy_keV": diffractometer.calc.energy,  # for X-ray instruments
             "wavelength_angstrom": diffractometer.calc.wavelength,
             "hklpy_version": diffractometer._hklpy_version_,
             "library": libhkl.__name__,
