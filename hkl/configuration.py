@@ -127,7 +127,7 @@ class DCLattice:
         for angle in "alpha beta gamma".split():
             v = getattr(self, angle)
             _check_not_value(v, 0., f"angle {angle}")  # exclude zero
-            _check_range(v, AX_MIN, AX_MAX, f"angle {angle}")
+            _check_range(v, 1e-6, 180. - 1e-6, f"angle {angle}")
 
     @property
     def values(self):
