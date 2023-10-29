@@ -148,8 +148,8 @@ class DCReflection:
     def validate(self, dc_obj):
         """Check this reflection has values the diffractometer can accept."""
         _check_range(self.wavelength, 1e-6, 1e6, "wavelength")
-        energy = A_KEV / self.wavelength  # assumes X-rays
-        q_max = energy  # physics: X-ray reciprocal-space won't stretch any further
+        # physics: reciprocal-space won't stretch any further
+        q_max = 4 * numpy.pi / self.wavelength
         q_min = -q_max
         for axis, value in self.reflection.items():
             _check_key(axis, dc_obj.reciprocal_axes, f"reciprocal-space axis {axis}")
