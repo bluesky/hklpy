@@ -197,11 +197,12 @@ class DCSample:
 
             # temporarily, change the wavelength
             w0 = diffractometer.calc.wavelength
+            w1 = rdict["wavelength"]
             try:
-                diffractometer.calc.wavelength = rdict["wavelength"]
+                diffractometer.calc.wavelength = w1
                 r = diffractometer.calc.sample.add_reflection(*args)
             except RuntimeError as exc:
-                print(f"RuntimeError when adding reflection({args}): {exc}")
+                print(f"RuntimeError when adding reflection({args}, wavelength={w1}): {exc}")
             finally:
                 diffractometer.calc.wavelength = w0
 
