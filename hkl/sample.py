@@ -407,13 +407,13 @@ class HklSample(object):
         """Return dictionary with reflection details."""
         h, k, l = refl.hkl_get()
         geom = refl.geometry_get()
-        return dict(
-            reflection=dict(h=h, k=k, l=l),
-            flag=refl.flag_get(),
-            wavelength=geom.wavelength_get(1),
-            position={k: v for k, v in zip(geom.axis_names_get(), geom.axis_values_get(1))},
-            orientation_reflection=refl in self._orientation_reflections,
-        )
+        return {
+            "reflection": {"h": h, "k": k, "l": l},
+            "flag": refl.flag_get(),  # not used by hklpy
+            "wavelength": geom.wavelength_get(1),
+            "position": dict(zip(geom.axis_names_get(), geom.axis_values_get(1))),
+            "orientation_reflection": refl in self._orientation_reflections,
+        }
 
     @property
     def reflections_details(self):

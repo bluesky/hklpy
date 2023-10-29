@@ -143,7 +143,7 @@ class DCReflection:
     position: dict[str, float]
     wavelength: float
     orientation_reflection: bool
-    flag: int
+    flag: int = 1  # only used by libhkl
 
     def validate(self, dc_obj):
         """Check this reflection has values the diffractometer can accept."""
@@ -157,7 +157,7 @@ class DCReflection:
         for axis, value in self.position.items():
             _check_key(axis, dc_obj.canonical_axes, f"real-space axis {axis}")
             _check_range(value, AX_MIN, AX_MAX, f"real-space axis {axis}")
-        # TODO: How to validate 'flag'?
+        # do not validate 'flag' (not used in hklpy)
 
 
 @dataclass
