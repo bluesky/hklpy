@@ -31,7 +31,9 @@ __all__ = [
 
 import datetime
 import json
+import typing
 from dataclasses import dataclass
+from dataclasses import field
 
 import numpy
 import yaml
@@ -126,8 +128,8 @@ class DCLattice:
             _check_range(getattr(self, side), 1e-6, 1e6, f"side {side}")
         for angle in "alpha beta gamma".split():
             v = getattr(self, angle)
-            _check_not_value(v, 0., f"angle {angle}")  # exclude zero
-            _check_range(v, 1e-6, 180. - 1e-6, f"angle {angle}")
+            _check_not_value(v, 0.0, f"angle {angle}")  # exclude zero
+            _check_range(v, 1e-6, 180.0 - 1e-6, f"angle {angle}")
 
     @property
     def values(self):
@@ -236,6 +238,9 @@ class DCConfiguration:
     hklpy_version: str = ""
     library_version: str = ""
     python_class: str = ""
+
+    # _any_ other content goes into this dictionary (comments, unanticipated keys, ...)
+    other: dict[str, typing.Any] = field(default_factory=dict)
 
     def validate(self, dc_obj):
         """
