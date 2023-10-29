@@ -29,7 +29,7 @@ New Features and/or Enhancements
 * Add ``Petra3_p23_6c`` diffractometer geometry.
 * Add ``SoleilNanoscopiumRobot`` diffractometer geometry.
 * Add ``SoleilSixsMed2p3v2`` diffractometer geometry.
-* Export and reload diffractometer configuration is JSON string, YAML string, or Python dictionary.
+* Export and reload diffractometer configuration as JSON string, YAML string, or Python dictionary.
 
 Fixes
 -----
