@@ -1,11 +1,13 @@
+import pathlib
 from contextlib import nullcontext as does_not_raise
+from dataclasses import MISSING
 
 import pytest
+from apischema.validation.errors import ValidationError
 
 from .. import DiffractometerConfiguration
 from ..configuration import EXPORT_FORMATS
-
-# from ..configuration import REQUIRED_CONFIGURATION_KEYS_TYPES
+from ..configuration import DCConfiguration
 
 
 def test_e4cv(e4cv):
@@ -60,32 +62,42 @@ def test_format(fmt, e4cv):
         config.restore(cfg)  # test restore with automatic type recognition
 
 
-# @pytest.mark.parametrize("action", "rm set".split())  # remove or set keys incorrectly
-# @pytest.mark.parametrize(
-#     "key, value, failure",
-#     [[k, object, AssertionError] for k in REQUIRED_CONFIGURATION_KEYS_TYPES]
-# )
-# def test_validation_fails(action, key, value, failure, tardis):
-#     assert len(tardis.calc._samples) == 1
-#     assert tardis.calc.sample.name == "main"
+@pytest.mark.parametrize("file", [None, "data/e4c-config.json"])  # default or restored config
+@pytest.mark.parametrize("action", "rm set".split())  # remove or set keys incorrectly
+@pytest.mark.parametrize(
+    "key, value, failure",  # fmt: off
+    [
+        [k, object, (KeyError, TypeError, ValidationError, ValueError)]
+        for k in DCConfiguration.__dataclass_fields__
+    ],  # fmt: off
+)
+def test_validation_fails(file, action, key, value, failure, e4cv):
+    agent = DiffractometerConfiguration(e4cv)
+    assert isinstance(agent, DiffractometerConfiguration), f"{agent}"
 
-#     with pytest.raises(TypeError):
-#         cfg = DiffractometerConfiguration("wrong diffractometer object")
-#         cfg.validate_config_dict({})
+    if file is not None:
+        path = pathlib.Path(__file__).parent / file
+        assert path.exists(), f"{path}"
+        with open(path) as f:
+            agent.restore(f.read())
 
-#     with pytest.raises(TypeError):
-#         cfg = DiffractometerConfiguration(tardis)
-#         cfg.validate_config_dict("wrong configuration object")
+    data = agent.export("dict")
+    assert isinstance(data, dict), f"{type(data)=}"
 
-#     with pytest.raises(failure):
-#         cfg = DiffractometerConfiguration(tardis)
-#         assert isinstance(cfg, dict), f"{cfg}"
+    if action == "rm":
+        data.pop(key)
+        # Determine if key is optional (default/factory is defined).  Empirical.
+        attr = DCConfiguration.__dataclass_fields__[key]
+        if attr.default_factory != MISSING or attr.default != MISSING:
+            failure = None  # OK if not provided
+    elif action == "set":
+        data[key] = value
 
-#         if action == "rm":
-#             cfg.pop(key)
-#         elif action == "set":
-#             cfg[key] = value
-#         cfg.validate_config_dict(cfg)
+    if failure is None:
+        agent.restore(data)
+    else:
+        with pytest.raises(failure):
+            agent.restore(data)
 
 
 # TODO: test sample dictionary
