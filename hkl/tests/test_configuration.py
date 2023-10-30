@@ -3,11 +3,17 @@ from contextlib import nullcontext as does_not_raise
 from dataclasses import MISSING
 
 import pytest
-from apischema.validation.errors import ValidationError
+from apischema import ValidationError
+from apischema import deserialize
+from apischema import serialize
 
 from .. import DiffractometerConfiguration
 from ..configuration import EXPORT_FORMATS
 from ..configuration import DCConfiguration
+from ..configuration import DCConstraint
+from ..configuration import DCLattice
+from ..configuration import DCReflection
+from ..configuration import DCSample
 
 
 def test_e4cv(e4cv):
@@ -100,7 +106,91 @@ def test_validation_fails(file, action, key, value, failure, e4cv):
             agent.restore(data)
 
 
+@pytest.mark.parametrize("key", "low_limit high_limit value".split())
+# fit is a boolean, existing validation testing is sufficient for now
+@pytest.mark.parametrize(
+    "value, failure",
+    [
+        [-360.01, pytest.raises(ValueError)],
+        [-360, does_not_raise()],
+        [0, does_not_raise()],
+        [360, does_not_raise()],
+        [360.01, pytest.raises(ValueError)],
+        ["0", pytest.raises(ValidationError)],
+    ],
+)
+def test_DCConstraint_fails(key, value, failure):
+    # all attributes are required
+    data = {
+        "low_limit": 0.0,
+        "high_limit": 0.0,
+        "value": 0.0,
+        "fit": True,
+    }
+    agent = deserialize(DCConstraint, data)
+    assert isinstance(agent, DCConstraint)
+    assert key in data
+
+    data.pop(key)
+    with pytest.raises(ValidationError):
+        deserialize(DCConstraint, data)
+
+    data[key] = value
+    with failure:
+        agent = deserialize(DCConstraint, data)
+        assert isinstance(agent, DCConstraint)
+        agent.validate(f"testing {key=}")
+
+
+@pytest.mark.parametrize("key", "a b c alpha beta gamma".split())
+@pytest.mark.parametrize(
+    "value, failure",
+    [
+        [-1, pytest.raises(ValueError)],
+        [0, pytest.raises(ValueError)],
+        [1e-7, pytest.raises(ValueError)],
+        [1, does_not_raise()],
+        [179.99, does_not_raise()],
+        [180, does_not_raise()],
+        [10_000, does_not_raise()],
+        [100_000_000, pytest.raises(ValueError)],
+    ],
+)
+def test_DCLattice_fails(key, value, failure):
+    data = {
+        "a": 4,
+        "b": 5,
+        "c": 6,
+        "alpha": 8,
+        "beta": 9,
+        "gamma": 10,
+    }
+    agent = deserialize(DCLattice, data)
+    assert isinstance(agent, DCLattice)
+    assert key in data
+
+    data.pop(key)
+    with pytest.raises(ValidationError):
+        deserialize(DCConstraint, data)
+
+    data[key] = value
+    if key in "alpha beta gamma".split() and value > 180 - 1e-6:
+        failure = pytest.raises(ValueError)
+    with failure:
+        agent = deserialize(DCLattice, data)
+        assert isinstance(agent, DCLattice)
+        agent.validate(f"testing {key=}")
+
+
 # TODO: test sample dictionary
+def test_DCReflection_fails():
+    assert True  # TODO:
+
+
 # TODO: test reflections dictionary
+def test_DCSample_fails():
+    assert True  # TODO:
+
+
 # TODO: test that diffractometer is updated by config.restore()
 # TODO: Test the `clear` flag for config.restore()
