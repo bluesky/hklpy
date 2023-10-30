@@ -233,7 +233,7 @@ class DCConfiguration:
 
     # optional attributes
     datetime: str = ""
-    energy_keV: float = A_KEV / DEFAULT_WAVELENGTH  # assumes X-rays
+    energy_keV: float = field(default_factory=float)  # for X-ray instruments
     engine: str = ""
     hklpy_version: str = ""
     library_version: str = ""
