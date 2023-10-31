@@ -222,7 +222,25 @@ Lattice = namedtuple("LatticeTuple", "a b c alpha beta gamma")
 
 
 def new_lattice(a, b=None, c=None, alpha=90., beta=None, gamma=None):
-    """Simplify for high-symmetry crystal systems."""
+    """
+    Simplify for high-symmetry crystal systems.
+
+    EXAMPLES (highest to lowest symmetry):
+
+    =============== =================================== === === === ======= ======= =====
+    system          command                             a   b   c   alpha   beta    gamma
+    =============== =================================== === === === ======= ======= =====
+    cubic           new_lattice(5.)                     5   5   5   90      90      90
+    hexagonal       new_lattice(4., c=3., gamma=120)    4   4   3   90      90      120
+    rhombohedral    new_lattice(4., alpha=80.0)         4   4   4   80      80      80
+    tetragonal      new_lattice(4, c=3)                 4   4   3   90      90      90
+    orthorhombic    new_lattice(4, 5, 3)                4   5   3   90      90      90
+    monoclinic      new_lattice(4, 5, 3, beta=75)       4   5   3   90      75      90
+    triclinic       new_lattice(4, 5, 3, 75., 85., 95.) 4   5   3   75      85      95
+    =============== =================================== === === === ======= ======= =====
+    
+    .. see: https://en.wikipedia.org/wiki/Crystal_system
+    """
     return Lattice(a, b or a, c or a, alpha, beta or alpha, gamma or alpha)
 
 

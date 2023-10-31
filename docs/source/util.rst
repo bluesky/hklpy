@@ -4,5 +4,4 @@ util
 -----
 
 .. automodule:: hkl.util
-    :members: 
- 
+    :members:

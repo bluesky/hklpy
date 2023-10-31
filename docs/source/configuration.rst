@@ -27,7 +27,7 @@ Configuration dictionary
 * list [#axes.order]_ of canonical (geometry-defined) real-space axes names
 * list [#axes.order]_ of real-space axes names as the user has defined
 * list of samples
-* other general metadata about the diffractometer.  
+* other general metadata about the diffractometer.
 
 .. [#axes.order] The axes names are listed in the order prescribed by the back-end library.
 
@@ -143,6 +143,10 @@ API
 +++
 
 .. automodule:: hkl.configuration
-    :members: DiffractometerConfiguration
-    :exclude-members: Diffractometer
- 
+    :members:
+        DiffractometerConfiguration,
+        DCConstraint, DCLattice, DCReflection, DCSample, DCConfiguration,
+        _check_key, _check_not_value, _check_range, _check_type, _check_value
+    :private-members:
+    :undoc-members:
+

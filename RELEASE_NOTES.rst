@@ -29,6 +29,7 @@ New Features and/or Enhancements
 * Add ``Petra3_p23_6c`` diffractometer geometry.
 * Add ``SoleilNanoscopiumRobot`` diffractometer geometry.
 * Add ``SoleilSixsMed2p3v2`` diffractometer geometry.
+* Export and reload diffractometer configuration as JSON string, YAML string, or Python dictionary.
 
 Fixes
 -----
@@ -39,6 +40,7 @@ Maintenance
 -----------
 
 * Add pre-commit checks.
+* Add ``apischema`` to package requirements.
 * Add test for ``or_swap()``.
 * Expand testing to to Py3.8 - Py3.11.
 * Fix code in ``util.restore_reflections()`` that failed unit tests locally.
