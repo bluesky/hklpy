@@ -137,7 +137,8 @@ configuration can be restored to any diffractometer with matching ``"geometry":
 
 The extra keyword argument, ``clear=True`` (which is the default), means to
 first remove any previous configuration of the diffractometer and reset it to
-default values before restoring the configuration.
+default values before restoring the configuration.  The file name is described
+using the `pathlib <https://docs.python.org/3/library/pathlib.html>`_ library.
 
 API
 +++
