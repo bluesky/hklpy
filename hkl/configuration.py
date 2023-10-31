@@ -148,10 +148,18 @@ class DCReflection:
 
     #: Reciprocal-space axis positions
     reflection: dict[str, float]
-    position: dict[str, float]  # real-space axis positions
-    wavelength: float  # wavelength of _this_ reflection
-    orientation_reflection: bool  # used for calculating UB matrix?
-    flag: int = 1  # only used by libhkl
+
+    #: real-space axis positions
+    position: dict[str, float]
+
+    #: wavelength of _this_ reflection
+    wavelength: float
+
+    #: used for calculating UB matrix?
+    orientation_reflection: bool
+
+    #: only used by libhkl
+    flag: int = 1
 
     def validate(self, dc_obj):
         """Check this reflection has values the diffractometer can accept."""
@@ -213,9 +221,7 @@ class DCSample:
                 r = diffractometer.calc.sample.add_reflection(*args)
             except RuntimeError as exc:
                 diffractometer.calc.wavelength = w0
-                raise RuntimeError(
-                    f"could not add reflection({args}, wavelength={w1})"
-                ) from exc
+                raise RuntimeError(f"could not add reflection({args}, wavelength={w1})") from exc
             finally:
                 diffractometer.calc.wavelength = w0
 
