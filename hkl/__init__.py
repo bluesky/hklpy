@@ -84,6 +84,7 @@ from .util import (  # noqa: F401, F402, E402
     Lattice,
     list_orientation_runs,
     new_detector,
+    new_lattice,
     restore_constraints,
     restore_energy,
     restore_orientation,

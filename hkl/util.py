@@ -48,6 +48,7 @@ __all__ = """
     Lattice
     list_orientation_runs
     new_detector
+    new_lattice
     restore_constraints
     restore_energy
     restore_orientation
