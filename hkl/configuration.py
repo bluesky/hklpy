@@ -38,11 +38,9 @@ from dataclasses import field
 
 import numpy
 import yaml
-from apischema import ValidationError
 from apischema import deserialize
 from apischema import serialize
 
-from . import A_KEV
 from .util import libhkl
 
 # TODO: can these be learned from the diffractometer? (not constraints but axes?)
