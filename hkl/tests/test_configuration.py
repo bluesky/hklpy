@@ -89,8 +89,7 @@ def test_validation_fails(file, action, key, value, failure, e4cv):
     if file is not None:
         path = pathlib.Path(__file__).parent / file
         assert path.exists(), f"{path}"
-        with open(path) as f:
-            agent.restore(f.read())
+        agent.restore(path)
 
     data = agent.export("dict")
     assert isinstance(data, dict), f"{type(data)=}"
@@ -316,8 +315,7 @@ def test_diffractometer_restored(clear, e4cv):
     context = does_not_raise() if isinstance(clear, bool) else pytest.raises(TypeError)
     with context:
         full_config_before = agent.export("dict")
-        with open(test_file) as f:
-            agent.restore(f.read(), clear=clear)
+        agent.restore(test_file, clear=clear)
 
     # -------------------------------- these should not have been changed
     assert e4cv.calc.wavelength == wavelength_test, "wavelength changed"

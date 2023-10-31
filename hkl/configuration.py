@@ -31,6 +31,7 @@ __all__ = [
 
 import datetime
 import json
+import pathlib
 import typing
 from dataclasses import asdict
 from dataclasses import dataclass
@@ -361,8 +362,9 @@ class DiffractometerConfiguration:
 
         PARAMETERS
 
-        data *dict* or *str*:
-            structure (dict, json, or yaml) with diffractometer configuration
+        data *dict* or *str* *pathlib.Path* object:
+            Structure (dict, json, or yaml) with diffractometer configuration
+            or pathlib object referring to a file with one of these formats.
         clear *bool*:
             If ``True`` (default), remove any previous configuration of the
             diffractometer and reset it to default values before restoring the
@@ -374,6 +376,12 @@ class DiffractometerConfiguration:
 
         if not isinstance(clear, bool):
             raise TypeError(f"clear must be either True or False, received {clear}")
+
+        if isinstance(data, pathlib.Path):
+            if not data.exists():
+                raise FileNotFoundError(f"{data}")
+            with open(data) as f:
+                data = f.read()
 
         if isinstance(data, dict):
             importer = self.from_dict

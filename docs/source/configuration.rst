@@ -86,9 +86,9 @@ Assuming:
 * ``settings`` contains the configuration object (dict, json, or yaml) to be restored
 
 The same command is used to restore the configuration settings from either dict,
-JSON string, or YAML string.  The
-:meth:`~hkl.DiffractometerConfiguration.restore` method will determine the
-data type from its structure::
+JSON string, or YAML string or from a file (where the file is specified as a
+``pathlib.Path`` object).  The :meth:`~hkl.DiffractometerConfiguration.restore`
+method will determine the data type from its structure::
 
     config.restore(settings)
 
@@ -131,9 +131,9 @@ downloaded. (Compare with :download:`YAML </_static/e4c-config.yml>`.) This exam
 configuration can be restored to any diffractometer with matching ``"geometry":
 "E4CV"``::
 
-    with open("e4c-config.json") as f:
-        settings = f.read()
-    config.restore(settings, clear=True)
+    import pathlib
+
+    config.restore(pathlib.Path("e4c-config.json"), clear=True)
 
 The extra keyword argument, ``clear=True`` (which is the default), means to
 first remove any previous configuration of the diffractometer and reset it to
