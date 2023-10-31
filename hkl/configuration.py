@@ -32,6 +32,7 @@ __all__ = [
 import datetime
 import json
 import typing
+from dataclasses import asdict
 from dataclasses import dataclass
 from dataclasses import field
 
@@ -198,7 +199,7 @@ class DCSample:
 
         reflection_list = []
         for reflection in self.reflections:
-            rdict = serialize(DCReflection, reflection)
+            rdict = asdict(reflection)
             args = [*list(rdict["reflection"].values()), tuple(rdict["position"].values())]  # hkl values
 
             # temporarily, change the wavelength
