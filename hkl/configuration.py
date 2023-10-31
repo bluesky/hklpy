@@ -124,12 +124,16 @@ class DCLattice:
 
     def validate(self, dc_obj):
         """Check this lattice has values the diffractometer can accept."""
-        for side in "a b c".split():
-            _check_range(getattr(self, side), 1e-6, 1e6, f"side {side}")
-        for angle in "alpha beta gamma".split():
-            v = getattr(self, angle)
-            _check_not_value(v, 0.0, f"angle {angle}")  # exclude zero
-            _check_range(v, 1e-6, 180.0 - 1e-6, f"angle {angle}")
+        _check_range(self.a, 1e-6, 1e6, "a")
+        _check_range(self.b, 1e-6, 1e6, "b")
+        _check_range(self.c, 1e-6, 1e6, "c")
+        _check_range(self.alpha, 1e-6, 180.0 - 1e-6, "alpha")
+        _check_range(self.beta, 1e-6, 180.0 - 1e-6, "beta")
+        _check_range(self.gamma, 1e-6, 180.0 - 1e-6, "gamma")
+        # exclude zero
+        _check_not_value(self.alpha, 0.0, f"alpha")
+        _check_not_value(self.beta, 0.0, f"beta")
+        _check_not_value(self.gamma, 0.0, f"gamma")
 
     @property
     def values(self):
@@ -141,10 +145,10 @@ class DCLattice:
 class DCReflection:
     """(internal) Configuration of one orientation reflection."""
 
-    reflection: dict[str, float]
-    position: dict[str, float]
-    wavelength: float
-    orientation_reflection: bool
+    reflection: dict[str, float]  # reciprocal-space axis positions
+    position: dict[str, float]  # real-space axis positions
+    wavelength: float  # wavelength of _this_ reflection
+    orientation_reflection: bool  # used for calculating UB matrix?
     flag: int = 1  # only used by libhkl
 
     def validate(self, dc_obj):
