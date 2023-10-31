@@ -1,4 +1,3 @@
-import epics
 import logging
 from ..util import new_lattice
 import numpy
@@ -7,6 +6,7 @@ import numpy
 logger = logging.getLogger("ophyd_session_test")
 
 TARDIS_TEST_MODE = "lifting_detector_mu"
+TWO_PI = 2 * numpy.pi
 
 
 def new_sample(diffractometer, name, lattice):
@@ -26,6 +26,6 @@ def sample_silicon(diffractometer):
 
 
 def sample_vibranium(diffractometer):
-    a0 = 2 * numpy.pi
+    a0 = TWO_PI
     cubic = new_lattice(a0)
     new_sample(diffractometer, "vibranium", lattice=cubic)

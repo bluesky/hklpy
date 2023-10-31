@@ -159,10 +159,10 @@ class DCReflection:
         q_max = 4 * numpy.pi / self.wavelength
         q_min = -q_max
         for axis, value in self.reflection.items():
-            _check_key(axis, dc_obj.reciprocal_axes, f"reciprocal-space axis {axis}")
+            _check_key(axis, dc_obj.reciprocal_axes_names, f"reciprocal-space axis {axis}")
             _check_range(value, q_min, q_max, f"reciprocal-space axis {axis}")
         for axis, value in self.position.items():
-            _check_key(axis, dc_obj.canonical_axes, f"real-space axis {axis}")
+            _check_key(axis, dc_obj.canonical_axes_names, f"real-space axis {axis}")
             _check_range(value, AX_MIN, AX_MAX, f"real-space axis {axis}")
         # do not validate 'flag' (not used in hklpy)
 
@@ -180,18 +180,20 @@ class DCSample:
     def validate(self, dc_obj):
         """Check this sample has values the diffractometer can accept."""
         self.lattice.validate(dc_obj)
+        _check_not_value(self.name.strip(), "", "name cannot be empty")
         for reflection in self.reflections:
             reflection.validate(dc_obj)
         for k in "U UB".split():
             arr = numpy.array(getattr(self, k))
             _check_value(arr.shape, (3, 3), f"{k} matrix shape")
-            _check_type(arr[0][0], (float, numpy.floating), f"{k} matrix")
+            for i in range(len(arr)):
+                for j in range(len(arr[i])):
+                    _check_type(arr[i][j], (float, numpy.floating), f"{k}[{i}][{j}]")
 
     def write(self, diffractometer):
         """Write sample details to diffractometer."""
-        lattice_parameters = list(self.lattice.values)
-
         s = diffractometer.calc._samples.get(self.name)
+        lattice_parameters = list(self.lattice.values)
         if s is None:
             s = diffractometer.calc.new_sample(self.name, lattice=lattice_parameters)
         else:
@@ -280,7 +282,7 @@ class DCConfiguration:
             constraint.validate(cname)
 
         for sample in self.samples.values():
-            sample.validate(self)
+            sample.validate(dc_obj)
 
     def write(self, diffractometer):
         """Update diffractometer with configuration."""
@@ -365,6 +367,9 @@ class DiffractometerConfiguration:
         Note: Can't name this method "import", it's a reserved Python word.
         """
         importer = None
+
+        if not isinstance(clear, bool):
+            raise TypeError(f"clear must be either True or False, received {clear}")
 
         if isinstance(data, dict):
             importer = self.from_dict
