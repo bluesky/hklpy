@@ -127,7 +127,7 @@ autodoc_default_options = {
     #'members': 'var1, var2',
     #'member-order': 'bysource',
     "private-members": True,
-    "special-members": "__init__",
+    # "special-members": "__init__",
     # 'undoc-members': True,
     "exclude-members": autodoc_exclude_members,
 }
