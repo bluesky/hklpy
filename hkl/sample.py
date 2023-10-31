@@ -86,6 +86,41 @@ class HklSample(object):
         This assumes the hkl engine is used; generally, the ordered set of
         positions for the engine in-use should be specified.
 
+    PUBLIC API
+
+    .. autosummary::
+
+        ~add_reflection
+        ~affine
+        ~clear_reflections
+        ~compute_UB
+        ~hkl_calc
+        ~hkl_sample
+        ~lattice
+        ~name
+        ~reciprocal
+        ~reflection_measured_angles
+        ~reflection_theoretical_angles
+        ~reflections
+        ~reflections_details
+        ~remove_reflection
+        ~swap_orientation_reflections
+        ~U
+        ~UB
+        ~ux
+        ~uy
+        ~uz
+
+    PRIVATE API
+
+    .. autosummary::
+
+        ~__repr__
+        ~__str__
+        ~_create_reflection
+        ~_get_reflection_dict
+        ~_refl_matrix
+        ~_repr_info
     """
 
     def __init__(self, calc, sample=None, units="user", **kwargs):
@@ -376,7 +411,7 @@ class HklSample(object):
 
     def affine(self):
         """
-        Make the sample transform affine
+        Refine (affine) the sample lattice parameters from the list of reflections.
         """
         return self._sample.affine()
 
