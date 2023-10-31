@@ -220,7 +220,6 @@ class DCSample:
                 diffractometer.calc.wavelength = w1
                 r = diffractometer.calc.sample.add_reflection(*args)
             except RuntimeError as exc:
-                diffractometer.calc.wavelength = w0
                 raise RuntimeError(f"could not add reflection({args}, wavelength={w1})") from exc
             finally:
                 diffractometer.calc.wavelength = w0
