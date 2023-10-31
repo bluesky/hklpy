@@ -6,7 +6,6 @@ import pytest
 from ophyd import Component
 from ophyd import SoftPositioner
 
-from .__init__ import TARDIS_TEST_MODE
 from .. import E4CV
 from .. import E6C
 from .. import SimMixin
@@ -81,7 +80,7 @@ def tardis():
         gamma = Component(SoftPositioner, init_pos=0)
 
     diffractometer = Tardis("", name="tardis")
-    diffractometer.calc.engine.mode = TARDIS_TEST_MODE
+    diffractometer.calc.engine.mode = "lifting_detector_mu"
     # re-map Tardis' axis names onto what an E6C expects
     diffractometer.calc.physical_axis_names = {
         "mu": "theta",
