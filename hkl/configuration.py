@@ -146,7 +146,8 @@ class DCLattice:
 class DCReflection:
     """(internal) Configuration of one orientation reflection."""
 
-    reflection: dict[str, float]  # reciprocal-space axis positions
+    #: Reciprocal-space axis positions
+    reflection: dict[str, float]
     position: dict[str, float]  # real-space axis positions
     wavelength: float  # wavelength of _this_ reflection
     orientation_reflection: bool  # used for calculating UB matrix?
