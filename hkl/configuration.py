@@ -313,7 +313,7 @@ class DCConfiguration:
 
     #: List of names of the diffractometer reciprocal-space (pseudo) axes. Both
     #  the exact spelling and order are defined by the back-end computation
-    #  library ``engine``.  
+    #  library ``engine``.
     #  MUST match diffractometer to restore.
     reciprocal_axes: list[str]
 
@@ -390,11 +390,13 @@ class DCConfiguration:
         """Update diffractometer with configuration."""
         from .util import Constraint
 
+        # fmt: off
         if not isinstance(restore_constraints, bool):
             raise TypeError(
                 "'restore_constraints' must be True or False,"
-                f" received {restore_constraints}")
-
+                f" received {restore_constraints}"
+            )
+        # fmt: on
 
         # don't reset the wavelength
         # don't reset the (real-space) positions
@@ -662,11 +664,13 @@ class DiffractometerConfiguration:
             diffractometer and reset it to default values before restoring the
             configuration.
         """
+        # fmt: off
         self.from_dict(
             yaml.load(data, Loader=yaml.Loader),
             clear=clear,
             restore_constraints=restore_constraints
         )
+        # fmt: on
 
     def to_yaml(self, indent=4):
         """
