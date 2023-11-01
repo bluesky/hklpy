@@ -120,7 +120,8 @@ Define some reflections.  Pick two of them to define its orientation::
     _r004 = e4c.calc.sample.add_reflection(0, 0, 4, (-145.451, 90, 0, 69.0966))
     e4c.calc.sample.compute_UB(_r040, _r004)
 
-Save the orientation and other configuration::
+Save the orientation and other configuration to file ``"e4c-config.json"`` in
+the present working directory::
 
     settings = config.export()
     with open("e4c-config.json", "w") as f:
@@ -129,7 +130,7 @@ Save the orientation and other configuration::
 A :download:`JSON </_static/e4c-config.json>` example of this file can be
 downloaded. (Compare with :download:`YAML </_static/e4c-config.yml>`.) This example
 configuration can be restored to any diffractometer with matching ``"geometry":
-"E4CV"``::
+"E4CV"`` and engine ``"engine": "hkl"``::
 
     import pathlib
 
@@ -139,6 +140,13 @@ The extra keyword argument, ``clear=True`` (which is the default), means to
 first remove any previous configuration of the diffractometer and reset it to
 default values before restoring the configuration.  The file name is described
 using the `pathlib <https://docs.python.org/3/library/pathlib.html>`_ library.
+
+Alternatively, the `export()` method accepts a pathlib object such as::
+
+    import pathlib
+
+    config_file = pathlib.Path("e4c-config.json")
+    config.export(config_file, clear=True)
 
 API
 +++

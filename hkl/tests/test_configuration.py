@@ -260,7 +260,7 @@ def test_DCSample_fails(key, value, failure, e4cv):
     common_DC_dataclass_tests(DCSample, data, key, value, failure, agent)
 
 
-@pytest.mark.parametrize("clear", [True, False, object])
+@pytest.mark.parametrize("clear", [True, False, object, None])
 def test_diffractometer_restored(clear, e4cv):
     # -------------------------------- default configuration
     mode_before = e4cv.engine.mode
@@ -357,3 +357,17 @@ def test_diffractometer_restored(clear, e4cv):
         assert e4cv.engine.mode == mode_changed
         assert e4cv.calc._samples["main"].lattice == orthorhombic
         assert len(e4cv.calc._samples["main"].reflections_details) == 1
+
+
+def test_export_to_file(e4cv, tmp_path):
+    assert isinstance(tmp_path, pathlib.Path)
+    assert tmp_path.exists()
+
+    path = tmp_path / "config.txt"
+    assert not path.exists()
+
+    agent = DiffractometerConfiguration(e4cv)
+    agent.export(path)
+    assert path.exists()
+
+    agent.restore(path)  # just to be safe here

@@ -23,6 +23,8 @@ note: DC classes: Diffractometer Configuration
     ~DCReflection
     ~DCSample
     ~DCConfiguration
+
+.. note:: New in v1.1.
 """
 
 __all__ = [
@@ -286,6 +288,7 @@ class DCConfiguration:
 
     #: Name of the computational support for the reciprocal-space (pseudo) axes.
     #  MUST match in the list provided by the diffractometer geometry to restore.
+    #: The *engine* defines the list of the reciprocal-space (pseudo) axes.
     engine: str
 
     #: Name of the back-end computation library.  MUST match diffractometer to restore.
@@ -435,17 +438,26 @@ class DiffractometerConfiguration:
 
         PARAMETERS
 
-        fmt *str*:
+        fmt *str* or *pathlib.Path* object:
             One of these: ``None``, ``"dict"``, ``"json"``, ``"yaml"``. If
             ``None`` (or empty string or no argument at all), then JSON will be
             the default.
         """
+        path = None
+        if isinstance(fmt, pathlib.Path):
+            path = fmt
+            fmt = "json"  # use default format
+
         fmt = (fmt or "json").lower()
         if fmt == "yml":
             fmt = "yaml"  # a common substitution, just being friendly
         if fmt not in EXPORT_FORMATS:
             raise ValueError(f"fmt must be one of {EXPORT_FORMATS}, received {fmt!r}")
-        return getattr(self, f"to_{fmt}")()
+        data = getattr(self, f"to_{fmt}")()
+        if path is not None:
+            with open(path, "w") as f:
+                f.write(data)
+        return data
 
     def restore(self, data, clear=True):
         """
