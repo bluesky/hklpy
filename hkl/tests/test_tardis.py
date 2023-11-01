@@ -1,12 +1,8 @@
 import numpy as np
 import numpy.testing
 import pytest
-from ophyd import Component as Cpt
-from ophyd import SoftPositioner
 
-from .. import E6C
 from .. import Constraint
-from .. import SimMixin
 from .. import calc as hkl_calc
 from ..util import new_lattice
 
