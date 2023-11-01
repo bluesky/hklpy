@@ -359,6 +359,8 @@ class DCConfiguration:
         """
         diffractometer = dc_obj.diffractometer
         _check_value(self.geometry, diffractometer.calc._geometry.name_get(), "geometry")
+        _check_key(self.engine, diffractometer.calc._engine_names, "engine")
+        _check_value(self.engine, diffractometer.calc.engine.name, "engine")
         _check_value(self.library, libhkl.__name__, "library")
         _check_value(self.canonical_axes, dc_obj.canonical_axes_names, "canonical_axes")
         _check_value(self.reciprocal_axes, dc_obj.reciprocal_axes_names, "reciprocal_axes")
