@@ -9,8 +9,8 @@ from .. import Constraint
 from .. import SimMixin
 from .. import calc as hkl_calc
 from ..util import new_lattice
-from .__init__ import TARDIS_TEST_MODE
-from .__init__ import new_sample
+from . import TARDIS_TEST_MODE
+from . import new_sample
 
 
 @pytest.fixture(scope="function")
