@@ -69,7 +69,7 @@ def _check_range(value, low, high, intro):
     """(internal) Raise ValueError if value is not between low & high."""
     if low > high:
         raise ValueError(f"{intro}:  {low} should not be greater than {high}")
-    if not (low <= value <= high):
+    if not low <= value <= high:
         raise ValueError(f"{intro}:  {value} is not between {low} & {high}")
 
 
@@ -89,9 +89,20 @@ def _check_value(actual, expected, intro):
 class DCConstraint:
     """(internal) Configuration of one diffractometer axis constraint."""
 
+    #: Lowest value to be accepted as a possible for this axis when computing
+    #  real-space solutions from given reciprocal-space positions.
     low_limit: float
+
+    #: Highest value to be accepted as a possible for this axis when computing
+    #  real-space solutions from given reciprocal-space positions.
     high_limit: float
+
+    #: Constant value to be used for this axis when ``fit=False`` when computing
+    #  real-space solutions from given reciprocal-space positions.
     value: float
+
+    #: If ``fit=True``, allow this value to be changed when computing
+    #  real-space solutions from given reciprocal-space positions.
     fit: bool
 
     @property
@@ -115,14 +126,25 @@ class DCConstraint:
 class DCLattice:
     """(internal) Configuration of one crystal lattice."""
 
+    #: unit cell length :math:`a` (angstrom)
     a: float
+
+    #: unit cell length :math:`b` (angstrom)
     b: float
+
+    #: unit cell length :math:`c` (angstrom)
     c: float
+
+    #: unit cell angle :math:`alpha` (degrees)
     alpha: float
+
+    #: unit cell angle :math:`beta` (degrees)
     beta: float
+
+    #: unit cell angle :math:`gamma` (degrees)
     gamma: float
 
-    def validate(self, dc_obj):
+    def validate(self, *_args):
         """Check this lattice has values the diffractometer can accept."""
         _check_range(self.a, 1e-6, 1e6, "a")
         _check_range(self.b, 1e-6, 1e6, "b")
@@ -131,9 +153,9 @@ class DCLattice:
         _check_range(self.beta, 1e-6, 180.0 - 1e-6, "beta")
         _check_range(self.gamma, 1e-6, 180.0 - 1e-6, "gamma")
         # exclude zero
-        _check_not_value(self.alpha, 0.0, f"alpha")
-        _check_not_value(self.beta, 0.0, f"beta")
-        _check_not_value(self.gamma, 0.0, f"gamma")
+        _check_not_value(self.alpha, 0.0, "alpha")
+        _check_not_value(self.beta, 0.0, "beta")
+        _check_not_value(self.gamma, 0.0, "gamma")
 
     @property
     def values(self):
@@ -179,22 +201,33 @@ class DCReflection:
 class DCSample:
     """(internal) Configuration of one crystalline sample with a lattice."""
 
+    #: Name of this crystalline sample.
     name: str
+
+    #: Crystal lattice parameters (angstroms and dgrees)
     lattice: DCLattice
+
+    #: List of orientation reflections.
     reflections: list[DCReflection]
+
+    #: Orientation matrix (3 x 3) of the crystal relative to the diffractometer.
     U: list[list[float]]
+
+    #: Orientation matrix (3 x 3).  U is the crystal orientation matrix relative
+    #  to the diffractometer and B is the transition matrix of a non-orthonormal
+    #  (the reciprocal of the crystal) in an orthonormal system.
     UB: list[list[float]]
 
     def validate(self, dc_obj):
         """Check this sample has values the diffractometer can accept."""
-        self.lattice.validate(dc_obj)
+        self.lattice.validate()
         _check_not_value(self.name.strip(), "", "name cannot be empty")
         for reflection in self.reflections:
             reflection.validate(dc_obj)
         for k in "U UB".split():
             arr = numpy.array(getattr(self, k))
             _check_value(arr.shape, (3, 3), f"{k} matrix shape")
-            for i in range(len(arr)):
+            for i in range(len(arr)):  # Want i, j for reporting
                 for j in range(len(arr[i])):
                     _check_type(arr[i][j], (float, numpy.floating), f"{k}[{i}][{j}]")
 
@@ -210,7 +243,11 @@ class DCSample:
         reflection_list = []
         for reflection in self.reflections:
             rdict = asdict(reflection)
-            args = [*list(rdict["reflection"].values()), tuple(rdict["position"].values())]  # hkl values
+            # fmt: off
+            args = [  # hkl values
+                *list(rdict["reflection"].values()),
+                tuple(rdict["position"].values())]
+            # fmt: on
 
             # temporarily, change the wavelength
             w0 = diffractometer.calc.wavelength
@@ -233,28 +270,82 @@ class DCSample:
 
 @dataclass
 class DCConfiguration:
-    """(internal) Full structure of the diffractometer configuration."""
+    """
+    (internal) Full structure of the diffractometer configuration.
 
-    name: str
-    geometry: str  # MUST match diffractometer to restore
-    library: str  # MUST match diffractometer to restore
-    mode: str  # MUST match a diffractometer mode to restore
-    canonical_axes: list[str]  # MUST match diffractometer to restore
-    real_axes: list[str]  # MUST match number of diffractometer axes to restore
-    reciprocal_axes: list[str]  # MUST match diffractometer to restore
-    wavelength_angstrom: float
+    Optional (keyword) attributes are not used to restore a diffractometer's
+    configuration.
+
+    Required (non-optional) attributes are used by ``restore()`` to either match
+    the diffractometer or restore the configuration.
+    """
+
+    #: Name of the diffractometer geometry as provided by the back-end
+    #  computation library.  MUST match diffractometer to restore.
+    geometry: str
+
+    #: Name of the computational support for the reciprocal-space (pseudo) axes.
+    #  MUST match in the list provided by the diffractometer geometry to restore.
+    engine: str
+
+    #: Name of the back-end computation library.  MUST match diffractometer to restore.
+    library: str
+
+    #: Diffractometer calculation mode.  Chosen from list provided by the
+    #  back-end computation library.  MUST match in the list provided by the
+    #  diffractometer to restore.
+    mode: str
+
+    #: List of the diffractometer real-space axis names.  Both the exact
+    #  spelling and order are defined by the back-end computation library.  MUST
+    #  match diffractometer to restore.
+    canonical_axes: list[str]
+
+    #: User-defined real-space axis names. MUST match
+    #  diffractometer to restore. The length and order of this list must be the same as
+    #  the ``canonical_axes``. It is used to resolve any (real-space)
+    #  ``positioner`` names in this file.
+    real_axes: list[str]
+
+    #: List of names of the diffractometer reciprocal-space (pseudo) axes. Both
+    #  the exact spelling and order are defined by the back-end computation
+    #  library ``engine``.  
+    #  MUST match diffractometer to restore.
+    reciprocal_axes: list[str]
+
+    #: Limits to be imposed on the real-space axes for operations and
+    #  computations.  Keys must match in the list of ``canonical_axes``.
     constraints: dict[str, DCConstraint]
+
+    #: Crystalline samples (lattice and orientation reflections).
+    #  The sample name is used as the key in the dictionary.
     samples: dict[str, DCSample]
 
-    # optional attributes
+    # -------------------- optional attributes
+    #: Name of this diffractometer.
+    name: str = ""
+
+    #: Date and time this configuration was recorded.
     datetime: str = ""
-    energy_keV: float = field(default_factory=float)  # for X-ray instruments
-    engine: str = ""
+
+    #: Wavelength (angstrom) of the incident radiation.
+    wavelength_angstrom: float = field(default_factory=float)
+
+    #: Energy (keV) of the incident beam.  Useful for synchrotron X-ray instruments.
+    energy_keV: float = field(default_factory=float)
+
+    #: Version of the *hklpy* Python package used to create this diffractometer
+    #configuration content.
     hklpy_version: str = ""
+
+    #: Version information of the back-end computation library.
     library_version: str = ""
+
+    #: Name of the Python class that defines this diffractometer.
     python_class: str = ""
 
-    # _any_ other content goes into this dictionary (comments, unanticipated keys, ...)
+    #: _Any_ other content goes into this dictionary (comments, unanticipated
+    #  keys, ...)
     other: dict[str, typing.Any] = field(default_factory=dict)
 
     def validate(self, dc_obj):
