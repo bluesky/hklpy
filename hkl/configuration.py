@@ -386,7 +386,7 @@ class DCConfiguration:
         for sample in self.samples.values():
             sample.validate(dc_obj)
 
-    def write(self, diffractometer):
+    def write(self, diffractometer, restore_constraints=True):
         """Update diffractometer with configuration."""
         from .util import Constraint
 
@@ -395,9 +395,15 @@ class DCConfiguration:
         # don't reset the (reciprocal-space) positions
         diffractometer.engine.mode = self.mode
 
-        diffractometer._set_constraints(
-            {k: Constraint(*constraint.values) for k, constraint in self.constraints.items()}
-        )
+        # fmt: off
+        if restore_constraints:
+            diffractometer._set_constraints(
+                {
+                    k: Constraint(*constraint.values)
+                    for k, constraint in self.constraints.items()
+                }
+            )
+        # fmt: on
 
         for sample in self.samples.values():
             sample.write(diffractometer)
@@ -460,7 +466,7 @@ class DiffractometerConfiguration:
                 f.write(data)
         return data
 
-    def restore(self, data, clear=True):
+    def restore(self, data, clear=True, restore_constraints=True):
         """
         Restore configuration from a recognized format (dict, json, yaml).
 
@@ -475,6 +481,8 @@ class DiffractometerConfiguration:
             If ``True`` (default), remove any previous configuration of the
             diffractometer and reset it to default values before restoring the
             configuration.
+        restore_constraints *bool*:
+            If ``True`` (default), restore any constraints provided.
 
         Note: Can't name this method "import", it's a reserved Python word.
         """
@@ -499,7 +507,7 @@ class DiffractometerConfiguration:
         if importer is None:
             raise TypeError("Unrecognized configuration structure.")
 
-        importer(data, clear=clear)
+        importer(data, clear=clear, restore_constraints=restore_constraints)
 
     @property
     def canonical_axes_names(self):
@@ -591,7 +599,7 @@ class DiffractometerConfiguration:
         )
         # fmt: on
 
-    def from_dict(self, data, clear=True):
+    def from_dict(self, data, clear=True, restore_constraints=True):
         """
         Load diffractometer configuration from Python dictionary.
 
@@ -610,13 +618,13 @@ class DiffractometerConfiguration:
         if clear:
             self.reset_diffractometer()
         # tell the model to update the diffractometer
-        model.write(self.diffractometer)
+        model.write(self.diffractometer, restore_constraints=restore_constraints)
 
     def to_dict(self):
         """Report diffractometer configuration as Python dictionary."""
         return serialize(DCConfiguration, self.model)
 
-    def from_json(self, data, clear=True):
+    def from_json(self, data, clear=True, restore_constraints=True):
         """
         Load diffractometer configuration from JSON text.
 
@@ -629,13 +637,13 @@ class DiffractometerConfiguration:
             diffractometer and reset it to default values before restoring the
             configuration.
         """
-        self.from_dict(json.loads(data), clear=clear)
+        self.from_dict(json.loads(data), clear=clear, restore_constraints=restore_constraints)
 
     def to_json(self, indent=4):
         """Report diffractometer configuration as JSON text."""
         return json.dumps(self.to_dict(), indent=indent)
 
-    def from_yaml(self, data, clear=True):
+    def from_yaml(self, data, clear=True, restore_constraints=True):
         """
         Load diffractometer configuration from YAML text.
 
@@ -648,7 +656,11 @@ class DiffractometerConfiguration:
             diffractometer and reset it to default values before restoring the
             configuration.
         """
-        self.from_dict(yaml.load(data, Loader=yaml.Loader), clear=clear)
+        self.from_dict(
+            yaml.load(data, Loader=yaml.Loader),
+            clear=clear,
+            restore_constraints=restore_constraints
+        )
 
     def to_yaml(self, indent=4):
         """
