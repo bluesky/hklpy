@@ -9,12 +9,12 @@ from .. import Constraint
 from .. import SimMixin
 from .. import calc as hkl_calc
 from ..util import new_lattice
-from . import TARDIS_TEST_MODE
-from . import new_sample
 
 
 @pytest.fixture(scope="function")
 def kcf_sample(tardis):
+    from . import new_sample
+
     # note: orientation matrix (below) was pre-computed with this wavelength
     # wavelength units must match lattice unit cell length units
     tardis.calc.wavelength = 13.317314715359827
@@ -94,6 +94,8 @@ def test_params(tardis):
     """
     Make sure the parameters are set correctly
     """
+    from . import TARDIS_TEST_MODE
+
     calc = tardis.calc
     assert calc.pseudo_axis_names == "h k l".split()
     assert tuple(calc.physical_axis_names) == tardis.real_positioners._fields
@@ -231,8 +233,7 @@ def test_issue62(tardis, kcf_sample, constrain, theta, delta, gamma, h, k, l):
 
 @pytest.fixture(scope="function")
 def sample1(tardis):
-    # test with remapped names, not canonical names
-
+    """Test with remapped names, not canonical names."""
     # lattice cell lengths are in Angstrom, angles are in degrees
     lattice = new_lattice(9.069, c=10.390, gamma=120.)
     tardis.calc.new_sample("sample1", lattice=lattice)
@@ -321,7 +322,8 @@ def test_sample1(sample1, tardis):
 
 
 def test_sample1_calc_only():
-    # These comparisons start with the Tardis' calc support (no Diffractometer object)
+    """Comparisons start with the Tardis' calc support (no Diffractometer object)."""
+    from . import TARDIS_TEST_MODE
 
     tardis_calc = hkl_calc.CalcE6C()
 
