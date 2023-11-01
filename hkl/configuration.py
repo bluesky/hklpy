@@ -390,6 +390,12 @@ class DCConfiguration:
         """Update diffractometer with configuration."""
         from .util import Constraint
 
+        if not isinstance(restore_constraints, bool):
+            raise TypeError(
+                "'restore_constraints' must be True or False,"
+                f" received {restore_constraints}")
+
+
         # don't reset the wavelength
         # don't reset the (real-space) positions
         # don't reset the (reciprocal-space) positions

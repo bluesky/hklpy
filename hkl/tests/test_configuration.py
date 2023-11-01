@@ -116,8 +116,14 @@ def common_DC_dataclass_tests(dc_class, data, key, value, failure, val_arg):
     assert isinstance(agent, dc_class)
     assert key in data
 
+    # Is key an optional attribute?
+    context = pytest.raises(ValidationError)
+    attr = dc_class.__dataclass_fields__[key]
+    if attr.default_factory != MISSING or attr.default != MISSING:
+        context = does_not_raise()
+
     data.pop(key)
-    with pytest.raises(ValidationError):
+    with context:
         deserialize(dc_class, data)
 
     data[key] = value
@@ -259,17 +265,17 @@ def test_DCSample_fails(key, value, failure, e4cv):
     agent = DiffractometerConfiguration(e4cv)
     common_DC_dataclass_tests(DCSample, data, key, value, failure, agent)
 
-@pytest.mark.parametrize("restore_constraints", [True, False, object, None])
+
 @pytest.mark.parametrize("clear", [True, False, object, None])
-def test_diffractometer_restored(restore_constraints, clear, e4cv):
+def test_diffractometer_restored(clear, e4cv):
     # -------------------------------- default configuration
-    mode_before = e4cv.engine.mode
+    mode_default = e4cv.engine.mode
     positions_before = e4cv.RealPosition
     reciprocal_positions_before = e4cv.PseudoPosition
-    constraints_before = e4cv._constraints_for_databroker
+    constraints_default = e4cv._constraints_for_databroker
 
     assert round(e4cv.calc.wavelength, 2) == 1.55
-    assert e4cv.engine.mode == mode_before
+    assert e4cv.engine.mode == mode_default
     assert len(e4cv.calc._samples) == 1
     assert e4cv.calc.sample.name == "main"
     assert len(e4cv.calc.sample.reflections_details) == 0
@@ -287,12 +293,12 @@ def test_diffractometer_restored(restore_constraints, clear, e4cv):
     e4cv.engine.mode = mode_changed
     assert e4cv.engine.mode == mode_changed
 
-    assert e4cv._constraints_for_databroker == constraints_before
+    assert e4cv._constraints_for_databroker == constraints_default
     assert e4cv.calc.wavelength != wavelength_test
 
     e4cv.apply_constraints(constraints_test)
     constraints_changed = e4cv._constraints_for_databroker
-    assert constraints_changed != constraints_before
+    assert constraints_changed != constraints_default
 
     e4cv.calc.wavelength = wavelength_test
     assert e4cv.calc.wavelength == wavelength_test
@@ -312,10 +318,12 @@ def test_diffractometer_restored(restore_constraints, clear, e4cv):
     assert test_file.exists()
 
     agent = DiffractometerConfiguration(e4cv)
-    context = does_not_raise() if isinstance(clear, bool) else pytest.raises(TypeError)
+    full_config_before = agent.export("dict")
+    context = does_not_raise()
+    if not isinstance(clear, bool):
+        context = pytest.raises(TypeError)
     with context:
-        full_config_before = agent.export("dict")
-        agent.restore(test_file, clear=clear, restore_constraints=restore_constraints)
+        agent.restore(test_file, clear=clear)
 
     # -------------------------------- these should not have been changed
     assert e4cv.calc.wavelength == wavelength_test, "wavelength changed"
@@ -330,18 +338,14 @@ def test_diffractometer_restored(restore_constraints, clear, e4cv):
 
     if isinstance(clear, bool):
         assert full_config_after != full_config_before
-        if restore_constraints:
-            assert e4cv._constraints_for_databroker == constraints_before
-            assert e4cv._constraints_for_databroker != constraints_changed
-        else:
-            assert e4cv._constraints_for_databroker != constraints_before
-            assert e4cv._constraints_for_databroker == constraints_changed
+        assert e4cv._constraints_for_databroker != constraints_default
+        assert e4cv._constraints_for_databroker != constraints_changed
         # one additional sample
         assert len(e4cv.calc._samples) == 2
         assert list(e4cv.calc._samples) == "main vibranium".split()
 
         if clear:
-            assert e4cv.engine.mode == mode_before
+            assert e4cv.engine.mode == mode_default
             assert e4cv.engine.mode != mode_changed
             assert e4cv.calc._samples["main"].lattice != orthorhombic
             assert len(e4cv.calc._samples["main"].reflections_details) == 0
@@ -357,13 +361,36 @@ def test_diffractometer_restored(restore_constraints, clear, e4cv):
         assert full_config_after == full_config_before
         assert len(e4cv.calc._samples) == 1
         assert list(e4cv.calc._samples) == "main".split()
-        assert e4cv.engine.mode != mode_before
+        assert e4cv.engine.mode != mode_default
         assert e4cv.engine.mode == mode_changed
         assert e4cv.calc._samples["main"].lattice == orthorhombic
         assert len(e4cv.calc._samples["main"].reflections_details) == 1
 
 
+@pytest.mark.parametrize("restore_constraints", [True, False, object, None])
+def test_diffractometer_constraints_restored(restore_constraints, e4cv):
+    """Are the constraints restored by option value?"""
+    test_file = pathlib.Path(__file__).parent / TEST_CONFIG_FILE
+    assert test_file.exists()
+
+    agent = DiffractometerConfiguration(e4cv)
+    constraints_before = agent.export("dict")["constraints"]
+
+    context = does_not_raise()
+    if not isinstance(restore_constraints, bool):
+        context = pytest.raises(TypeError)
+    with context:
+        agent.restore(test_file, restore_constraints=restore_constraints)
+
+    constraints_now = agent.export("dict")["constraints"]
+    if isinstance(restore_constraints, bool) and restore_constraints:
+        assert constraints_before != constraints_now
+    else:
+        assert constraints_before == constraints_now
+
+
 def test_export_to_file(e4cv, tmp_path):
+    """Can configuration be exported to file using pathlib object?"""
     assert isinstance(tmp_path, pathlib.Path)
     assert tmp_path.exists()
 

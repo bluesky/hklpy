@@ -22,26 +22,26 @@
     ],
     "constraints": {
         "omega": {
-            "low_limit": -180.0,
-            "high_limit": 180.0,
+            "low_limit": -100.0,
+            "high_limit": 100.0,
             "value": 0.0,
             "fit": true
         },
         "chi": {
-            "low_limit": -180.0,
-            "high_limit": 180.0,
+            "low_limit": -100.0,
+            "high_limit": 100.0,
             "value": 0.0,
             "fit": true
         },
         "phi": {
-            "low_limit": -180.0,
-            "high_limit": 180.0,
+            "low_limit": -100.0,
+            "high_limit": 100.0,
             "value": 0.0,
             "fit": true
         },
         "tth": {
-            "low_limit": -180.0,
-            "high_limit": 180.0,
+            "low_limit": -100.0,
+            "high_limit": 100.0,
             "value": 0.0,
             "fit": true
         }
@@ -190,7 +190,7 @@
         }
     },
     "name": "e4c",
-    "datetime": "2023-11-01 16:11:39.049412",
+    "datetime": "2023-11-01 16:40",
     "wavelength_angstrom": 1.54,
     "energy_keV": 8.050921974025975,
     "hklpy_version": "1.0.5.dev122+g473f61f",
