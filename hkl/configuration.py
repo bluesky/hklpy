@@ -212,13 +212,14 @@ class DCSample:
     #: List of orientation reflections.
     reflections: list[DCReflection]
 
-    #: Orientation matrix (3 x 3) of the crystal relative to the diffractometer.
-    U: list[list[float]]
-
     #: Orientation matrix (3 x 3).  U is the crystal orientation matrix relative
     #  to the diffractometer and B is the transition matrix of a non-orthonormal
     #  (the reciprocal of the crystal) in an orthonormal system.
     UB: list[list[float]]
+
+    #: Orientation matrix (3 x 3) of the crystal relative to the diffractometer.
+    #  (optional)
+    U: list[list[float]] = field(default_factory=list[list[float]])
 
     def validate(self, dc_obj):
         """Check this sample has values the diffractometer can accept."""
@@ -325,30 +326,30 @@ class DCConfiguration:
     samples: dict[str, DCSample]
 
     # -------------------- optional attributes
-    #: Name of this diffractometer.
+    #: Name of this diffractometer. (optional)
     name: str = ""
 
-    #: Date and time this configuration was recorded.
+    #: Date and time this configuration was recorded. (optional)
     datetime: str = ""
 
-    #: Wavelength (angstrom) of the incident radiation.
+    #: Wavelength (angstrom) of the incident radiation. (optional)
     wavelength_angstrom: float = field(default_factory=float)
 
-    #: Energy (keV) of the incident beam.  Useful for synchrotron X-ray instruments.
+    #: Energy (keV) of the incident beam.  Useful for synchrotron X-ray instruments. (optional)
     energy_keV: float = field(default_factory=float)
 
     #: Version of the *hklpy* Python package used to create this diffractometer
-    #configuration content.
+    #  configuration content. (optional)
     hklpy_version: str = ""
 
-    #: Version information of the back-end computation library.
+    #: Version information of the back-end computation library. (optional)
     library_version: str = ""
 
-    #: Name of the Python class that defines this diffractometer.
+    #: Name of the Python class that defines this diffractometer. (optional)
     python_class: str = ""
 
     #: _Any_ other content goes into this dictionary (comments, unanticipated
-    #  keys, ...)
+    #  keys, ...) (optional)
     other: dict[str, typing.Any] = field(default_factory=dict)
 
     def validate(self, dc_obj):
