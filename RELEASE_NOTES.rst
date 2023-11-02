@@ -42,6 +42,7 @@ Maintenance
 * Add pre-commit checks.
 * Add ``apischema`` to package requirements.
 * Add test for ``or_swap()``.
+* Change documentation theme to pydata-sphinx-theme.
 * Expand testing to to Py3.8 - Py3.11.
 * Fix code in ``util.restore_reflections()`` that failed unit tests locally.
 * Make it easier to find the SPEC command cross-reference table.
