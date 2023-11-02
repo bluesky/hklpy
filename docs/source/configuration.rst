@@ -1,7 +1,7 @@
 
 .. _configuration:
 
-configuration
+Configuration
 -------------
 
 Record the configuration of the diffractometer so that it can be restored later.
