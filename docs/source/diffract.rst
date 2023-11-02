@@ -1,7 +1,7 @@
 .. _diffract:
 
-diffract
---------
+Module: ``diffract``
+--------------------
 
 A local subclass of :class:`hkl.diffract.Diffractometer` for the desired
 diffractometer geometry must be created to define the reciprocal-space
@@ -28,14 +28,14 @@ name                            description
 These special-use geometries are also provided by the **libhkl**
 library [#libhkl]_:
 
-* :class:`~hkl.geometries.Med2p3`
 * :class:`~hkl.geometries.Petra3_p09_eh2`
 * :class:`~hkl.geometries.SoleilMars`
 * :class:`~hkl.geometries.SoleilSiriusKappa`
 * :class:`~hkl.geometries.SoleilSiriusTurret`
-* :class:`~hkl.geometries.SoleilSixs`
 * :class:`~hkl.geometries.SoleilSixsMed1p2`
 * :class:`~hkl.geometries.SoleilSixsMed2p2`
+* :class:`~hkl.geometries.SoleilSixsMed2p3`
+* :class:`~hkl.geometries.SoleilSixsMed2p3v2`
 
 In all cases, see the **libhkl** documentation for further information
 on these geometries.

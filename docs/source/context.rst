@@ -1,6 +1,6 @@
 
-context
--------
+Module: ``context``
+-------------------
 
 .. automodule:: hkl.context
     :members: 
