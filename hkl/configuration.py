@@ -93,14 +93,14 @@ class DCConstraint:
 
     low_limit: float
     """
-    Lowest value to be accepted as a possible for this axis when computing
-    real-space solutions from given reciprocal-space positions.
+    Lowest acceptable value for this axis when computing real-space solutions
+    from given reciprocal-space positions.
     """
 
     high_limit: float
     """
-    Highest value to be accepted as a possible for this axis when computing
-    real-space solutions from given reciprocal-space positions.
+    Highest acceptable value for this axis when computing real-space solutions
+    from given reciprocal-space positions.
     """
 
     value: float
@@ -111,7 +111,7 @@ class DCConstraint:
 
     fit: bool
     """
-    If ``fit=True``, allow this value to be changed when computing
+    If ``fit=True``, allow this axis to be changed when computing
     real-space solutions from given reciprocal-space positions.
     """
 
@@ -178,19 +178,25 @@ class DCReflection:
     """(internal) Configuration of one orientation reflection."""
 
     reflection: dict[str, float]
-    """Reciprocal-space axis positions"""
+    """
+    Reciprocal-space axis positions.  Keys must match in the list of
+    ``reciprocal_axes``.
+    """
 
     position: dict[str, float]
-    """real-space axis positions"""
+    """
+    Real-space axis positions.  Keys must match in the list of
+    ``canonical_axes``.
+    """
 
     wavelength: float
-    """wavelength of *this* reflection"""
+    """Wavelength (angstroms) at which *this* reflection was measured."""
 
     orientation_reflection: bool
-    """used for calculating UB matrix?"""
+    """Use this reflection for calculating :math:`UB` matrix?"""
 
     flag: int = 1
-    """only used by libhkl"""
+    """(only used by *libhkl*)"""
 
     def validate(self, dc_obj):
         """Check this reflection has values the diffractometer can accept."""
@@ -323,17 +329,17 @@ class DCConfiguration:
 
     canonical_axes: list[str]
     """
-    List of the diffractometer real-space axis names.  Both the exact
-    spelling and order are defined by the back-end computation library.  MUST
-    match diffractometer to restore.
+    List of the diffractometer real-space axis names.  Both the exact spelling
+    and order are defined by the back-end computation library.  MUST match
+    diffractometer to restore.
     """
 
     real_axes: list[str]
     """
-    User-defined real-space axis names. MUST match
-    diffractometer to restore. The length and order of this list must be the same as
-    the ``canonical_axes``. It is used to resolve any (real-space)
-    ``positioner`` names in this file.
+    User-defined real-space axis names. MUST match diffractometer to restore.
+    The length and order of this list must be the same as the
+    ``canonical_axes``. It is used to resolve any (real-space) ``positioner``
+    names in this file.
     """
 
     reciprocal_axes: list[str]
