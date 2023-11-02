@@ -97,7 +97,9 @@ The example below demonstrates this process using a YAML file.
 Example
 +++++++
 
-Build a diffractometer (using E4CV geometry)::
+Build a diffractometer (using E4CV geometry):
+
+.. code-block:: python
 
     import numpy
     from hkl import SimulatedE4CV
@@ -107,13 +109,17 @@ Build a diffractometer (using E4CV geometry)::
     e4c = SimulatedE4CV("", name="e4c")
     config = DiffractometerConfiguration(e4c)
 
-Add a sample::
+Add a sample:
+
+.. code-block:: python
 
     a0 = 2 * numpy.pi
     cubic = new_lattice(a0)
     e4c.calc.new_sample("vibranium", lattice=cubic)
 
-Define some reflections.  Pick two of them to define its orientation::
+Define some reflections.  Pick two of them to define its orientation:
+
+.. code-block:: python
 
     _r400 = e4c.calc.sample.add_reflection(4, 0, 0, (-145.451, 0, 0, 69.0966))
     _r040 = e4c.calc.sample.add_reflection(0, 4, 0, (-145.451, 0, 90, 69.0966))
@@ -121,7 +127,9 @@ Define some reflections.  Pick two of them to define its orientation::
     e4c.calc.sample.compute_UB(_r040, _r004)
 
 Save the orientation and other configuration to file ``"e4c-config.json"`` in
-the present working directory::
+the present working directory:
+
+.. code-block:: python
 
     settings = config.export()
     with open("e4c-config.json", "w") as f:
@@ -130,7 +138,9 @@ the present working directory::
 A :download:`JSON </_static/e4c-config.json>` example of this file can be
 downloaded. (Compare with :download:`YAML </_static/e4c-config.yml>`.) This example
 configuration can be restored to any diffractometer with matching ``"geometry":
-"E4CV"`` and engine ``"engine": "hkl"``::
+"E4CV"`` and engine ``"engine": "hkl"``:
+
+.. code-block:: python
 
     import pathlib
 
@@ -141,7 +151,9 @@ first remove any previous configuration of the diffractometer and reset it to
 default values before restoring the configuration.  The file name is described
 using the `pathlib <https://docs.python.org/3/library/pathlib.html>`_ library.
 
-Alternatively, the `export()` method accepts a pathlib object such as::
+Alternatively, the `export()` method accepts a pathlib object such as:
+
+.. code-block:: python
 
     import pathlib
 
