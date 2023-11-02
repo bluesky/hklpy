@@ -695,7 +695,7 @@ class DiffractometerConfiguration:
         """
         self.from_dict(json.loads(data), clear=clear, restore_constraints=restore_constraints)
 
-    def to_json(self, indent=4):
+    def to_json(self, indent=2):
         """Report diffractometer configuration as JSON text."""
         return json.dumps(self.to_dict(), indent=indent)
 
@@ -720,7 +720,7 @@ class DiffractometerConfiguration:
         )
         # fmt: on
 
-    def to_yaml(self, indent=4):
+    def to_yaml(self, indent=2):
         """
         Report diffractometer configuration as YAML text.
 
