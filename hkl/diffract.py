@@ -36,6 +36,8 @@ logger = logging.getLogger(__name__)
 class Diffractometer(PseudoPositioner):
     """Diffractometer pseudopositioner
 
+    PUBLIC API
+
     .. autosummary::
 
         ~calc
@@ -49,6 +51,11 @@ class Diffractometer(PseudoPositioner):
         ~undo_last_constraints
         ~pa
         ~wh
+
+    PRIVATE API
+
+    .. autosummary::
+
         ~_calc_energy_update_permitted
         ~_constraints_dict
         ~_constraints_for_databroker
@@ -59,7 +66,7 @@ class Diffractometer(PseudoPositioner):
         ~_set_constraints
         ~_update_calc_energy
 
-    This has a corresponding calculation engine from **hklpy** that does
+    A Diffractometer has a corresponding calculation engine from **hklpy** that does
     forward and inverse calculations.
 
     If instantiating a specific diffractometer class such as `E4C`, `E6C`,
@@ -564,10 +571,10 @@ class Diffractometer(PseudoPositioner):
     def _set_constraints(self, constraints):
         """set diffractometer's constraints"""
         for axis, constraint in constraints.items():
-            self.calc[axis].limits = list(constraint)[0:2]
-            #     constraint.low_limit,
-            #     constraint.high_limit,
-            # )
+            self.calc[axis].limits = [
+                constraint.low_limit,
+                constraint.high_limit,
+            ]
             self.calc[axis].value = constraint.value
             self.calc[axis].fit = constraint.fit
 

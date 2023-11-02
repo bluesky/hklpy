@@ -32,6 +32,8 @@ gi.require_version("Hkl", "5.0")
 
 from .calc import A_KEV, UnreachableError  # noqa: F401, F402, E402
 
+from .configuration import DiffractometerConfiguration  # noqa: F401, F402, E402
+
 from .geometries import (  # noqa: F401, F402, E402
     E4CH,
     E4CV,
@@ -82,6 +84,7 @@ from .util import (  # noqa: F401, F402, E402
     Lattice,
     list_orientation_runs,
     new_detector,
+    new_lattice,
     restore_constraints,
     restore_energy,
     restore_orientation,

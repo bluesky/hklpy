@@ -86,6 +86,41 @@ class HklSample(object):
         This assumes the hkl engine is used; generally, the ordered set of
         positions for the engine in-use should be specified.
 
+    PUBLIC API
+
+    .. autosummary::
+
+        ~add_reflection
+        ~affine
+        ~clear_reflections
+        ~compute_UB
+        ~hkl_calc
+        ~hkl_sample
+        ~lattice
+        ~name
+        ~reciprocal
+        ~reflection_measured_angles
+        ~reflection_theoretical_angles
+        ~reflections
+        ~reflections_details
+        ~remove_reflection
+        ~swap_orientation_reflections
+        ~U
+        ~UB
+        ~ux
+        ~uy
+        ~uz
+
+    PRIVATE API
+
+    .. autosummary::
+
+        ~__repr__
+        ~__str__
+        ~_create_reflection
+        ~_get_reflection_dict
+        ~_refl_matrix
+        ~_repr_info
     """
 
     def __init__(self, calc, sample=None, units="user", **kwargs):
@@ -376,7 +411,7 @@ class HklSample(object):
 
     def affine(self):
         """
-        Make the sample transform affine
+        Refine (affine) the sample lattice parameters from the list of reflections.
         """
         return self._sample.affine()
 
@@ -407,13 +442,13 @@ class HklSample(object):
         """Return dictionary with reflection details."""
         h, k, l = refl.hkl_get()
         geom = refl.geometry_get()
-        return dict(
-            reflection=dict(h=h, k=k, l=l),
-            flag=refl.flag_get(),
-            wavelength=geom.wavelength_get(1),
-            position={k: v for k, v in zip(geom.axis_names_get(), geom.axis_values_get(1))},
-            orientation_reflection=refl in self._orientation_reflections,
-        )
+        return {
+            "reflection": {"h": h, "k": k, "l": l},
+            "flag": refl.flag_get(),  # not used by hklpy
+            "wavelength": geom.wavelength_get(1),
+            "position": dict(zip(geom.axis_names_get(), geom.axis_values_get(1))),
+            "orientation_reflection": refl in self._orientation_reflections,
+        }
 
     @property
     def reflections_details(self):

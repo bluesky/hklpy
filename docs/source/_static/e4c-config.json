@@ -1,0 +1,200 @@
+{
+    "geometry": "E4CV",
+    "engine": "hkl",
+    "library": "gi.repository.Hkl",
+    "mode": "bissector",
+    "canonical_axes": [
+        "omega",
+        "chi",
+        "phi",
+        "tth"
+    ],
+    "real_axes": [
+        "omega",
+        "chi",
+        "phi",
+        "tth"
+    ],
+    "reciprocal_axes": [
+        "h",
+        "k",
+        "l"
+    ],
+    "constraints": {
+        "omega": {
+            "low_limit": -180.0,
+            "high_limit": 180.0,
+            "value": 0.0,
+            "fit": true
+        },
+        "chi": {
+            "low_limit": -180.0,
+            "high_limit": 180.0,
+            "value": 0.0,
+            "fit": true
+        },
+        "phi": {
+            "low_limit": -180.0,
+            "high_limit": 180.0,
+            "value": 0.0,
+            "fit": true
+        },
+        "tth": {
+            "low_limit": -180.0,
+            "high_limit": 180.0,
+            "value": 0.0,
+            "fit": true
+        }
+    },
+    "samples": {
+        "main": {
+            "name": "main",
+            "lattice": {
+                "a": 1.54,
+                "b": 1.54,
+                "c": 1.54,
+                "alpha": 90.0,
+                "beta": 90.0,
+                "gamma": 90.0
+            },
+            "reflections": [],
+            "UB": [
+                [
+                    4.079990459207523,
+                    -2.4982736282101165e-16,
+                    -2.4982736282101165e-16
+                ],
+                [
+                    0.0,
+                    4.079990459207523,
+                    -2.4982736282101165e-16
+                ],
+                [
+                    0.0,
+                    0.0,
+                    4.079990459207523
+                ]
+            ],
+            "U": [
+                [
+                    1.0,
+                    0.0,
+                    0.0
+                ],
+                [
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                [
+                    0.0,
+                    0.0,
+                    1.0
+                ]
+            ]
+        },
+        "vibranium": {
+            "name": "vibranium",
+            "lattice": {
+                "a": 6.283185307179586,
+                "b": 6.283185307179586,
+                "c": 6.283185307179586,
+                "alpha": 90.0,
+                "beta": 90.0,
+                "gamma": 90.0
+            },
+            "reflections": [
+                {
+                    "reflection": {
+                        "h": 4.0,
+                        "k": 0.0,
+                        "l": 0.0
+                    },
+                    "position": {
+                        "omega": -145.451,
+                        "chi": 0.0,
+                        "phi": 0.0,
+                        "tth": 69.0966
+                    },
+                    "wavelength": 1.54,
+                    "orientation_reflection": false,
+                    "flag": 1
+                },
+                {
+                    "reflection": {
+                        "h": 0.0,
+                        "k": 4.0,
+                        "l": 0.0
+                    },
+                    "position": {
+                        "omega": -145.451,
+                        "chi": 0.0,
+                        "phi": 90.0,
+                        "tth": 69.0966
+                    },
+                    "wavelength": 1.54,
+                    "orientation_reflection": true,
+                    "flag": 1
+                },
+                {
+                    "reflection": {
+                        "h": 0.0,
+                        "k": 0.0,
+                        "l": 4.0
+                    },
+                    "position": {
+                        "omega": -145.451,
+                        "chi": 90.0,
+                        "phi": 0.0,
+                        "tth": 69.0966
+                    },
+                    "wavelength": 1.54,
+                    "orientation_reflection": true,
+                    "flag": 1
+                }
+            ],
+            "UB": [
+                [
+                    1.2217304763701863e-05,
+                    -0.9999999999253688,
+                    -1.7623547209572502e-15
+                ],
+                [
+                    -1.4926257043558267e-10,
+                    -1.4349296274686127e-42,
+                    -1.0000000000000002
+                ],
+                [
+                    0.9999999999253688,
+                    1.221730476364063e-05,
+                    -1.492626316575311e-10
+                ]
+            ],
+            "U": [
+                [
+                    1.2217304763701863e-05,
+                    -0.9999999999253688,
+                    -1.8235863128158895e-15
+                ],
+                [
+                    -1.4926257043558267e-10,
+                    -9.139696455822134e-27,
+                    -1.0000000000000002
+                ],
+                [
+                    0.9999999999253688,
+                    1.2217304763701863e-05,
+                    -1.4926257042444305e-10
+                ]
+            ]
+        }
+    },
+    "name": "e4c",
+    "datetime": "2023-11-01 16:11:39.049412",
+    "wavelength_angstrom": 1.54,
+    "energy_keV": 8.050921974025975,
+    "hklpy_version": "1.0.5.dev122+g473f61f",
+    "library_version": "v5.0.0.3001",
+    "python_class": "SimulatedE4CV",
+    "other": {}
+}

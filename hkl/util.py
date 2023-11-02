@@ -10,6 +10,7 @@ Utility functions and structures.
     ~Lattice
     ~list_orientation_runs
     ~new_detector
+    ~new_lattice
     ~restore_constraints
     ~restore_energy
     ~restore_orientation
@@ -47,6 +48,7 @@ __all__ = """
     Lattice
     list_orientation_runs
     new_detector
+    new_lattice
     restore_constraints
     restore_energy
     restore_orientation
@@ -218,6 +220,29 @@ class Constraint:
 
 
 Lattice = namedtuple("LatticeTuple", "a b c alpha beta gamma")
+
+
+def new_lattice(a, b=None, c=None, alpha=90., beta=None, gamma=None):
+    """
+    Simplify for high-symmetry crystal systems.
+
+    EXAMPLES (highest to lowest symmetry):
+
+    =============== =================================== === === === ======= ======= =====
+    system          command                             a   b   c   alpha   beta    gamma
+    =============== =================================== === === === ======= ======= =====
+    cubic           new_lattice(5.)                     5   5   5   90      90      90
+    hexagonal       new_lattice(4., c=3., gamma=120)    4   4   3   90      90      120
+    rhombohedral    new_lattice(4., alpha=80.0)         4   4   4   80      80      80
+    tetragonal      new_lattice(4, c=3)                 4   4   3   90      90      90
+    orthorhombic    new_lattice(4, 5, 3)                4   5   3   90      90      90
+    monoclinic      new_lattice(4, 5, 3, beta=75)       4   5   3   90      75      90
+    triclinic       new_lattice(4, 5, 3, 75., 85., 95.) 4   5   3   75      85      95
+    =============== =================================== === === === ======= ======= =====
+    
+    .. see: https://en.wikipedia.org/wiki/Crystal_system
+    """
+    return Lattice(a, b or a, c or a, alpha, beta or alpha, gamma or alpha)
 
 
 _position_tuples = {}
@@ -425,8 +450,6 @@ def restore_reflections(orientation, diffractometer):
     orientation_reflections = []
     # might be renamed axes
     renaming = diffractometer.calc._axis_name_to_original
-    if len(renaming) > 0:
-        reals = [renaming[k] for k in reals]
 
     for ref_base in orientation["reflections_details"]:
         # every reflection has its own wavelength
@@ -436,7 +459,11 @@ def restore_reflections(orientation, diffractometer):
         # Can't just use the dictionaries in ``orientation``.
         # Get the canonical order from the orientation data.
         miller_indices = [ref_base["reflection"][key] for key in pseudos]
-        positions = [ref_base["position"][key] for key in reals]
+        try:
+            positions = [ref_base["position"][key] for key in reals]
+        except KeyError:
+            # switch to use renamed keys
+            positions = [ref_base["position"][renaming[key]] for key in reals]
         ppp = namedtuple("PositionTuple", tuple(reals))(*positions)
 
         # assemble the final form of the reflection for add_reflection()

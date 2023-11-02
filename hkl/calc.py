@@ -213,6 +213,7 @@ class CalcRecip(object):
 
         self._geometry = self._factory.create_new_geometry()
         self._engine_list = self._factory.create_new_engine_list()
+        self._engine_names = [e.name_get() for e in self._engine_list.engines_get()]
 
         if sample is not None:
             if isinstance(sample, HklSample):

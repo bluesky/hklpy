@@ -1,28 +1,31 @@
-import epics
 import logging
-import unittest
+from ..util import new_lattice
+import numpy
 
 
 logger = logging.getLogger("ophyd_session_test")
 
-
-def setup_package():
-    pass
-
-
-def teardown_package():
-    pass
+TARDIS_TEST_MODE = "lifting_detector_mu"
+TWO_PI = 2 * numpy.pi
 
 
-def main(is_main):
-    # fmt = '%(asctime)-15s [%(levelname)s] %(message)s'
-    # logging.basicConfig(format=fmt, level=logging.DEBUG)
-    epics.ca.use_initial_context()
+def new_sample(diffractometer, name, lattice):
+    diffractometer.calc.new_sample(name, lattice=lattice)
 
-    logger = logging.getLogger("logger")
-    logger.setLevel(logging.INFO)
 
-    if is_main:
-        setup_package()
-        unittest.main()
-        teardown_package()
+def sample_kryptonite(diffractometer):
+    triclinic = new_lattice(4, 5, 6, 75, 85, 95)
+    new_sample(diffractometer, "kryptonite", lattice=triclinic)
+
+
+def sample_silicon(diffractometer):
+    from .. import SI_LATTICE_PARAMETER
+
+    cubic = new_lattice(SI_LATTICE_PARAMETER)
+    new_sample(diffractometer, "silicon", lattice=cubic)
+
+
+def sample_vibranium(diffractometer):
+    a0 = TWO_PI
+    cubic = new_lattice(a0)
+    new_sample(diffractometer, "vibranium", lattice=cubic)

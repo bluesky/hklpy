@@ -162,7 +162,8 @@ in the custom subclass.  Don't forget to add the definitions for the real and
 pseudo positioners.
 
 .. code-block:: python
-   :caption: Connecting control system energy to a 4-circle diffractometer.
+    :caption: Connecting control system energy to a 4-circle diffractometer.
+    :linenos:
 
     from hkl import E4CV
     import logging
