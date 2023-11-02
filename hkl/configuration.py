@@ -206,7 +206,7 @@ class DCSample:
     #: Name of this crystalline sample.
     name: str
 
-    #: Crystal lattice parameters (angstroms and dgrees)
+    #: Crystal lattice parameters (angstroms and degrees)
     lattice: DCLattice
 
     #: List of orientation reflections.
