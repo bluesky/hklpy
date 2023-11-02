@@ -67,7 +67,7 @@ Export
 
 The diffractometer configuration can be exported to any of the formats shown in
 the table below. Assuming ``config`` is the object returned by calling
-:class:`~hkl.DiffractometerConfiguration()`:
+:class:`~hkl.configuration.DiffractometerConfiguration()`:
 
 ===========================  ============================================================
 command                      returns
@@ -76,6 +76,7 @@ command                      returns
 ``config.export("json")``    `JSON string <https://json.org>`_
 ``config.export("dict")``    `Python dict <https://docs.python.org/3/library/stdtypes.html#dict>`_
 ``config.export("yaml")``    `YAML string <https://yaml.org>`_
+``config.export(path_obj)``  `JSON string <https://json.org>`_, JSON written to file identified by ``path_obj``.
 ===========================  ============================================================
 
 Restore
