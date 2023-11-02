@@ -6,8 +6,6 @@
 import pathlib
 import sys
 
-import sphinx_rtd_theme
-
 docs_source = pathlib.Path(__file__).parent
 sys.path.insert(0, str(docs_source.parent.parent))
 
