@@ -1,7 +1,8 @@
 import logging
-from ..util import new_lattice
+
 import numpy
 
+from ..util import new_lattice
 
 logger = logging.getLogger("ophyd_session_test")
 

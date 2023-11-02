@@ -1,16 +1,17 @@
+import bluesky.plans as bp
+import databroker
+import numpy.testing
+import pandas as pd
+import pytest
 from bluesky import RunEngine
 from bluesky import plan_stubs as bps
+from ophyd.sim import hw
+
+import hkl.util
 from hkl import SI_LATTICE_PARAMETER
 from hkl import SimulatedE4CV
 from hkl import SimulatedK4CV
 from hkl.calc import A_KEV
-from ophyd.sim import hw
-import pandas as pd
-import bluesky.plans as bp
-import databroker
-import hkl.util
-import numpy.testing
-import pytest
 
 
 class Fourc(SimulatedE4CV):

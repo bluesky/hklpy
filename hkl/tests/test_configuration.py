@@ -17,7 +17,6 @@ from ..util import Constraint
 from ..util import new_lattice
 from . import TWO_PI
 
-
 TEST_CONFIG_FILE = "data/e4c-config.json"
 
 

@@ -11,21 +11,22 @@ Common Support for diffractometers
 """
 
 
+import logging
+
+import pint
+import pyRestTable
 from ophyd import Component as Cpt
 from ophyd import PositionerBase
 from ophyd import PseudoPositioner
 from ophyd import Signal
 from ophyd.pseudopos import pseudo_position_argument
 from ophyd.pseudopos import real_position_argument
-from ophyd.signal import AttributeSignal, ArrayAttributeSignal
-import logging
-import pint
-import pyRestTable
+from ophyd.signal import ArrayAttributeSignal
+from ophyd.signal import AttributeSignal
 
-from . import calc
 from . import __version__
+from . import calc
 from .util import Constraint
-
 
 __all__ = """
     Diffractometer

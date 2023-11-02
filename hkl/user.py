@@ -46,11 +46,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from .diffract import Diffractometer
-from .util import Lattice
 import numpy
 import pyRestTable
 
+from .diffract import Diffractometer
+from .util import Lattice
 
 _geom_ = None  # selected diffractometer geometry
 

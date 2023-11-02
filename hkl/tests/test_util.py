@@ -1,7 +1,7 @@
-from packaging import version
-import hkl.util
 import pytest
+from packaging import version
 
+import hkl.util
 
 NO_SUCH_PACKAGE_NAME = "no-such-package"
 
@@ -25,9 +25,11 @@ def RE(cat):
 @pytest.fixture(scope="function")
 def fourc():
     """4-circle with renamed axes and oriented sample."""
-    from hkl import E4CV, SimMixin
     from ophyd import Component
     from ophyd import SoftPositioner
+
+    from hkl import E4CV
+    from hkl import SimMixin
 
     class FourCircle(SimMixin, E4CV):
         theta = Component(SoftPositioner, kind="hinted", init_pos=0)

@@ -1,10 +1,11 @@
+import pytest
+
 import hkl
 import hkl.calc
 import hkl.diffract
 import hkl.geometries
 import hkl.user
 import hkl.util
-import pytest
 
 
 @pytest.mark.parametrize(
