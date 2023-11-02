@@ -231,7 +231,7 @@ def test_issue62(tardis, kcf_sample, constrain, theta, delta, gamma, h, k, l):
 def sample1(tardis):
     """Test with remapped names, not canonical names."""
     # lattice cell lengths are in Angstrom, angles are in degrees
-    lattice = new_lattice(9.069, c=10.390, gamma=120.)
+    lattice = new_lattice(9.069, c=10.390, gamma=120.0)
     tardis.calc.new_sample("sample1", lattice=lattice)
 
     tardis.energy_offset.put(0)
@@ -333,7 +333,7 @@ def test_sample1_calc_only():
     assert abs(tardis_calc.energy - 7.69142297) < 5e-7
 
     # lattice cell lengths are in Angstrom, angles are in degrees
-    lattice = new_lattice(9.069, c=10.390, gamma=120.)
+    lattice = new_lattice(9.069, c=10.390, gamma=120.0)
     sample = tardis_calc.new_sample("sample1", lattice=lattice)
     assert sample.name == "sample1"
 

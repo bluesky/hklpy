@@ -225,7 +225,7 @@ class Constraint:
 Lattice = namedtuple("LatticeTuple", "a b c alpha beta gamma")
 
 
-def new_lattice(a, b=None, c=None, alpha=90., beta=None, gamma=None):
+def new_lattice(a, b=None, c=None, alpha=90.0, beta=None, gamma=None):
     """
     Simplify for high-symmetry crystal systems.
 
