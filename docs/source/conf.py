@@ -21,11 +21,16 @@ import hkl.user
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'hklpy'
-copyright = '2014-2023, Brookhaven National Laboratory'
+project = "hklpy"
+copyright = "2014-2023, Brookhaven National Laboratory"
 # author = 'Bluesky team'
 version = hkl.__version__
 release = version
+short_version = version
+if ".d" in short_version:  # extra date makes the title too long
+    short_version = short_version.rsplit(".d", 1)[0]
+today_fmt = "%Y-%m-%d %H:%M"
+html_title = f"{project} {short_version}"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -42,17 +47,15 @@ extensions = [
     "nbsphinx",
 ]
 
-templates_path = ['_templates']
+templates_path = ["_templates"]
 exclude_patterns = ["**.ipynb_checkpoints"]
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-sys.path.append(str(docs_source / "_themes"))
-html_theme = "sphinx_rtd_theme"
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-html_static_path = ['_static']
+html_theme = "pydata_sphinx_theme"
+html_static_path = ["_static"]
 
 
 # -- Options for autodoc ---------------------------------------------------
