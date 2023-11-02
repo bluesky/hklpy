@@ -118,7 +118,7 @@ Then, the motor positions can be accessed: ``p.omega``, ``p.chi``,
 These are the motor angles computed as the first solution:
 
 ========= ======== ======== ========= ========
-(hkl)     omega    chi      phi       tth     
+(hkl)     omega    chi      phi       tth
 ========= ======== ======== ========= ========
 (1, 0, 0) 10.32101 0.20845  86.38310  20.64202
 ========= ======== ======== ========= ========

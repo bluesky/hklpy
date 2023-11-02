@@ -239,7 +239,7 @@ def new_lattice(a, b=None, c=None, alpha=90., beta=None, gamma=None):
     monoclinic      new_lattice(4, 5, 3, beta=75)       4   5   3   90      75      90
     triclinic       new_lattice(4, 5, 3, 75., 85., 95.) 4   5   3   75      85      95
     =============== =================================== === === === ======= ======= =====
-    
+
     .. see: https://en.wikipedia.org/wiki/Crystal_system
     """
     return Lattice(a, b or a, c or a, alpha, beta or alpha, gamma or alpha)
