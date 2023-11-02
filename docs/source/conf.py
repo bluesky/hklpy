@@ -25,8 +25,9 @@ copyright = "2014-2023, Brookhaven National Laboratory"
 version = hkl.__version__
 release = version
 short_version = version
-if ".d" in short_version:  # extra date makes the title too long
-    short_version = short_version.rsplit(".d", 1)[0]
+if "+g" in version and ".d2" in version:
+    # Extra date (1.0.5.dev146+gbb34ee0.d20231102) makes the title too long.
+    short_version = short_version.rsplit(".d2", 1)[0]
 today_fmt = "%Y-%m-%d %H:%M"
 html_title = f"{project} {short_version}"
 
@@ -47,7 +48,6 @@ extensions = [
 
 templates_path = ["_templates"]
 exclude_patterns = ["**.ipynb_checkpoints"]
-
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
@@ -71,8 +71,8 @@ autodoc_exclude_members = ",".join(
     """.split()
 )
 autodoc_default_options = {
-    #'members': 'var1, var2',
-    #'member-order': 'bysource',
+    # 'members': 'var1, var2',
+    # 'member-order': 'bysource',
     "private-members": True,
     # "special-members": "__init__",
     # 'undoc-members': True,
@@ -84,6 +84,6 @@ autodoc_mock_imports = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
-inheritance_graph_attrs = dict(rankdir="LR")
-inheritance_node_attrs = dict(fontsize=24)
+inheritance_graph_attrs = {"rankdir": "LR"}
+inheritance_node_attrs = {"fontsize": 24}
 autosummary_generate = True
