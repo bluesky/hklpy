@@ -5,5 +5,4 @@ calc
 -----
 
 .. automodule:: hkl.calc
-    :members: 
- 
+    :members:
