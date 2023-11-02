@@ -15,6 +15,8 @@ methods to export and restore that configuration. User code could choose to
 write the configuration to a file, an EPICS PV, or some other persistent
 location.
 
+.. note:: New in v1.1.
+
 Configuration dictionary
 ++++++++++++++++++++++++
 
