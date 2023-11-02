@@ -184,7 +184,7 @@ class DCReflection:
     """real-space axis positions"""
 
     wavelength: float
-    """wavelength of _this_ reflection"""
+    """wavelength of *this* reflection"""
 
     orientation_reflection: bool
     """used for calculating UB matrix?"""
