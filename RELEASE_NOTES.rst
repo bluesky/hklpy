@@ -11,12 +11,12 @@ Release History
     Deprecations
     Contributors
 
-v1.2 (expected 2024)
+v2.0.0 (expected 2024)
 ======================================
 
 User-requested changes
 
-v1.1 (expected 2023-12)
+v1.1.0 (expected 2023-12)
 ======================================
 
 Add new geometries from upstream *libhkl*.
