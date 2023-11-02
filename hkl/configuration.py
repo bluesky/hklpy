@@ -91,21 +91,29 @@ def _check_value(actual, expected, intro):
 class DCConstraint:
     """(internal) Configuration of one diffractometer axis constraint."""
 
-    #: Lowest value to be accepted as a possible for this axis when computing
-    #  real-space solutions from given reciprocal-space positions.
     low_limit: float
+    """
+    Lowest value to be accepted as a possible for this axis when computing
+    real-space solutions from given reciprocal-space positions.
+    """
 
-    #: Highest value to be accepted as a possible for this axis when computing
-    #  real-space solutions from given reciprocal-space positions.
     high_limit: float
+    """
+    Highest value to be accepted as a possible for this axis when computing
+    real-space solutions from given reciprocal-space positions.
+    """
 
-    #: Constant value to be used for this axis when ``fit=False`` when computing
-    #  real-space solutions from given reciprocal-space positions.
     value: float
+    """
+    Constant value to be used for this axis when ``fit=False`` when computing
+    real-space solutions from given reciprocal-space positions.
+    """
 
-    #: If ``fit=True``, allow this value to be changed when computing
-    #  real-space solutions from given reciprocal-space positions.
     fit: bool
+    """
+    If ``fit=True``, allow this value to be changed when computing
+    real-space solutions from given reciprocal-space positions.
+    """
 
     @property
     def values(self):
@@ -128,23 +136,23 @@ class DCConstraint:
 class DCLattice:
     """(internal) Configuration of one crystal lattice."""
 
-    #: unit cell length :math:`a` (angstrom)
     a: float
+    """unit cell length :math:`a` (angstrom)"""
 
-    #: unit cell length :math:`b` (angstrom)
     b: float
+    """unit cell length :math:`b` (angstrom)"""
 
-    #: unit cell length :math:`c` (angstrom)
     c: float
+    """unit cell length :math:`c` (angstrom)"""
 
-    #: unit cell angle :math:`alpha` (degrees)
     alpha: float
+    """unit cell angle :math:`alpha` (degrees)"""
 
-    #: unit cell angle :math:`beta` (degrees)
     beta: float
+    """unit cell angle :math:`beta` (degrees)"""
 
-    #: unit cell angle :math:`gamma` (degrees)
     gamma: float
+    """unit cell angle :math:`gamma` (degrees)"""
 
     def validate(self, *_args):
         """Check this lattice has values the diffractometer can accept."""
@@ -169,20 +177,20 @@ class DCLattice:
 class DCReflection:
     """(internal) Configuration of one orientation reflection."""
 
-    #: Reciprocal-space axis positions
     reflection: dict[str, float]
+    """Reciprocal-space axis positions"""
 
-    #: real-space axis positions
     position: dict[str, float]
+    """real-space axis positions"""
 
-    #: wavelength of _this_ reflection
     wavelength: float
+    """wavelength of _this_ reflection"""
 
-    #: used for calculating UB matrix?
     orientation_reflection: bool
+    """used for calculating UB matrix?"""
 
-    #: only used by libhkl
     flag: int = 1
+    """only used by libhkl"""
 
     def validate(self, dc_obj):
         """Check this reflection has values the diffractometer can accept."""
@@ -203,23 +211,27 @@ class DCReflection:
 class DCSample:
     """(internal) Configuration of one crystalline sample with a lattice."""
 
-    #: Name of this crystalline sample.
     name: str
+    """Name of this crystalline sample."""
 
-    #: Crystal lattice parameters (angstroms and degrees)
     lattice: DCLattice
+    """Crystal lattice parameters (angstroms and degrees)"""
 
-    #: List of orientation reflections.
     reflections: list[DCReflection]
+    """List of orientation reflections."""
 
-    #: Orientation matrix (3 x 3).  U is the crystal orientation matrix relative
-    #  to the diffractometer and B is the transition matrix of a non-orthonormal
-    #  (the reciprocal of the crystal) in an orthonormal system.
     UB: list[list[float]]
+    """
+    Orientation matrix (3 x 3).  U is the crystal orientation matrix relative
+    to the diffractometer and B is the transition matrix of a non-orthonormal
+    (the reciprocal of the crystal) in an orthonormal system.
+    """
 
-    #: Orientation matrix (3 x 3) of the crystal relative to the diffractometer.
-    #  (optional)
     U: list[list[float]] = field(default_factory=list[list[float]])
+    """
+    Orientation matrix (3 x 3) of the crystal relative to the diffractometer.
+    (optional)
+    """
 
     def validate(self, dc_obj):
         """Check this sample has values the diffractometer can accept."""
@@ -283,74 +295,110 @@ class DCConfiguration:
     the diffractometer or restore the configuration.
     """
 
-    #: Name of the diffractometer geometry as provided by the back-end
-    #  computation library.  MUST match diffractometer to restore.
     geometry: str
+    """
+    Name of the diffractometer geometry as provided by the back-end
+    computation library.  MUST match diffractometer to restore.
+    """
 
-    #: Name of the computational support for the reciprocal-space (pseudo) axes.
-    #  MUST match in the list provided by the diffractometer geometry to restore.
-    #: The *engine* defines the list of the reciprocal-space (pseudo) axes.
     engine: str
+    """
+    Name of the computational support for the reciprocal-space (pseudo) axes.
+    MUST match in the list provided by the diffractometer geometry to restore.
+    The *engine* defines the list of the reciprocal-space (pseudo) axes.
+    """
 
-    #: Name of the back-end computation library.  MUST match diffractometer to restore.
     library: str
+    """
+    Name of the back-end computation library.  MUST match diffractometer to
+    restore.
+    """
 
-    #: Diffractometer calculation mode.  Chosen from list provided by the
-    #  back-end computation library.  MUST match in the list provided by the
-    #  diffractometer to restore.
     mode: str
+    """
+    Diffractometer calculation mode.  Chosen from list provided by the
+    back-end computation library.  MUST match in the list provided by the
+    diffractometer to restore.
+    """
 
-    #: List of the diffractometer real-space axis names.  Both the exact
-    #  spelling and order are defined by the back-end computation library.  MUST
-    #  match diffractometer to restore.
     canonical_axes: list[str]
+    """
+    List of the diffractometer real-space axis names.  Both the exact
+    spelling and order are defined by the back-end computation library.  MUST
+    match diffractometer to restore.
+    """
 
-    #: User-defined real-space axis names. MUST match
-    #  diffractometer to restore. The length and order of this list must be the same as
-    #  the ``canonical_axes``. It is used to resolve any (real-space)
-    #  ``positioner`` names in this file.
     real_axes: list[str]
+    """
+    User-defined real-space axis names. MUST match
+    diffractometer to restore. The length and order of this list must be the same as
+    the ``canonical_axes``. It is used to resolve any (real-space)
+    ``positioner`` names in this file.
+    """
 
-    #: List of names of the diffractometer reciprocal-space (pseudo) axes. Both
-    #  the exact spelling and order are defined by the back-end computation
-    #  library ``engine``.
-    #  MUST match diffractometer to restore.
     reciprocal_axes: list[str]
+    """
+    List of names of the diffractometer reciprocal-space (pseudo) axes. Both
+    the exact spelling and order are defined by the back-end computation
+    library ``engine``.
+    MUST match diffractometer to restore.
+    """
 
-    #: Limits to be imposed on the real-space axes for operations and
-    #  computations.  Keys must match in the list of ``canonical_axes``.
     constraints: dict[str, DCConstraint]
+    """
+    Limits to be imposed on the real-space axes for operations and
+    computations.  Keys must match in the list of ``canonical_axes``.
+    """
 
-    #: Crystalline samples (lattice and orientation reflections).
-    #  The sample name is used as the key in the dictionary.
     samples: dict[str, DCSample]
+    """
+    Crystalline samples (lattice and orientation reflections).
+    The sample name is used as the key in the dictionary.
+    """
 
     # -------------------- optional attributes
-    #: Name of this diffractometer. (optional)
     name: str = ""
+    """
+    Name of this diffractometer. (optional)
+    """
 
-    #: Date and time this configuration was recorded. (optional)
     datetime: str = ""
+    """
+    Date and time this configuration was recorded. (optional)
+    """
 
-    #: Wavelength (angstrom) of the incident radiation. (optional)
     wavelength_angstrom: float = field(default_factory=float)
+    """
+    Wavelength (angstrom) of the incident radiation. (optional)
+    """
 
-    #: Energy (keV) of the incident beam.  Useful for synchrotron X-ray instruments. (optional)
     energy_keV: float = field(default_factory=float)
+    """
+    Energy (keV) of the incident beam.  Useful for synchrotron X-ray
+    instruments. (optional)
+    """
 
-    #: Version of the *hklpy* Python package used to create this diffractometer
-    #  configuration content. (optional)
     hklpy_version: str = ""
+    """
+    Version of the *hklpy* Python package used to create this diffractometer
+    configuration content. (optional)
+    """
 
-    #: Version information of the back-end computation library. (optional)
     library_version: str = ""
+    """
+    Version information of the back-end computation library. (optional)
+    """
 
-    #: Name of the Python class that defines this diffractometer. (optional)
     python_class: str = ""
+    """
+    Name of the Python class that defines this diffractometer. (optional)
+    """
 
-    #: _Any_ other content goes into this dictionary (comments, unanticipated
-    #  keys, ...) (optional)
     other: dict[str, typing.Any] = field(default_factory=dict)
+    """
+    *Any* other content goes into this dictionary (comments, unanticipated
+    keys, ...) (optional)
+    """
 
     def validate(self, dc_obj):
         """
