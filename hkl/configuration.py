@@ -146,13 +146,13 @@ class DCLattice:
     """unit cell length :math:`c` (angstrom)"""
 
     alpha: float
-    """unit cell angle :math:`alpha` (degrees)"""
+    """unit cell angle :math:`\alpha` (degrees)"""
 
     beta: float
-    """unit cell angle :math:`beta` (degrees)"""
+    """unit cell angle :math:`\beta` (degrees)"""
 
     gamma: float
-    """unit cell angle :math:`gamma` (degrees)"""
+    """unit cell angle :math:`\gamma` (degrees)"""
 
     def validate(self, *_args):
         """Check this lattice has values the diffractometer can accept."""
