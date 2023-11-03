@@ -28,12 +28,12 @@ dependencies:
   - pandoc
   - pint
   - pip
+  - pydata-sphinx-theme
   - pyepics
   - pygobject
   - pyRestTable
   - spec2nexus
   - sphinx
-  - sphinx_rtd_theme
   - tqdm
   - pip:
     - coveralls

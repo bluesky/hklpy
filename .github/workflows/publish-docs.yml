@@ -1,13 +1,13 @@
 name: Publish Documentation
 
 on:
-  # comment here for production use
-  # push
-
-  # comment here for development use
+  # Build the docs on pushes to main branch, PRs to main branch, and new tags.
+  # Publish only on demand.
   push:
     branches:
       - main
+    tags:
+      - '*'  # all tags
   pull_request:
     branches:
       - main
@@ -29,6 +29,11 @@ jobs:
         python-version: [3.9]
 
     steps:
+    - name: Set env vars
+      run: |
+        export REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}  # just the repo, as opposed to org/repo
+        echo "REPOSITORY_NAME=${REPOSITORY_NAME}" >> $GITHUB_ENV
+
     - name: get correct package name from repository
       shell: bash -l {0}
       run: |
@@ -39,7 +44,10 @@ jobs:
       run: |
         env | sort | grep hklpy
 
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Deploy Information
       if: ${{ github.event.inputs.deploy }}
@@ -68,6 +76,12 @@ jobs:
       shell: bash -l {0}
       run: |
         make -C docs clean html
+
+    - name: Upload Docs ZIP file as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.REPOSITORY_NAME }}-docs
+        path: docs/build/html/
 
     # comment here for development use
     - name: Deploy documentation to blueskyproject.io.

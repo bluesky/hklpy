@@ -11,12 +11,12 @@ Release History
     Deprecations
     Contributors
 
-v1.2 (expected 2024)
+v2.0.0 (expected 2024)
 ======================================
 
 User-requested changes
 
-v1.1 (expected 2023-12)
+v1.1.0 (expected 2023-12)
 ======================================
 
 Add new geometries from upstream *libhkl*.
@@ -42,10 +42,12 @@ Maintenance
 * Add pre-commit checks.
 * Add ``apischema`` to package requirements.
 * Add test for ``or_swap()``.
+* Change documentation theme to pydata-sphinx-theme.
 * Expand testing to to Py3.8 - Py3.11.
 * Fix code in ``util.restore_reflections()`` that failed unit tests locally.
 * Make it easier to find the SPEC command cross-reference table.
 * Update packaging to latest PyPA recommendations.
+* Documentation ZIP file uploaded as artifact with each build.  Great for review!
 
 v1.0.4 (released 2023-10-06)
 ======================================

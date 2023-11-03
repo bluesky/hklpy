@@ -1,7 +1,7 @@
 .. _util:
 
-util
------
+Module: ``util``
+----------------
 
 .. automodule:: hkl.util
     :members:
