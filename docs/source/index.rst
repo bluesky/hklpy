@@ -7,20 +7,18 @@ hklpy
 Controls for using diffractometers within the `Bluesky Framework
 <https://blueskyproject.io>`_.
 
-Based on the *hkl* library (https://repo.or.cz/hkl.git,
-also https://github.com/picca/hkl but that repository
-may not be synchronized with the latest version from repo.or.cz).
-Documentation for *hkl* is here:
-https://people.debian.org/~picca/hkl/hkl.html
+Based on the *hkl* library (`documentation
+<https://people.debian.org/~picca/hkl/hkl.html>`_, `source
+<https://repo.or.cz/hkl.git>`_).  (Caution: The GitHub source `repository
+<https://github.com/picca/hkl>`_ may not be synchronized with the latest version
+from repo.or.cz.)
 
 .. ,
    with slightly cleaner abstractions
    when compared to the auto-generated gobject-introspection classes.
 
-Integrates with ophyd pseudopositioners.
-
-Documentation about *ophyd* and the *bluesky* framework
-(https://blueskyproject.io/).
+Integrates with `ophyd <https://blueskyproject.io/ophyd>`_ pseudopositioners
+for use with `bluesky <https://blueskyproject.io/bluesky>`_ plans.
 
 .. toctree::
    :maxdepth: 2
@@ -51,3 +49,5 @@ Indices
 
 * :ref:`General Index <genindex>`
 * :ref:`Index of Modules <modindex>`
+
+.. note:: *hklpy* documentation built |today| for version |version|.

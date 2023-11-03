@@ -116,7 +116,6 @@ class Diffractometer(PseudoPositioner):
     :class:`~hkl.geometries.E6C`
     :class:`~hkl.geometries.K4CV`
     :class:`~hkl.geometries.K6C`
-    :class:`~hkl.geometries.Med2p3`
     :class:`~hkl.geometries.Petra3_p09_eh2`
     :class:`~hkl.geometries.Petra3_p23_4c`
     :class:`~hkl.geometries.Petra3_p23_6c`
@@ -124,7 +123,6 @@ class Diffractometer(PseudoPositioner):
     :class:`~hkl.geometries.SoleilNanoscopiumRobot`
     :class:`~hkl.geometries.SoleilSiriusKappa`
     :class:`~hkl.geometries.SoleilSiriusTurret`
-    :class:`~hkl.geometries.SoleilSixs`
     :class:`~hkl.geometries.SoleilSixsMed1p2`
     :class:`~hkl.geometries.SoleilSixsMed2p2`
     :class:`~hkl.geometries.SoleilSixsMed2p3`
