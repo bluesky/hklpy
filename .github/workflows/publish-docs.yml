@@ -1,13 +1,13 @@
 name: Publish Documentation
 
 on:
-  # comment here for production use
-  # push
-
-  # comment here for development use
+  # Build the docs on pushes to main branch, PRs to main branch, and new tags.
+  # Publish only on demand.
   push:
     branches:
       - main
+    tags:
+      - '*'  # all tags
   pull_request:
     branches:
       - main

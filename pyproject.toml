@@ -59,8 +59,8 @@ dependencies = [
 
 [project.optional-dependencies]
 docs = [
+  "pydata-sphinx-theme",
   "spec2nexus",
-  "sphinx-rtd-theme",
 ]
 tests = [
   "bluesky",

@@ -1,8 +1,8 @@
 
 .. _geometries:
 
-geometries
-----------
+Module: ``geometries``
+----------------------
 
 See examples in the :ref:`examples.diffractometer` section.
 

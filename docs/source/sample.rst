@@ -1,7 +1,7 @@
 .. _sample:
 
-sample
-------
+Module: ``sample``
+------------------
 
 .. automodule:: hkl.sample
     :members:

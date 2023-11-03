@@ -1,7 +1,7 @@
 .. _user:
 
-user
-----
+Module: ``user``
+----------------
 
 Make it easier for users (especially SPEC users) to learn and remember
 the new tools in Bluesky's *hklpy* package.
@@ -15,7 +15,6 @@ in *hklpy*.
 ----
 
 .. _user.examples:
-
 
 EXAMPLES::
 
