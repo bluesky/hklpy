@@ -1,9 +1,8 @@
 
 .. _calc:
 
-Module: ``calc`` 
+Module: ``calc``
 ----------------
 
 .. automodule:: hkl.calc
-    :members: 
- 
+    :members:

@@ -27,18 +27,21 @@ Also provides `SI_LATTICE_PARAMETER` as defined by the
 """
 
 from __future__ import print_function
-from collections import defaultdict, namedtuple
-import gi
+
 import logging
-import numpy as np
-import pandas as pd
 import subprocess
 import sys
+from collections import defaultdict
+from collections import namedtuple
+
+import gi
+import numpy as np
+import pandas as pd
 import tqdm
 
 gi.require_version("Hkl", "5.0")
-from gi.repository import Hkl as libhkl
 from gi.repository import GLib  # noqa: F401
+from gi.repository import Hkl as libhkl
 
 __all__ = """
     Constraint
@@ -222,7 +225,7 @@ class Constraint:
 Lattice = namedtuple("LatticeTuple", "a b c alpha beta gamma")
 
 
-def new_lattice(a, b=None, c=None, alpha=90., beta=None, gamma=None):
+def new_lattice(a, b=None, c=None, alpha=90.0, beta=None, gamma=None):
     """
     Simplify for high-symmetry crystal systems.
 
@@ -239,7 +242,7 @@ def new_lattice(a, b=None, c=None, alpha=90., beta=None, gamma=None):
     monoclinic      new_lattice(4, 5, 3, beta=75)       4   5   3   90      75      90
     triclinic       new_lattice(4, 5, 3, 75., 85., 95.) 4   5   3   75      85      95
     =============== =================================== === === === ======= ======= =====
-    
+
     .. see: https://en.wikipedia.org/wiki/Crystal_system
     """
     return Lattice(a, b or a, c or a, alpha, beta or alpha, gamma or alpha)

@@ -1,14 +1,12 @@
-from __future__ import print_function
 import logging
 
 import numpy as np
 
-from .engine import Parameter
-from .util import libhkl
 from . import util
-from .util import Lattice
 from .context import TemporaryGeometry
-
+from .engine import Parameter
+from .util import Lattice
+from .util import libhkl
 
 __all__ = """
     check_lattice

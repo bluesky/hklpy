@@ -40,7 +40,8 @@ import numpy as np
 
 from . import util
 from .context import UsingEngine
-from .engine import CalcParameter, Engine
+from .engine import CalcParameter
+from .engine import Engine
 from .sample import HklSample
 from .util import libhkl
 

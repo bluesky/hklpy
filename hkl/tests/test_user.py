@@ -1,9 +1,9 @@
-from hkl import SI_LATTICE_PARAMETER
-from hkl import SimulatedE4CV
-import hkl.user
 import numpy.testing
 import pytest
 
+import hkl.user
+from hkl import SI_LATTICE_PARAMETER
+from hkl import SimulatedE4CV
 
 a0 = SI_LATTICE_PARAMETER
 

@@ -11,9 +11,11 @@ Low-level support to Hkl computation engine support for diffractometers
 """
 
 from __future__ import print_function
-from . import util
-from collections import OrderedDict
+
 import logging
+from collections import OrderedDict
+
+from . import util
 
 __all__ = """
     CalcParameter

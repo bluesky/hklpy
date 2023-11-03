@@ -1,10 +1,11 @@
-from hkl import SimulatedE4CV
-from hkl.calc import A_KEV
-from hkl.diffract import Constraint
 import numpy.testing
 import pint
 import pyRestTable
 import pytest
+
+from hkl import SimulatedE4CV
+from hkl.calc import A_KEV
+from hkl.diffract import Constraint
 
 
 class Fourc(SimulatedE4CV):
@@ -314,11 +315,12 @@ def test_apply_constraints(fourc):
 
 
 def test_specify_engine():
-    import hkl
     import numpy as np
     from ophyd import Component as Cpt
     from ophyd import PseudoSingle
     from ophyd import SoftPositioner
+
+    import hkl
 
     class Q4C(hkl.E4CV):
         q = Cpt(PseudoSingle, "")

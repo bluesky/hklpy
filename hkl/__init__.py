@@ -7,6 +7,8 @@
 
 """
 
+# flake8: noqa
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -30,68 +32,59 @@ gi.require_version("Hkl", "5.0")
 
 # import shortcuts
 
-from .calc import A_KEV, UnreachableError  # noqa: F401, F402, E402
-
+from .calc import A_KEV  # noqa: F401, F402, E402
+from .calc import UnreachableError  # noqa: F401, F402, E402
 from .configuration import DiffractometerConfiguration  # noqa: F401, F402, E402
-
-from .geometries import (  # noqa: F401, F402, E402
-    E4CH,
-    E4CV,
-    E6C,
-    K4CV,
-    K6C,
-    Petra3_p09_eh2,
-    Petra3_p23_4c,
-    Petra3_p23_6c,
-    SimMixin,
-    SimulatedE4CV,
-    SimulatedE6C,
-    SimulatedK4CV,
-    SimulatedK6C,
-    SoleilMars,
-    SoleilNanoscopiumRobot,
-    SoleilSiriusKappa,
-    SoleilSiriusTurret,
-    SoleilSixsMed1p2,
-    SoleilSixsMed2p2,
-    SoleilSixsMed2p3,
-    SoleilSixsMed2p3v2,
-    Zaxis,
-)
-
-from .user import (  # noqa: F401, F402, E402
-    cahkl,
-    cahkl_table,
-    calc_UB,
-    change_sample,
-    list_samples,
-    new_sample,
-    or_swap,
-    pa,
-    select_diffractometer,
-    set_energy,
-    setor,
-    show_sample,
-    show_selected_diffractometer,
-    update_sample,
-    wh,
-)
-
-from .util import (  # noqa: F401, F402, E402
-    Constraint,
-    diffractometer_types,
-    get_position_tuple,
-    Lattice,
-    list_orientation_runs,
-    new_detector,
-    new_lattice,
-    restore_constraints,
-    restore_energy,
-    restore_orientation,
-    restore_reflections,
-    restore_sample,
-    restore_UB,
-    run_orientation_info,
-    SI_LATTICE_PARAMETER,
-    software_versions,
-)
+from .geometries import E4CH  # noqa: F401, F402, E402
+from .geometries import E4CV
+from .geometries import E6C
+from .geometries import K4CV
+from .geometries import K6C
+from .geometries import Petra3_p09_eh2
+from .geometries import Petra3_p23_4c
+from .geometries import Petra3_p23_6c
+from .geometries import SimMixin
+from .geometries import SimulatedE4CV
+from .geometries import SimulatedE6C
+from .geometries import SimulatedK4CV
+from .geometries import SimulatedK6C
+from .geometries import SoleilMars
+from .geometries import SoleilNanoscopiumRobot
+from .geometries import SoleilSiriusKappa
+from .geometries import SoleilSiriusTurret
+from .geometries import SoleilSixsMed1p2
+from .geometries import SoleilSixsMed2p2
+from .geometries import SoleilSixsMed2p3
+from .geometries import SoleilSixsMed2p3v2
+from .geometries import Zaxis
+from .user import cahkl  # noqa: F401, F402, E402
+from .user import cahkl_table
+from .user import calc_UB
+from .user import change_sample
+from .user import list_samples
+from .user import new_sample
+from .user import or_swap
+from .user import pa
+from .user import select_diffractometer
+from .user import set_energy
+from .user import setor
+from .user import show_sample
+from .user import show_selected_diffractometer
+from .user import update_sample
+from .user import wh
+from .util import SI_LATTICE_PARAMETER  # noqa: F401, F402, E402
+from .util import Constraint
+from .util import Lattice
+from .util import diffractometer_types
+from .util import get_position_tuple
+from .util import list_orientation_runs
+from .util import new_detector
+from .util import new_lattice
+from .util import restore_constraints
+from .util import restore_energy
+from .util import restore_orientation
+from .util import restore_reflections
+from .util import restore_sample
+from .util import restore_UB
+from .util import run_orientation_info
+from .util import software_versions

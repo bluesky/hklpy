@@ -26,7 +26,7 @@
 #H21  rockON  rockCenter  rockWidth
 #O0  2-theta     theta       chi       phi   antheta  an2theta    z-axis     m_1_8
 #O1      xt1       yt1       yt2       yt3     m_2_5       zt1      samx      samz
-#O2 DCM.theta       wst       wsl       wsb       wsr       m22  
+#O2 DCM.theta       wst       wsl       wsb       wsr       m22
 #C Wed Jun 16 18:25:04 2010.  do ./matrix150.mac.
 #C Wed Jun 16 18:26:02 2010.  Mode reset from 5 to 0.
 #C Wed Jun 16 18:26:18 2010.  Mode reset from 0 to 3.
@@ -43,7 +43,7 @@
 #Q 1.00133 1.00133 2.99945
 #P0 65.644 32.82125 115.23625 48.1315 -0.001 -0.16 2.5 -0.2
 #P1 -3.4480499 0.49927508 0.030010083 0.499275 1.749425 -113.52071 -946.48814 0
-#P2 11.508019 2.9999781 30.000019 2.9999781 29.999854 1230.0415 
+#P2 11.508019 2.9999781 30.000019 2.9999781 29.999854 1230.0415
 #C LNO_LAO
 #V0 102.36 4 1 4 1 1 1 1 986.893
 #V1 -0.695912 0.254987 11.1785 11.1785

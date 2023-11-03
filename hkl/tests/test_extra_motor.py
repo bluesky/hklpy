@@ -1,6 +1,7 @@
-from hkl import SimulatedE4CV
 from ophyd import Component as Cpt
 from ophyd import PseudoSingle
+
+from hkl import SimulatedE4CV
 
 
 class Fourc(SimulatedE4CV):

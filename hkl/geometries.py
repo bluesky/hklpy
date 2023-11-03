@@ -43,13 +43,15 @@ SPECIAL-USE DIFFRACTOMETER GEOMETRIES
 
 """
 
-from . import calc
-from .diffract import Diffractometer
+import logging
+
 from ophyd import Component as Cpt
 from ophyd import Device
 from ophyd import PseudoSingle
 from ophyd import SoftPositioner
-import logging
+
+from . import calc
+from .diffract import Diffractometer
 
 __all__ = """
     E4CH
