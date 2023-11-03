@@ -47,6 +47,7 @@ Maintenance
 * Fix code in ``util.restore_reflections()`` that failed unit tests locally.
 * Make it easier to find the SPEC command cross-reference table.
 * Update packaging to latest PyPA recommendations.
+* Documentation ZIP file uploaded as artifact with each build.  Great for review!
 
 v1.0.4 (released 2023-10-06)
 ======================================
