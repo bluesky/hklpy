@@ -44,7 +44,10 @@ jobs:
       run: |
         env | sort | grep hklpy
 
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Deploy Information
       if: ${{ github.event.inputs.deploy }}
