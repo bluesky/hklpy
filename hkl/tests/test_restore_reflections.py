@@ -2,8 +2,6 @@
 Test that reflections from one sample are not restored to other samples.
 """
 
-import random
-
 from .. import DiffractometerConfiguration
 from . import sample_kryptonite
 from . import sample_silicon
