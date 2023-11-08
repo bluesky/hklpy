@@ -53,6 +53,8 @@ AX_MAX = 360.0  # highest allowed value for real-space axis
 DEFAULT_WAVELENGTH = 1.54  # angstrom
 EXPORT_FORMATS = "dict json yaml".split()
 
+SIGNIFICANT_FIGURES = 7
+
 
 # standard value checks, raise exception(s) when appropriate
 def _check_key(key, biblio, intro):
@@ -212,6 +214,21 @@ class DCReflection:
             _check_range(value, AX_MIN, AX_MAX, f"real-space axis {axis}")
         # do not validate 'flag' (not used in hklpy)
 
+    def find(self, sample):
+        """Find this reflection in the sample's reflections.  Return None if not found."""
+        for sref in sample._sample.reflections_get():
+
+            def equal(a, b):
+                return round(abs(a - b), SIGNIFICANT_FIGURES) == 0.0
+
+            rdict = sample._get_reflection_dict(sref)
+            if not equal(rdict["wavelength"], self.wavelength):
+                continue
+            for axis in "h k l".split():
+                if not equal(rdict["reflection"][axis], self.reflection[axis]):
+                    continue
+            return sref
+
 
 @dataclass
 class DCSample:
@@ -273,20 +290,24 @@ class DCSample:
             # temporarily, change the wavelength
             w0 = diffractometer.calc.wavelength
             w1 = rdict["wavelength"]
+            refl = reflection.find(s)
             try:
                 diffractometer.calc.wavelength = w1
-                r = diffractometer.calc.sample.add_reflection(*args)
+                if refl is not None:
+                    s.remove_reflection(refl)
+                r = s.add_reflection(*args)
             except RuntimeError as exc:
                 raise RuntimeError(f"could not add reflection({args}, wavelength={w1})") from exc
             finally:
                 diffractometer.calc.wavelength = w0
+            # Remaining code will not be executed if exception was raised.
 
             if rdict["orientation_reflection"]:
                 reflection_list.append(r)
 
             if len(reflection_list) > 1:
                 r1, r2 = reflection_list[0], reflection_list[1]
-                diffractometer.calc.sample.compute_UB(r1, r2)
+                s.compute_UB(r1, r2)
 
 
 @dataclass
