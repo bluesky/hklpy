@@ -1,3 +1,5 @@
+"""Sample on the diffractometer."""
+
 import logging
 
 import numpy as np
@@ -88,21 +90,19 @@ class HklSample(object):
 
     .. autosummary::
 
-        ~add_reflection
-        ~affine
-        ~clear_reflections
-        ~compute_UB
-        ~hkl_calc
-        ~hkl_sample
-        ~lattice
         ~name
+        ~add_reflection
+        ~remove_reflection
+        ~swap_orientation_reflections
+        ~clear_reflections
+        ~affine
+        ~compute_UB
+        ~lattice
         ~reciprocal
         ~reflection_measured_angles
         ~reflection_theoretical_angles
         ~reflections
         ~reflections_details
-        ~remove_reflection
-        ~swap_orientation_reflections
         ~U
         ~UB
         ~ux
@@ -113,6 +113,8 @@ class HklSample(object):
 
     .. autosummary::
 
+        ~hkl_calc
+        ~hkl_sample
         ~__repr__
         ~__str__
         ~_create_reflection
