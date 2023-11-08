@@ -9,7 +9,7 @@ from ..util import new_lattice
 
 @pytest.fixture(scope="function")
 def kcf_sample(tardis):
-    from . import new_sample
+    from .tools import new_sample
 
     # note: orientation matrix (below) was pre-computed with this wavelength
     # wavelength units must match lattice unit cell length units
@@ -90,7 +90,7 @@ def test_params(tardis):
     """
     Make sure the parameters are set correctly
     """
-    from . import TARDIS_TEST_MODE
+    from .tools import TARDIS_TEST_MODE
 
     calc = tardis.calc
     assert calc.pseudo_axis_names == "h k l".split()
@@ -319,7 +319,7 @@ def test_sample1(sample1, tardis):
 
 def test_sample1_calc_only():
     """Comparisons start with the Tardis' calc support (no Diffractometer object)."""
-    from . import TARDIS_TEST_MODE
+    from .tools import TARDIS_TEST_MODE
 
     tardis_calc = hkl_calc.CalcE6C()
 
