@@ -275,8 +275,7 @@ class DCSample:
             w1 = rdict["wavelength"]
             try:
                 diffractometer.calc.wavelength = w1
-                # FIXME: What if the reflection already exists?
-                r = s.add_reflection(*args)
+                r = diffractometer.calc.sample.add_reflection(*args)
             except RuntimeError as exc:
                 raise RuntimeError(f"could not add reflection({args}, wavelength={w1})") from exc
             finally:
@@ -287,7 +286,7 @@ class DCSample:
 
             if len(reflection_list) > 1:
                 r1, r2 = reflection_list[0], reflection_list[1]
-                s.compute_UB(r1, r2)
+                diffractometer.calc.sample.compute_UB(r1, r2)
 
 
 @dataclass
