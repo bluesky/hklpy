@@ -36,9 +36,13 @@ jobs:
     - name: Start MongoDB
       uses: supercharge/mongodb-github-action@1.10.0
 
-    - name: Start MongoDB
+    - name: Start tiled server on port 8000
       run: |
         docker pull ghcr.io/bluesky/tiled:main
+        docker run \
+          -p 8000:8000 \
+          -e TILED_SINGLE_USER_API_KEY=secret \
+          ghcr.io/bluesky/tiled:main
 
     - name: Create Python ${{ matrix.python-version }} environment
       uses: mamba-org/setup-micromamba@v1
