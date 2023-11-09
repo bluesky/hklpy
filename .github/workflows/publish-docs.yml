@@ -54,16 +54,21 @@ jobs:
       run: |
         echo "The docs will be published from this workflow run."
 
-    - name: Install Python ${{ matrix.python-version }} Conda environment with micromamba from env-dev.yml
-      uses: mamba-org/provision-with-micromamba@main
+    # - name: Install Python ${{ matrix.python-version }} Conda environment with micromamba from env-dev.yml
+    #   uses: mamba-org/provision-with-micromamba@main
+    #   with:
+    #     environment-file: env-dev.yml
+    #     environment-name: test
+
+    - name: Install Python
+      uses: actions/setup-python@v4
       with:
-        environment-file: env-dev.yml
-        environment-name: test
+        python-version: "3.11"
 
     - name: Install the package locally
       shell: bash -l {0}
       run: |
-        pip install -e .
+        pip install -e .[docs] -vv
 
     - name: Diagnostics
       shell: bash -l {0}
@@ -72,7 +77,7 @@ jobs:
         conda list
         env | sort | grep -i CONDA
 
-    - name: Build Docs
+    - name: Build Docs with Sphinx
       shell: bash -l {0}
       run: |
         make -C docs clean html
