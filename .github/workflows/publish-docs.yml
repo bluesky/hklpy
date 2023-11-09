@@ -60,6 +60,9 @@ jobs:
     #     environment-file: env-dev.yml
     #     environment-name: test
 
+    - name: Install package in OS
+      run: sudo apt install libgirepository1.0-dev
+
     - name: Install Python
       uses: actions/setup-python@v4
       with:
@@ -70,12 +73,12 @@ jobs:
       run: |
         pip install -e .[docs] -vv
 
-    - name: Diagnostics
-      shell: bash -l {0}
-      run: |
-        conda info
-        conda list
-        env | sort | grep -i CONDA
+    # - name: Diagnostics
+    #   shell: bash -l {0}
+    #   run: |
+    #     conda info
+    #     conda list
+    #     env | sort | grep -i CONDA
 
     - name: Build Docs with Sphinx
       shell: bash -l {0}
