@@ -33,6 +33,7 @@ __all__ = [
 
 import datetime
 import json
+import math
 import pathlib
 import typing
 from dataclasses import asdict
@@ -53,7 +54,7 @@ AX_MAX = 360.0  # highest allowed value for real-space axis
 DEFAULT_WAVELENGTH = 1.54  # angstrom
 EXPORT_FORMATS = "dict json yaml".split()
 
-SIGNIFICANT_FIGURES = 7
+EQUAL_TOLERANCE = 1.0e-7
 
 
 # standard value checks, raise exception(s) when appropriate
@@ -218,17 +219,19 @@ class DCReflection:
         """Find this reflection in the sample's reflections.  Return None if not found."""
 
         def equal(a, b):
-            return round(abs(a - b), SIGNIFICANT_FIGURES) == 0.0
+            return math.isclose(a, b, abs_tol=EQUAL_TOLERANCE)
 
         for sref in sample._sample.reflections_get():
             rdict = sample._get_reflection_dict(sref)
-            match = (
+            # fmt: off
+            matches = [
+                equal(rdict["reflection"][axis], self.reflection[axis])
+                for axis in self.reflection
+            ] + [
                 equal(rdict["wavelength"], self.wavelength)
-                and equal(rdict["reflection"]["h"], self.reflection["h"])
-                and equal(rdict["reflection"]["k"], self.reflection["k"])
-                and equal(rdict["reflection"]["l"], self.reflection["l"])
-            )
-            if match:
+            ]
+            # fmt: on
+            if False not in matches:
                 return sref
 
 
