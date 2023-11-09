@@ -36,7 +36,7 @@ jobs:
     - name: Start MongoDB
       uses: supercharge/mongodb-github-action@1.10.0
 
-    - name: Start tiled server on port 8000
+    - name: Start tiled server on host port 8019
       run: |
         docker pull ghcr.io/bluesky/tiled:main
         docker run \
