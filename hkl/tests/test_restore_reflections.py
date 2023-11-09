@@ -36,13 +36,14 @@ def test_issue289(e4cv):
     s_444 = silicon.add_reflection(4, 4, 4, (34, 134, 54, 64))
     silicon.compute_UB(s_440, s_444)
 
-    assert len(main.reflections) == 2
-    assert len(kryptonite.reflections) == 2
-    assert len(silicon.reflections) == 2
-    assert len(vibranium.reflections) == 2
+    n_saved_reflections = 2
+    assert len(main.reflections) == n_saved_reflections
+    assert len(kryptonite.reflections) == n_saved_reflections
+    assert len(silicon.reflections) == n_saved_reflections
+    assert len(vibranium.reflections) == n_saved_reflections
     # same test, using diffractometer sample dictionary now.
     for sample in e4cv.calc._samples.values():
-        assert len(sample.reflections) == 2, f"{sample.name=}"
+        assert len(sample.reflections) == n_saved_reflections, f"{sample.name=}"
     assert len(e4cv.calc._samples) == 4
 
     agent = DiffractometerConfiguration(e4cv)
@@ -57,4 +58,4 @@ def test_issue289(e4cv):
 
     assert len(e4cv.calc._samples) == 4
     for sample in e4cv.calc._samples.values():
-        assert len(sample.reflections) == 2
+        assert len(sample.reflections) == 2 * n_saved_reflections

@@ -33,7 +33,6 @@ __all__ = [
 
 import datetime
 import json
-import math
 import pathlib
 import typing
 from dataclasses import asdict
@@ -215,25 +214,6 @@ class DCReflection:
             _check_range(value, AX_MIN, AX_MAX, f"real-space axis {axis}")
         # do not validate 'flag' (not used in hklpy)
 
-    def find(self, sample):
-        """Find this reflection in the sample's reflections.  Return None if not found."""
-
-        def equal(a, b):
-            return math.isclose(a, b, abs_tol=EQUAL_TOLERANCE)
-
-        for sref in sample._sample.reflections_get():
-            rdict = sample._get_reflection_dict(sref)
-            # fmt: off
-            matches = [
-                equal(rdict["reflection"][axis], self.reflection[axis])
-                for axis in self.reflection
-            ] + [
-                equal(rdict["wavelength"], self.wavelength)
-            ]
-            # fmt: on
-            if False not in matches:
-                return sref
-
 
 @dataclass
 class DCSample:
@@ -295,9 +275,6 @@ class DCSample:
             # temporarily, change the wavelength
             w0 = diffractometer.calc.wavelength
             w1 = rdict["wavelength"]
-            refl = reflection.find(sample)
-            if refl is not None:
-                sample.remove_reflection(refl)
             try:
                 diffractometer.calc.wavelength = w1
                 r = sample.add_reflection(*args)
@@ -568,6 +545,11 @@ class DiffractometerConfiguration:
             If ``True`` (default), remove any previous configuration of the
             diffractometer and reset it to default values before restoring the
             configuration.
+
+            If ``False``, sample reflections will be append with all reflections
+            included in the configuration data for that sample.  Existing
+            reflections will not be changed.  The user may need to edit the
+            list of reflections after ``restore(clear=False)``.
         restore_constraints *bool*:
             If ``True`` (default), restore any constraints provided.
 
