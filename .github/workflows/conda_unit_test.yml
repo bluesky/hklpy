@@ -36,6 +36,10 @@ jobs:
     - name: Start MongoDB
       uses: supercharge/mongodb-github-action@1.10.0
 
+    - name: Start MongoDB
+      run: |
+        docker pull ghcr.io/bluesky/tiled:main
+
     - name: Create Python ${{ matrix.python-version }} environment
       uses: mamba-org/setup-micromamba@v1
       with:
