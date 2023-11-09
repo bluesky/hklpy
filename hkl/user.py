@@ -11,6 +11,7 @@ FUNCTIONS
     ~cahkl
     ~cahkl_table
     ~calc_UB
+    ~current_diffractometer
     ~list_samples
     ~new_sample
     ~or_swap
@@ -29,6 +30,7 @@ __all__ = """
     cahkl_table
     calc_UB
     change_sample
+    current_diffractometer
     list_samples
     new_sample
     or_swap
@@ -122,6 +124,11 @@ def change_sample(sample):
         # fmt: on
     _geom_.calc.sample = sample
     show_sample(sample)
+
+
+def current_diffractometer():
+    """Return the currently-selected diffractometer (or ``None``)."""
+    return _geom_
 
 
 def list_samples(verbose=True):
@@ -256,9 +263,10 @@ def show_sample(sample_name=None, verbose=True):
 
 def show_selected_diffractometer(instrument=None):
     """Print the name of the selected diffractometer."""
-    if _geom_ is None:
+    geom = current_diffractometer()
+    if geom is None:
         print("No diffractometer selected.")
-    print(_geom_.name)
+    print(geom.name)
 
 
 def update_sample(a, b, c, alpha, beta, gamma):
@@ -278,10 +286,10 @@ def update_sample(a, b, c, alpha, beta, gamma):
 def pa():
     """Report (all) the diffractometer settings."""
     _check_geom_selected()
-    _geom_.pa()
+    current_diffractometer().pa()
 
 
 def wh():
     """Report (brief) where is the diffractometer."""
     _check_geom_selected()
-    _geom_.wh()
+    current_diffractometer().wh()
