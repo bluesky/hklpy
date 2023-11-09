@@ -216,18 +216,20 @@ class DCReflection:
 
     def find(self, sample):
         """Find this reflection in the sample's reflections.  Return None if not found."""
+
+        def equal(a, b):
+            return round(abs(a - b), SIGNIFICANT_FIGURES) == 0.0
+
         for sref in sample._sample.reflections_get():
-
-            def equal(a, b):
-                return round(abs(a - b), SIGNIFICANT_FIGURES) == 0.0
-
             rdict = sample._get_reflection_dict(sref)
-            if not equal(rdict["wavelength"], self.wavelength):
-                continue
-            for axis in "h k l".split():
-                if not equal(rdict["reflection"][axis], self.reflection[axis]):
-                    continue
-            return sref
+            match = (
+                equal(rdict["wavelength"], self.wavelength)
+                and equal(rdict["reflection"]["h"], self.reflection["h"])
+                and equal(rdict["reflection"]["k"], self.reflection["k"])
+                and equal(rdict["reflection"]["l"], self.reflection["l"])
+            )
+            if match:
+                return sref
 
 
 @dataclass
@@ -271,12 +273,12 @@ class DCSample:
 
     def write(self, diffractometer):
         """Write sample details to diffractometer."""
-        s = diffractometer.calc._samples.get(self.name)
+        sample = diffractometer.calc._samples.get(self.name)
         lattice_parameters = list(self.lattice.values)
-        if s is None:
-            s = diffractometer.calc.new_sample(self.name, lattice=lattice_parameters)
+        if sample is None:
+            sample = diffractometer.calc.new_sample(self.name, lattice=lattice_parameters)
         else:
-            s.lattice = lattice_parameters
+            sample.lattice = lattice_parameters
 
         reflection_list = []
         for reflection in self.reflections:
@@ -290,24 +292,23 @@ class DCSample:
             # temporarily, change the wavelength
             w0 = diffractometer.calc.wavelength
             w1 = rdict["wavelength"]
-            refl = reflection.find(s)
+            refl = reflection.find(sample)
+            if refl is not None:
+                sample.remove_reflection(refl)
             try:
                 diffractometer.calc.wavelength = w1
-                if refl is not None:
-                    s.remove_reflection(refl)
-                r = s.add_reflection(*args)
+                r = sample.add_reflection(*args)
+                if rdict["orientation_reflection"]:
+                    reflection_list.append(r)
             except RuntimeError as exc:
                 raise RuntimeError(f"could not add reflection({args}, wavelength={w1})") from exc
             finally:
                 diffractometer.calc.wavelength = w0
             # Remaining code will not be executed if exception was raised.
 
-            if rdict["orientation_reflection"]:
-                reflection_list.append(r)
-
             if len(reflection_list) > 1:
                 r1, r2 = reflection_list[0], reflection_list[1]
-                s.compute_UB(r1, r2)
+                sample.compute_UB(r1, r2)
 
 
 @dataclass
