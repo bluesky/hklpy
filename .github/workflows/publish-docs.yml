@@ -54,31 +54,44 @@ jobs:
       run: |
         echo "The docs will be published from this workflow run."
 
+    - name: Create Python documentation environment
+      uses: mamba-org/setup-micromamba@v1
+      with:
+        environment-file: env-dev.yml
+        environment-name: documentation
+        condarc: |
+          channel-priority: flexible
+        init-shell: bash
+        create-args: >-
+          python="3.11"
+        cache-environment: true
+        cache-environment-key: env-key
+  
     # - name: Install Python ${{ matrix.python-version }} Conda environment with micromamba from env-dev.yml
     #   uses: mamba-org/provision-with-micromamba@main
     #   with:
     #     environment-file: env-dev.yml
     #     environment-name: test
 
-    - name: Install package in OS
-      run: sudo apt install libgirepository1.0-dev
+    # - name: Install package in OS
+    #   run: sudo apt install libgirepository1.0-dev
 
-    - name: Install Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
+    # - name: Install Python
+    #   uses: actions/setup-python@v4
+    #   with:
+    #     python-version: "3.11"
 
     - name: Install the package locally
       shell: bash -l {0}
       run: |
-        pip install -e .[docs] -vv
+        pip install --no-deps -e . -vv
 
-    # - name: Diagnostics
-    #   shell: bash -l {0}
-    #   run: |
-    #     conda info
-    #     conda list
-    #     env | sort | grep -i CONDA
+    - name: Diagnostics
+      shell: bash -l {0}
+      run: |
+        conda info
+        conda list
+        env | sort | grep -i CONDA
 
     - name: Build Docs with Sphinx
       shell: bash -l {0}
