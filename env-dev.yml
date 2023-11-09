@@ -16,7 +16,7 @@ dependencies:
   - apischema
   - black
   - bluesky
-  - databroker =1.2
+  - databroker
   - flake8
   - hkl
   - ipython
