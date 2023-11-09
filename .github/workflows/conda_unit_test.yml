@@ -40,6 +40,8 @@ jobs:
       run: |
         docker pull ghcr.io/bluesky/tiled:main
         docker run \
+          -d \
+          --rm \
           -p 8000:8000 \
           -e TILED_SINGLE_USER_API_KEY=secret \
           ghcr.io/bluesky/tiled:main
