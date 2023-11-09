@@ -62,8 +62,6 @@ jobs:
         condarc: |
           channel-priority: flexible
         init-shell: bash
-        create-args: >-
-          python="3.11"
         cache-environment: true
         cache-environment-key: env-key
   
