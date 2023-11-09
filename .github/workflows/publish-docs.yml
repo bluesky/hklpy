@@ -67,20 +67,6 @@ jobs:
         cache-environment: true
         cache-environment-key: env-key
   
-    # - name: Install Python ${{ matrix.python-version }} Conda environment with micromamba from env-dev.yml
-    #   uses: mamba-org/provision-with-micromamba@main
-    #   with:
-    #     environment-file: env-dev.yml
-    #     environment-name: test
-
-    # - name: Install package in OS
-    #   run: sudo apt install libgirepository1.0-dev
-
-    # - name: Install Python
-    #   uses: actions/setup-python@v4
-    #   with:
-    #     python-version: "3.11"
-
     - name: Install the package locally
       shell: bash -l {0}
       run: |
