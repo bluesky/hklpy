@@ -131,7 +131,7 @@ phi   -180.0    180.0      0.0   True
 tth   -180.0    180.0      0.0   True
 ===== ========= ========== ===== ====
 
-Make a convenience function to show all the possible `:ref:`constraints.forward`
+Make a convenience function to show all the possible :ref:`constraints.forward`
 solutions in a table.  The complete list of possible solutions is provided by
 the low-level :meth:`~hkl.calc.CalcRecip.forward` method:
 
@@ -152,7 +152,6 @@ the low-level :meth:`~hkl.calc.CalcRecip.forward` method:
 Show all solutions for the :math:`(100)` position (note the inner set of parentheses):
 
 .. code-block::
-    :linenos:
 
     all_forward_solutions((1, 0, 0))
 
