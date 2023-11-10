@@ -217,7 +217,7 @@ expected. These are the ``forward()`` computation methods:
 
 The :meth:`hkl.diffract.Diffractometer.forward` method selects the first
 allowed solution from :meth:`hkl.calc.CalcRecip.forward`.  This is the default
-choice as defined by :func:`hkl.calc.default_decision_function`. You can 
+choice as defined by :func:`hkl.calc.default_decision_function`. You can
 replace it with your own function.  Then, either:
 
 * (easier) set your diffractometer object's
