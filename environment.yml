@@ -15,7 +15,6 @@ dependencies:
   - python >=3.8,<3.12
   - apischema
   - bluesky
-  - databroker =1.2
   - hkl
   - numpy
   - ophyd

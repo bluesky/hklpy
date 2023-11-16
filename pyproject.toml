@@ -64,7 +64,7 @@ docs = [
 ]
 tests = [
   "bluesky",
-  "databroker ==1.2",
+  "databroker",
   "packaging",
 ]
 all = ["hklpy[docs,tests]"]
