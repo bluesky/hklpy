@@ -53,6 +53,8 @@ AX_MAX = 360.0  # highest allowed value for real-space axis
 DEFAULT_WAVELENGTH = 1.54  # angstrom
 EXPORT_FORMATS = "dict json yaml".split()
 
+EQUAL_TOLERANCE = 1.0e-7
+
 
 # standard value checks, raise exception(s) when appropriate
 def _check_key(key, biblio, intro):
@@ -254,12 +256,12 @@ class DCSample:
 
     def write(self, diffractometer):
         """Write sample details to diffractometer."""
-        s = diffractometer.calc._samples.get(self.name)
+        sample = diffractometer.calc._samples.get(self.name)
         lattice_parameters = list(self.lattice.values)
-        if s is None:
-            s = diffractometer.calc.new_sample(self.name, lattice=lattice_parameters)
+        if sample is None:
+            sample = diffractometer.calc.new_sample(self.name, lattice=lattice_parameters)
         else:
-            s.lattice = lattice_parameters
+            sample.lattice = lattice_parameters
 
         reflection_list = []
         for reflection in self.reflections:
@@ -275,18 +277,18 @@ class DCSample:
             w1 = rdict["wavelength"]
             try:
                 diffractometer.calc.wavelength = w1
-                r = diffractometer.calc.sample.add_reflection(*args)
+                r = sample.add_reflection(*args)
+                if rdict["orientation_reflection"]:
+                    reflection_list.append(r)
             except RuntimeError as exc:
                 raise RuntimeError(f"could not add reflection({args}, wavelength={w1})") from exc
             finally:
                 diffractometer.calc.wavelength = w0
-
-            if rdict["orientation_reflection"]:
-                reflection_list.append(r)
+            # Remaining code will not be executed if exception was raised.
 
             if len(reflection_list) > 1:
                 r1, r2 = reflection_list[0], reflection_list[1]
-                diffractometer.calc.sample.compute_UB(r1, r2)
+                sample.compute_UB(r1, r2)
 
 
 @dataclass
@@ -543,6 +545,11 @@ class DiffractometerConfiguration:
             If ``True`` (default), remove any previous configuration of the
             diffractometer and reset it to default values before restoring the
             configuration.
+
+            If ``False``, sample reflections will be append with all reflections
+            included in the configuration data for that sample.  Existing
+            reflections will not be changed.  The user may need to edit the
+            list of reflections after ``restore(clear=False)``.
         restore_constraints *bool*:
             If ``True`` (default), restore any constraints provided.
 
