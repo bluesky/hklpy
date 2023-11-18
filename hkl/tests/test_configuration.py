@@ -401,3 +401,52 @@ def test_export_to_file(e4cv, tmp_path):
     assert path.exists()
 
     agent.restore(path)  # just to be safe here
+
+
+def test_preview(e4cv):
+    agent = DiffractometerConfiguration(e4cv)
+
+    report = agent.preview(agent.export()).splitlines()
+    assert report[0] == f"name: {e4cv.name}"
+    assert report[2] == f"geometry: {e4cv.geometry_name.get()}"
+    assert report[4] == "Table of Samples"
+    assert "====" in report[5]
+    assert "sample" in report[6]
+    assert "main" in report[8]
+    assert len(report) == 10
+
+    report = agent.preview(agent.export(), show_reflections=True).splitlines()
+    assert len(report) == 10  # no reflections, no new info
+
+    report = agent.preview(agent.export(), show_constraints=True).splitlines()
+    assert len(report) == 10 + 11  # new lines
+    assert report[12] == "Table of Axis Constraints"
+    assert "====" in report[13]
+    assert "fit?" in report[14]
+    assert report[16].startswith("omega")
+    assert report[19].startswith("tth")
+
+    main = e4cv.calc.sample  # the default sample
+    m_100 = main.add_reflection(1, 0, 0, (-45, 0, 0, 0))
+    m_010 = main.add_reflection(0, 1, 0, (45, 0, 0, 0))
+    m_001 = main.add_reflection(0, 0, 1, (45, 0, 90, 0))
+    main.compute_UB(m_100, m_010)
+    report = agent.preview(agent.export(), show_reflections=True).splitlines()
+    assert len(report) == 10 + 10  # new lines
+    assert report[12] == f"Table of Reflections for Sample: {main.name}"
+    assert report[14].split()[1] == "h"
+    assert report[14].split()[-3] == "tth"
+    assert report[14].split()[-2] == "wavelength"
+    assert report[14].split()[-1] == "orient?"
+    assert report[16].split()[1] == "1"
+    assert report[16].split()[2] == "0"
+    assert report[16].split()[3] == "0"
+    assert report[16].split()[-1] == "True"
+    assert report[17].split()[1] == "0"
+    assert report[17].split()[2] == "1"
+    assert report[17].split()[3] == "0"
+    assert report[17].split()[-1] == "True"
+    assert report[18].split()[1] == "0"
+    assert report[18].split()[2] == "0"
+    assert report[18].split()[3] == "1"
+    assert report[18].split()[-1] == "False"
