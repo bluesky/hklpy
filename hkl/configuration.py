@@ -566,6 +566,9 @@ class DiffractometerConfiguration:
         if not isinstance(data, dict):
             raise TypeError(f"Cannot interpret configuration data: {type(data)}")
 
+        def float_format(v):
+            return f"{round(v, SIGNIFICANT_DIGITS):g}"
+
         text = (
             f"name: {data.get('name', '-n/a-')}"
             f"\ndate: {data.get('datetime', '-n/a-')}"
@@ -579,7 +582,7 @@ class DiffractometerConfiguration:
             sample = data["samples"][sname]
             row = [i, sname]
             for v in sample["lattice"].values():
-                row.append(f"{round(v, SIGNIFICANT_DIGITS)}")
+                row.append(float_format(v))
             row.append(len(sample["reflections"]))
             table.addRow(row)
         text += f"\n\n{title}\n{table}"
@@ -598,9 +601,9 @@ class DiffractometerConfiguration:
                 table.addLabel("orient?")
                 for i, refl in enumerate(sample["reflections"], start=1):
                     row = [i]
-                    row += [f"{round(v, SIGNIFICANT_DIGITS)}" for v in refl["reflection"].values()]
-                    row += [f"{round(v, SIGNIFICANT_DIGITS)}" for v in refl["position"].values()]
-                    row.append(str(refl["wavelength"]))
+                    row += [float_format(v) for v in refl["reflection"].values()]
+                    row += [float_format(v) for v in refl["position"].values()]
+                    row.append(f"{round(refl['wavelength'], SIGNIFICANT_DIGITS):g}")
                     row.append(str(refl["orientation_reflection"]))
                     table.addRow(row)
                 text += f"\n\n{title}\n{table}"
@@ -612,7 +615,7 @@ class DiffractometerConfiguration:
             for aname, constraint in data["constraints"].items():
                 row = [aname]
                 for k in "low_limit high_limit value".split():
-                    row.append(f"{round(constraint[k], SIGNIFICANT_DIGITS)}")
+                    row.append(float_format(constraint[k]))
                 row.append(f"{constraint['fit']}")
                 table.addRow(row)
             text += f"\n\n{title}\n{table}"
@@ -686,6 +689,13 @@ class DiffractometerConfiguration:
     def model(self) -> DCConfiguration:
         """Return validated diffractometer configuration object."""
         diffractometer = self.diffractometer
+
+        # either an empty dict or maps renamed axes to canonical
+        xref = dict(diffractometer.calc._axis_name_to_original)
+
+        def canonical_name(axis):
+            return xref.get(axis, axis)
+
         data = {
             "name": diffractometer.name,
             "geometry": diffractometer.calc._geometry.name_get(),
@@ -703,7 +713,7 @@ class DiffractometerConfiguration:
             "library_version": libhkl.VERSION,
             # fmt: off
             "constraints": {
-                axis: {
+                canonical_name(axis): {
                     parm: getattr(constraint, parm)
                     for parm in "low_limit high_limit value fit".split()
                 }
