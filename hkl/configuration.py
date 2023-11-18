@@ -459,7 +459,7 @@ class DCConfiguration:
 
         # fmt: off
         if restore_constraints:
-            diffractometer._set_constraints(
+            diffractometer.apply_constraints(
                 {
                     k: Constraint(*constraint.values)
                     for k, constraint in self.constraints.items()
