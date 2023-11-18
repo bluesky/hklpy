@@ -165,10 +165,16 @@ def test_forward_solutions_table(fourc):
     # (100) has chi ~ 0 which poses occasional roundoff errors
     # (sometimes -0.00000, sometimes 0.00000)
     sol = fourc.forward(1, 0, 0)
-    assert pytest.approx(sol.omega, 1e-5) == -30
-    assert pytest.approx(sol.chi, 1e-5) == 0
-    assert pytest.approx(sol.phi, 1e-5) == -90
-    assert pytest.approx(sol.tth, 1e-5) == -60
+
+    def check_limits_and_value(axis, value, tol=1e-5):
+        assert min(fourc.calc[axis].limits) <= value
+        assert max(fourc.calc[axis].limits) >= value
+        assert pytest.approx(getattr(sol, axis), 1e-5) == value
+
+    check_limits_and_value("omega", -30, 0.1)
+    check_limits_and_value("chi", 0, 0.1)
+    check_limits_and_value("phi", -90, 0.1)
+    check_limits_and_value("tth", -60, 0.1)
 
     fourc.apply_constraints({"tth": Constraint(0, 180, 0, True)})
 
