@@ -429,7 +429,7 @@ def test_preview(e4cv):
     main = e4cv.calc.sample  # the default sample
     m_100 = main.add_reflection(1, 0, 0, (-45, 0, 0, 0))
     m_010 = main.add_reflection(0, 1, 0, (45, 0, 0, 0))
-    m_001 = main.add_reflection(0, 0, 1, (45, 0, 90, 0))
+    main.add_reflection(0, 0, 1, (45, 0, 90, 0))
     main.compute_UB(m_100, m_010)
     report = agent.preview(agent.export(), show_reflections=True).splitlines()
     assert len(report) == 10 + 10  # new lines
