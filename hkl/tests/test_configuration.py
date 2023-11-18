@@ -401,3 +401,18 @@ def test_export_to_file(e4cv, tmp_path):
     assert path.exists()
 
     agent.restore(path)  # just to be safe here
+
+
+def test_constraints_stack(e4cv):
+    """Ensure that restored constraints can be removed by undo."""
+    agent = DiffractometerConfiguration(e4cv)
+    constraints_before = agent.export("dict")["constraints"]
+
+    test_file = pathlib.Path(__file__).parent / TEST_CONFIG_FILE
+    assert test_file.exists()
+
+    agent.restore(test_file)
+    assert agent.export("dict")["constraints"] != constraints_before
+
+    e4cv.undo_last_constraints()
+    assert agent.export("dict")["constraints"] == constraints_before
