@@ -118,8 +118,8 @@ class DCConstraint:
 
     fit: bool = True
     """
-    (deprecated) Not used as a constraint.  Value is ignored.  
-    See :class:`~hkl.util.Constraint`.
+    (deprecated) Not used as a constraint.  Value is ignored. See
+    :class:`~hkl.util.Constraint`.
     """
 
     @property

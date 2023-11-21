@@ -11,25 +11,35 @@ Overview
 
 Computation of the real-space axis positions given a set of reciprocal-space
 coordinates can have many solutions.  One or more constraints
-(:class:`~hkl.util.Constraint`) (a.k.a, cut points) can be applied to:
+(:class:`~hkl.util.Constraint`) (a.k.a, cut points), together with a choice of
+operating :ref:`mode <overview.mode>`, can be applied to:
 
 * limit the range of :ref:`constraints.forward` solutions accepted for that positioner
 * declare the value to use when the positioner should be kept constant
 
-This is the code available to manage diffractometer constraints:
+Diffractometer constraints are described by:
 
 .. autosummary::
 
+    ~hkl.util.Constraint
+
+These functions manage constraints:
+
+.. autosummary::
     ~hkl.diffract.Diffractometer.apply_constraints
     ~hkl.diffract.Diffractometer.reset_constraints
     ~hkl.diffract.Diffractometer.show_constraints
     ~hkl.diffract.Diffractometer.undo_last_constraints
-    ~hkl.util.Constraint
     ~hkl.util.restore_constraints
+
+Diffractometer constraints can be exported and restored as part of a
+:class:`~hkl.configuration.DiffractometerConfiguration`:
+
+.. autosummary::
     ~hkl.configuration.DiffractometerConfiguration.export
     ~hkl.configuration.DiffractometerConfiguration.restore
 
-.. these are coming in separate PRs (#299)
+.. this is coming in PR #299
     ~hkl.configuration.DiffractometerConfiguration.preview
 
 .. index:: cut points

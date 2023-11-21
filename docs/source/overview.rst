@@ -247,6 +247,8 @@ See the :ref:`constraints` section for more information.
 
 .. index:: mode
 
+.. _overview.mode:
+
 mode
 ----
 
