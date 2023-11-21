@@ -47,6 +47,7 @@ class Diffractometer(PseudoPositioner):
         ~inverse
         ~forward_solutions_table
         ~apply_constraints
+        ~get_axis_constraints
         ~reset_constraints
         ~show_constraints
         ~undo_last_constraints
@@ -539,6 +540,10 @@ class Diffractometer(PseudoPositioner):
             for p in self.RealPosition._fields
         ]
         # fmt: on
+
+    def get_axis_constraints(self, axis):
+        """Show the constraints for one axis."""
+        return self._constraints_dict[axis]
 
     def show_constraints(self, fmt="simple", printing=True):
         """Print the current constraints in a table."""
