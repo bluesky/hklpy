@@ -76,7 +76,7 @@ class Parameter(object):
 
     @property
     def name(self):
-        """ """
+        """Name of this parameter."""
         name = self._param.name_get()
         if self._name != name:
             return f"{self._name} (internally: {name})"
@@ -84,7 +84,10 @@ class Parameter(object):
 
     @property
     def value(self):
-        """Constant value to be used if held constant by forward mode."""
+        """
+        Value used (in :meth:`~hkl.calc.CalcRecip.forward()` method) if held
+        constant by the :attr:`~hkl.engine.Engine.mode`.
+        """
         return self._param.value_get(self._units)
 
     @value.setter

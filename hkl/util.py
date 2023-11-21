@@ -166,19 +166,33 @@ class Constraint:
     Parameters
     ----------
     low_limit : float
-        Minimum acceptable solution for position.
+        Lowest acceptable value for this axis when computing real-space solutions
+        from given reciprocal-space positions.
     high_limit : float
-        Maximum acceptable solution for position.
+        Highest acceptable value for this axis when computing real-space solutions
+        from given reciprocal-space positions.
     value : float
-        Constant value when ``fit=False``.
+        Constant value used (on condition) for ``forward(hkl)`` calculation.
+
+        Implemented by diffractometer :attr:`~hkl.engine.Engine.mode`.
+
+        The diffractometer engine's :attr:`~hkl.engine.Engine.mode` (such as E4CV's
+        ``constant_phi`` mode) controls whether or not the axis is to be held
+        constant.
     fit : bool
-        ``True`` when axis will be fitted, otherwise, hold position to ``value``.
+        (deprecated) Not used as a constraint.
 
+        The value of ``fit`` is ignored.  It remains now for compatibility with
+        previous *hklpy* releases. It will be dropped in a future *hklpy* release.
 
-    note: Patterned on collections.namedtuple
+        While this parameter is used by *libhkl* to adjust lattice parameters when
+        refining the **UB** matrix from more than 2 reflections, it is not used in
+        the calculation of rotation angles from reciprocal-space coordinates.
+
+        note: Patterned on collections.namedtuple
     """
 
-    def __init__(self, low_limit, high_limit, value, fit):
+    def __init__(self, low_limit, high_limit, value, fit=True):
         self.low_limit = float(low_limit)
         self.high_limit = float(high_limit)
         self.value = float(value)

@@ -133,7 +133,6 @@ def common_DC_dataclass_tests(dc_class, data, key, value, failure, val_arg):
 
 
 @pytest.mark.parametrize("key", "low_limit high_limit value".split())
-# fit is a boolean, existing validation testing is sufficient for now
 @pytest.mark.parametrize(
     "value, failure",
     [
@@ -147,13 +146,17 @@ def common_DC_dataclass_tests(dc_class, data, key, value, failure, val_arg):
 )
 def test_DCConstraint_fails(key, value, failure):
     # all attributes are required
+    # fmt: off
     data = {
         "low_limit": 0.0,
         "high_limit": 0.0,
         "value": 0.0,
         "fit": True,
     }
-    common_DC_dataclass_tests(DCConstraint, data, key, value, failure, f"testing DCConstraint.{key=}")
+    common_DC_dataclass_tests(
+        DCConstraint, data, key, value, failure, f"testing DCConstraint.{key=}"
+    )
+    # fmt: on
 
 
 @pytest.mark.parametrize("key", "a b c alpha beta gamma".split())

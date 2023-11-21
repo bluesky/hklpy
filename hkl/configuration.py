@@ -89,7 +89,9 @@ def _check_value(actual, expected, intro):
 
 @dataclass
 class DCConstraint:
-    """(internal) Configuration of one diffractometer axis constraint."""
+    """
+    (internal) Configuration of one diffractometer axis constraint.
+    """
 
     low_limit: float
     """
@@ -105,14 +107,25 @@ class DCConstraint:
 
     value: float
     """
-    Constant value to be used for this axis when ``fit=False`` when computing
-    real-space solutions from given reciprocal-space positions.
+    Constant value used (on condition) for ``forward(hkl)`` calculation.
+
+    Implemented by diffractometer :attr:`~hkl.engine.Engine.mode`.
+
+    The diffractometer engine's :attr:`~hkl.engine.Engine.mode` (such as E4CV's
+    ``constant_phi`` mode) controls whether or not the axis is to be held
+    constant.
     """
 
-    fit: bool
+    fit: bool = True
     """
-    If ``fit=True``, allow this axis to be changed when computing
-    real-space solutions from given reciprocal-space positions.
+    (deprecated) Not used as a constraint.
+
+    The value of ``fit`` is ignored.  It remains now for compatibility with
+    previous *hklpy* releases. It will be dropped in a future *hklpy* release.
+
+    While this parameter is used by *libhkl* to adjust lattice parameters when
+    refining the **UB** matrix from more than 2 reflections, it is not used in
+    the calculation of rotation angles from reciprocal-space coordinates.
     """
 
     @property
