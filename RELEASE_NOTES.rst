@@ -29,7 +29,7 @@ New Features and/or Enhancements
 * Add ``Petra3_p23_6c`` diffractometer geometry.
 * Add ``SoleilNanoscopiumRobot`` diffractometer geometry.
 * Add ``SoleilSixsMed2p3v2`` diffractometer geometry.
-* Export and reload diffractometer configuration as JSON string, YAML string, or Python dictionary.
+* Export and restore diffractometer configuration as JSON string, YAML string, Python dictionary, or file.
 
 Fixes
 -----
@@ -48,6 +48,11 @@ Maintenance
 * Make it easier to find the SPEC command cross-reference table.
 * Update packaging to latest PyPA recommendations.
 * Documentation ZIP file uploaded as artifact with each build.  Great for review!
+
+Deprecations
+------------
+
+* Deprecate the ``fit`` parameter in diffractometer constraints.
 
 v1.0.4 (released 2023-10-06)
 ======================================
