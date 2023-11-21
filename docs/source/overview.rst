@@ -237,11 +237,11 @@ vibranium [#vibranium]_ as mounted on a diffractometer with
 constraint
 ----------
 
-A :meth:`~hkl.diffract.Diffractometer.forward` transformation can
+A :meth:`~hkl.diffract.Diffractometer.forward()` transformation can
 have many solutions.  A :class:`~hkl.diffract.Constraint` can be applied:
 
 * to limit the range of solutions accepted for that positioner
-* to declare the positioner should be kept at a fixed value
+* to declare the value to use when the positioner should be kept constant
 
 See the :ref:`constraints` section for more information.
 

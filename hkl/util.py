@@ -188,8 +188,6 @@ class Constraint:
         While this parameter is used by *libhkl* to adjust lattice parameters when
         refining the **UB** matrix from more than 2 reflections, it is not used in
         the calculation of rotation angles from reciprocal-space coordinates.
-
-        note: Patterned on collections.namedtuple
     """
 
     def __init__(self, low_limit, high_limit, value, fit=True):

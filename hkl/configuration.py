@@ -118,14 +118,8 @@ class DCConstraint:
 
     fit: bool = True
     """
-    (deprecated) Not used as a constraint.
-
-    The value of ``fit`` is ignored.  It remains now for compatibility with
-    previous *hklpy* releases. It will be dropped in a future *hklpy* release.
-
-    While this parameter is used by *libhkl* to adjust lattice parameters when
-    refining the **UB** matrix from more than 2 reflections, it is not used in
-    the calculation of rotation angles from reciprocal-space coordinates.
+    (deprecated) Not used as a constraint.  Value is ignored.  
+    See :class:`~hkl.util.Constraint`.
     """
 
     @property
@@ -516,7 +510,7 @@ class DiffractometerConfiguration:
 
     def export(self, fmt="json"):
         """
-        Export configuration in a recognized format (dict, JSON, YAML).
+        Export configuration in a recognized format (dict, JSON, YAML, file).
 
         PARAMETERS
 
@@ -543,7 +537,7 @@ class DiffractometerConfiguration:
 
     def restore(self, data, clear=True, restore_constraints=True):
         """
-        Restore configuration from a recognized format (dict, json, yaml).
+        Restore configuration from a recognized format (dict, JSON, YAML, file).
 
         Instead of guessing, recognize the kind of config data by its structure.
 

@@ -14,7 +14,7 @@ coordinates can have many solutions.  One or more constraints
 (:class:`~hkl.util.Constraint`) (a.k.a, cut points) can be applied to:
 
 * limit the range of :ref:`constraints.forward` solutions accepted for that positioner
-* declare the positioner should be kept at a fixed value
+* declare the value to use when the positioner should be kept constant
 
 This is the code available to manage diffractometer constraints:
 
@@ -26,10 +26,10 @@ This is the code available to manage diffractometer constraints:
     ~hkl.diffract.Diffractometer.undo_last_constraints
     ~hkl.util.Constraint
     ~hkl.util.restore_constraints
-
-.. these are coming in separate PRs
     ~hkl.configuration.DiffractometerConfiguration.export
     ~hkl.configuration.DiffractometerConfiguration.restore
+
+.. these are coming in separate PRs (#299)
     ~hkl.configuration.DiffractometerConfiguration.preview
 
 .. index:: cut points
@@ -104,7 +104,7 @@ a :math:`(100)` position with a :class:`hkl.geometries.E4CV` (4-circle) geometry
 diffractometer with these constraints:
 
 ===== ========= ========== ===== ====
-axis  low_limit high_limit value fit?
+axis  low_limit high_limit value fit
 ===== ========= ========== ===== ====
 omega 10.0      40.0       0.0   True
 chi   -100.0    100.0      0.0   True
