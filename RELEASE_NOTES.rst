@@ -30,6 +30,7 @@ New Features and/or Enhancements
 * Add ``SoleilNanoscopiumRobot`` diffractometer geometry.
 * Add ``SoleilSixsMed2p3v2`` diffractometer geometry.
 * Export and restore diffractometer configuration as JSON string, YAML string, Python dictionary, or file.
+* Add ``user.current_diffractometer()`` function.
 
 Fixes
 -----
