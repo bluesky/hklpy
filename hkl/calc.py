@@ -143,6 +143,7 @@ class CalcRecip(object):
         ~forward
         ~forward_iter
         ~geometry_name
+        ~geometry_table
         ~get_path
         ~inverse
         ~inverted_axes
@@ -285,6 +286,68 @@ class CalcRecip(object):
     def geometry_name(self):
         """Name of this geometry, as defined in **libhkl**."""
         return self._geometry.name_get()
+
+    def geometry_table(self, rst=False):
+        """
+        Describe this geometry in a table.
+
+        rst *bool*:
+            When True, format using restructured text.  Otherwise,
+            use a simpler representation
+        """
+        import pyRestTable
+        import sys
+
+        def format_name_list(names):
+            if rst:
+                names = [f"``{k}``" for k in names]
+            return ", ".join(names)
+
+        cname = self.__class__.__name__
+        gname = self.geometry_name
+        engines = list(self.engines.keys())
+        real_axes = format_name_list(self.physical_axis_names)
+
+        table = pyRestTable.Table()
+        table.addLabel("engine")
+        table.addLabel("pseudo axes")
+        table.addLabel("mode")
+        table.addLabel("axes read")
+        table.addLabel("axes written")
+        table.addLabel("extra parameters")
+        for engine in sorted(engines):
+            # Engine setting is locked when class is created.  Default is "hkl".
+            # make new goniometer with chosen engine.  The "trick" here
+            # is to get the class from __this__ module.
+            # See: https://stackoverflow.com/a/7668273/1046449
+            gonio = getattr(sys.modules[__name__], cname)(engine=engine)
+            for mode in sorted(gonio.engine.modes):
+                gonio.engine.mode = mode  #
+                axes_r = format_name_list(gonio.engine._engine.axis_names_get(0))
+                axes_w = format_name_list(gonio.engine._engine.axis_names_get(1))
+                parameters = format_name_list(gonio.parameters)
+                pseudo_axes = format_name_list(gonio.pseudo_axis_names)
+                row = [engine, pseudo_axes, mode, axes_r, axes_w, parameters]
+                table.addRow(row)
+
+        if rst:
+            gname_safe = gname.replace(" ", "_")
+            print(f".. index:: {gname_safe}, geometry; {gname_safe}")
+            print()
+            print(f".. _{gname_safe}_table:")
+            print()
+            title = f"Geometry: ``{self.geometry_name}``"
+            print(title)
+            print("+" * len(title))
+            print()
+            print(f"* real axes: {real_axes}")
+            print("* pseudo axes: depends on the engine")
+        else:
+            print(f"Geometry: {self.geometry_name}")
+            print(f"  real axes: {real_axes}")
+            print("  pseudo axes: depends on the engine")
+        print()
+        print(table)
 
     def _get_sample(self, name):
         if isinstance(name, libhkl.Sample):
