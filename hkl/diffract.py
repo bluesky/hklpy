@@ -53,6 +53,7 @@ class Diffractometer(PseudoPositioner):
         ~undo_last_constraints
         ~pa
         ~wh
+        ~geometry_table
 
     PRIVATE API
 
@@ -834,3 +835,7 @@ class Diffractometer(PseudoPositioner):
             print(table)
 
         return table
+
+    def geometry_table(self):
+        """Print a table describing this diffractometer geometry."""
+        self.calc.geometry_table()
