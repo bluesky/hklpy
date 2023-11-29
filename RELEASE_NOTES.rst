@@ -30,6 +30,7 @@ New Features and/or Enhancements
 * Add ``SoleilNanoscopiumRobot`` diffractometer geometry.
 * Add ``SoleilSixsMed2p3v2`` diffractometer geometry.
 * Add ``user.current_diffractometer()`` function.
+* Build tables of diffractometer geometry, engines, and modes from *libhkl* API.
 * Export and reload diffractometer configuration as JSON string, YAML string, or Python dictionary.
 
 Fixes
