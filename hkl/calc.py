@@ -613,10 +613,10 @@ class CalcRecip(object):
             Normalized proximity to `end` position to stop iterating
         decision_fcn : callable, optional
             Function to choose a solution from several. Defaults to picking the
-            first solution. The signature of the function should be as follows:
+            first solution. Here is the default ``decision_fcn()``::
 
-            >>  def decision(pseudo_position, solution_list):
-            >>      return solution_list[0]
+                def decision(pseudo_position, solution_list):
+                    return solution_list[0]
 
         Returns
         -------
