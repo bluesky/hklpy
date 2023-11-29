@@ -10,6 +10,7 @@ Run this manually, as needed::
 """
 
 import sys
+
 import pyRestTable
 
 from hkl import calc
