@@ -75,7 +75,6 @@ docs/source/generated
 # Microsoft VS Code editor
 .vscode/
 .history/
-docs/source/_build/
 
 # PyTest cache
 .pytest_cache/
