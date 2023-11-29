@@ -832,5 +832,9 @@ class Diffractometer(PseudoPositioner):
         return table
 
     def geometry_table(self):
-        """Print a table describing this diffractometer geometry."""
+        """
+        Print a table describing this diffractometer geometry.
+
+        Calls :meth:`hkl.calc.CalcRecip.geometry_table()`.
+        """
         self.calc.geometry_table()

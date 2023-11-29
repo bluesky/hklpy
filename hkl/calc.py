@@ -291,7 +291,9 @@ class CalcRecip(object):
         """
         Describe this geometry in a table.
 
-        rst *bool*:
+        Parameters
+        ----------
+        rst : *bool*
             When True, format using restructured text.  Otherwise,
             use a simpler representation
         """
