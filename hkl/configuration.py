@@ -40,6 +40,7 @@ from dataclasses import dataclass
 from dataclasses import field
 
 import numpy
+import pyRestTable
 import yaml
 from apischema import deserialize
 from apischema import serialize
@@ -53,7 +54,7 @@ AX_MAX = 360.0  # highest allowed value for real-space axis
 DEFAULT_WAVELENGTH = 1.54  # angstrom
 EXPORT_FORMATS = "dict json yaml".split()
 
-EQUAL_TOLERANCE = 1.0e-7
+SIGNIFICANT_DIGITS = 7
 
 
 # standard value checks, raise exception(s) when appropriate
@@ -487,6 +488,7 @@ class DiffractometerConfiguration:
     .. autosummary::
 
         ~export
+        ~preview
         ~restore
         ~model
         ~reset_diffractometer
@@ -536,6 +538,96 @@ class DiffractometerConfiguration:
             with open(path, "w") as f:
                 f.write(data)
         return data
+
+    def preview(self, data, show_constraints=False, show_reflections=False):
+        """
+        List the samples in the configuration.
+
+        PARAMETERS
+
+        data *dict* or *str* *pathlib.Path* object:
+            Structure (dict, json, or yaml) with diffractometer configuration
+            or pathlib object referring to a file with one of these formats.
+        show_constraints *bool*:
+            If ``True`` (default: ``False``), will also show any constraints
+            in a separate table.
+        show_reflections *bool*:
+            If ``True`` (default: ``False``), will also show reflections, if
+            any, in a separate table for each sample.
+        """
+        if isinstance(data, pathlib.Path):
+            if not data.exists():
+                raise FileNotFoundError(f"{data}")
+            with open(data) as f:
+                data = f.read()
+
+        if isinstance(data, str):
+            if data.strip().startswith("{"):
+                data = json.loads(data)
+            else:
+                data = yaml.load(data, Loader=yaml.Loader)
+
+        return self._preview(data, show_constraints, show_reflections)
+
+    def _preview(self, data, show_constraints=False, show_reflections=False):
+        if not isinstance(data, dict):
+            raise TypeError(f"Cannot interpret configuration data: {type(data)}")
+
+        def float_format(v):
+            return f"{round(v, SIGNIFICANT_DIGITS):g}"
+
+        text = (
+            f"name: {data.get('name', '-n/a-')}"
+            f"\ndate: {data.get('datetime', '-n/a-')}"
+            f"\ngeometry: {data['geometry']}"
+        )
+
+        title = "Table of Samples"
+        table = pyRestTable.Table()
+        table.labels = "# sample a b c alpha beta gamma #refl".split()
+        for i, sname in enumerate(data["samples"], start=1):
+            sample = data["samples"][sname]
+            row = [i, sname]
+            for v in sample["lattice"].values():
+                row.append(float_format(v))
+            row.append(len(sample["reflections"]))
+            table.addRow(row)
+        text += f"\n\n{title}\n{table}"
+
+        if show_reflections:
+            for sname, sample in data["samples"].items():
+                if len(sample["reflections"]) == 0:
+                    continue  # nothing to report
+                title = f"Table of Reflections for Sample: {sname}"
+                table = pyRestTable.Table()
+                refl = sample["reflections"][0]
+                table.addLabel("#")
+                table.labels += list(refl["reflection"])
+                table.labels += list(refl["position"])
+                table.addLabel("wavelength")
+                table.addLabel("orient?")
+                for i, refl in enumerate(sample["reflections"], start=1):
+                    row = [i]
+                    row += [float_format(v) for v in refl["reflection"].values()]
+                    row += [float_format(v) for v in refl["position"].values()]
+                    row.append(f"{round(refl['wavelength'], SIGNIFICANT_DIGITS):g}")
+                    row.append(str(refl["orientation_reflection"]))
+                    table.addRow(row)
+                text += f"\n\n{title}\n{table}"
+
+        if show_constraints and len(data["constraints"]) > 0:
+            title = "Table of Axis Constraints"
+            table = pyRestTable.Table()
+            table.labels = "axis low_limit high_limit value fit?".split()
+            for aname, constraint in data["constraints"].items():
+                row = [aname]
+                for k in "low_limit high_limit value".split():
+                    row.append(float_format(constraint[k]))
+                row.append(f"{constraint['fit']}")
+                table.addRow(row)
+            text += f"\n\n{title}\n{table}"
+
+        return text
 
     def restore(self, data, clear=True, restore_constraints=True):
         """
@@ -604,6 +696,13 @@ class DiffractometerConfiguration:
     def model(self) -> DCConfiguration:
         """Return validated diffractometer configuration object."""
         diffractometer = self.diffractometer
+
+        # either an empty dict or maps renamed axes to canonical
+        xref = dict(diffractometer.calc._axis_name_to_original)
+
+        def canonical_name(axis):
+            return xref.get(axis, axis)
+
         data = {
             "name": diffractometer.name,
             "geometry": diffractometer.calc._geometry.name_get(),
@@ -621,7 +720,7 @@ class DiffractometerConfiguration:
             "library_version": libhkl.VERSION,
             # fmt: off
             "constraints": {
-                axis: {
+                canonical_name(axis): {
                     parm: getattr(constraint, parm)
                     for parm in "low_limit high_limit value fit".split()
                 }
