@@ -365,6 +365,15 @@ class HklSample(object):
 
         with TemporaryGeometry(calc):
             if position is not None:
+                if isinstance(position, (int, float)):
+                    raise TypeError(f"Expected positions, received {position!r}")
+                if len(position) != len(calc.engine.axes_r):
+                    # fmt: off
+                    raise ValueError(
+                        f"Expected {len(calc.engine.axes_r)}"
+                        f" positions, received {position!r}"
+                    )
+                    # fmt: on
                 calc.physical_positions = position
             r2 = self._sample.add_reflection(calc._geometry, detector, h, k, l)
 
