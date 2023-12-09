@@ -3,7 +3,7 @@ from contextlib import nullcontext as does_not_raise
 
 import pytest
 
-from ..util import get_position_tuple
+# from ..util import get_position_tuple
 
 # TODO: test all the different ways positions can be entered
 # tuple
