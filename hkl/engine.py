@@ -237,6 +237,21 @@ class Engine(object):
         return self._engine.name_get()
 
     @property
+    def axes_c(self):
+        """HKL real axis names (held constant during forward() computation)."""
+        return [axis for axis in self.axes_r if axis not in self.axes_w]
+
+    @property
+    def axes_r(self):
+        """HKL real axis names (read-only)."""
+        return self._engine.axis_names_get(0)
+
+    @property
+    def axes_w(self):
+        """HKL real axis names (written by forward() computation)."""
+        return self._engine.axis_names_get(1)
+
+    @property
     def mode(self):
         """HKL calculation mode (see also `HklCalc.modes`)"""
         return self._engine.current_mode_get()
