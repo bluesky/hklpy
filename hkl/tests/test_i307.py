@@ -10,6 +10,8 @@ from ..util import get_position_tuple
 @pytest.mark.parametrize(
     "miller, angles, context, message",
     [
+        # None
+        [(-1, -2, -3), None, does_not_raise(), None],
         # tuple
         [(-1, -2, -3), (1, 2, 3, 4), does_not_raise(), None],
         # list
