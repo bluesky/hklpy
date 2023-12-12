@@ -26,6 +26,10 @@ __all__ = """
 logger = logging.getLogger(__name__)
 
 
+AXES_READ = 0
+AXES_WRITTEN = 1
+
+
 class Parameter(object):
     """HKL library parameter object
 
@@ -244,12 +248,12 @@ class Engine(object):
     @property
     def axes_r(self):
         """HKL real axis names (read-only)."""
-        return self._engine.axis_names_get(0)
+        return self._engine.axis_names_get(AXES_READ)
 
     @property
     def axes_w(self):
         """HKL real axis names (written by forward() computation)."""
-        return self._engine.axis_names_get(1)
+        return self._engine.axis_names_get(AXES_WRITTEN)
 
     @property
     def mode(self):
