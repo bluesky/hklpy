@@ -371,11 +371,11 @@ class HklSample(object):
                     # so use the current motor positions
                     return False
                 elif isinstance(pos, (list, tuple)):
-                    if len(position) != len(calc.axes_r):
+                    if len(pos) != len(calc.axes_r):
                         # fmt: off
                         raise ValueError(
                             f"Expected {len(calc.axes_r)}"
-                            f" positions, received {position!r}"
+                            f" positions, received {pos!r}"
                         )
                         # fmt: on
                     if False in [isinstance(v, (int, float)) for v in pos]:
@@ -385,8 +385,8 @@ class HklSample(object):
                     if False in [isinstance(v, (int, float)) for v in pos]:
                         raise TypeError(f"All values must be numeric, received {pos!r}")
                     return True
-                elif isinstance(position, (int, float)):
-                    raise TypeError(f"Expected positions, received {position!r}")
+                elif isinstance(pos, (int, float)):
+                    raise TypeError(f"Expected positions, received {pos!r}")
                 # fmt: off
                 return TypeError(
                     f"Expected list, tuple, or calc.Position() object,"
