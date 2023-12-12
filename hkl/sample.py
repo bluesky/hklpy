@@ -333,20 +333,22 @@ class HklSample(object):
         for refl in refls:
             self.add_reflection(*refl)
 
-    def add_reflection(self, h, k, l, position=None, detector=None, compute_ub=False):
+    def add_reflection(
+        self, h: (int, float), k: (int, float), l: (int, float), position=None, detector=None, compute_ub=False
+    ):
         """Add a reflection, optionally specifying the detector to use
 
         Parameters
         ----------
-        h : float
+        h : (int, float)
             Reflection h
-        k : float
+        k : (int, float)
             Reflection k
-        l : float
+        l : (int, float)
             Reflection l
         detector : Hkl.Detector, optional
             The detector
-        position : tuple or namedtuple, optional
+        position : list, tuple, or namedtuple, optional
             The physical motor position that this reflection corresponds to
             If not specified, the current geometry of the calculation engine is
             assumed.
