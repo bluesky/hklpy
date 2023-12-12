@@ -3,17 +3,59 @@ from contextlib import nullcontext as does_not_raise
 
 import pytest
 
-# from ..util import get_position_tuple
+from ..util import get_position_tuple
 
-# TODO: test all the different ways positions can be entered
-# tuple
-# list
-# namedtuple
-# Position object
+
+# fmt: off
+@pytest.mark.parametrize(
+    "miller, angles, context, message",
+    [
+        # tuple
+        [(-1, -2, -3), (1, 2, 3, 4), does_not_raise(), None],
+        # list
+        [(-1, -2, -3), [1, 2, 3, 4], does_not_raise(), None],
+        # dict
+        [
+            (-1, -2, -3),
+            {"omega": 1, "chi": 2, "phi": 3, "tth": 4},
+            pytest.raises(TypeError),
+            "Must be sequence, not dict",
+        ],
+        # namedtuple
+        [(-1, -2, -3), "namedtuple 1 2 3 4", does_not_raise(), None],
+        # calc.Position object
+        [(-1, -2, -3), "Position 1 2 3 4", does_not_raise(), None],
+    ]
+)
+# fmt: on
+def test_position_args(miller, angles, context, message, e4cv):
+    """Test sample.add_reflection with the different ways positions can be entered."""
+    assert len(miller) == 3
+
+    calc = e4cv.calc
+    assert calc is not None
+
+    sample = calc.sample
+    assert sample is not None
+
+    with context as info:
+        if isinstance(angles, str):
+            # These constructs require some additional setup.
+            if angles.startswith("Position"):
+                angles = calc.Position(*map(float, angles.split()[1:]))
+            elif angles.startswith("namedtuple"):
+                # fmt: off
+                angles = get_position_tuple("omega chi phi tth".split())(
+                    *list(map(float, angles.split()[1:]))
+                )
+                # fmt: on
+        sample.add_reflection(*miller, angles)
+    if message is not None:
+        assert message in str(info.value)
 
 
 @pytest.mark.parametrize(
-    "args, interceptor, message",
+    "args, context, message",
     [
         # wrong number of reals, tuple
         [[1, 2, 3, (4, 5)], pytest.raises(ValueError), "Expected 4 positions,"],
@@ -34,15 +76,15 @@ import pytest
         [[1, 2, 3, namedtuple("Position", "omega chi phi tth".split())(4, 5, 6, 7)], does_not_raise(), None],
     ],
 )
-def test_add_reflection(args, interceptor, message, e4cv):
+def test_add_reflection(args, context, message, e4cv):
     calc = e4cv.calc
     sample = calc.sample
     assert sample is not None
 
-    with interceptor as exinfo:
+    with context as info:
         sample.add_reflection(*args)
     if message is not None:
-        assert message in str(exinfo.value)
+        assert message in str(info.value)
 
 
 @pytest.mark.parametrize(
