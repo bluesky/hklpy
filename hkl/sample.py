@@ -364,16 +364,37 @@ class HklSample(object):
             r1 = self._sample.reflections_get()[-1]
 
         with TemporaryGeometry(calc):
-            if position is not None:
-                if isinstance(position, (int, float)):
+
+            def has_valid_position(pos):
+                """Raise if invalid, otherwise return boolean."""
+                if pos is None:
+                    # so use the current motor positions
+                    return False
+                elif isinstance(pos, (list, tuple)):
+                    if len(position) != len(calc.axes_r):
+                        # fmt: off
+                        raise ValueError(
+                            f"Expected {len(calc.axes_r)}"
+                            f" positions, received {position!r}"
+                        )
+                        # fmt: on
+                    if False in [isinstance(v, (int, float)) for v in pos]:
+                        raise TypeError(f"All values must be numeric, received {pos!r}")
+                    return True
+                elif type(pos).__class__.__name__.startswith("Pos"):
+                    if False in [isinstance(v, (int, float)) for v in pos]:
+                        raise TypeError(f"All values must be numeric, received {pos!r}")
+                    return True
+                elif isinstance(position, (int, float)):
                     raise TypeError(f"Expected positions, received {position!r}")
-                if len(position) != len(calc.engine.axes_r):
-                    # fmt: off
-                    raise ValueError(
-                        f"Expected {len(calc.engine.axes_r)}"
-                        f" positions, received {position!r}"
-                    )
-                    # fmt: on
+                # fmt: off
+                return TypeError(
+                    f"Expected list, tuple, or calc.Position() object,"
+                    f" received {pos!r}"
+                )
+                # fmt: on
+
+            if has_valid_position(position):
                 calc.physical_positions = position
             r2 = self._sample.add_reflection(calc._geometry, detector, h, k, l)
 
