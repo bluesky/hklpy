@@ -301,7 +301,7 @@ class CalcRecip(object):
 
     @property
     def axes_c(self):
-        """User-defined real-space axes held constant during foward() calculation."""
+        """User-defined real-space axes held constant during forward() calculation."""
         return [self._canonical2user(ax) for ax in self._engine.axes_c]
 
     @property
