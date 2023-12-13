@@ -341,3 +341,13 @@ def test_specify_engine():
     assert value.omega == 0.0
     assert value.chi == 0.0
     assert value.phi == 0.0
+
+
+@pytest.mark.parametrize("axis", "alpha phi omega".split())
+def test_get_constraint(axis, fourc):
+    if axis in fourc.calc._geometry.axis_names_get():
+        constraint = fourc.get_axis_constraints(axis)
+        assert isinstance(constraint, Constraint)
+    else:
+        with pytest.raises(KeyError):
+            fourc.get_axis_constraints(axis)

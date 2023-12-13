@@ -30,6 +30,7 @@ New Features and/or Enhancements
 * Add ``SoleilNanoscopiumRobot`` diffractometer geometry.
 * Add ``SoleilSixsMed2p3v2`` diffractometer geometry.
 * Add ``user.current_diffractometer()`` function.
+* Add ``axes_r``, ``axes_w``, & ``axes_c`` properties to both ``calc`` & ``engine``.
 * Build tables of diffractometer geometry, engines, and modes from *libhkl* API.
 * Export and reload diffractometer configuration as JSON string, YAML string, or Python dictionary.
 
@@ -45,11 +46,12 @@ Maintenance
 * Add ``apischema`` to package requirements.
 * Add test for ``or_swap()``.
 * Change documentation theme to pydata-sphinx-theme.
+* Documentation ZIP file uploaded as artifact with each build.  Great for review!
 * Expand testing to to Py3.8 - Py3.11.
 * Fix code in ``util.restore_reflections()`` that failed unit tests locally.
 * Make it easier to find the SPEC command cross-reference table.
 * Update packaging to latest PyPA recommendations.
-* Documentation ZIP file uploaded as artifact with each build.  Great for review!
+* Validate user input to sample.add_reflection().
 
 v1.0.4 (released 2023-10-06)
 ======================================

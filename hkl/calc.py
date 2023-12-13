@@ -282,6 +282,29 @@ class CalcRecip(object):
 
         self._re_init()
 
+    def _canonical2user(self, canonical):
+        """Convert canonical axis names to user (renames)."""
+        if len(self._axis_name_to_renamed) > 0:
+            axis = self._axis_name_to_renamed[canonical]
+        else:
+            axis = canonical
+        return axis
+
+    @property
+    def axes_r(self):
+        """User-defined real-space axes used for forward() calculation."""
+        return [self._canonical2user(ax) for ax in self._engine.axes_r]
+
+    @property
+    def axes_w(self):
+        """User-defined real-space axes written by forward() calculation."""
+        return [self._canonical2user(ax) for ax in self._engine.axes_w]
+
+    @property
+    def axes_c(self):
+        """User-defined real-space axes held constant during forward() calculation."""
+        return [self._canonical2user(ax) for ax in self._engine.axes_c]
+
     @property
     def geometry_name(self):
         """Name of this geometry, as defined in **libhkl**."""
