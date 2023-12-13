@@ -333,7 +333,7 @@ class HklSample(object):
         for refl in refls:
             self.add_reflection(*refl)
 
-    def add_reflection(self, h: float, k: float, l: float, position=None, detector=None, compute_ub=False):
+    def add_reflection(self, h: float, k: float, l: float, position=None, detector=None, compute_ub: bool = False):
         """Add a reflection, optionally specifying the detector to use
 
         Parameters
