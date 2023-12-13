@@ -12,6 +12,7 @@ from .. import SimMixin
 from .. import SimulatedE4CV
 from .. import SimulatedE6C
 from .. import SimulatedK4CV
+from .. import SimulatedK6C
 
 
 @pytest.fixture
@@ -60,6 +61,15 @@ def e6c():
 def k4cv():
     """Standard K4CV."""
     diffractometer = SimulatedK4CV("", name="k4cv")
+    diffractometer.wait_for_connection()
+    diffractometer._update_calc_energy()
+    return diffractometer
+
+
+@pytest.fixture
+def k6c():
+    """Standard K6C."""
+    diffractometer = SimulatedK6C("", name="k6c")
     diffractometer.wait_for_connection()
     diffractometer._update_calc_energy()
     return diffractometer
