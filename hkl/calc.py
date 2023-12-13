@@ -296,7 +296,7 @@ class CalcRecip(object):
 
     @property
     def axes_w(self):
-        """User-defined real-space axes written by foward() calculation."""
+        """User-defined real-space axes written by forward() calculation."""
         return [self._canonical2user(ax) for ax in self._engine.axes_w]
 
     @property
