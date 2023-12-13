@@ -1,9 +1,45 @@
+"""
+Tests for changes due to issues #307 & #308.
+"""
+
 from collections import namedtuple
 from contextlib import nullcontext as does_not_raise
 
 import pytest
 
 from ..util import get_position_tuple
+
+
+@pytest.mark.parametrize(
+    "miller, context, message",
+    [
+        [(1, 2, 3), does_not_raise(), None],
+        [(1.0, 2.0, 3.0), does_not_raise(), None],
+        [("1", 2, 3), pytest.raises(TypeError), "Must be number, not str"],
+        [(1, 2, "3"), pytest.raises(TypeError), "Must be number, not str"],
+        [([1], 2, 3), pytest.raises(TypeError), "Must be number, not list"],
+        [(object, 2, 3), pytest.raises(TypeError), "Must be number, not type"],
+        [(None, 2, 3), pytest.raises(TypeError), "does not allow None as a value"],
+        [None, pytest.raises(TypeError), "argument after * must be an iterable, not NoneType"],
+        [((1,), 2, 3), pytest.raises(TypeError), "Must be number, not tuple"],
+        [
+            # Tests that h, k, l was omitted, only a position was supplied.
+            # This is one of the problems reported.
+            namedtuple("PosAnything", "a b c d".split())(1, 2, 3, 4),
+            pytest.raises(TypeError),
+            "Expected positions, received 4",
+        ],
+    ],
+)
+def test_miller_args(miller, context, message, e4cv):
+    """Test the Miller indices arguments: h, k, l."""
+    sample = e4cv.calc.sample
+    assert sample is not None
+
+    with context as info:
+        sample.add_reflection(*miller)
+    if message is not None:
+        assert message in str(info.value)
 
 
 # fmt: off
@@ -21,12 +57,42 @@ from ..util import get_position_tuple
             (-1, -2, -3),
             {"omega": 1, "chi": 2, "phi": 3, "tth": 4},
             pytest.raises(TypeError),
-            "Must be sequence, not dict",
+            "Expected list, tuple, or calc.Position() object,",
         ],
         # namedtuple
         [(-1, -2, -3), "namedtuple 1 2 3 4", does_not_raise(), None],
         # calc.Position object
         [(-1, -2, -3), "Position 1 2 3 4", does_not_raise(), None],
+        # Unacceptable namedtuple (does not start with "Pos")
+        [
+            (-10, -2, -3),
+            namedtuple("Not_Position", "a b c d".split())(1, 2, 3, 4),
+            pytest.raises(TypeError),
+            "Expected list, tuple, or calc.Position() object",
+        ],
+        # Acceptable namedtuple (starts with "Pos") type
+        # yet the axis names are wrong.
+        [
+            (-10, -2, -3),
+            namedtuple("Positron", "a b c d".split())(1, 2, 3, 4),
+            pytest.raises(KeyError),
+            "Wrong axes names.  Expected [",
+        ],
+        # Acceptable namedtuple (starts with "Pos") type
+        # yet values must all be numeric.
+        [
+            (-10, -2, -3),
+            namedtuple("Post", "omega chi phi tth".split())(1, "2", 3, 4),
+            pytest.raises(TypeError),
+            "All values must be numeric",
+        ],
+        # Acceptable namedtuple (starts with "Pos") type & content.
+        [
+            (-10, -2, -3),
+            namedtuple("Posh", "omega chi phi tth".split())(1, 2, 3, 4),
+            does_not_raise(),
+            None,
+        ],
     ]
 )
 # fmt: on
@@ -40,17 +106,18 @@ def test_position_args(miller, angles, context, message, e4cv):
     sample = calc.sample
     assert sample is not None
 
+    if isinstance(angles, str):
+        # These constructs require some additional setup.
+        if angles.startswith("Position"):
+            angles = calc.Position(*map(float, angles.split()[1:]))
+        elif angles.startswith("namedtuple"):
+            # fmt: off
+            angles = get_position_tuple("omega chi phi tth".split())(
+                *list(map(float, angles.split()[1:]))
+            )
+            # fmt: on
+
     with context as info:
-        if isinstance(angles, str):
-            # These constructs require some additional setup.
-            if angles.startswith("Position"):
-                angles = calc.Position(*map(float, angles.split()[1:]))
-            elif angles.startswith("namedtuple"):
-                # fmt: off
-                angles = get_position_tuple("omega chi phi tth".split())(
-                    *list(map(float, angles.split()[1:]))
-                )
-                # fmt: on
         sample.add_reflection(*miller, angles)
     if message is not None:
         assert message in str(info.value)
@@ -66,8 +133,8 @@ def test_position_args(miller, angles, context, message, e4cv):
         # wrong number of reals, namedtuple
         [
             [1, 2, 3, namedtuple("Position", "omega chi phi".split())(1, 2, 3)],
-            pytest.raises(ValueError),
-            "Expected 4 positions,",
+            pytest.raises(KeyError),
+            "Wrong axes names.  Expected [",
         ],
         # wrong representation of position
         [[1, 2, 3, 4], pytest.raises(TypeError), "Expected positions"],
