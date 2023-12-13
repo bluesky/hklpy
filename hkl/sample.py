@@ -370,26 +370,34 @@ class HklSample(object):
                 if pos is None:
                     # so use the current motor positions
                     return False
-                elif isinstance(pos, (list, tuple)):
-                    if len(pos) != len(calc.axes_r):
+                elif type(pos).__name__.startswith("Pos"):
+                    # This is (probably) a calc.Position namedtuple
+                    if False in [isinstance(v, (int, float)) for v in pos]:
+                        raise TypeError(f"All values must be numeric, received {pos!r}")
+                    if pos._fields != tuple(calc.physical_axis_names):
+                        # fmt: off
+                        raise KeyError(
+                            f"Wrong axes names.  Expected {calc.physical_axis_names},"
+                            f" received {pos._fields}"
+                        )
+                        # fmt: on
+                    return True
+                elif type(pos).__name__ in "list tuple".split():
+                    # note: isinstance(pos, (list, tuple)) includes namedtuple
+                    if len(pos) != len(calc.physical_axis_names):
                         # fmt: off
                         raise ValueError(
-                            f"Expected {len(calc.axes_r)}"
+                            f"Expected {len(calc.physical_axis_names)}"
                             f" positions, received {pos!r}"
                         )
                         # fmt: on
                     if False in [isinstance(v, (int, float)) for v in pos]:
                         raise TypeError(f"All values must be numeric, received {pos!r}")
                     return True
-                elif type(pos).__class__.__name__.startswith("Pos"):
-                    # This is (probably) a calc.Position namedtuple
-                    if False in [isinstance(v, (int, float)) for v in pos]:
-                        raise TypeError(f"All values must be numeric, received {pos!r}")
-                    return True
                 elif isinstance(pos, (int, float)):
                     raise TypeError(f"Expected positions, received {pos!r}")
                 # fmt: off
-                return TypeError(
+                raise TypeError(
                     f"Expected list, tuple, or calc.Position() object,"
                     f" received {pos!r}"
                 )
