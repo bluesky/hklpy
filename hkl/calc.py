@@ -291,7 +291,7 @@ class CalcRecip(object):
 
     @property
     def axes_r(self):
-        """User-defined real-space axes used for foward() calculation."""
+        """User-defined real-space axes used for forward() calculation."""
         return [self._canonical2user(ax) for ax in self._engine.axes_r]
 
     @property
