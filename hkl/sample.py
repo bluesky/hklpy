@@ -382,6 +382,7 @@ class HklSample(object):
                         raise TypeError(f"All values must be numeric, received {pos!r}")
                     return True
                 elif type(pos).__class__.__name__.startswith("Pos"):
+                    # This is (probably) a calc.Position namedtuple
                     if False in [isinstance(v, (int, float)) for v in pos]:
                         raise TypeError(f"All values must be numeric, received {pos!r}")
                     return True
