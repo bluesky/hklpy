@@ -370,7 +370,7 @@ class HklSample(object):
                 if pos is None:
                     # so use the current motor positions
                     return False
-                elif type(pos).__name__.startswith("Pos"):
+                elif type(pos).__name__.startswith("Pos") or type(pos).__name__.endswith("RealPos"):
                     # This is (probably) a calc.Position namedtuple
                     if False in [isinstance(v, (int, float)) for v in pos]:
                         raise TypeError(f"All values must be numeric, received {pos!r}")
