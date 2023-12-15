@@ -32,6 +32,7 @@ New Features and/or Enhancements
 * Export and restore diffractometer configuration as JSON string, YAML string, Python dictionary, or file.
 * Add ``user.current_diffractometer()`` function.
 * Add ``axes_r``, ``axes_w``, & ``axes_c`` properties to both ``calc`` & ``engine``.
+* Build tables of diffractometer geometry, engines, and modes from *libhkl* API.
 * Export and reload diffractometer configuration as JSON string, YAML string, or Python dictionary.
 
 Fixes
