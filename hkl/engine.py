@@ -80,7 +80,7 @@ class Parameter(object):
 
     @property
     def name(self):
-        """ """
+        """Name of this parameter."""
         name = self._param.name_get()
         if self._name != name:
             return f"{self._name} (internally: {name})"
@@ -88,8 +88,18 @@ class Parameter(object):
 
     @property
     def value(self):
-        """ """
+        """
+        Value used (in :meth:`~hkl.calc.CalcRecip.forward()` method) if held
+        constant by the :attr:`~hkl.engine.Engine.mode`.
+        """
         return self._param.value_get(self._units)
+
+    @value.setter
+    def value(self, value):
+        if self._inverted:
+            value *= -1.0
+
+        self._param.value_set(value, self._units)
 
     @property
     def user_units(self):
@@ -100,13 +110,6 @@ class Parameter(object):
     def default_units(self):
         """A string representing the default unit type"""
         return self._param.default_unit_get()
-
-    @value.setter
-    def value(self, value):
-        if self._inverted:
-            value *= -1.0
-
-        self._param.value_set(value, self._units)
 
     @property
     def fit(self):

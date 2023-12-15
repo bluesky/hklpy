@@ -133,7 +133,6 @@ def common_DC_dataclass_tests(dc_class, data, key, value, failure, val_arg):
 
 
 @pytest.mark.parametrize("key", "low_limit high_limit value".split())
-# fit is a boolean, existing validation testing is sufficient for now
 @pytest.mark.parametrize(
     "value, failure",
     [
@@ -147,13 +146,17 @@ def common_DC_dataclass_tests(dc_class, data, key, value, failure, val_arg):
 )
 def test_DCConstraint_fails(key, value, failure):
     # all attributes are required
+    # fmt: off
     data = {
         "low_limit": 0.0,
         "high_limit": 0.0,
         "value": 0.0,
         "fit": True,
     }
-    common_DC_dataclass_tests(DCConstraint, data, key, value, failure, f"testing DCConstraint.{key=}")
+    common_DC_dataclass_tests(
+        DCConstraint, data, key, value, failure, f"testing DCConstraint.{key=}"
+    )
+    # fmt: on
 
 
 @pytest.mark.parametrize("key", "a b c alpha beta gamma".split())
@@ -401,6 +404,21 @@ def test_export_to_file(e4cv, tmp_path):
     assert path.exists()
 
     agent.restore(path)  # just to be safe here
+
+
+def test_constraints_stack(e4cv):
+    """Ensure that restored constraints can be removed by undo."""
+    agent = DiffractometerConfiguration(e4cv)
+    constraints_before = agent.export("dict")["constraints"]
+
+    test_file = pathlib.Path(__file__).parent / TEST_CONFIG_FILE
+    assert test_file.exists()
+
+    agent.restore(test_file)
+    assert agent.export("dict")["constraints"] != constraints_before
+
+    e4cv.undo_last_constraints()
+    assert agent.export("dict")["constraints"] == constraints_before
 
 
 def test_preview(e4cv):

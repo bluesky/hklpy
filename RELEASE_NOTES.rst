@@ -29,6 +29,7 @@ New Features and/or Enhancements
 * Add ``Petra3_p23_6c`` diffractometer geometry.
 * Add ``SoleilNanoscopiumRobot`` diffractometer geometry.
 * Add ``SoleilSixsMed2p3v2`` diffractometer geometry.
+* Export and restore diffractometer configuration as JSON string, YAML string, Python dictionary, or file.
 * Add ``user.current_diffractometer()`` function.
 * Add ``axes_r``, ``axes_w``, & ``axes_c`` properties to both ``calc`` & ``engine``.
 * Build tables of diffractometer geometry, engines, and modes from *libhkl* API.
@@ -52,6 +53,11 @@ Maintenance
 * Make it easier to find the SPEC command cross-reference table.
 * Update packaging to latest PyPA recommendations.
 * Validate user input to sample.add_reflection().
+
+Deprecations
+------------
+
+* Deprecate the ``fit`` parameter in diffractometer constraints.
 
 v1.0.4 (released 2023-10-06)
 ======================================

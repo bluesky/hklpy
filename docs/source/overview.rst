@@ -16,6 +16,8 @@ Definitions
 
 Several terms used throughout are:
 
+.. _overview.real:
+
 .. index:: !real
 
 real axis (positioner)
@@ -27,6 +29,8 @@ A positioner (whether simulated or attached to hardware) that operates in
 or
 `ophyd.SoftPositioner
 <https://blueskyproject.io/ophyd/positioners.html#softpositioner>`_.
+
+.. _overview.pseudo:
 
 .. index:: !pseudo
 
@@ -43,31 +47,31 @@ forward (transformation)
 ------------------------
 
 Compute the values of the real positioners given values of the pseudo
-positioners.  Since more than one solution is possible, additional
-constraints (limits on the real positioner and diffractometer mode) may be
-added.
+positioners.  Additional :ref:`constraints <constraint.overview>` (limits on the
+real positioner and diffractometer mode) may be defined to limit the number of
+possible solutions.
 
 .. index:: !inverse
 
 inverse (transformation)
 ------------------------
 
-Compute the values of the pseudo positioners given values of the real
-positioners.
+Compute the values of the :ref:`pseudo positioners <overview.pseudo>` given
+values of the :ref:`real positioners <overview.real>`.
 
 .. index:: !libhkl
 
 *libhkl* support library
 ------------------------
 
-The transformation between real and reciprocal (_pseudo_) space are passed
-(from :mod:`hkl.diffract` through :mod:`hkl.calc`) to a support library
-known here as *libhkl* (https://repo.or.cz/hkl.git), written in C++.
+The transformation between real and reciprocal (a.k.a., *pseudo*) space are passed
+(from modules :mod:`~hkl.diffract` through :mod:`~hkl.calc`) to a support library
+known here as *libhkl* (https://repo.or.cz/hkl.git), written in C.
 
 Parts of a `Diffractometer` object
 ==================================
 
-A ``Diffractometer`` object has several parts:
+A :class:`~hkl.diffract.Diffractometer` object has several parts:
 
 name
 ----
@@ -88,11 +92,12 @@ geometry
 
 The geometry describes the physical arrangement of real positioners that
 make up the diffractometer.  The choices are limited to those geometries
-provided in :mod:`hkl.geometries` (which are the geometries provided by the
+provided in :mod:`~hkl.geometries` (which are the geometries provided by the
 *libhkl* support library).  A geometry will provide a list of the real
 positioners.  It is possible to use alternate names.
 
-.. TODO: how to add a new geometry? (text does not yet exist)
+.. TODO: how to add a new geometry? (text does not yet exist)  Requires
+   code contribution to the libhkl back end library at this time.
 
 .. index:: calc
 
@@ -112,26 +117,34 @@ diffractometer object, ``DFRCT.energy``, which will then set the wavelength.
 The ``calc`` contains the methods that convert between energy and
 wavelength. To use this Python support at an instrument that does not use
 X-rays (such as a neutron source), re-write these methods and also redefine
-any classes that use :class:`hkl.calc.CalcRecip()`.
+any classes that use :class:`~hkl.calc.CalcRecip()`.
 
 .. index:: energy
 
-energy
-------
+wavelength (and energy)
+-----------------------
 
 The :ref:`energy <diffract.energy>` of the diffractometer sets the
-wavelength, which is used when:
+*wavelength* (:math:`\lambda`), [#lambda.name]_ which is used when:
 
-#. computing ``forward()`` and ``inverse()`` transformations
-#. defining orientation reflections
-#. documenting the state of the diffractometer
+#. computing :meth:`~hkl.diffract.Diffractometer.forward()` and
+   :meth:`~hkl.diffract.Diffractometer.inverse()` transformations
+#. defining orientation :ref:`reflections <overview.orientation_reflections>`
+#. documenting the :class:`~hkl.configuration.DiffractometerConfiguration`
 
-It is more common for users to describe energy than wavelength.  The
-high-level interface allows the energy to be expressed in any
-:ref:`engineering units <diffract.energy.units>` that are convertible to
-the expected units (`keV`).  An offset may be applied, which is useful when
-connecting the diffractometer energy with a control system variable.
-(See the :ref:`diffract.energy.control_system` section.)
+.. note:: It is more common for X-ray users to describe the *energy*
+   of the incident radiation than its
+   *wavelength*.  The high-level interface allows the X-ray photon energy
+   to be expressed in any :ref:`engineering units <diffract.energy.units>`
+   that are convertible to the expected units (`keV`).  An offset may be
+   applied, which is useful when connecting the diffractometer energy
+   with a control system variable. (See the
+   :ref:`diffract.energy.control_system` section.)
+
+.. [#lambda.name] The wavelength, commonly written as :math:`\lambda`,
+   cannot be named in Python code as `"lambda"`, which is a
+   `reserved <https://docs.python.org/3/reference/expressions.html#lambda>`_
+   Python word.
 
 .. index:: sample
 
@@ -140,40 +153,101 @@ sample
 
 The point of a diffractometer is to position a sample for scientific
 measurements. The ``sample`` attribute is an instance of
-:class:`hkl.sample.HklSample`. Behind the scenes, the
-:class:`hkl.diffract.Diffractometer` object maintains a *dictionary* of
-samples (keyed by ``name``), each with its own :class:`hkl.utils.Lattice`
+:class:`~hkl.sample.HklSample`. Behind the scenes, the
+:class:`~hkl.diffract.Diffractometer` object maintains a *dictionary* of
+samples (keyed by ``name``), each with its own :class:`~hkl.utils.Lattice`
 and orientation (reflections) information.
 
 .. index:: lattice
 
 lattice
--------
++++++++
 
-Crystal :class:`hkl.utils.Lattice` parameters of unit cell lengths and angles.
+Crystal samples have :class:`~hkl.utils.Lattice` parameters defined by
+unit cell lengths and angles.  (Units here are angstroms and degrees.)
+
+This table describes the lattice of crystalline Vibranium [#vibranium]_:
+
+========= ============  ============   ============   ===== ====  =====
+sample    a             b              c              alpha beta  gamma
+========= ============  ============   ============   ===== ====  =====
+vibranium :math:`2\pi`  :math:`2\pi`   :math:`2\pi`   90    90    90
+========= ============  ============   ============   ===== ====  =====
+
+.. [#vibranium] Vibranium (https://en.wikipedia.org/wiki/Vibranium)
+   is a fictional metal.  Here, we have decided it is cubic with a lattice
+   constant of exactly :math:`2\pi`.
+
+.. _overview.orientation:
 
 .. index:: orientation
 
 orientation
------------
++++++++++++
 
-The **UB** matrix describes the ``forward()`` and ``inverse()`` transformations
-that allow precise positioning of a crystal's atomic planes in the laboratory
-reference system of the diffractometer.  Typically, the **UB** matrix is computed
-(by *libhkl*) from two orientation reflections.
+The **UB** matrix describes the :meth:`~hkl.diffract.Diffractometer.forward()`
+and :meth:`~hkl.diffract.Diffractometer.inverse()` transformations that allow
+precise positioning of a crystalline sample's atomic planes in the laboratory
+reference system of the diffractometer.  Typically, the **UB** matrix is
+computed (by *libhkl*) from two orientation reflections.  Two different methods
+are available to compute the **UB** matrix:
+
+==========================================   ===============================================
+method                                       description
+==========================================   ===============================================
+:meth:`~hkl.sample.HklSample.compute_UB()`   Busing & Levy computation with 2 reflections
+:meth:`~hkl.sample.HklSample.affine()`       Simplex refinement with more than 2 reflections
+==========================================   ===============================================
+
+.. _overview.orientation_reflections:
+
+.. index:: orientation reflections; reflections
+
+orientation reflections
+~~~~~~~~~~~~~~~~~~~~~~~
+
+An orientation reflection consists of a set of matching :ref:`overview.pseudo`
+and :ref:`overview.real` values at a specified wavelength.  These values may be
+measured or computed.  It is not necessary that the real axis positions be
+within any of the :ref:`constraints <constraints>`.
+
+There are several use cases for a set of reflections:
+
+* Computation of the :ref:`overview.orientation` matrix (for 2 or more non-parallel reflections).
+* Documentation of observed (or theoretical) reflection settings.
+* Reference settings so as to re-position the diffractometer.
+* Define a crystallographic zone or axis to guide the diffractometer for measurements.
+
+Here is an example of three orientation reflections for a sample of crystalline
+vibranium [#vibranium]_ as mounted on a diffractometer with
+:class:`~hkl.geometries.E4CV` geometry:
+
+= === === === ======== ==== ==== ======= ========== =======
+# h   k   l   omega    chi  phi  tth     wavelength orient?
+= === === === ======== ==== ==== ======= ========== =======
+1 4.0 0.0 0.0 -145.451 0.0  0.0  69.0966 1.54       False
+2 0.0 4.0 0.0 -145.451 0.0  90.0 69.0966 1.54       True
+3 0.0 0.0 4.0 -145.451 90.0 0.0  69.0966 1.54       True
+= === === === ======== ==== ==== ======= ========== =======
 
 .. index:: constraint
+
+.. _constraint.overview:
 
 constraint
 ----------
 
-The ``forward()`` transformation can have many solutions.  A
-:class:`~hkl.diffract.Constraint` can be applied to a real positioner to
-limit the range of solutions accepted for that positioner.
+A :meth:`~hkl.diffract.Diffractometer.forward()` transformation can
+have many solutions.  A :class:`~hkl.diffract.Constraint` can be applied:
 
-.. TODO: more explanation here?  or link?
+* to limit the range of solutions accepted for that positioner
+* to declare the value to use when the positioner should be kept constant
+
+See the :ref:`constraints` section for more information.
 
 .. index:: mode
+
+.. _overview.mode:
 
 mode
 ----
@@ -199,7 +273,7 @@ Steps to define a diffractometer object
 =======================================
 
 #. Identify the geometry.
-#. Check that it is supported in  :mod:`hkl.geometries`.
+#. Check that it is supported in the :mod:`~hkl.geometries` module.
 #. Create a custom subclass for the diffractometer.
 #. Connect the real positioners with the control system motors.
 #. (optional) Connect energy to the control system.
@@ -270,12 +344,12 @@ Keep in mind these considerations:
 5. To restore crystal lattice and orientation reflections from a previous
    run, first use the `databroker
    <https://blueskyproject.io/databroker/tutorials/search-and-lookup.html#find-runs-in-a-catalog>`_
-   to find the run.  (The :func:`hkl.util.list_orientation_runs()` function
+   to find the run.  (The :func:`~hkl.util.list_orientation_runs()` function
    can list any recent runs with orientation information.  It needs
    the databroker catalog object.)  With the run, use
-   :func:`hkl.util.run_orientation_info()` to obtain
+   :func:`~hkl.util.run_orientation_info()` to obtain
    the orientation information.
-   Then call :func:`hkl.util.restore_orientation()`
+   Then call :func:`~hkl.util.restore_orientation()`
    with the run's orientation information.  Here is an example
    with the `fourc` object created above and a previous run with
    ``scan_id = 457``::
@@ -292,8 +366,8 @@ Keep in mind these considerations:
 6. You should only restore orientation reflections from a **matching**
    diffractometer geometry (such as ``E4CV``).  A `ValueError`
    exception will be raised if the geometry names (one of the names
-   in :mod:`hkl.geometries`) do not match.  To override this check
-   (at your own risk), replace :func:`hkl.util._check_geometry`
+   in :mod:`~hkl.geometries`) do not match.  To override this check
+   (at your own risk), replace :func:`~hkl.util._check_geometry`
    with your own code.
 
 7. A sample lattice can be restored into any

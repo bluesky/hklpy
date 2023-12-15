@@ -92,7 +92,9 @@ def _check_value(actual, expected, intro):
 
 @dataclass
 class DCConstraint:
-    """(internal) Configuration of one diffractometer axis constraint."""
+    """
+    (internal) Configuration of one diffractometer axis constraint.
+    """
 
     low_limit: float
     """
@@ -108,14 +110,19 @@ class DCConstraint:
 
     value: float
     """
-    Constant value to be used for this axis when ``fit=False`` when computing
-    real-space solutions from given reciprocal-space positions.
+    Constant value used (on condition) for ``forward(hkl)`` calculation.
+
+    Implemented by diffractometer :attr:`~hkl.engine.Engine.mode`.
+
+    The diffractometer engine's :attr:`~hkl.engine.Engine.mode` (such as E4CV's
+    ``constant_phi`` mode) controls whether or not the axis is to be held
+    constant.
     """
 
-    fit: bool
+    fit: bool = True
     """
-    If ``fit=True``, allow this axis to be changed when computing
-    real-space solutions from given reciprocal-space positions.
+    (deprecated) Not used as a constraint.  Value is ignored. See
+    :class:`~hkl.util.Constraint`.
     """
 
     @property
@@ -462,7 +469,7 @@ class DCConfiguration:
 
         # fmt: off
         if restore_constraints:
-            diffractometer._set_constraints(
+            diffractometer.apply_constraints(
                 {
                     k: Constraint(*constraint.values)
                     for k, constraint in self.constraints.items()
@@ -507,7 +514,7 @@ class DiffractometerConfiguration:
 
     def export(self, fmt="json"):
         """
-        Export configuration in a recognized format (dict, JSON, YAML).
+        Export configuration in a recognized format (dict, JSON, YAML, file).
 
         PARAMETERS
 
@@ -624,7 +631,7 @@ class DiffractometerConfiguration:
 
     def restore(self, data, clear=True, restore_constraints=True):
         """
-        Restore configuration from a recognized format (dict, json, yaml).
+        Restore configuration from a recognized format (dict, JSON, YAML, file).
 
         Instead of guessing, recognize the kind of config data by its structure.
 

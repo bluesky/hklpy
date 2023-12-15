@@ -26,6 +26,7 @@ for use with `bluesky <https://blueskyproject.io/bluesky>`_ plans.
    :caption: Core Functionality
 
    overview
+   constraints
    install
 
 .. toctree::

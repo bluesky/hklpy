@@ -166,19 +166,31 @@ class Constraint:
     Parameters
     ----------
     low_limit : float
-        Minimum acceptable solution for position.
+        Lowest acceptable value for this axis when computing real-space solutions
+        from given reciprocal-space positions.
     high_limit : float
-        Maximum acceptable solution for position.
+        Highest acceptable value for this axis when computing real-space solutions
+        from given reciprocal-space positions.
     value : float
-        Constant value when ``fit=False``.
+        Constant value used (on condition) for ``forward(hkl)`` calculation.
+
+        Implemented by diffractometer :attr:`~hkl.engine.Engine.mode`.
+
+        The diffractometer engine's :attr:`~hkl.engine.Engine.mode` (such as E4CV's
+        ``constant_phi`` mode) controls whether or not the axis is to be held
+        constant.
     fit : bool
-        ``True`` when axis will be fitted, otherwise, hold position to ``value``.
+        (deprecated) Not used as a constraint.
 
+        The value of ``fit`` is ignored.  It remains now for compatibility with
+        previous *hklpy* releases. It will be dropped in a future *hklpy* release.
 
-    note: Patterned on collections.namedtuple
+        While this parameter is used by *libhkl* to adjust lattice parameters when
+        refining the **UB** matrix from more than 2 reflections, it is not used in
+        the calculation of rotation angles from reciprocal-space coordinates.
     """
 
-    def __init__(self, low_limit, high_limit, value, fit):
+    def __init__(self, low_limit, high_limit, value, fit=True):
         self.low_limit = float(low_limit)
         self.high_limit = float(high_limit)
         self.value = float(value)
@@ -444,19 +456,23 @@ def restore_reflections(orientation, diffractometer):
         Diffractometer object.
     """
     _check_geometry(orientation, diffractometer)
+    calc = diffractometer.calc
     # remember this wavelength
-    wavelength0 = diffractometer.calc.wavelength
+    wavelength0 = calc.wavelength
 
     # short aliases
     pseudos = orientation["_pseudos"]
     reals = orientation["_reals"]
+    if reals != calc.physical_axis_names and reals == calc._geometry.axis_names_get():
+        # Substitute user-defined axes names for canonical axes names.
+        reals = calc.physical_axis_names
     orientation_reflections = []
     # might be renamed axes
-    renaming = diffractometer.calc._axis_name_to_original
+    renaming = calc._axis_name_to_original
 
     for ref_base in orientation["reflections_details"]:
         # every reflection has its own wavelength
-        diffractometer.calc.wavelength = ref_base["wavelength"]
+        calc.wavelength = ref_base["wavelength"]
 
         # Order of the items is important.
         # Can't just use the dictionaries in ``orientation``.
@@ -471,17 +487,17 @@ def restore_reflections(orientation, diffractometer):
 
         # assemble the final form of the reflection for add_reflection()
         reflection = tuple([*miller_indices, ppp])
-        r = diffractometer.calc.sample.add_reflection(*reflection)
+        r = calc.sample.add_reflection(*reflection)
         if ref_base["orientation_reflection"]:
             orientation_reflections.append(r)
 
     if len(orientation_reflections) > 1:
         # compute **UB** from the last two orientation reflections
-        diffractometer.calc.sample.compute_UB(*orientation_reflections[-2:])
+        calc.sample.compute_UB(*orientation_reflections[-2:])
 
     # restore previous wavelength
-    if diffractometer.calc.wavelength != wavelength0:
-        diffractometer.calc.wavelength = wavelength0
+    if calc.wavelength != wavelength0:
+        calc.wavelength = wavelength0
 
 
 def restore_orientation(orientation, diffractometer):
