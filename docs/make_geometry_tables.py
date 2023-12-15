@@ -79,7 +79,7 @@ def print_summary_table():
     db = {
         gonio.geometry_name: {
             "real_axes": gonio.physical_axis_names,
-            "cname": gonio.__class__.__name__[4:],
+            "cname": gonio.__class__.__name__[4:],  # 4 = len("Calc") as in "CalcE4CV"
         }
         for gonio in goniometers()
     }
