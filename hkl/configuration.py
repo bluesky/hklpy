@@ -39,7 +39,6 @@ from dataclasses import asdict
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Dict
-from typing import List
 
 import numpy
 import pyRestTable
