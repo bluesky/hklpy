@@ -245,7 +245,7 @@ class DCSample:
     (the reciprocal of the crystal) in an orthonormal system.
     """
 
-    U: List[List[float]] = field(default_factory=list[list[float]])
+    U: List[List[float]]  # TOTO py>=3.9:  = field(default_factory=list[list[float]])
     """
     Orientation matrix (3 x 3) of the crystal relative to the diffractometer.
     (optional)
