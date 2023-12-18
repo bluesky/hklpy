@@ -39,6 +39,7 @@ from dataclasses import asdict
 from dataclasses import dataclass
 from dataclasses import field
 from typing import Dict
+from typing import List
 
 import numpy
 import pyRestTable
@@ -234,17 +235,17 @@ class DCSample:
     lattice: DCLattice
     """Crystal lattice parameters (angstroms and degrees)"""
 
-    reflections: list[DCReflection]
+    reflections: List[DCReflection]
     """List of orientation reflections."""
 
-    UB: list[list[float]]
+    UB: List[List[float]]
     """
     Orientation matrix (3 x 3).  U is the crystal orientation matrix relative
     to the diffractometer and B is the transition matrix of a non-orthonormal
     (the reciprocal of the crystal) in an orthonormal system.
     """
 
-    U: list[list[float]] = field(default_factory=list[list[float]])
+    U: List[List[float]] = field(default_factory=List[List[float]])
     """
     Orientation matrix (3 x 3) of the crystal relative to the diffractometer.
     (optional)
@@ -338,14 +339,14 @@ class DCConfiguration:
     diffractometer to restore.
     """
 
-    canonical_axes: list[str]
+    canonical_axes: List[str]
     """
     List of the diffractometer real-space axis names.  Both the exact spelling
     and order are defined by the back-end computation library.  MUST match
     diffractometer to restore.
     """
 
-    real_axes: list[str]
+    real_axes: List[str]
     """
     User-defined real-space axis names. MUST match diffractometer to restore.
     The length and order of this list must be the same as the
@@ -353,7 +354,7 @@ class DCConfiguration:
     names in this file.
     """
 
-    reciprocal_axes: list[str]
+    reciprocal_axes: List[str]
     """
     List of names of the diffractometer reciprocal-space (pseudo) axes. Both
     the exact spelling and order are defined by the back-end computation
