@@ -235,17 +235,17 @@ class DCSample:
     lattice: DCLattice
     """Crystal lattice parameters (angstroms and degrees)"""
 
-    reflections: List[DCReflection]
+    reflections: list[DCReflection]
     """List of orientation reflections."""
 
-    UB: List[List[float]]
+    UB: list[list[float]]
     """
     Orientation matrix (3 x 3).  U is the crystal orientation matrix relative
     to the diffractometer and B is the transition matrix of a non-orthonormal
     (the reciprocal of the crystal) in an orthonormal system.
     """
 
-    U: List[List[float]] = field(default_factory=List[List[float]])
+    U: list[list[float]] = field(default_factory=list[list[float]])
     """
     Orientation matrix (3 x 3) of the crystal relative to the diffractometer.
     (optional)
@@ -339,14 +339,14 @@ class DCConfiguration:
     diffractometer to restore.
     """
 
-    canonical_axes: List[str]
+    canonical_axes: list[str]
     """
     List of the diffractometer real-space axis names.  Both the exact spelling
     and order are defined by the back-end computation library.  MUST match
     diffractometer to restore.
     """
 
-    real_axes: List[str]
+    real_axes: list[str]
     """
     User-defined real-space axis names. MUST match diffractometer to restore.
     The length and order of this list must be the same as the
@@ -354,7 +354,7 @@ class DCConfiguration:
     names in this file.
     """
 
-    reciprocal_axes: List[str]
+    reciprocal_axes: list[str]
     """
     List of names of the diffractometer reciprocal-space (pseudo) axes. Both
     the exact spelling and order are defined by the back-end computation
