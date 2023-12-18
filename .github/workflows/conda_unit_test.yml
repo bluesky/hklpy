@@ -68,10 +68,10 @@ jobs:
         conda list
         micromamba list
 
-    - name: Test only with pytest
-      shell: bash -l {0}
-      run: |
-        pytest -vvv --exitfirst .
+    # - name: Test only with pytest
+    #   shell: bash -l {0}
+    #   run: |
+    #     pytest -vvv --exitfirst .
 
     - name: Test with coverage and pytest
       shell: bash -l {0}
