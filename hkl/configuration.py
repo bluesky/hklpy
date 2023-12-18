@@ -38,6 +38,7 @@ import typing
 from dataclasses import asdict
 from dataclasses import dataclass
 from dataclasses import field
+from typing import Dict
 
 import numpy
 import pyRestTable
@@ -187,13 +188,13 @@ class DCLattice:
 class DCReflection:
     """(internal) Configuration of one orientation reflection."""
 
-    reflection: dict[str, float]
+    reflection: Dict[str, float]
     """
     Reciprocal-space axis positions.  Keys must match in the list of
     ``reciprocal_axes``.
     """
 
-    position: dict[str, float]
+    position: Dict[str, float]
     """
     Real-space axis positions.  Keys must match in the list of
     ``canonical_axes``.
@@ -360,13 +361,13 @@ class DCConfiguration:
     MUST match diffractometer to restore.
     """
 
-    constraints: dict[str, DCConstraint]
+    constraints: Dict[str, DCConstraint]
     """
     Limits to be imposed on the real-space axes for operations and
     computations.  Keys must match in the list of ``canonical_axes``.
     """
 
-    samples: dict[str, DCSample]
+    samples: Dict[str, DCSample]
     """
     Crystalline samples (lattice and orientation reflections).
     The sample name is used as the key in the dictionary.
@@ -410,7 +411,7 @@ class DCConfiguration:
     Name of the Python class that defines this diffractometer. (optional)
     """
 
-    other: dict[str, typing.Any] = field(default_factory=dict)
+    other: Dict[str, typing.Any] = field(default_factory=dict)
     """
     *Any* other content goes into this dictionary (comments, unanticipated
     keys, ...) (optional)
