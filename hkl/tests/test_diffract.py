@@ -357,3 +357,33 @@ def test_get_constraint(axis, fourc):
     else:
         with pytest.raises(KeyError):
             fourc.get_axis_constraints(axis)
+
+
+def test_i303_forward_solution_original_problem(e4cv):
+    assert e4cv is not None
+
+    # Approximate the code presented as the example problem.
+    refl = (1, 1, 1)
+    e4cv.reset_constraints()
+
+    e4cv.calc.engine.mode = "constant_phi"
+    assert e4cv.calc.engine.mode == "constant_phi"
+    CONSTANT_PHI = 23.4567
+
+    e4cv.apply_constraints({"phi": Constraint(-180, 180, CONSTANT_PHI, True)})
+    assert pytest.approx(e4cv.calc["phi"].value, abs=1e-4) == CONSTANT_PHI
+
+    # Check that phi is held constant in forward_solutions_table()
+    # Returns a pyRestTable.Table object.
+    table = e4cv.forward_solutions_table([refl], full=True, digits=4)
+    assert len(table.rows) == 2
+    assert table.labels[4] == "phi"
+    assert pytest.approx(table.rows[0][4], abs=1e-4) == CONSTANT_PHI
+    assert pytest.approx(table.rows[1][4], abs=1e-4) == CONSTANT_PHI
+
+    # Check that phi is held constant in forward()
+    # Returns a position namedtuple.
+    position = e4cv.forward(refl)
+    assert pytest.approx(position.phi, abs=1e-4) == CONSTANT_PHI
+
+    e4cv.reset_constraints()
