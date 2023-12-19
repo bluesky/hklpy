@@ -78,9 +78,8 @@ def test_basic_setup(fourc, kappa):
 
 
 def test_orientation_json_serializable(fourc):
-    import json
-
     import numpy
+    from tiled.utils import safe_json_dump
 
     attr_list = """
     lattice lattice_reciprocal U UB _pseudos _reals _constraints
@@ -90,7 +89,14 @@ def test_orientation_json_serializable(fourc):
         attr = getattr(fourc, attr_name)
         assert isinstance(attr.get(), (numpy.ndarray, tuple)), f"{attr_name=} {type(attr.get())=}"
 
-    json.dumps(fourc.read_configuration())
+    # Try JSON-encoding every item in the read_configuration() dictionary,
+    # making sure each item can be converted.
+    for k1, v1 in fourc.read_configuration().items():
+        for k2, v2 in v1.items():
+            try:
+                safe_json_dump(v2)  # Function that is called by databroker
+            except TypeError as exc:
+                raise TypeError(f"{k1=} {k2=} {v2=} {type(v2)=} : {exc}")
 
 
 def test_fourc_orientation_save(cat, RE, fourc):
