@@ -38,6 +38,7 @@ New Features and/or Enhancements
 Fixes
 -----
 
+* Resolved under-reported problems in CI unit tests.
 * ``util.restore_reflections()`` use renamed motor axes if so defined.
 
 Maintenance
