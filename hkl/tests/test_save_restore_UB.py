@@ -79,6 +79,7 @@ def test_basic_setup(fourc, kappa):
 
 def test_orientation_json_serializable(fourc):
     import json
+
     import numpy
 
     attr_list = """
