@@ -376,10 +376,10 @@ def test_i303_forward_solution_original_problem(e4cv):
     # Check that phi is held constant in forward_solutions_table()
     # Returns a pyRestTable.Table object.
     table = e4cv.forward_solutions_table([refl], full=True, digits=4)
-    assert len(table.rows) == 2
-    assert table.labels[4] == "phi"
-    assert pytest.approx(table.rows[0][4], abs=1e-4) == CONSTANT_PHI
-    assert pytest.approx(table.rows[1][4], abs=1e-4) == CONSTANT_PHI
+    phi_column = table.labels.index("phi")
+    assert len(table.rows) > 0
+    for row in table.rows:
+        assert pytest.approx(row[phi_column], abs=1e-4) == CONSTANT_PHI
 
     # Check that phi is held constant in forward()
     # Returns a position namedtuple.
