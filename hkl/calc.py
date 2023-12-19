@@ -800,6 +800,10 @@ class CalcRecip(object):
     def __str__(self):
         return repr(self)
 
+    @property
+    def _cfg_reciprocal(self):
+        return tuple(list(self.sample.reciprocal))
+
 
 class CalcE4CH(CalcRecip):
     """Geometry: E4CH"""
