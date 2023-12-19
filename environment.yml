@@ -25,6 +25,10 @@ dependencies:
   - pygobject
   - pyRestTable
   - spec2nexus
+  - suitcase-jsonl
+  - suitcase-mongo
+  - suitcase-msgpack
+  - suitcase-utils
   - tqdm
   - pip:
     - coveralls
