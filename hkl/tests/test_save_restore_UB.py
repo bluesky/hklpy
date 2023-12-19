@@ -77,6 +77,21 @@ def test_basic_setup(fourc, kappa):
     assert fourc.calc.wavelength == kappa.calc.wavelength
 
 
+def test_orientation_json_serializable(fourc):
+    import json
+    import numpy
+
+    attr_list = """
+    lattice lattice_reciprocal U UB _pseudos _reals _constraints
+    """.split()
+    for attr_name in attr_list:
+        assert hasattr(fourc, attr_name)
+        attr = getattr(fourc, attr_name)
+        assert isinstance(attr.get(), (numpy.ndarray, tuple)), f"{attr_name=} {type(attr.get())=}"
+
+    json.dumps(fourc.read_configuration())
+
+
 def test_fourc_orientation_save(cat, RE, fourc):
     assert len(cat) == 0
     det = hw().noisy_det
