@@ -168,7 +168,8 @@ class Diffractometer(PseudoPositioner):
     lattice_reciprocal = Cpt(
         # fmt: off
         AttributeSignal,
-        attr="calc.sample.reciprocal",
+        # attr="calc.sample.reciprocal",
+        attr="calc._cfg_reciprocal",
         doc="Reciprocal lattice",
         # fmt: on
     )
