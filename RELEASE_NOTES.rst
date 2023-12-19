@@ -38,6 +38,7 @@ New Features and/or Enhancements
 Fixes
 -----
 
+* ``diffract.forward()`` should pick solution consistent with ``diffract.forward_solution_table()``, if it can. Otherwise, fall back to previous iterative method.
 * ``util.restore_reflections()`` use renamed motor axes if so defined.
 
 Maintenance
