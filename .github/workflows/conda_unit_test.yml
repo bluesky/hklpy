@@ -28,36 +28,26 @@ jobs:
         - "3.9"
         - "3.10"
         - "3.11"
-        databroker-version:
-        - "1.2.5"
-        # - "2.0.0b31"
-        include:
-          - databroker-version: "1.2.5"
-            tiled-version:
-            - "0.1.0a96"
-          # - databroker-version: "2.0.0b31"
-          #   tiled-version:
-          #   - "0.1.0a110"
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Create Python ${{ matrix.python-version }} Databroker ${{ matrix.databroker-version }} environment
+    - name: Create Python ${{ matrix.python-version }} environment
       uses: mamba-org/setup-micromamba@v1
       with:
         cache-environment: true
-        cache-environment-key: env-key-${{ matrix.python-version }}-${{ matrix.databroker-version }}
+        cache-environment-key: env-key-${{ matrix.python-version }}
         condarc: |
           channel-priority: flexible
         environment-file: environment.yml
-        environment-name: hklpy-test-py-${{ matrix.python-version }}-${{ matrix.databroker-version }}
+        environment-name: hklpy-test-py-${{ matrix.python-version }}
         create-args: >-
           coveralls
           pytest
           pytest-cov
           python=${{ matrix.python-version }}
-          databroker=${{ matrix.databroker-version }}
-          tiled=${{ matrix.tiled-version }}
+          databroker=1.2.5
+          tiled=0.1.0a96
 
     - name: conda environments
       shell: bash -l {0}
