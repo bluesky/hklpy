@@ -36,6 +36,7 @@ dependencies:
   - spec2nexus
   - sphinx
   - tqdm
+  - trio >=0.22
   - pip:
     - coveralls
     - pytest
