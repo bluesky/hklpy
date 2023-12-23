@@ -34,7 +34,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Create Python ${{ matrix.python-version }} Databroker ${{ matrix.databroker-version }} environment
       uses: mamba-org/setup-micromamba@v1
       with:
