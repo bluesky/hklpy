@@ -26,8 +26,6 @@ Also provides `SI_LATTICE_PARAMETER` as defined by the
 .. [#] https://physics.nist.gov/cgi-bin/cuu/Value?asil
 """
 
-from __future__ import print_function
-
 import logging
 import subprocess
 import sys
@@ -341,6 +339,14 @@ def run_orientation_info(run):
     run : from Databroker
         A Bluesky run, from databroker v2, such as ``cat.v2[-1]``.
     """
+    import databroker
+
+    if databroker.__version__ >= "2.0":
+        raise ValueError(
+            f"This function does not work with databroker {databroker.__version__}."
+            "  See https://github.com/bluesky/hklpy/pull/317 for details."
+        )
+
     devices = {}
     try:
         run_conf = run.primary.config
