@@ -16,6 +16,7 @@ dependencies:
   - apischema
   - black
   - bluesky
+  - chardet
   - databroker
   - flake8
   - hkl
