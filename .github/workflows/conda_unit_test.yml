@@ -75,4 +75,4 @@ jobs:
       run: |
         coverage run --concurrency=thread --parallel-mode -m pytest -vvv  # --exitfirst .
         coverage combine
-        coverage report--precision 3
+        coverage report
