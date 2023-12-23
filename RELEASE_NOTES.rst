@@ -54,7 +54,6 @@ Maintenance
 * Expand testing to to Py3.8 - Py3.11.
 * Fix code in ``util.restore_reflections()`` that failed unit tests locally.
 * Pin databroker 1.2 (issue #316).
-* Pin tiled <=0.1.0a96 (issue #316).
 * Make it easier to find the SPEC command cross-reference table.
 * Update packaging to latest PyPA recommendations.
 * Validate user input to sample.add_reflection().

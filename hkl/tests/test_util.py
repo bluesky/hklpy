@@ -19,8 +19,6 @@ NO_SUCH_PACKAGE_NAME = "no-such-package"
 
 @pytest.fixture(scope="function")
 def cat():
-    import databroker
-
     yield databroker.temp().v2
 
 

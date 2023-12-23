@@ -46,8 +46,6 @@ jobs:
           pytest
           pytest-cov
           python=${{ matrix.python-version }}
-          databroker=1.2.5
-          tiled=0.1.0a96
 
     - name: conda environments
       shell: bash -l {0}
