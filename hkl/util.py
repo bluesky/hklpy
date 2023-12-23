@@ -344,28 +344,16 @@ def run_orientation_info(run):
     devices = {}
     try:
         run_conf = run.primary.config
-        _aaa = type(run_conf).__name__
         for device in sorted(run_conf):
-            if type(run_conf).__name__ == "Catalog":  # intake catalog
-                conf = run_conf[device].read()
-                if f"{device}_orientation_attrs" in conf:
-                    # fmt:off
-                    devices[device] = {
-                        item[len(device)+1:]: conf[item].to_dict()["data"][0]
-                        for item in conf
-                    }
-                    # fmt:on
-            elif type(run_conf).__name__ == "Container":  # tiled container
-                import yaml
-
-                _bbb = run_conf.read()
-                _bbb = run_conf.item["attributes"]["structure"]
-                conf = run_conf.get(device)
-                print(yaml.dump(conf, indent=2, sort_keys=False))
-            else:
-                raise TypeError(f"Not prepared to handle {type(run_conf)} documents.")
+            conf = run_conf[device].read()
+            if f"{device}_orientation_attrs" in conf:
+                # fmt:off
+                devices[device] = {
+                    item[len(device)+1:]: conf[item].to_dict()["data"][0]
+                    for item in conf
+                }
+                # fmt:on
     except Exception as exc:
-        print(f"{exc=}")
         logger.warning("Could not process run %s, due to %s", run, exc)
     return devices
 
