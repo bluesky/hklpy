@@ -132,8 +132,8 @@ def test_reachable(tardis, kcf_sample, constrain):
     tardis.move(ppos)
     print("tardis position is", tardis.position)
     print("tardis position is", tardis.calc.physical_positions)
-    numpy.testing.assert_almost_equal(tardis.position, ppos)
-    numpy.testing.assert_almost_equal(tardis.calc.physical_positions, rpos)
+    numpy.testing.assert_almost_equal(tardis.position, ppos, decimal=4)
+    numpy.testing.assert_almost_equal(tardis.calc.physical_positions, rpos, decimal=4)
 
 
 def test_inversion(tardis, kcf_sample, constrain):

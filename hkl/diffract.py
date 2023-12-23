@@ -461,9 +461,12 @@ class Diffractometer(PseudoPositioner):
 
         Return the default solution using the ``_decision_fcn()``.
         """
-        solutions = self.calc.forward_iter(
-            start=self.position, end=pseudo, max_iters=self.max_forward_iterations.get()
-        )
+        try:
+            solutions = self.calc.forward(list(pseudo))
+        except ValueError:
+            solutions = self.calc.forward_iter(
+                start=self.position, end=pseudo, max_iters=self.max_forward_iterations.get()
+            )
         logger.debug("pseudo to real: %s", solutions)
         return self._decision_fcn(pseudo, solutions)
 
