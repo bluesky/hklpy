@@ -31,6 +31,13 @@ jobs:
         databroker-version:
         - "1.2.5"
         - "2.0.0b31"
+        include:
+          - databroker-version: "1.2.5"
+            tiled-version:
+            - "0.1.0a96"
+          - databroker-version: "1.2.5"
+            tiled-version:
+            - "0.1.0a110"
 
     steps:
     - uses: actions/checkout@v4
@@ -50,6 +57,7 @@ jobs:
           pytest-cov
           python=${{ matrix.python-version }}
           databroker=${{ matrix.databroker-version }}
+          tiled=${{ matrix.tiled-version }}
 
     - name: conda environments
       shell: bash -l {0}
