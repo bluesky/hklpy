@@ -29,6 +29,7 @@ dependencies:
   - suitcase-mongo
   - suitcase-msgpack
   - suitcase-utils
+  - tiled
   - tqdm
   - pip:
     - coveralls
