@@ -32,6 +32,7 @@ import sys
 from collections import defaultdict
 from collections import namedtuple
 
+import databroker
 import gi
 import numpy as np
 import pandas as pd
@@ -306,7 +307,10 @@ def list_orientation_runs(catalog, *args, limit=20):
             info = run_orientation_info(run)
             if len(info):
                 scan_id = run.metadata["start"]["scan_id"]
-                uid = run.name[:7]
+                if databroker.__version__ >= "2.0":
+                    uid = run.start["uid"][:7]
+                else:
+                    uid = run.name[:7]
                 for device in sorted(info.keys()):
                     orientation = info[device]
                     row = dict(scan_id=scan_id)
@@ -339,26 +343,32 @@ def run_orientation_info(run):
     run : from Databroker
         A Bluesky run, from databroker v2, such as ``cat.v2[-1]``.
     """
-    import databroker
-
-    if databroker.__version__ >= "2.0":
-        raise ValueError(
-            f"This function does not work with databroker {databroker.__version__}."
-            "  See https://github.com/bluesky/hklpy/pull/317 for details."
-        )
-
     devices = {}
+
     try:
-        run_conf = run.primary.config
-        for device in sorted(run_conf):
-            conf = run_conf[device].read()
-            if f"{device}_orientation_attrs" in conf:
-                # fmt:off
-                devices[device] = {
-                    item[len(device)+1:]: conf[item].to_dict()["data"][0]
-                    for item in conf
-                }
-                # fmt:on
+        if databroker.__version__ >= "2.0":
+            for descriptor in run.primary.descriptors:
+                for device, configuration in descriptor.get("configuration", {}).items():
+                    conf = configuration.get("data", {})
+                    if f"{device}_orientation_attrs" in conf:
+                        # fmt:off
+                        devices[device] = {
+                            item[len(device) + 1:]: value
+                            for item, value in conf.items()
+                        }
+                        # fmt:on
+
+        else:  # older databroker v1.2
+            run_conf = run.primary.config
+            for device in sorted(run_conf):
+                conf = run_conf[device].read()
+                if f"{device}_orientation_attrs" in conf:
+                    # fmt:off
+                    devices[device] = {
+                        item[len(device)+1:]: conf[item].to_dict()["data"][0]
+                        for item in conf
+                    }
+                    # fmt:on
     except Exception as exc:
         logger.warning("Could not process run %s, due to %s", run, exc)
     return devices
