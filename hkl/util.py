@@ -365,7 +365,7 @@ def run_orientation_info(run):
                 if f"{device}_orientation_attrs" in conf:
                     # fmt:off
                     devices[device] = {
-                        item[len(device)+1:]: conf[item].to_dict()["data"][0]
+                        item[len(f"{device}_"):]: conf[item].to_dict()["data"][0]
                         for item in conf
                     }
                     # fmt:on
