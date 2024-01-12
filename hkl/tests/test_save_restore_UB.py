@@ -1,3 +1,5 @@
+import time
+
 import bluesky.plans as bp
 import databroker
 import numpy.testing
@@ -84,18 +86,16 @@ def test_fourc_orientation_save(cat, RE, fourc):
     # this run will not save orientation information
     _uids = RE(bp.count([det]))
     assert len(_uids) == 1
+    time.sleep(1)
     assert len(cat) == 1
     assert "fourc" not in cat[1].primary.config
 
     # this run _will_ save orientation information
     _uids = RE(bp.count([det, fourc]))
     assert len(_uids) == 1
+    time.sleep(1)
     assert len(cat) == 2
-    xarray_data = cat[2].primary.config["fourc"].read()
-    assert not isinstance(xarray_data, dict)
-    descriptors = xarray_data.to_dict()
-    assert isinstance(descriptors, dict)
-    assert list(descriptors.keys()) == "coords attrs dims data_vars".split()
+
     key_list = """
         _pseudos
         _reals
@@ -108,20 +108,54 @@ def test_fourc_orientation_save(cat, RE, fourc):
         sample_name
         UB
     """.split()
-    for key in key_list:
-        key_name = f"fourc_{key}"
-        assert hasattr(xarray_data, key_name)
-        assert key_name in descriptors["data_vars"]
 
-    assert xarray_data.fourc_class_name == "Fourc"
-    assert xarray_data.fourc_geometry_name == "E4CV"
-    assert xarray_data.fourc_diffractometer_name == "fourc"
-    assert xarray_data.fourc_sample_name == "Si"
+    if databroker.__version__ < "2.0":
+        conf = cat[_uids[0]].primary.config["fourc"].read()
+        assert not isinstance(conf, dict)
+        descriptors = conf.to_dict()
+        assert isinstance(descriptors, dict)
+        assert list(descriptors.keys()) == "coords attrs dims data_vars".split()
+        for key in key_list:
+            key_name = f"fourc_{key}"
+            assert hasattr(conf, key_name)
+            assert key_name in descriptors["data_vars"]
 
-    assert len(xarray_data.fourc__pseudos) == 1
-    assert xarray_data.fourc__pseudos[0].values.tolist() == "h k l".split()
-    assert len(xarray_data.fourc__reals) == 1
-    assert xarray_data.fourc__reals.values[0].tolist() == "omega chi phi tth".split()
+        assert conf.fourc_class_name == "Fourc"
+        assert conf.fourc_geometry_name == "E4CV"
+        assert conf.fourc_diffractometer_name == "fourc"
+        assert conf.fourc_sample_name == "Si"
+
+        assert len(conf.fourc__pseudos) == 1
+        assert conf.fourc__pseudos[0].values.tolist() == "h k l".split()
+        assert len(conf.fourc__reals) == 1
+        assert conf.fourc__reals.values[0].tolist() == "omega chi phi tth".split()
+
+    else:
+        descriptors = cat[_uids[0]].primary.descriptors
+        assert isinstance(descriptors, list)
+        assert len(descriptors) > 0
+        for descriptor in descriptors:
+            for device, configuration in descriptor.get("configuration", {}).items():
+                assert isinstance(device, str)
+                assert isinstance(configuration, dict)
+                conf = configuration.get("data", {})
+                assert isinstance(conf, dict)
+
+                if device != "fourc":
+                    continue
+                for key in key_list:
+                    key_name = f"fourc_{key}"
+                    assert key_name in conf
+
+                assert conf["fourc_class_name"] == "Fourc"
+                assert conf["fourc_geometry_name"] == "E4CV"
+                assert conf["fourc_diffractometer_name"] == "fourc"
+                assert conf["fourc_sample_name"] == "Si"
+
+                assert len(conf["fourc__pseudos"]) == 3
+                assert conf["fourc__pseudos"] == "h k l".split()
+                assert len(conf["fourc__reals"]) == 4
+                assert conf["fourc__reals"] == "omega chi phi tth".split()
 
 
 def test_fourc_run_orientation_info(cat, RE, fourc):

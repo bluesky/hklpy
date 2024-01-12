@@ -39,6 +39,9 @@ Fixes
 -----
 
 * ``diffract.forward()`` should pick solution consistent with ``diffract.forward_solution_table()``, if it can. Otherwise, fall back to previous iterative method.
+* Make ``util.list_orientation_runs()`` work with databroker v1.2 or v2+.
+* Make ``util.run_orientation_info()`` work with databroker v1.2 or v2+.
+* Resolved under-reported problems in CI unit tests.
 * ``util.restore_reflections()`` use renamed motor axes if so defined.
 
 Maintenance

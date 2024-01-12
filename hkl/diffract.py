@@ -168,7 +168,7 @@ class Diffractometer(PseudoPositioner):
     lattice_reciprocal = Cpt(
         # fmt: off
         AttributeSignal,
-        attr="calc.sample.reciprocal",
+        attr="calc._cfg_reciprocal",
         doc="Reciprocal lattice",
         # fmt: on
     )
@@ -177,8 +177,8 @@ class Diffractometer(PseudoPositioner):
     UB = Cpt(AttributeSignal, attr="calc.sample.UB", doc="UB matrix")
     # fmt: off
     reflections = Cpt(
-        ArrayAttributeSignal,
-        attr="calc.sample.reflections",
+        AttributeSignal,
+        attr="_reflections",
         doc="Reflections",
     )
     reflections_details = Cpt(
@@ -448,6 +448,11 @@ class Diffractometer(PseudoPositioner):
     # calculation class, which is probably not a good thing
     # -- it becomes a problem when someone uses these functions
     # outside of move()
+
+    @property
+    def _reflections(self):
+        """Return the list of reflections as a [[float]]"""
+        return [list(r) for r in self.calc.sample.reflections]
 
     @pseudo_position_argument
     def forward(self, pseudo):

@@ -16,6 +16,7 @@ dependencies:
   - apischema
   - black
   - bluesky
+  - chardet
   - databroker
   - flake8
   - hkl
@@ -35,6 +36,7 @@ dependencies:
   - spec2nexus
   - sphinx
   - tqdm
+  - trio >=0.22
   - pip:
     - coveralls
     - pytest

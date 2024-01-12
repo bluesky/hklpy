@@ -169,7 +169,67 @@ API
 .. automodule:: hkl.configuration
     :members:
         DiffractometerConfiguration,
-        DCConstraint, DCLattice, DCReflection, DCSample, DCConfiguration,
         _check_key, _check_not_value, _check_range, _check_type, _check_value
     :private-members:
     :undoc-members:
+
+.. autoclass:: hkl.configuration.DCConfiguration
+
+    .. autoattribute:: geometry
+    .. autoattribute:: engine
+    .. autoattribute:: library
+    .. autoattribute:: mode
+    .. autoattribute:: canonical_axes
+    .. autoattribute:: real_axes
+    .. autoattribute:: reciprocal_axes
+    .. autoattribute:: samples
+    .. autoattribute:: samples
+    .. autoattribute:: name
+    .. autoattribute:: datetime
+    .. autoattribute:: wavelength_angstrom
+    .. autoattribute:: energy_keV
+    .. autoattribute:: hklpy_version
+    .. autoattribute:: library_version
+    .. autoattribute:: python_class
+    .. autoattribute:: other
+    .. automethod:: validate
+    .. automethod:: write
+
+.. autoclass:: hkl.configuration.DCConstraint
+
+    .. autoattribute:: low_limit
+    .. autoattribute:: high_limit
+    .. autoattribute:: value
+    .. autoattribute:: fit
+    .. automethod:: validate
+    .. autoproperty:: values
+
+.. autoclass:: hkl.configuration.DCLattice
+
+    .. autoattribute:: a
+    .. autoattribute:: b
+    .. autoattribute:: c
+    .. autoattribute:: alpha
+    .. autoattribute:: beta
+    .. autoattribute:: gamma
+    .. automethod:: validate
+    .. autoproperty:: values
+
+.. autoclass:: hkl.configuration.DCReflection
+
+    .. autoattribute:: reflection
+    .. autoattribute:: position
+    .. autoattribute:: wavelength
+    .. autoattribute:: orientation_reflection
+    .. autoattribute:: flag
+    .. automethod:: validate
+
+.. autoclass:: hkl.configuration.DCSample
+
+    .. autoattribute:: name
+    .. autoattribute:: lattice
+    .. autoattribute:: reflections
+    .. autoattribute:: UB
+    .. autoattribute:: U
+    .. automethod:: validate
+    .. automethod:: write

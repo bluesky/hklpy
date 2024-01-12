@@ -49,6 +49,7 @@ classifiers = [
 # pyqt ==5
 dependencies = [
   "apischema",
+  "databroker",
   "numpy",
   "ophyd",
   "pint",
@@ -64,7 +65,7 @@ docs = [
 ]
 tests = [
   "bluesky",
-  "databroker",
+  "tiled",
   "packaging",
 ]
 all = ["hklpy[docs,tests]"]

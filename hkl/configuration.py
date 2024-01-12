@@ -38,6 +38,8 @@ import typing
 from dataclasses import asdict
 from dataclasses import dataclass
 from dataclasses import field
+from typing import Dict
+from typing import List
 
 import numpy
 import pyRestTable
@@ -187,13 +189,13 @@ class DCLattice:
 class DCReflection:
     """(internal) Configuration of one orientation reflection."""
 
-    reflection: dict[str, float]
+    reflection: Dict[str, float]
     """
     Reciprocal-space axis positions.  Keys must match in the list of
     ``reciprocal_axes``.
     """
 
-    position: dict[str, float]
+    position: Dict[str, float]
     """
     Real-space axis positions.  Keys must match in the list of
     ``canonical_axes``.
@@ -233,17 +235,18 @@ class DCSample:
     lattice: DCLattice
     """Crystal lattice parameters (angstroms and degrees)"""
 
-    reflections: list[DCReflection]
+    reflections: List[DCReflection]
     """List of orientation reflections."""
 
-    UB: list[list[float]]
+    UB: List[List[float]]
     """
     Orientation matrix (3 x 3).  U is the crystal orientation matrix relative
     to the diffractometer and B is the transition matrix of a non-orthonormal
     (the reciprocal of the crystal) in an orthonormal system.
     """
 
-    U: list[list[float]] = field(default_factory=list[list[float]])
+    # TODO: Once py38 is dropped, re-enable the default value setting
+    U: List[List[float]]  # = field(default_factory=list[list[float]])
     """
     Orientation matrix (3 x 3) of the crystal relative to the diffractometer.
     (optional)
@@ -337,14 +340,14 @@ class DCConfiguration:
     diffractometer to restore.
     """
 
-    canonical_axes: list[str]
+    canonical_axes: List[str]
     """
     List of the diffractometer real-space axis names.  Both the exact spelling
     and order are defined by the back-end computation library.  MUST match
     diffractometer to restore.
     """
 
-    real_axes: list[str]
+    real_axes: List[str]
     """
     User-defined real-space axis names. MUST match diffractometer to restore.
     The length and order of this list must be the same as the
@@ -352,7 +355,7 @@ class DCConfiguration:
     names in this file.
     """
 
-    reciprocal_axes: list[str]
+    reciprocal_axes: List[str]
     """
     List of names of the diffractometer reciprocal-space (pseudo) axes. Both
     the exact spelling and order are defined by the back-end computation
@@ -360,13 +363,13 @@ class DCConfiguration:
     MUST match diffractometer to restore.
     """
 
-    constraints: dict[str, DCConstraint]
+    constraints: Dict[str, DCConstraint]
     """
     Limits to be imposed on the real-space axes for operations and
     computations.  Keys must match in the list of ``canonical_axes``.
     """
 
-    samples: dict[str, DCSample]
+    samples: Dict[str, DCSample]
     """
     Crystalline samples (lattice and orientation reflections).
     The sample name is used as the key in the dictionary.
@@ -410,7 +413,7 @@ class DCConfiguration:
     Name of the Python class that defines this diffractometer. (optional)
     """
 
-    other: dict[str, typing.Any] = field(default_factory=dict)
+    other: Dict[str, typing.Any] = field(default_factory=dict)
     """
     *Any* other content goes into this dictionary (comments, unanticipated
     keys, ...) (optional)

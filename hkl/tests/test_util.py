@@ -1,15 +1,24 @@
-import pytest
-from packaging import version
+"""Test the hkl.util module."""
 
-import hkl.util
+import json
+import time
+
+import databroker
+import pytest
+from bluesky import plans as bp
+from bluesky.run_engine import RunEngine
+from packaging import version
+from tiled.utils import safe_json_dump
+
+from .. import util
+from .tools import DocsCollector
+from .tools import validate_descriptor_doc_content
 
 NO_SUCH_PACKAGE_NAME = "no-such-package"
 
 
 @pytest.fixture(scope="function")
 def cat():
-    import databroker
-
     yield databroker.temp().v2
 
 
@@ -78,9 +87,9 @@ def crystal_setup(diffractometer):
 
 
 def test__package_info_states():
-    assert hkl.util._package_info is None
-    hkl.util.get_package_info("hkl")
-    assert hkl.util._package_info is not None
+    assert util._package_info is None
+    util.get_package_info("hkl")
+    assert util._package_info is not None
 
 
 @pytest.mark.parametrize(
@@ -95,7 +104,7 @@ def test__package_info_states():
     ],
 )
 def test_get_package_info(package_name, minimum_version):
-    v = hkl.util.get_package_info(package_name)
+    v = util.get_package_info(package_name)
     if v is None:
         assert package_name in ("hklpy", NO_SUCH_PACKAGE_NAME)
     else:
@@ -120,9 +129,9 @@ def test_get_package_info(package_name, minimum_version):
     # fmt: on
 )
 def test_software_versions_default_list(case):
-    v = hkl.util.software_versions(case)
+    v = util.software_versions(case)
     assert isinstance(v, dict)
-    expected = sorted(hkl.util.DEFAULT_PACKAGE_LIST)
+    expected = sorted(util.DEFAULT_PACKAGE_LIST)
     assert sorted(v.keys()) == expected
 
 
@@ -138,7 +147,7 @@ def test_software_versions_default_list(case):
     ],
 )
 def test_software_versions_items(package_name, minimum_version):
-    v = hkl.util.software_versions([package_name])
+    v = util.software_versions([package_name])
     if package_name in v:
         v_string = v[package_name]
         v_package = version.parse(v_string)
@@ -174,10 +183,11 @@ def test_issue215(cat, RE, fourc):
 
     assert len(cat) == 0
     uids = RE(bp.count([fourc]))
+    time.sleep(1)
     assert len(uids) == 1
     assert len(cat) == 1
 
-    orientation = hkl.util.run_orientation_info(cat[-1])
+    orientation = util.run_orientation_info(cat[-1])
     assert isinstance(orientation, dict)
     assert fourc.name in orientation
     # assert list(orientation.keys()) == []
@@ -191,7 +201,64 @@ def test_issue215(cat, RE, fourc):
     success = False
     try:
         # since it is just a problem of motor names in reflections ...
-        hkl.util.restore_reflections(orient, fourc)
+        util.restore_reflections(orient, fourc)
         success = True
     finally:
         assert success, "Could not restore orientation reflections."
+
+
+@pytest.mark.parametrize("use_refl", [None, "short", "long"])
+def test_RE_documents(use_refl, e4cv):
+    """Issue #316."""
+
+    docs = DocsCollector()  # capture the raw document stream directly
+    assert len(docs.raw) == 0
+
+    # add a reflection?
+    if use_refl == "short":
+        e4cv.calc.sample.add_reflection(1, 2, 3, (40, 0, 0, 60))
+    elif use_refl == "long":
+        # fmt: off
+        e4cv.calc.sample.add_reflection(
+            1, 2, 3,
+            position=e4cv.calc.Position(tth=60, omega=40, chi=0, phi=0),
+        )
+        # fmt: on
+    refs = e4cv.reflections.get()
+    assert isinstance(refs, list)
+    assert len(refs) == len(e4cv.calc.sample.reflections)
+    if len(refs) > 0:
+        assert list(refs[0]) == [1.0, 2.0, 3.0]
+
+    safe = safe_json_dump(refs)
+    assert isinstance(safe, bytes)
+
+    assert isinstance(safe_json_dump(e4cv.reflections_details.get()), bytes)
+    # assert f"{refs=!r}" == "debug"
+
+    RE = RunEngine()
+    cat = databroker.temp().v2
+    RE.subscribe(cat.v1.insert)
+
+    uids = RE(bp.count([e4cv]), docs.receiver)
+    assert len(uids) == 1
+    assert len(docs.raw) == 4
+
+    # Get the configuration from the raw document stream
+    validate_descriptor_doc_content(e4cv.name, docs.raw.get("descriptor"))
+
+    # Get the configuration from the safe_json version of the document stream
+    # difference: np.ndarray --> list
+    # difference: tuple --> list
+    descriptor = docs.safe_json.get("descriptor")
+    assert isinstance(descriptor, bytes)
+    validate_descriptor_doc_content(e4cv.name, json.loads(docs.safe_json.get("descriptor")))
+
+    # Get the configuration from the databroker document stream
+    for key, doc in cat.v1[uids[0]].documents():
+        if key == "descriptor":
+            validate_descriptor_doc_content(e4cv.name, doc)
+
+    orientation = util.run_orientation_info(cat[uids[0]])
+    assert isinstance(orientation, dict)
+    assert e4cv.name in orientation

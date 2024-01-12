@@ -15,6 +15,7 @@ dependencies:
   - python >=3.8,<3.12
   - apischema
   - bluesky
+  - databroker
   - hkl
   - numpy
   - ophyd
@@ -25,6 +26,10 @@ dependencies:
   - pygobject
   - pyRestTable
   - spec2nexus
+  - suitcase-jsonl
+  - suitcase-mongo
+  - suitcase-msgpack
+  - suitcase-utils
   - tqdm
   - pip:
     - coveralls
