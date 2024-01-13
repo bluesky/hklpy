@@ -14,6 +14,8 @@ import logging
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
+PROJECT_NAME = "hklpy"  # pyproject.toml::[project]name
+
 try:
     from setuptools_scm import get_version
 
@@ -22,7 +24,7 @@ try:
 except (LookupError, ModuleNotFoundError):
     from importlib.metadata import version
 
-    __version__ = version("pkgdemo")
+    __version__ = version(PROJECT_NAME)
     del version
 
 # gobject-introspection, to access libhkl
