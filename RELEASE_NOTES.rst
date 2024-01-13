@@ -16,7 +16,7 @@ v2.0.0 (expected 2024)
 
 User-requested changes
 
-v1.1.0 (expected 2023-12)
+v1.1.0 (released 2024-01-13)
 ======================================
 
 Add new geometries from upstream *libhkl*.
