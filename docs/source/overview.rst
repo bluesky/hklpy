@@ -1,11 +1,26 @@
+.. include:: /substitutions.txt
+
 .. _overview:
 
 ========
 Overview
 ========
 
-The ``hklpy`` package provides controls for using diffractometers within the
-`Bluesky Framework <https://blueskyproject.io>`_.
+|hklpy| provides `ophyd <https://blueskyproject.io/ophyd>`_ diffractometer
+devices.  Each diffractometer is a positioner which may be used with `bluesky
+<https://blueskyproject.io/bluesky>`_ plans.
+
+*Hkl* (`documentation <https://people.debian.org/~picca/hkl/hkl.html>`_), from
+Synchrotron Soleil, is used as a backend library to convert between real-space
+motor coordinates and reciprocal-space crystallographic coordinates.  Here, we
+refer to this library as |libhkl| to clarify and distinguish from other use of
+of the term *hkl*.  Multiple source code repositories exist. |hklpy| uses the
+`active development repository <https://repo.or.cz/hkl.git>`_.
+
+All diffractometers can be provisioned with simulated axes; motors from an EPICS
+control system are not required to use |hklpy|. A few diffractometer simulators
+are provided :ref:`ready to use <ready_to_use>`.
+
 :class:`~hkl.diffract.Diffractometer()` is the base class from which all the
 different diffractometer geometries are built.  Built on the
 `ophyd.PseudoPositioner
