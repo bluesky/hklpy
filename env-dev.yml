@@ -35,6 +35,8 @@ dependencies:
   - pyRestTable
   - spec2nexus
   - sphinx
+  - sphinx-design
+  - sphinx-tabs
   - tqdm
   - trio >=0.22
   - pip:

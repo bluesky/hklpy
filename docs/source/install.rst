@@ -1,6 +1,8 @@
 .. shamelessly copied from ophyd's tutorial
 
-How to install `hklpy`
+.. _install:
+
+Install `hklpy`
 ======================
 
 This tutorial covers:
