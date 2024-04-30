@@ -1,3 +1,5 @@
+.. index:: SPEC; commands
+
 .. _spec_commands_map:
 
 ========================

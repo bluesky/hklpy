@@ -19,9 +19,22 @@ Based on the *hkl* library (`documentation
 Integrates with `ophyd <https://blueskyproject.io/ophyd>`_ pseudopositioners
 for use with `bluesky <https://blueskyproject.io/bluesky>`_ plans.
 
+.. toctree::
+   :glob:
+   :hidden:
+
+   overview
+   install
+   api
+   ready_to_use
+   examples/*
+   constraints
+   license
+   release_notes
+
 .. icons: https://fonts.google.com/icons
 
-.. grid:: 2
+.. grid:: 3
 
     .. grid-item-card:: :material-outlined:`summarize;3em` :ref:`overview`
 
@@ -41,7 +54,7 @@ for use with `bluesky <https://blueskyproject.io/bluesky>`_ plans.
 
     .. grid-item-card:: :material-regular:`precision_manufacturing;3em` :ref:`geometries`
 
-      Diffractometer geometries.
+      All the diffractometer geometries.
 
     .. grid-item-card:: :material-regular:`precision_manufacturing;3em` :ref:`ready_to_use`
 
@@ -49,15 +62,19 @@ for use with `bluesky <https://blueskyproject.io/bluesky>`_ plans.
 
     .. grid-item-card:: :material-regular:`alt_route;3em` :ref:`examples`
 
-      Examples using the *hklpy* package.
+      Example notebooks, how-to guides, ...
 
     .. grid-item-card:: :material-regular:`settings;3em` :ref:`configuration`
 
       Record the diffractometer configuration.
 
-    .. grid-item-card:: :material-regular:`alt_route;3em` :ref:`constraints`
+    .. grid-item-card:: :material-regular:`filter_list;3em` :ref:`constraints`
 
       Limit the number of reflections found.
+
+    .. grid-item-card:: :material-regular:`toc;3em` :ref:`spec_commands_map`
+
+      Bluesky for SPEC users.
 
     .. grid-item-card:: :material-regular:`history;3em` :ref:`release_notes`
 
@@ -66,21 +83,6 @@ for use with `bluesky <https://blueskyproject.io/bluesky>`_ plans.
     .. grid-item-card:: :material-regular:`description;3em` :ref:`about`
 
       See below.
-
------------------
-
-.. toctree::
-   :glob:
-   :hidden:
-
-   overview
-   constraints
-   install
-   ready_to_use
-   examples/*
-   api
-   license
-   release_notes
 
 .. _about:
 
