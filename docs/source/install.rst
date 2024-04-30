@@ -28,7 +28,7 @@ GitHub repository::
     $ git clone http://github.com/bluesky/hklpy.git
 
 .. note:: |libhkl| library **must** be installed.
-    
+
     Here are two possible ways, both involve ``conda`` installations to
     satisfy project requirements.
 
