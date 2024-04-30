@@ -1,93 +1,67 @@
-.. shamelessly copied from ophyd's tutorial
+.. include:: /substitutions.txt
 
 .. _install:
 
-Install `hklpy`
-======================
+Install
+=======
 
-This tutorial covers:
+The |hklpy| package should be installed by ``conda`` so that the |libhkl|
+compiled library is installed properly. That library is only compiled for
+workstations with *Linux x86_64* architecture.
 
-* Installation for users using :ref:`install.conda.user`
-* Installation for developers using :ref:`install.conda.developer`
-* Installation for users using :ref:`install.pip.user`
-* Test the installation using :ref:`install.test`
+.. _install.conda:
 
-.. note:: *hklpy* only runs on Linux, since it relies on the *hkl*
-    library which is only available for Linux.
+conda
+-----
 
-It is not required to have an EPICS IOC server running; all diffractometers may
-be run with simulated axes.
+If you are using Anaconda Python and have ``conda`` installed, install the most
+recent |hklpy| release with this command::
 
-.. _install.conda.user:
+    conda install conda-forge::hklpy
 
-Conda for *hklpy* Users
------------------------
+source
+------
 
-We strongly recommend creating a fresh environment (here, named ``try-hklpy``),
-installing *hklpy* (from the ``conda-forge`` conda channel [#conda]_) and other
-required packages from the very start.
+The |hklpy| source code can be downloaded from the
+GitHub repository::
 
-.. code:: bash
+    $ git clone http://github.com/bluesky/hklpy.git
 
-   conda create -n try-hklpy -c conda-forge hklpy
-   conda activate try-hklpy
+.. note:: |libhkl| library **must** be installed.
+    
+    Here are two possible ways, both involve ``conda`` installations to
+    satisfy project requirements.
 
-.. [#conda] conda-forge: https://anaconda.org/conda-forge
+    1. Install |hklpy| first with :ref:`install.conda`
 
-.. _install.conda.developer:
+    2. Create and activate a custom conda environment
+       using |hklpy|'s ``environment.yml`` file::
 
-Conda for Development
----------------------
+            conda env create -n hklpy-source -f environment.yml
+            conda activate hklpy-source
 
-We strongly recommend creating a fresh environment (here, named ``hklpy-dev``),
-first installing *hklpy* (from the ``conda-forge`` conda channel [#conda]_) and
-other packages.  This will add all required packages to the new environment.
-Start from the source directory:
+    After one of these steps, then install |hklpy| from source as shown next.
 
-.. code:: bash
+To install from the source directory using ``pip`` in editable mode::
 
-   cd hklpy
-   conda create -n dev-hklpy -f env-dev.yml
-   conda activate hklpy-dev
+    $ cd hklpy
+    $ python -m pip install -e .
 
-Next, pip install the source directory:
+Required Libraries
+------------------
 
-.. code:: bash
-
-   pip install -e . --no-deps
-
-.. _install.pip.user:
-
-Pip for *hklpy* Users
----------------------
-
-We strongly recommend creating a fresh environment (here, named ``try-hklpy``).
-Both Python and the *hkl* library must already be installed.  Here, we create
-a conda environment with just these packages required:
-
-.. .. code:: bash
-
-..     python3 -m venv try-hklpy
-..     source try-hklpy/bin/activate
-
-.. code:: bash
-
-    conda create -y -n try-hklpy python=3.9 hkl -c conda-forge
-    conda activate try-hklpy
-
-Install *hklpy* from PyPI.
-
-.. code:: bash
-
-    python3 -m pip install hklpy
+The repository's ``environment.yml`` file lists the additional packages
+required by |hklpy|.  Most packages are available as conda packages
+from https://anaconda.org.  The others are available on
+https://PyPI.python.org.
 
 .. _install.test:
 
-Test that *hklpy* is installed
+Test the installation
 ------------------------------
 
-Test the *hklpy* has been installed by creating a simulated 4-circle
-diffractometer and showing its defaults:
+Test that |hklpy| and the |libhkl| library have been installed by creating a
+simulated 4-circle diffractometer and showing its default settings:
 
 .. code:: bash
 

@@ -1,0 +1,5 @@
+.. canonical representations of various terms
+
+.. |hklpy| replace:: **hklpy**
+.. |libhkl| replace:: **libhkl**
+.. |spec| replace:: **SPEC**

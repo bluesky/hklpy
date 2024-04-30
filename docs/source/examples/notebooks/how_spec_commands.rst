@@ -1,4 +1,6 @@
-.. index:: SPEC; commands
+.. include:: /substitutions.txt
+
+.. index:: SPEC; commands, hklpy; commands
 
 .. _spec_commands_map:
 
@@ -6,23 +8,22 @@
 SPEC commands in Bluesky
 ========================
 
-Make it easier for users (especially SPEC users) to learn and remember
-the new tools in Bluesky's *hklpy* package.
+Make it easier for users (especially |spec| users) to learn and remember
+the tools in Bluesky's |hklpy| package.
 
-In addition to the comparison with SPEC commands, more *hklpy* commands
-are listed in the :ref:`user` section.
+See section :ref:`user` for more |hklpy| commands.
 
 .. index:: !Quick Reference Table
 
-Quick Reference Table
+.. rubric:: Quick Reference Table
 
 ===============  =============================================================  ============
-*SPEC*           *hklpy*                                                        description
+|spec|           |hklpy|                                                        description
 ===============  =============================================================  ============
 --               :func:`~hkl.user.select_diffractometer`                        Select the default diffractometer.
 ``pa``           :func:`~hkl.user.pa`                                           Report (full) diffractometer settings.  (pa: print all)
 ``wh``           :func:`~hkl.user.wh`                                           Report (brief) diffractometer settings. (wh: where)
-``br h k l``     ``d_object.move((h, k, l))``                                   Move diffractometer (named here as ``d_object``) motors to the given :math:`h, k, l`.
+``br h k l``     ``d_object.move((h, k, l))``                                   Move motors of ``d_object`` diffractometer to the given :math:`h, k, l`.  Note the extra parenthesis.
 ``ca h k l``     :func:`~hkl.user.cahkl`                                        Prints calculated motor settings for the given :math:`h, k, l`.
 ``or_swap``      :func:`~hkl.user.or_swap()`                                    Exchange primary & secondary orientation reflections.
 ``or0``          :func:`~hkl.user.setor`                                        Define a crystal reflection and its motor positions.

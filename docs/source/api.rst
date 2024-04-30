@@ -16,3 +16,9 @@ API Reference
    sample
    user
    util
+
+.. toctree::
+   :glob:
+   :hidden:
+
+   license
