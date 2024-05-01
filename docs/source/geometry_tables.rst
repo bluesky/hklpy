@@ -1,10 +1,12 @@
 .. this page created by ./docs/make_geometry_tables.py
 
+.. include:: /substitutions.txt
+
 .. _geometry_tables:
 
-==============================
-Diffractometer Geometry Tables
-==============================
+=========================
+Diffractometer Geometries
+=========================
 
 .. index:: mode
 

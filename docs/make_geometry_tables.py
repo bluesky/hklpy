@@ -18,10 +18,12 @@ from hkl import calc
 PAGE_HEAD = f"""
 .. this page created by {sys.argv[0]}
 
+.. include:: /substitutions.txt
+
 .. _geometry_tables:
 
 =================================
-Tables of Diffractometer Geometry
+Diffractometer Geometries
 =================================
 
 Tables are provided for the different geometries and then, for each
@@ -34,7 +36,7 @@ Geometries indexed by number of circles
 The different diffractometer geometries are distinguished, primarily, by
 the number of axes (circles) and the names of each.  This table is
 sorted first by the number of circles, and then the geometry name (as
-used here in *hklpy*).
+used here in |hklpy|).
 
 """
 
