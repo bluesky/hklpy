@@ -23,7 +23,8 @@ See section :ref:`user` for more |hklpy| commands.
 --               :func:`~hkl.user.select_diffractometer`                        Select the default diffractometer.
 ``pa``           :func:`~hkl.user.pa`                                           Report (full) diffractometer settings.  (pa: print all)
 ``wh``           :func:`~hkl.user.wh`                                           Report (brief) diffractometer settings. (wh: where)
-``br h k l``     ``d_object.move((h, k, l))``                                   Move motors of ``d_object`` diffractometer to the given :math:`h, k, l`.  Note the extra parenthesis.
+``br h k l``     ``d_object.move((h, k, l))``                                   (command line) Move motors of diffractometer ``d_object`` to the given :math:`h, k, l`.  Note the extra parenthesis.
+``br h k l``     ``yield from bps.mv(d_object, (h, k, l))``                     (bluesky plan) Move motors of diffractometer ``d_object`` to the given :math:`h, k, l`.  Note the extra parenthesis.
 ``ca h k l``     :func:`~hkl.user.cahkl`                                        Prints calculated motor settings for the given :math:`h, k, l`.
 ``or_swap``      :func:`~hkl.user.or_swap()`                                    Exchange primary & secondary orientation reflections.
 ``or0``          :func:`~hkl.user.setor`                                        Define a crystal reflection and its motor positions.
@@ -48,4 +49,5 @@ See section :ref:`user` for more |hklpy| commands.
 ``mz``           TODO:                                                          Move zone
 ``pl``           TODO:                                                          Set the scattering plane
 ``sz``           TODO:                                                          Set zone
+``reflex``       TODO:                                                          Least squares refinement of lattice parameters from list of reflections
 ===============  =============================================================  ============
