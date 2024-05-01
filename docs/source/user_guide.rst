@@ -32,10 +32,10 @@ and all the nitty-gritty details.
 
         .. grid:: 2
 
-            .. grid-item-card:: :ref:`user`
-            .. grid-item-card:: :ref:`configuration`
+            .. grid-item-card:: :ref:`User Friendliness <user>`
+            .. grid-item-card:: :ref:`Export & restore UB <configuration>`
             .. grid-item-card:: :ref:`ready_to_use`
-            .. grid-item-card:: :ref:`geometries`
+            .. grid-item-card:: :ref:`geometry_tables`
             .. grid-item-card:: :ref:`constraints`
             .. grid-item-card:: :ref:`spec_commands_map`
 

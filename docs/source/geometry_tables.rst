@@ -2,9 +2,9 @@
 
 .. _geometry_tables:
 
-=================================
-Tables of Diffractometer Geometry
-=================================
+==============================
+Diffractometer Geometry Tables
+==============================
 
 .. index:: mode
 
