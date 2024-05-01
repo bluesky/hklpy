@@ -2,8 +2,8 @@
 
 .. _examples.diffractometer:
 
-Diffractometer Geometries
--------------------------
+Diffractometer Examples
+-----------------------
 
 See also the documentation for the :ref:`geometries` module.
 

@@ -1,5 +1,5 @@
 """
-Provide a simplified interface for hklpy diffractometer users.
+Provide a simplified interface for |hklpy| diffractometer users.
 
 The user must define a diffractometer instance, then
 register that instance here calling ``select_diffractometer(instance)``.
