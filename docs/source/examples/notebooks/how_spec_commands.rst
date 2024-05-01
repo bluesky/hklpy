@@ -49,5 +49,5 @@ See section :ref:`user` for more |hklpy| commands.
 ``mz``           TODO:                                                          Move zone
 ``pl``           TODO:                                                          Set the scattering plane
 ``sz``           TODO:                                                          Set zone
-``reflex``       TODO:                                                          Least squares refinement of lattice parameters from list of reflections
+``reflex``       :func:`~hkl.sample.HklSample.affine()`                         Refinement of lattice parameters from list of 3 or more reflections
 ===============  =============================================================  ============
