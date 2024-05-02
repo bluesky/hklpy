@@ -11,18 +11,20 @@ Release History
     Deprecations
     Contributors
 
-v2.0.0 (expected 2024)
-======================================
+..
+    v2.0.0 (expected 2024)
+    ======================================
 
-User-requested changes
+    User-requested changes
 
-v1.1.1 (released -tba-)
-======================================
+..
+    v1.1.1 (released -tba-)
+    ======================================
 
-Maintenance
------------
+    Maintenance
+    -----------
 
-Reogranized the web site docs to be easier to navigate.
+    Reorganized the web site docs to be easier to navigate.
 
 v1.1.0 (released 2024-01-13)
 ======================================
