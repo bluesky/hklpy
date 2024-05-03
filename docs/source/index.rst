@@ -45,7 +45,7 @@ hklpy
 About
 -----
 
-:home: https://bluesky.github.io/hklpy
+:home: https://blueskyproject.io/hklpy
 :source: https://github.com/bluesky/hklpy
 :license: :ref:`license`
 :full version: |release|
