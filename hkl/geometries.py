@@ -183,7 +183,15 @@ class Zaxis(Diffractometer):
 
 
 class SimMixin(Device):
-    """Defines `h`, `k`, & `l` pseudo-positioners."""
+    """
+    Defines `h`, `k`, & `l` pseudo-positioners.
+
+    Use this mixin class with any of the diffractometer geometries to create
+    your own simulator.  Follow one of the simulators below, such as
+    :class:`~hkl.geometries.SimulatedE4CV`.  You should replace ``E4CV`` with
+    your geomtry's name.  And, you will need to create SoftPositioner components
+    for each of the real-space axes, in the order required by that geometry.
+    """
 
     h = Cpt(PseudoSingle, "", kind="hinted")
     k = Cpt(PseudoSingle, "", kind="hinted")

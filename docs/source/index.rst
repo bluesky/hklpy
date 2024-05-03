@@ -4,51 +4,51 @@
 hklpy
 =====
 
-Controls for using diffractometers within the `Bluesky Framework
-<https://blueskyproject.io>`_.
+.. include:: /substitutions.txt
 
-Based on the *hkl* library (`documentation
-<https://people.debian.org/~picca/hkl/hkl.html>`_, `source
-<https://repo.or.cz/hkl.git>`_).  (Caution: The GitHub source `repository
-<https://github.com/picca/hkl>`_ may not be synchronized with the latest version
-from repo.or.cz.)
+.. index:: !hklpy
 
-.. ,
-   with slightly cleaner abstractions
-   when compared to the auto-generated gobject-introspection classes.
-
-Integrates with `ophyd <https://blueskyproject.io/ophyd>`_ pseudopositioners
-for use with `bluesky <https://blueskyproject.io/bluesky>`_ plans.
+|hklpy| is a Python package for practical use of diffractometers with the
+`Bluesky Framework <https://blueskyproject.io>`_.
 
 .. toctree::
-   :maxdepth: 2
    :glob:
-   :caption: Core Functionality
+   :hidden:
 
-   overview
-   constraints
+   user_guide
    install
-
-.. toctree::
-   :maxdepth: 2
-   :glob:
-   :caption: Ready-to-Use Devices
-
-   ready_to_use
-   examples/*
-
-.. toctree::
-   :maxdepth: 2
-   :glob:
-   :caption: Developer Notes
-
    api
    release_notes
 
-Indices
--------
+.. icons: https://fonts.google.com/icons
 
-* :ref:`General Index <genindex>`
-* :ref:`Index of Modules <modindex>`
+.. grid:: 2
 
-.. note:: *hklpy* documentation built |today| for version |version|.
+    .. grid-item-card:: :material-outlined:`summarize;3em` :ref:`user_guide`
+
+      How to use |hklpy|
+
+    .. grid-item-card:: :material-regular:`install_desktop;3em` :ref:`install`
+
+      How to install |hklpy|
+
+    .. grid-item-card:: :material-regular:`subscriptions;3em` :ref:`api_documentation`
+
+      About the underlying devices and other support.
+
+    .. grid-item-card:: :material-regular:`history;3em` :ref:`release_notes`
+
+      History of changes.
+
+.. _about:
+
+About
+-----
+
+:home: https://bluesky.github.io/hklpy
+:source: https://github.com/bluesky/hklpy
+:license: :ref:`license`
+:full version: |release|
+:published: |today|
+:index: :ref:`genindex`
+:module: :ref:`modindex`

@@ -1,10 +1,12 @@
 .. this page created by ./docs/make_geometry_tables.py
 
+.. include:: /substitutions.txt
+
 .. _geometry_tables:
 
-=================================
-Tables of Diffractometer Geometry
-=================================
+=========================
+Diffractometer Geometries
+=========================
 
 .. index:: mode
 
@@ -20,7 +22,7 @@ Geometries indexed by number of circles
 The different diffractometer geometries are distinguished, primarily, by
 the number of axes (circles) and the names of each.  This table is
 sorted first by the number of circles, and then the geometry name (as
-used here in *hklpy*).
+used here in |hklpy|).
 
 
 ======== ================================================================ =======================================================================

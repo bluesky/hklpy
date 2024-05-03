@@ -1,5 +1,7 @@
-Ready-to-Use Devices
-====================
+.. _ready_to_use:
+
+Simulated Diffractometers
+=========================
 
 These simulated diffractometer devices are ready-made classes in Python. To
 configure them, the user needs only provide a name.

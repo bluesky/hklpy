@@ -1,3 +1,5 @@
+.. _api_documentation:
+
 API Reference
 =============
 
@@ -14,3 +16,9 @@ API Reference
    sample
    user
    util
+
+.. toctree::
+   :glob:
+   :hidden:
+
+   license

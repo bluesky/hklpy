@@ -24,8 +24,8 @@ import hkl.user
 project = "hklpy"
 copyright = "2014-2023, Brookhaven National Laboratory"
 # author = 'Bluesky team'
-version = hkl.__version__
-release = version
+release = hkl.__version__
+version = ".".join(release.split(".")[:2])
 short_version = version
 if "+g" in version and ".d2" in version:
     # Extra date (1.0.5.dev146+gbb34ee0.d20231102) makes the title too long.
@@ -45,8 +45,10 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
+    "sphinx_design",
     "nbsphinx",
 ]
+extensions.append("sphinx_tabs.tabs")  # this must be last
 
 templates_path = ["_templates"]
 exclude_patterns = ["**.ipynb_checkpoints"]
@@ -55,6 +57,7 @@ exclude_patterns = ["**.ipynb_checkpoints"]
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "pydata_sphinx_theme"
+html_title = f"{project} {version}"
 html_static_path = ["_static"]
 
 

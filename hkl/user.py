@@ -1,8 +1,15 @@
 """
-Provide a simplified interface for hklpy diffractometer users.
+Provide a simplified interface for |hklpy| diffractometer users.
 
-The user must define a diffractometer instance, then
-register that instance here calling ``select_diffractometer(instance)``.
+The user must define a diffractometer object, then
+register that object here.  For example::
+
+    from hkl import SimulatedE4CV
+    from hkl.user import *
+
+    e4cv = SimulatedE4CV("", name="e4cv")
+    select_diffractometer(e4cv)
+    wh()
 
 FUNCTIONS
 

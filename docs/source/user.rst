@@ -1,13 +1,15 @@
+.. include:: /substitutions.txt
+
 .. _user:
 
 Module: ``user``
 ----------------
 
-Make it easier for users (especially SPEC users) to learn and remember
-the new tools in Bluesky's *hklpy* package.
+Make it easier for users (especially |spec| users) to learn and remember
+the new tools in Bluesky's |hklpy| package.
 
-See :ref:`spec_commands_map` for a table of SPEC commands and their counterparts
-in *hklpy*.
+See :ref:`spec_commands_map` for a table of |spec| commands and their counterparts
+in |hklpy|.
 
 .. automodule:: hkl.user
     :members:
