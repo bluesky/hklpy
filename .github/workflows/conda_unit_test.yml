@@ -56,7 +56,7 @@ jobs:
 
     - name: Directories before Docker
       run: ls -lAFghrt ~/
-  
+
     - name: Start EPICS IOCs in Docker
       run: |
         set -vxeuo pipefail
@@ -95,7 +95,7 @@ jobs:
         CMD+="; up.wait_for_connection()"
         CMD+="; print(up.get(), pv.get())"
         python -c "${CMD}"
-  
+
     - name: Install the hklpy package
       shell: bash -l {0}
       run: |
