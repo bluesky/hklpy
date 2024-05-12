@@ -32,9 +32,31 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Create Python ${{ matrix.python-version }} environment
+      uses: mamba-org/setup-micromamba@v1
+      with:
+        cache-environment: true
+        cache-environment-key: env-key-${{ matrix.python-version }}
+        condarc: |
+          channel-priority: flexible
+        environment-file: environment.yml
+        environment-name: hklpy-test-py-${{ matrix.python-version }}
+        create-args: >-
+          coveralls
+          pytest
+          pytest-cov
+          python=${{ matrix.python-version }}
+
+    - name: conda environments
+      shell: bash -l {0}
+      run: |
+        conda env list
+        micromamba env list
+        python --version
+
     - name: Directories before Docker
       run: ls -lAFghrt ~/
-
+  
     - name: Start EPICS IOCs in Docker
       run: |
         set -vxeuo pipefail
@@ -73,30 +95,7 @@ jobs:
         CMD+="; up.wait_for_connection()"
         CMD+="; print(up.get(), pv.get())"
         python -c "${CMD}"
-
-
-    - name: Create Python ${{ matrix.python-version }} environment
-      uses: mamba-org/setup-micromamba@v1
-      with:
-        cache-environment: true
-        cache-environment-key: env-key-${{ matrix.python-version }}
-        condarc: |
-          channel-priority: flexible
-        environment-file: environment.yml
-        environment-name: hklpy-test-py-${{ matrix.python-version }}
-        create-args: >-
-          coveralls
-          pytest
-          pytest-cov
-          python=${{ matrix.python-version }}
-
-    - name: conda environments
-      shell: bash -l {0}
-      run: |
-        conda env list
-        micromamba env list
-        python --version
-
+  
     - name: Install the hklpy package
       shell: bash -l {0}
       run: |
