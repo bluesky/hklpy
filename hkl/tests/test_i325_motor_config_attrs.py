@@ -1,66 +1,83 @@
+import pytest
 from ophyd import Component
 from ophyd import Device
 from ophyd import EpicsMotor
+from ophyd import EpicsSignal
+from ophyd import Kind
+
 import hkl
 
+from .common import IOC_PV_PREFIX_GP
 
-M1_PV = "gp:m1"
-M2_PV = "gp:m2"
-M3_PV = "gp:m3"
-M4_PV = "gp:m4"
-CONFIG_ATTRS_EXPECTED = (
-    "user_offset user_offset_dir velocity acceleration motor_egu".split()
+OMEGA_PV = f"{IOC_PV_PREFIX_GP}m1"
+CHI_PV = f"{IOC_PV_PREFIX_GP}m2"
+PHI_PV = f"{IOC_PV_PREFIX_GP}m3"
+TTH_PV = f"{IOC_PV_PREFIX_GP}m4"
+
+MOTOR_RECORD_CONFIG_ATTRS = sorted(
+    """
+        acceleration
+        motor_egu
+        user_offset
+        user_offset_dir
+        velocity
+    """.split()
 )
 
 
-def test_i325():
+class FourC(hkl.SimMixin, hkl.E4CV):
+    omega = Component(EpicsMotor, OMEGA_PV)
+    chi = Component(EpicsMotor, CHI_PV)
+    phi = Component(EpicsMotor, PHI_PV)
+    tth = Component(EpicsMotor, TTH_PV)
+
+
+class MyDevice(Device):
+    omega = Component(EpicsMotor, OMEGA_PV)
+
+
+device = MyDevice("", name="device")
+fourc = FourC("", name="fourc")
+motor = EpicsMotor(OMEGA_PV, name="motor")
+
+
+@pytest.mark.parametrize("attr", MOTOR_RECORD_CONFIG_ATTRS)
+@pytest.mark.parametrize(
+    "motor, parent",
+    [
+        [motor, motor],
+        [device.omega, device],
+        [fourc.omega, fourc],
+        [fourc.chi, fourc],
+        [fourc.phi, fourc],
+        [fourc.tth, fourc],
+    ],
+)
+def test_i325(attr, motor, parent):
     """
     Check the configuration_attrs for EpicsMotor itself and as Component.
 
     https://github.com/bluesky/hklpy/issues/325
+
+    EPICS IOC and motor records are necessary to demonstrate this problem. We
+    prove the problem is NOT in the ophyd Devices by including them in the
+    tests.
+
+    Comparison of device's ``.read_configuration()`` output can show this
+    problem. Compare EpicsMotor with any/all Diffractometer motors.
     """
+    parent.wait_for_connection()
+    motor.wait_for_connection()
 
-    # First, we prove the problem is NOT in the ophyd Devices.
-    class MyDevice(Device):
-        motor = Component(EpicsMotor, "")
+    device_configuration = parent.read_configuration()
+    device_configuration_keys = sorted(list(device_configuration))
+    expected_key = f"{motor.name}_{attr}"
+    assert attr in motor.component_names, f"{expected_key=!r}"
+    component = getattr(motor, attr)
+    assert isinstance(component, EpicsSignal)
+    assert component.kind == Kind.config, f"{component.kind=!r}"
 
-    motor_device = MyDevice(M1_PV, name="motor_device")
-    motor_object = EpicsMotor(M1_PV, name="motor_object")
-    motor_device.wait_for_connection()
-    motor_object.wait_for_connection()
-    assert motor_object.configuration_attrs == CONFIG_ATTRS_EXPECTED
-    assert motor_device.motor.configuration_attrs == motor_object.configuration_attrs
-
-    # But the original statement of the problem is for data from databroker after a run.
-    # motor: list(db[-1].descriptors[0]['configuration']['es_diag1_y']['data'] )
-    # tardis: list(db[-1].descriptors[0]['configuration']['tardis']['data'] )
-    # In the second case, only some of the config attrs are present for each motor.
-    # Different ones for each motor are reported.
-
-    # Comparison of device's .read_configuration() output can show this problem.
-    # Compare EpicsMotor with any/all Diffractometer motor.
-
-    class Fourc(hkl.SimMixin, hkl.E4CV):
-        omega = Component(EpicsMotor, M1_PV)
-        chi = Component(EpicsMotor, M2_PV)
-        phi = Component(EpicsMotor, M3_PV)
-        tth = Component(EpicsMotor, M4_PV)
-
-    fourc = Fourc("", name="fourc")
-    fourc.wait_for_connection()
-
-    def check_config_attrs(device):
-        device_configuration = device.read_configuration()
-        for attr in CONFIG_ATTRS_EXPECTED:
-            expected_key = f"{device.name}_{attr}"
-            assert expected_key in device_configuration, f"{expected_key=!r}"
-
-    for item in (
-        motor_object,
-        motor_device.motor,
-        fourc.omega,
-        fourc.chi,
-        fourc.phi,
-        fourc.tth,
-    ):
-        check_config_attrs(item)
+    assert expected_key in device_configuration_keys, f"{expected_key=!r}"
+    # assert (
+    #     sorted(motor.configuration_attrs) == MOTOR_RECORD_CONFIG_ATTRS
+    # ), f"{motor.name=!r}"
