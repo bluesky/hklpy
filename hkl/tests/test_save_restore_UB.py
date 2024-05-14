@@ -188,7 +188,7 @@ def test_list_orientation_runs(cat, RE, fourc, kappa):
     assert len(runs) == 4, f"{runs=!r}"
     # four sets of orientation info
     # (last scan has 2, first scan has none)
-    # assert len(runs.scan_id) == 4
+    assert len(runs.scan_id) == 4
     assert 1 not in runs.scan_id.to_list(), f"{runs=!r}"  # no orientation
     assert runs.scan_id.to_list() == [2, 3, 4, 4]
     assert runs.diffractometer_name.to_list() == "fourc kappa fourc kappa".split()
