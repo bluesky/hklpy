@@ -78,6 +78,4 @@ def test_i325(attr, motor, parent):
     assert component.kind == Kind.config, f"{component.kind=!r}"
 
     assert expected_key in device_configuration_keys, f"{expected_key=!r}"
-    assert (
-        sorted(motor.configuration_attrs) == MOTOR_RECORD_CONFIG_ATTRS
-    ), f"{motor.name=!r}"
+    assert sorted(motor.configuration_attrs) == MOTOR_RECORD_CONFIG_ATTRS, f"{motor.name=!r}"
