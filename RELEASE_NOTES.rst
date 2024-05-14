@@ -29,7 +29,8 @@ Release History
     Maintenance
     -----------
 
-    * Drop Python 3.7 from unit test suite.
+    * Add EPICS IOCs to GitHub workflow unit test suite.
+    * Drop Python 3.7 from unit test suite matrix.
     * Reorganized the web site docs to be easier to navigate.
 
 v1.1.0 (released 2024-01-13)
