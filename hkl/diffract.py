@@ -315,19 +315,16 @@ class Diffractometer(PseudoPositioner):
             # fmt: off
             prefix,
             read_attrs=read_attrs,
-            configuration_attrs=configuration_attrs,
+            configuration_attrs=configuration_attrs,  # write xtal info to descriptor
             **kwargs,
             # fmt: on
         )
 
-        # write the crystal orientation information in descriptor doc
-        self.configuration_attrs += self._orientation_attrs
+        for attr in self.orientation_attrs.get():
+            getattr(self, attr).kind = "config"
+        self.energy_update_calc_flag.kind = "config"
+        self.orientation_attrs.kind = "config"  # orientation written as descriptors
         self._constraints_stack = []
-
-        if read_attrs is None:
-            # if unspecified, set the read attrs to the pseudo/real motor
-            # positions once known
-            self.read_attrs = list(self.PseudoPosition._fields) + list(self.RealPosition._fields)
 
         self.energy.subscribe(self._energy_changed, event_type=Signal.SUB_VALUE)
         self.energy_offset.subscribe(self._energy_offset_changed, event_type=Signal.SUB_VALUE)
