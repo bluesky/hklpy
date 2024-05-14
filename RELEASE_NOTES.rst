@@ -24,7 +24,7 @@ Release History
     Fixes
     -----------
 
-    * Resolve problem with configuration attributes of motor axes.
+    * Resolve problem with configuration attributes of Diffractometer class.
 
     Maintenance
     -----------
