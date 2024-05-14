@@ -4,7 +4,9 @@ Common code, setups, constants, ... for these tests.
 Avoids direct imports of __init__.py.
 """
 
+import json
 import logging
+from pathlib import Path  # noqa
 
 import numpy
 from tiled.utils import safe_json_dump
@@ -27,6 +29,12 @@ class DocsCollector:
     def receiver(self, key, doc):
         self.raw[key] = doc
         self.safe_json[key] = safe_json_dump(doc)
+
+    def to_file(self, fpath: (Path, str), indent: int = 2) -> None:  # type: ignore
+        """Write collected docs to a file."""
+        with open(fpath, "w") as f:
+            dd = {k: json.loads(v.decode("utf8")) for k, v in self.safe_json.items()}
+            json.dump(dd, f, indent=indent)
 
 
 def new_sample(diffractometer, name, lattice):
@@ -65,16 +73,20 @@ def validate_descriptor_doc_content(gname, descriptor):
     data = diffractometer_config.get("data")
     assert isinstance(data, dict)
 
-    assert isinstance(data[f"{gname}_sample_name"], str)
-    assert isinstance(data[f"{gname}_lattice"], (numpy.ndarray, list))
-    assert isinstance(data[f"{gname}_lattice_reciprocal"], (tuple, list))
-    assert isinstance(data[f"{gname}_U"], (numpy.ndarray, list))
-    assert isinstance(data[f"{gname}_UB"], (numpy.ndarray, list))
-    assert isinstance(data[f"{gname}_reflections_details"], list)
-    assert isinstance(data[f"{gname}__pseudos"], (tuple, list))
-    assert isinstance(data[f"{gname}__reals"], (tuple, list))
-    assert isinstance(data[f"{gname}__constraints"], (numpy.ndarray, list))
-    assert isinstance(data[f"{gname}_ux"], float)
-    assert isinstance(data[f"{gname}_uy"], float)
-    assert isinstance(data[f"{gname}_uz"], float)
-    assert isinstance(data[f"{gname}_orientation_attrs"], list)
+    attrs = [
+        ["sample_name", str],
+        ["lattice", (numpy.ndarray, list)],
+        ["lattice_reciprocal", (tuple, list)],
+        ["U", (numpy.ndarray, list)],
+        ["UB", (numpy.ndarray, list)],
+        ["reflections_details", list],
+        ["_pseudos", (tuple, list)],
+        ["_reals", (tuple, list)],
+        ["_constraints", (numpy.ndarray, list)],
+        ["ux", float],
+        ["uy", float],
+        ["uz", float],
+        ["orientation_attrs", list],
+    ]
+    for attr, struct in attrs:
+        assert isinstance(data.get(f"{gname}_{attr}"), struct), f"{attr=!r} {list(data)=!r}"

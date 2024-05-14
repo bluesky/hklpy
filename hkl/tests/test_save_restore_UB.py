@@ -10,10 +10,11 @@ from bluesky import plan_stubs as bps
 from ophyd.sim import hw
 
 import hkl.util
-from hkl import SI_LATTICE_PARAMETER
 from hkl import SimulatedE4CV
 from hkl import SimulatedK4CV
 from hkl.calc import A_KEV
+
+from .tools import sample_silicon
 
 
 class Fourc(SimulatedE4CV):
@@ -43,11 +44,10 @@ def fourc():
     fourc._update_calc_energy()
 
     fourc.energy.put(A_KEV / 1.54)
-    a0 = SI_LATTICE_PARAMETER
-    sample = fourc.calc.new_sample("Si", lattice=(a0, a0, a0, 90, 90, 90))
+    sample = sample_silicon(fourc)
     r_400 = sample.add_reflection(4, 0, 0, (-145.451, 0, 0, 69.0966))
     r_040 = sample.add_reflection(0, 4, 0, (-145.451, 0, 90, 69.0966))
-    fourc.calc.sample.compute_UB(r_400, r_040)
+    sample.compute_UB(r_400, r_040)
 
     return fourc
 
@@ -59,12 +59,11 @@ def kappa():
     kappa._update_calc_energy()
 
     kappa.energy.put(A_KEV / 1.54)
-    a0 = SI_LATTICE_PARAMETER
-    sample = kappa.calc.new_sample("Si", lattice=(a0, a0, a0, 90, 90, 90))
+    sample = sample_silicon(kappa)
     r_400 = sample.add_reflection(4, 0, 0, (55.4507, 0, 90, -69.0966))
     r_040 = sample.add_reflection(0, 4, 0, (-1.5950, 134.7568, 123.3554, -69.0966))
 
-    kappa.calc.sample.compute_UB(r_400, r_040)
+    sample.compute_UB(r_400, r_040)
 
     return kappa
 
@@ -117,13 +116,13 @@ def test_fourc_orientation_save(cat, RE, fourc):
         assert list(descriptors.keys()) == "coords attrs dims data_vars".split()
         for key in key_list:
             key_name = f"fourc_{key}"
-            assert hasattr(conf, key_name)
+            assert hasattr(conf, key_name), f"{key_name=!r} {list(conf)=!r}"
             assert key_name in descriptors["data_vars"]
 
         assert conf.fourc_class_name == "Fourc"
         assert conf.fourc_geometry_name == "E4CV"
         assert conf.fourc_diffractometer_name == "fourc"
-        assert conf.fourc_sample_name == "Si"
+        assert conf.fourc_sample_name == "silicon"
 
         assert len(conf.fourc__pseudos) == 1
         assert conf.fourc__pseudos[0].values.tolist() == "h k l".split()
@@ -150,7 +149,7 @@ def test_fourc_orientation_save(cat, RE, fourc):
                 assert conf["fourc_class_name"] == "Fourc"
                 assert conf["fourc_geometry_name"] == "E4CV"
                 assert conf["fourc_diffractometer_name"] == "fourc"
-                assert conf["fourc_sample_name"] == "Si"
+                assert conf["fourc_sample_name"] == "silicon"
 
                 assert len(conf["fourc__pseudos"]) == 3
                 assert conf["fourc__pseudos"] == "h k l".split()
@@ -163,6 +162,7 @@ def test_fourc_run_orientation_info(cat, RE, fourc):
     info = hkl.util.run_orientation_info(cat[1])
     assert info is not None
     assert isinstance(info, dict)
+    assert len(info) > 0, f"{info=!r}"
     assert "fourc" in info
     fourc_orient = info["fourc"]
     assert "orientation_attrs" in fourc_orient
@@ -185,10 +185,11 @@ def test_list_orientation_runs(cat, RE, fourc, kappa):
 
     RE(scans())
     runs = hkl.util.list_orientation_runs(cat)
+    assert len(runs) == 4, f"{runs=!r}"
     # four sets of orientation info
     # (last scan has 2, first scan has none)
-    assert len(runs.scan_id) == 4
-    assert 1 not in runs.scan_id.to_list()  # no orientation
+    # assert len(runs.scan_id) == 4
+    assert 1 not in runs.scan_id.to_list(), f"{runs=!r}"  # no orientation
     assert runs.scan_id.to_list() == [2, 3, 4, 4]
     assert runs.diffractometer_name.to_list() == "fourc kappa fourc kappa".split()
 
@@ -222,7 +223,7 @@ def test_missing_energy_key(cat, RE, fourc):
         yield from bp.count([fourc])
 
     uids = RE(scans())
-    assert len(uids) == 1
+    assert len(uids) == 1, f"{uids=!r}"
     assert uids[0] in cat
 
     runs = hkl.util.list_orientation_runs(cat)
@@ -245,7 +246,11 @@ def test_missing_energy_key(cat, RE, fourc):
 
 def test_restore_orientation(cat, RE, fourc):
     RE(bp.count([fourc]))
-    fourc_orient = hkl.util.run_orientation_info(cat[-1])["fourc"]
+    info = hkl.util.run_orientation_info(cat[-1])
+    assert isinstance(info, dict)
+
+    fourc_orient = info.get("fourc")
+    assert fourc_orient is not None, f"{fourc_orient=!r}"
 
     e4cv = Fourc("", name="e4cv")
     assert len(e4cv.calc._samples) == 1
@@ -254,7 +259,7 @@ def test_restore_orientation(cat, RE, fourc):
     hkl.util.restore_orientation(fourc_orient, e4cv)
     assert len(e4cv.calc._samples) == 2
     sample = e4cv.calc.sample
-    assert sample.name == "Si"
+    assert sample.name == "silicon"
     assert len(sample.reflections) == 2
     numpy.testing.assert_array_equal(sample.reflections, [[4, 0, 0], [0, 4, 0]])
     # fmt: off
@@ -313,7 +318,11 @@ def test_restore_orientation(cat, RE, fourc):
 
 def test_restore_sample(cat, RE, fourc):
     RE(bp.count([fourc]))
-    fourc_orient = hkl.util.run_orientation_info(cat[-1])["fourc"]
+    info = hkl.util.run_orientation_info(cat[-1])
+    assert isinstance(info, dict)
+
+    fourc_orient = info.get("fourc")
+    assert fourc_orient is not None, f"{fourc_orient=!r}"
 
     # Add sample to new diffractometer.
     e4cv = Fourc("", name="e4cv")
@@ -325,5 +334,5 @@ def test_restore_sample(cat, RE, fourc):
     # Sample already defined, will not make another.
     with pytest.raises(ValueError) as exinfo:
         hkl.util.restore_sample(fourc_orient, e4cv)
-    expected = "Sample 'Si' already exists in e4cv."
+    expected = "Sample 'silicon' already exists in e4cv."
     assert exinfo.value.args[0] == expected
