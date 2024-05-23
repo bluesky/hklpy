@@ -183,7 +183,6 @@ API
     .. autoattribute:: real_axes
     .. autoattribute:: reciprocal_axes
     .. autoattribute:: samples
-    .. autoattribute:: samples
     .. autoattribute:: name
     .. autoattribute:: datetime
     .. autoattribute:: wavelength_angstrom

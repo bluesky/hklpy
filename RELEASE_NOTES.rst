@@ -21,10 +21,17 @@ Release History
     v1.1.1 (released -tba-)
     ======================================
 
+    Fixes
+    -----------
+
+    * Resolve problem with configuration attributes of Diffractometer class.
+
     Maintenance
     -----------
 
-    Reorganized the web site docs to be easier to navigate.
+    * Add EPICS IOCs to GitHub workflow unit test suite.
+    * Drop Python 3.7 from unit test suite matrix.
+    * Reorganized the web site docs to be easier to navigate.
 
 v1.1.0 (released 2024-01-13)
 ======================================

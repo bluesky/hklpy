@@ -189,12 +189,14 @@ def test_issue215(cat, RE, fourc):
 
     orientation = util.run_orientation_info(cat[-1])
     assert isinstance(orientation, dict)
-    assert fourc.name in orientation
+    assert fourc.name in orientation, f"{list(orientation)=!r}"
     # assert list(orientation.keys()) == []
 
     orient = orientation[fourc.name]
-    assert orient["_reals"] != canonical_names
-    assert orient["_reals"] == our_names
+    reals = orient.get("_reals")
+    assert reals is not None, f"{orient=!r}"
+    assert reals != canonical_names
+    assert reals == our_names
     for reflection in orient["reflections_details"]:
         assert list(reflection["position"].keys()) == canonical_names
 
