@@ -4,9 +4,9 @@
 
 .. _geometry_tables:
 
-=================================
+=========================
 Diffractometer Geometries
-=================================
+=========================
 
 Tables are provided for the different geometries and then, for each
 geometry, the calculation engines, pseudo axes required, modes of
