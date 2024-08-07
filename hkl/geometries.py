@@ -29,6 +29,7 @@ SPECIAL-USE DIFFRACTOMETER GEOMETRIES
 
 .. autosummary::
 
+    ~ApsPolar
     ~Petra3_p09_eh2
     ~Petra3_p23_4c
     ~Petra3_p23_6c
@@ -54,6 +55,7 @@ from . import calc
 from .diffract import Diffractometer
 
 __all__ = """
+    ApsPolar
     E4CH
     E4CV
     E6C
@@ -63,6 +65,7 @@ __all__ = """
     Petra3_p23_4c
     Petra3_p23_6c
     SimMixin
+    SimulatedApsPolar
     SimulatedE4CV
     SimulatedE6C
     SimulatedK4CV
@@ -78,6 +81,12 @@ __all__ = """
     Zaxis
 """.split()
 logger = logging.getLogger(__name__)
+
+
+class ApsPolar(Diffractometer):
+    """APS POLAR 6-circle diffractometer."""
+
+    calc_class = calc.CalcApsPolar
 
 
 class E4CH(Diffractometer):
@@ -196,6 +205,17 @@ class SimMixin(Device):
     h = Cpt(PseudoSingle, "", kind="hinted")
     k = Cpt(PseudoSingle, "", kind="hinted")
     l = Cpt(PseudoSingle, "", kind="hinted")
+
+
+class SimulatedApsPolar(SimMixin, ApsPolar):
+    """SimulatedApsPolar: Eulerian 4-circle diffractometer."""
+
+    tau = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0, kind="normal")
+    mu = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0, kind="normal")
+    chi = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0, kind="normal")
+    phi = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0, kind="normal")
+    gamma = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0, kind="normal")
+    delta = Cpt(SoftPositioner, limits=(-180, 180), init_pos=0, kind="normal")
 
 
 class SimulatedE4CV(SimMixin, E4CV):

@@ -37,6 +37,7 @@ gi.require_version("Hkl", "5.0")
 from .calc import A_KEV  # noqa: F401, F402, E402
 from .calc import UnreachableError  # noqa: F401, F402, E402
 from .configuration import DiffractometerConfiguration  # noqa: F401, F402, E402
+from .geometries import ApsPolar  # noqa: F401, F402, E402
 from .geometries import E4CH  # noqa: F401, F402, E402
 from .geometries import E4CV
 from .geometries import E6C
@@ -46,6 +47,7 @@ from .geometries import Petra3_p09_eh2
 from .geometries import Petra3_p23_4c
 from .geometries import Petra3_p23_6c
 from .geometries import SimMixin
+from .geometries import SimulatedApsPolar
 from .geometries import SimulatedE4CV
 from .geometries import SimulatedE6C
 from .geometries import SimulatedK4CV

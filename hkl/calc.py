@@ -11,6 +11,7 @@ Calculation support for diffractometers
 
 .. autosummary::
 
+    ~CalcApsPolar
     ~CalcE4CH
     ~CalcE4CV
     ~CalcE6C
@@ -47,6 +48,7 @@ from .util import libhkl
 
 __all__ = """
     A_KEV
+    CalcApsPolar
     CalcE4CH
     CalcE4CV
     CalcE6C
@@ -804,6 +806,13 @@ class CalcRecip(object):
     def _cfg_reciprocal(self):
         """Return reciprocal lattice to save as configuration."""
         return tuple(list(self.sample.reciprocal))
+
+
+class CalcApsPolar(CalcRecip):
+    """Geometry: APS POLAR"""
+
+    def __init__(self, **kwargs):
+        super().__init__("APS POLAR", **kwargs)
 
 
 class CalcE4CH(CalcRecip):
