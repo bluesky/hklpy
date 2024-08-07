@@ -4,7 +4,8 @@ from ophyd import PseudoSingle
 from hkl import SimulatedE4CV
 
 
-class Fourc(SimulatedE4CV): ...
+class Fourc(SimulatedE4CV):
+    """4-circle for testing."""
 
 
 FOURC_SETUP_CODE = """

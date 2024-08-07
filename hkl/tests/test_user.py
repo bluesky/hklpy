@@ -8,7 +8,8 @@ from hkl import SimulatedE4CV
 a0 = SI_LATTICE_PARAMETER
 
 
-class Fourc(SimulatedE4CV): ...
+class Fourc(SimulatedE4CV):
+    """4-circle for testing."""
 
 
 @pytest.fixture(scope="function")
