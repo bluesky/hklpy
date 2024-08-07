@@ -18,20 +18,28 @@ Release History
     User-requested changes
 
 ..
-    v1.1.1 (released -tba-)
+    v1.1.2 (released -tba-)
     ======================================
 
-    Fixes
-    -----------
+v1.1.1 (released 2024-08-07)
+======================================
 
-    * Resolve problem with configuration attributes of Diffractometer class.
+New Features and/or Enhancements
+--------------------------------
 
-    Maintenance
-    -----------
+* Add APS POLAR diffractometer geometry.
 
-    * Add EPICS IOCs to GitHub workflow unit test suite.
-    * Drop Python 3.7 from unit test suite matrix.
-    * Reorganized the web site docs to be easier to navigate.
+Fixes
+-----
+
+* Resolve problem with configuration attributes of Diffractometer class.
+
+Maintenance
+-----------
+
+* Add EPICS IOCs to GitHub workflow unit test suite.
+* Drop Python 3.7 from unit test suite matrix.
+* Reorganized the web site docs to be easier to navigate.
 
 v1.1.0 (released 2024-01-13)
 ======================================
