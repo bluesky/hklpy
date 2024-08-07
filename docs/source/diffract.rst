@@ -11,31 +11,46 @@ capabilities are also customized in a local subclass.
 Examples are provided in the
 :ref:`Geometries Examples <geometries.examples>` section.
 
+.. _diffract.geometries.common:
+
+Common Diffractometer Geometries
+++++++++++++++++++++++++++++++++
+
 These are the diffractometer geometries provided by the **libhkl**
 library [#libhkl]_:
 
-==============================  ==========================
-name                            description
-==============================  ==========================
-:class:`~hkl.geometries.E4CH`   Eulerian 4-circle, vertical scattering plane
-:class:`~hkl.geometries.E4CV`   Eulerian 4-circle, horizontal scattering plane
-:class:`~hkl.geometries.E6C`    Eulerian 6-circle
-:class:`~hkl.geometries.K4CV`   Kappa 4-circle, vertical scattering plane
-:class:`~hkl.geometries.K6C`    Kappa 6-circle
-:class:`~hkl.geometries.Zaxis`  Z-axis
-==============================  ==========================
+.. autosummary::
+    :nosignatures:
+
+    ~hkl.geometries.E4CH
+    ~hkl.geometries.E4CV
+    ~hkl.geometries.E6C
+    ~hkl.geometries.K4CV
+    ~hkl.geometries.K6C
+    ~hkl.geometries.Zaxis
+
+.. _diffract.geometries.special_use:
+
+Special-use Diffractometer Geometries
++++++++++++++++++++++++++++++++++++++
 
 These special-use geometries are also provided by the **libhkl**
 library [#libhkl]_:
 
-* :class:`~hkl.geometries.Petra3_p09_eh2`
-* :class:`~hkl.geometries.SoleilMars`
-* :class:`~hkl.geometries.SoleilSiriusKappa`
-* :class:`~hkl.geometries.SoleilSiriusTurret`
-* :class:`~hkl.geometries.SoleilSixsMed1p2`
-* :class:`~hkl.geometries.SoleilSixsMed2p2`
-* :class:`~hkl.geometries.SoleilSixsMed2p3`
-* :class:`~hkl.geometries.SoleilSixsMed2p3v2`
+.. autosummary::
+    :nosignatures:
+
+    ~hkl.geometries.ApsPolar
+    ~hkl.geometries.Petra3_p09_eh2
+    ~hkl.geometries.Petra3_p23_4c
+    ~hkl.geometries.Petra3_p23_6c
+    ~hkl.geometries.SoleilMars
+    ~hkl.geometries.SoleilSiriusKappa
+    ~hkl.geometries.SoleilSiriusTurret
+    ~hkl.geometries.SoleilSixsMed1p2
+    ~hkl.geometries.SoleilSixsMed2p2
+    ~hkl.geometries.SoleilSixsMed2p3
+    ~hkl.geometries.SoleilSixsMed2p3v2
 
 In all cases, see the **libhkl** documentation for further information
 on these geometries.

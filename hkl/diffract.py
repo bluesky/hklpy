@@ -113,6 +113,7 @@ class Diffractometer(PseudoPositioner):
 
     See Also
     --------
+    :class:`~hkl.geometries.ApsPolar
     :class:`~hkl.geometries.E4CH`
     :class:`~hkl.geometries.E4CV`
     :class:`~hkl.geometries.E6C`
