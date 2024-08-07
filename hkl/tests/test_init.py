@@ -13,6 +13,7 @@ import hkl.util
     [
         ("calc", "A_KEV"),
         ("calc", "UnreachableError"),
+        ("geometries", "ApsPolar"),
         ("geometries", "E4CH"),
         ("geometries", "E4CV"),
         ("geometries", "E6C"),
@@ -22,6 +23,7 @@ import hkl.util
         ("geometries", "Petra3_p23_4c"),
         ("geometries", "Petra3_p23_6c"),
         ("geometries", "SimMixin"),
+        ("geometries", "SimulatedApsPolar"),
         ("geometries", "SimulatedE4CV"),
         ("geometries", "SimulatedE6C"),
         ("geometries", "SimulatedK4CV"),
