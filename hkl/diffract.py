@@ -10,7 +10,6 @@ Common Support for diffractometers
 
 """
 
-
 import logging
 
 import pint

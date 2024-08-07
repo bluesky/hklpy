@@ -8,8 +8,7 @@ from hkl.calc import A_KEV
 from hkl.diffract import Constraint
 
 
-class Fourc(SimulatedE4CV):
-    ...
+class Fourc(SimulatedE4CV): ...
 
 
 @pytest.fixture(scope="function")

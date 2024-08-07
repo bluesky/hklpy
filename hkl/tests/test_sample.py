@@ -4,8 +4,7 @@ import pytest
 from hkl import SimulatedE4CV
 
 
-class Fourc(SimulatedE4CV):
-    ...
+class Fourc(SimulatedE4CV): ...
 
 
 @pytest.fixture(scope="function")

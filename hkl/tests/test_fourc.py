@@ -9,8 +9,7 @@ from .. import SimulatedE4CV
 from ..calc import UnreachableError
 
 
-class Fourc(SimulatedE4CV):
-    ...
+class Fourc(SimulatedE4CV): ...
 
 
 def check_hkl(diffractometer, h, k, l):
