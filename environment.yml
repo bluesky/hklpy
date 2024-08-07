@@ -19,6 +19,7 @@ dependencies:
   - hkl
   - numpy <=1.999
   - ophyd
+  - orjson
   - packaging
   - pint
   - pip
