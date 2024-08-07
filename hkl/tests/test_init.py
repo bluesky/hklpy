@@ -23,7 +23,6 @@ import hkl.util
         ("geometries", "Petra3_p23_4c"),
         ("geometries", "Petra3_p23_6c"),
         ("geometries", "SimMixin"),
-        ("geometries", "SimulatedApsPolar"),
         ("geometries", "SimulatedE4CV"),
         ("geometries", "SimulatedE6C"),
         ("geometries", "SimulatedK4CV"),
