@@ -42,6 +42,7 @@ from .geometries import E4CV
 from .geometries import E6C
 from .geometries import K4CV
 from .geometries import K6C
+from .geometries import ApsPolar
 from .geometries import Petra3_p09_eh2
 from .geometries import Petra3_p23_4c
 from .geometries import Petra3_p23_6c

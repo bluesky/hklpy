@@ -9,7 +9,7 @@ from hkl.diffract import Constraint
 
 
 class Fourc(SimulatedE4CV):
-    ...
+    """4-circle for testing."""
 
 
 @pytest.fixture(scope="function")

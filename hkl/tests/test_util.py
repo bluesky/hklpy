@@ -8,10 +8,10 @@ import pytest
 from bluesky import plans as bp
 from bluesky.run_engine import RunEngine
 from packaging import version
-from tiled.utils import safe_json_dump
 
 from .. import util
 from .tools import DocsCollector
+from .tools import safe_json_dump
 from .tools import validate_descriptor_doc_content
 
 NO_SUCH_PACKAGE_NAME = "no-such-package"

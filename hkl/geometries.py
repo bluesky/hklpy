@@ -29,6 +29,7 @@ SPECIAL-USE DIFFRACTOMETER GEOMETRIES
 
 .. autosummary::
 
+    ~ApsPolar
     ~Petra3_p09_eh2
     ~Petra3_p23_4c
     ~Petra3_p23_6c
@@ -54,6 +55,7 @@ from . import calc
 from .diffract import Diffractometer
 
 __all__ = """
+    ApsPolar
     E4CH
     E4CV
     E6C
@@ -78,6 +80,12 @@ __all__ = """
     Zaxis
 """.split()
 logger = logging.getLogger(__name__)
+
+
+class ApsPolar(Diffractometer):
+    """APS POLAR 6-circle diffractometer."""
+
+    calc_class = calc.CalcApsPolar
 
 
 class E4CH(Diffractometer):

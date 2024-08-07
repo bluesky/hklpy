@@ -15,10 +15,11 @@ dependencies:
   - python >=3.8,<3.12
   - apischema
   - bluesky
-  - databroker
+  - databroker <=1.999
   - hkl
-  - numpy
+  - numpy <=1.999
   - ophyd
+  - orjson
   - packaging
   - pint
   - pip

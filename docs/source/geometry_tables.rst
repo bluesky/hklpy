@@ -12,9 +12,9 @@ Diffractometer Geometries
 
 Tables are provided for the different geometries and then, for each geometry,
 the calculation engines, pseudo axes required, modes of operation, and any
-additional parameters required by the :ref:`mode <overview.mode>`.  The mode defines
-which axes will be computed, which will be held constant, and any relationships
-between axes.
+additional parameters required by the :ref:`mode <overview.mode>`.  The mode
+defines which axes will be computed, which will be held constant, and any
+relationships between axes.
 
 Geometries indexed by number of circles
 ---------------------------------------
@@ -37,6 +37,7 @@ used here in |hklpy|).
 4        :ref:`ZAXIS <ZAXIS_table>`                                       ``mu``, ``omega``, ``delta``, ``gamma``
 5        :ref:`SOLEIL SIXS MED2+2 <SOLEIL_SIXS_MED2+2_table>`             ``beta``, ``mu``, ``omega``, ``gamma``, ``delta``
 5        :ref:`SOLEIL SIXS MED2+3 v2 <SOLEIL_SIXS_MED2+3_v2_table>`       ``mu``, ``omega``, ``gamma``, ``delta``, ``eta_a``
+6        :ref:`APS POLAR <APS_POLAR_table>`                               ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta``
 6        :ref:`E6C <E6C_table>`                                           ``mu``, ``omega``, ``chi``, ``phi``, ``gamma``, ``delta``
 6        :ref:`K6C <K6C_table>`                                           ``mu``, ``komega``, ``kappa``, ``kphi``, ``gamma``, ``delta``
 6        :ref:`PETRA3 P09 EH2 <PETRA3_P09_EH2_table>`                     ``mu``, ``omega``, ``chi``, ``phi``, ``delta``, ``gamma``
@@ -54,8 +55,6 @@ used here in |hklpy|).
 Tables for each geometry
 ------------------------
 
-.. index:: mode
-
 A table is provided for each diffractometer geometry listing the calculation
 engines, pseudo axes required, modes of operation, and any additional parameters
 required by the mode.
@@ -70,6 +69,35 @@ required by the mode.
 * *axes read* : Axes used in the ``forward()`` computation.
 * *axes written* : Axes computed by the ``forward()`` computation.
 * *extra parameters* : Any necessary additional parameters.
+
+.. index:: APS_POLAR, geometry; APS_POLAR
+
+.. _APS_POLAR_table:
+
+Geometry: ``APS POLAR``
++++++++++++++++++++++++
+
+* real axes: ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta``
+* pseudo axes: depends on the engine
+
+====== =================== ================================= ======================================================= ===================================== ===============================
+engine pseudo axes         mode                              axes read                                               axes written                          extra parameters
+====== =================== ================================= ======================================================= ===================================== ===============================
+hkl    ``h``, ``k``, ``l`` 4-circles bissecting horizontal   ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``mu``, ``chi``, ``phi``, ``gamma``
+hkl    ``h``, ``k``, ``l`` 4-circles constant chi horizontal ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``mu``, ``phi``, ``gamma``
+hkl    ``h``, ``k``, ``l`` 4-circles constant mu horizontal  ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``chi``, ``phi``, ``gamma``
+hkl    ``h``, ``k``, ``l`` 4-circles constant phi horizontal ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``mu``, ``chi``, ``gamma``
+hkl    ``h``, ``k``, ``l`` lifting detector chi              ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``chi``, ``gamma``, ``delta``
+hkl    ``h``, ``k``, ``l`` lifting detector mu               ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``tau``, ``gamma``, ``delta``
+hkl    ``h``, ``k``, ``l`` lifting detector mu               ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``tau``, ``gamma``, ``delta``
+hkl    ``h``, ``k``, ``l`` lifting detector phi              ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``phi``, ``gamma``, ``delta``
+hkl    ``h``, ``k``, ``l`` psi constant horizontal           ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``mu``, ``chi``, ``phi``, ``gamma``   ``h2``, ``k2``, ``l2``, ``psi``
+hkl    ``h``, ``k``, ``l`` psi constant vertical             ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``tau``, ``chi``, ``phi``, ``delta``  ``h2``, ``k2``, ``l2``, ``psi``
+hkl    ``h``, ``k``, ``l`` zaxis + alpha-fixed               ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``mu``, ``gamma``, ``delta``
+hkl    ``h``, ``k``, ``l`` zaxis + alpha=beta                ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``tau``, ``mu``, ``gamma``, ``delta``
+hkl    ``h``, ``k``, ``l`` zaxis + beta-fixed                ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``tau``, ``gamma``, ``delta``
+psi    ``psi``             psi_vertical                      ``tau``, ``mu``, ``chi``, ``phi``, ``gamma``, ``delta`` ``mu``, ``chi``, ``phi``, ``delta``   ``h2``, ``k2``, ``l2``
+====== =================== ================================= ======================================================= ===================================== ===============================
 
 .. index:: E4CH, geometry; E4CH
 

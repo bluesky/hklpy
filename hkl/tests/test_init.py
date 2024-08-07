@@ -13,6 +13,7 @@ import hkl.util
     [
         ("calc", "A_KEV"),
         ("calc", "UnreachableError"),
+        ("geometries", "ApsPolar"),
         ("geometries", "E4CH"),
         ("geometries", "E4CV"),
         ("geometries", "E6C"),

@@ -18,11 +18,11 @@ from .tools import sample_silicon
 
 
 class Fourc(SimulatedE4CV):
-    ...
+    """4-circle for testing."""
 
 
 class Kappa(SimulatedK4CV):
-    ...
+    """Kappa 4-circle for testing."""
 
 
 @pytest.fixture

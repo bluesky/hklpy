@@ -9,7 +9,6 @@ import logging
 from pathlib import Path  # noqa
 
 import numpy
-from tiled.utils import safe_json_dump
 
 from ..util import new_lattice
 
@@ -90,3 +89,39 @@ def validate_descriptor_doc_content(gname, descriptor):
     ]
     for attr, struct in attrs:
         assert isinstance(data.get(f"{gname}_{attr}"), struct), f"{attr=!r} {list(data)=!r}"
+
+
+def safe_json_dump(content):
+    """
+    Vendored from tiled.utils
+
+    https://github.com/bluesky/tiled/blob/15abbc98df9bfd25f8c713656f664a558136e26f/tiled/utils.py#L526
+
+    Base64-encode raw bytes, and provide a fallback if orjson numpy handling fails.
+    """
+    import base64
+    import sys
+
+    import orjson
+
+    def default(content):
+        if isinstance(content, bytes):
+            content = f"data:application/octet-stream;base64,{base64.b64encode(content).decode('utf-8')}"
+            return content
+        if isinstance(content, Path):
+            return str(content)
+        # No need to import numpy if it hasn't been used already.
+        numpy = sys.modules.get("numpy", None)
+        if numpy is not None:
+            if isinstance(content, numpy.ndarray):
+                # If we make it here, OPT_NUMPY_SERIALIZE failed because we have hit some edge case.
+                # Give up on the numpy fast-path and convert to Python list.
+                # If the items in this list aren't serializable (e.g. bytes) we'll recurse on each item.
+                return content.tolist()
+            elif isinstance(content, (bytes, numpy.bytes_)):
+                return content.decode("utf-8")
+        raise TypeError
+
+    # Not all numpy dtypes are supported by orjson.
+    # Fall back to converting to a (possibly nested) Python list.
+    return orjson.dumps(content, option=orjson.OPT_SERIALIZE_NUMPY, default=default)

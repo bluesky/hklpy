@@ -10,7 +10,7 @@ from ..calc import UnreachableError
 
 
 class Fourc(SimulatedE4CV):
-    ...
+    """4-circle for testing."""
 
 
 def check_hkl(diffractometer, h, k, l):
