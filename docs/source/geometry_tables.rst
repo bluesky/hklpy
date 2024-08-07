@@ -10,9 +10,11 @@ Diffractometer Geometries
 
 .. index:: mode
 
-Tables are provided for the different geometries and then, for each
-geometry, the calculation engines, pseudo axes required, modes of
-operation, and any additional parameters required by the mode.
+Tables are provided for the different geometries and then, for each geometry,
+the calculation engines, pseudo axes required, modes of operation, and any
+additional parameters required by the :ref:`mode <overview.mode>`.  The mode
+defines which axes will be computed, which will be held constant, and any
+relationships between axes.
 
 Geometries indexed by number of circles
 ---------------------------------------
