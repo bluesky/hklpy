@@ -17,7 +17,7 @@ dependencies:
   - bluesky
   - databroker <=1.999
   - hkl
-  - numpy
+  - numpy <=1.999
   - ophyd
   - packaging
   - pint
