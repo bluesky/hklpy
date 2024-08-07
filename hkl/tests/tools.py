@@ -100,8 +100,9 @@ def safe_json_dump(content):
     Base64-encode raw bytes, and provide a fallback if orjson numpy handling fails.
     """
     import base64
-    import orjson
     import sys
+
+    import orjson
 
     def default(content):
         if isinstance(content, bytes):
