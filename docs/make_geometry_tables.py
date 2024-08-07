@@ -26,6 +26,8 @@ PAGE_HEAD = f"""
 Diffractometer Geometries
 =========================
 
+.. index:: mode
+
 Tables are provided for the different geometries and then, for each
 geometry, the calculation engines, pseudo axes required, modes of
 operation, and any additional parameters required by the mode.
