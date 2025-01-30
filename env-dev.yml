@@ -9,22 +9,27 @@ name: dev-hklpy
 
 channels:
   - conda-forge  # must come before defaults (for gsl version)
-  - defaults
+  - nodefaults
 
 dependencies:
-  - python >=3.8,<3.12
+  # additional pins for testing
+  - dask <2025
+  - xarray <2025
+
+  - python >=3.9,<=3.12
   - apischema
   - black
   - bluesky
   - chardet
-  - databroker
+  - databroker <=1.999
   - flake8
   - hkl
   - ipython
   - jupyter
   - nbsphinx
-  - numpy
+  - numpy <1.999
   - ophyd
+  - orjson
   - packaging
   - pandoc
   - pint

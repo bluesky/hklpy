@@ -9,7 +9,7 @@ name: hklpy
 
 channels:
   - conda-forge  # must come before defaults (for gsl version)
-  - defaults
+  - nodefaults
 
 dependencies:
   - python >=3.8,<3.12
