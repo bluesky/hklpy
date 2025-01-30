@@ -21,6 +21,11 @@ Release History
     v1.1.2 (released -tba-)
     ======================================
 
+    Maintenance
+    -------------
+
+    * Unit tests now cover to Py3.9 - Py3.12.
+
 v1.1.1 (released 2024-08-07)
 ======================================
 
@@ -77,7 +82,7 @@ Maintenance
 * Add test for ``or_swap()``.
 * Change documentation theme to pydata-sphinx-theme.
 * Documentation ZIP file uploaded as artifact with each build.  Great for review!
-* Expand testing to to Py3.8 - Py3.11.
+* Expand testing to Py3.8 - Py3.11.
 * Fix code in ``util.restore_reflections()`` that failed unit tests locally.
 * Make it easier to find the SPEC command cross-reference table.
 * Update packaging to latest PyPA recommendations.
