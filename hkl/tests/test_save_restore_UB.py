@@ -179,8 +179,8 @@ def test_fourc_run_orientation_info(cat, RE, fourc):
     assert info is not None
     assert isinstance(info, dict)
     assert len(info) > 0, f"{info=!r}"
-    assert "fourc" in info
-    fourc_orient = info["fourc"]
+    fourc_orient = info.get(fourc.name)
+    assert fourc_orient is not None,  f"{info=}"
     assert "orientation_attrs" in fourc_orient
     assert "reflections_details" in fourc_orient["orientation_attrs"]
     assert "reflections_details" in fourc_orient
