@@ -52,6 +52,7 @@ dependencies = [
   "databroker",
   "numpy",
   "ophyd",
+  "orjson",
   "pint",
   "pygobject",
   "pyRestTable",
