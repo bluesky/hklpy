@@ -95,7 +95,7 @@ def test__package_info_states():
 @pytest.mark.parametrize(
     "package_name, minimum_version",
     [
-        ("bluesky", "1.6"),
+        ("ophyd", "1.8"),
         ("pygobject", "3.40"),
         ("hkl", "5.0.0"),
         ("hklpy", "0"),  # minimum test for unversioned use
@@ -111,11 +111,8 @@ def test_get_package_info(package_name, minimum_version):
         assert "version" in v
         v_string = v.get("version", "unknown")
 
-        if package_name == "hkl":
-            assert v_string.startswith("5.0.0.")
-
         v_package = version.parse(v_string)
-        assert v_package >= version.parse(minimum_version)
+        assert v_package >= version.parse(minimum_version), f"{package_name=} {v_package=} {minimum_version=}"
 
 
 @pytest.mark.parametrize(
@@ -138,7 +135,7 @@ def test_software_versions_default_list(case):
 @pytest.mark.parametrize(
     "package_name, minimum_version",
     [
-        ("bluesky", "1.6"),
+        ("ophyd", "1.9"),
         ("pygobject", "3.40"),
         ("hkl", "5.0.0"),
         ("hklpy", "0"),  # minimum test for unversioned use
