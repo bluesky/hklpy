@@ -18,7 +18,7 @@ maintainers = [
 ]
 dynamic = ["version"]
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 keywords = ["bluesky", "diffraction", "diffractometer"]
 # https://packaging.python.org/en/latest/specifications/declaring-project-metadata/?highlight=license
 license = {file = "LICENSE"}
@@ -52,6 +52,7 @@ dependencies = [
   "databroker",
   "numpy",
   "ophyd",
+  "orjson",
   "pint",
   "pygobject",
   "pyRestTable",
@@ -78,7 +79,7 @@ all = ["hklpy[docs,tests]"]
 
 [tool.black]
 line-length = 115  # matches the value of 'max-line-length' in .flake8
-target-version = ['py38']
+target-version = ['py311']
 include = '\.pyi?$'
 exclude = '''
 

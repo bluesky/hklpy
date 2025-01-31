@@ -328,7 +328,7 @@ def list_orientation_runs(catalog, *args, limit=20):
     return pd.DataFrame(buffer)
 
 
-def run_orientation_info(run):
+def run_orientation_info(run) -> dict:
     """
     Return a dictionary with orientation information in this run.
 
@@ -358,17 +358,14 @@ def run_orientation_info(run):
                         }
                         # fmt:on
 
-        else:  # older databroker v1.2
-            run_conf = run.primary.config
-            for device in sorted(run_conf):
-                conf = run_conf[device].read()
-                if f"{device}_orientation_attrs" in conf:
-                    # fmt:off
-                    devices[device] = {
-                        item[len(f"{device}_"):]: conf[item].to_dict()["data"][0]
-                        for item in conf
-                    }
-                    # fmt:on
+        else:  # databroker <2.0
+            for device, stream in run.primary.config.items():
+                for descriptor in stream._descriptors:
+                    data = descriptor.get("configuration", {}).get(device, {}).get("data", {})
+                    attrs = data.get(f"{device}_orientation_attrs")
+                    if attrs is not None:
+                        devices[device] = {attr: data[f"{device}_{attr}"] for attr in attrs}
+
     except Exception as exc:
         logger.warning("Could not process run %s, due to %s", run, exc)
     return devices
