@@ -3,7 +3,6 @@
 # Developer's environment for hklpy
 
 # conda env create -f env-dev.yml
-# micromamba create -n dev-hklpy -f env-dev.yml
 
 name: dev-hklpy
 
