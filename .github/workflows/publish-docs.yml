@@ -55,7 +55,7 @@ jobs:
         echo "The docs will be published from this workflow run."
 
     - name: Create Python documentation environment
-      uses: mamba-org/setup-micromamba@v1
+      uses: mamba-org/setup-micromamba@v2
       with:
         environment-file: env-dev.yml
         environment-name: documentation
