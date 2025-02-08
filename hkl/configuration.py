@@ -238,7 +238,7 @@ class DCSample:
     reflections: List[DCReflection]
     """List of orientation reflections."""
 
-    UB: List[List[float]]
+    UB: List[List[float]] = field(default_factory=lambda: [[]])
     """
     Orientation matrix (3 x 3).  U is the crystal orientation matrix relative
     to the diffractometer and B is the transition matrix of a non-orthonormal
