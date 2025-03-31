@@ -21,6 +21,11 @@ Release History
     v1.1.2 (released -tba-)
     ======================================
 
+    Fixes
+    -------------
+
+    * Add 'reflections' to 'configuration_attrs'.
+
     Maintenance
     -------------
 
