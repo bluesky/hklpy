@@ -66,10 +66,13 @@ docs = [
 ]
 tests = [
   "bluesky",
+  "coveralls",
   "databroker <=1.999",
   "numpy <=1.999",
   "orjson",
   "packaging",
+  "pytest-cov",
+  "pytest",
 ]
 all = ["hklpy[docs,tests]"]
 
