@@ -68,4 +68,3 @@ def test_i350():
 
     info = run_orientation_info(run)
     assert e4cv.name in info
-        
