@@ -14,6 +14,7 @@ ValueError is raised.
 """
 
 from contextlib import nullcontext as does_not_raise
+
 import databroker
 from bluesky import RunEngine
 from bluesky import plans as bp
@@ -22,7 +23,6 @@ from ophyd.sim import noisy_det
 from .. import SimulatedE4CV
 from ..diffract import Diffractometer
 from ..util import run_orientation_info
-
 
 cat = databroker.temp().v2
 RE = RunEngine()
