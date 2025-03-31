@@ -36,7 +36,7 @@ def test_i350():
     with does_not_raise():
         # None of these actions should raise an exception
         e4cv.calc.new_sample("STO", (3.905, 3.905, 3.905, 90, 90, 90))
-        e4cv.forward(0,0,1)
+        e4cv.forward(0, 0, 1)
         (uid,) = RE(bp.scan([noisy_det, e4cv], e4cv.omega, 1, 0, 5))
         cat.v1[uid].table()
         run = cat[uid]
@@ -49,7 +49,7 @@ def test_i350():
     r1 = e4cv.calc.sample.add_reflection(0, 0, 1, (11.45, -90, 0, 22.91))
     r2 = e4cv.calc.sample.add_reflection(0, 1, 0, (11.45, 0, 0, 22.91))
     e4cv.calc.sample.compute_UB(r1, r2)
-    e4cv.forward(0,0,1)
+    e4cv.forward(0, 0, 1)
     (uid,) = RE(bp.scan([noisy_det, e4cv], e4cv.omega, 1, 0, 5))
     cat.v1[uid].table()
     run = cat[uid]
