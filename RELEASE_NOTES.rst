@@ -12,24 +12,24 @@ Release History
     Contributors
 
 ..
-    v2.0.0 (expected 2024)
+    v2.0.0 (superseded by hklpy2 project)
     ======================================
 
     User-requested changes
 
-..
-    v1.1.2 (released -tba-)
-    ======================================
+v1.1.2 (released 2025-04-01)
+======================================
 
-    Fixes
-    -------------
+Fixes
+-------------
 
-    * Add 'reflections' to 'configuration_attrs'.
+* Add 'reflections' to 'configuration_attrs'.
 
-    Maintenance
-    -------------
+Maintenance
+-------------
 
-    * Unit tests now cover to Py3.9 - Py3.12.
+* Unit tests now cover to Py3.9 - Py3.12.
+* Conda-forge build for Py3.13 is successful.
 
 v1.1.1 (released 2024-08-07)
 ======================================
