@@ -251,7 +251,7 @@ class Diffractometer(PseudoPositioner):
     geometry_name class_name
     UB U ux uy uz
     energy energy_units energy_offset
-    sample_name lattice lattice_reciprocal reflections_details
+    sample_name lattice lattice_reciprocal reflections reflections_details
     _pseudos _reals
     _constraints _mode
     diffractometer_name _hklpy_version
@@ -302,7 +302,7 @@ class Diffractometer(PseudoPositioner):
 
         if configuration_attrs is None:
             configuration_attrs = """
-                UB energy reflections_details geometry_name class_name
+                UB energy reflections reflections_details geometry_name class_name
             """.split()
 
         if decision_fcn is None:
