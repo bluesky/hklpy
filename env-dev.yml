@@ -33,6 +33,7 @@ dependencies:
   - pandoc
   - pint
   - pip
+  - pre-commit
   - pydata-sphinx-theme
   - pyepics
   - pygobject

@@ -238,15 +238,14 @@ class DCSample:
     reflections: List[DCReflection]
     """List of orientation reflections."""
 
-    UB: List[List[float]]
+    UB: List[List[float]] = field(default_factory=lambda: [[]])
     """
     Orientation matrix (3 x 3).  U is the crystal orientation matrix relative
     to the diffractometer and B is the transition matrix of a non-orthonormal
     (the reciprocal of the crystal) in an orthonormal system.
     """
 
-    # TODO: Once py38 is dropped, re-enable the default value setting
-    U: List[List[float]]  # = field(default_factory=list[list[float]])
+    U: List[List[float]] = field(default_factory=lambda: [[]])
     """
     Orientation matrix (3 x 3) of the crystal relative to the diffractometer.
     (optional)
